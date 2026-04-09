@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Job List</h2>
+
+    <table border="1">
+        <tr>
+            <th>Company</th>
+            <th>Role</th>
+            <th>Date</th>
+            <th>Status</th>
+        </tr>
+
+        {% for job in jobs %}
+        <tr>
+            <td>{{ job.company }}</td>
+            <td>{{ job.role }}</td>
+            <td>{{ job.date_applied }}</td>
+            <td>
+            {% if job.status == 'rejected' %}
+                <span style="color:red;">{{ job.get_status_display }}</span>
+            {% elif job.status == 'pending' %}
+                <span style="color:orange;">{{ job.get_status_display }}</span>
+            {% elif job.status == 'selected' %}
+                <span style="color:green;">{{ job.get_status_display }}</span>
+            {% elif job.status == 'applied' %}
+                <span style="color:blue;">{{ job.get_status_display }}</span>
+            {% else %}
+                {{ job.get_status_display }}
+            {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+{% endblock %}
