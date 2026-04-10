@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Referral List</h2>
+
+    <table border="1">
+        <tr>
+            <th>Name</th>
+            <th>Company</th>
+            <th>Email</th>
+            <th>Date</th>
+            <th>Status</th>
+        </tr>
+
+        {% for referral in referrals %}
+        <tr>
+            <td>{{ referral.person_name }}</td>
+            <td>{{ referral.company }}</td>
+            <td>{{ referral.email }}</td>
+            <td>{{ referral.date }}</td>
+            <td>
+            {% if referral.status == 'pending' %}
+                <span style="color:orange;">{{ referral.get_status_display }}</span>
+            {% elif referral.status == 'replied' %}
+                <span style="color:green;">{{ referral.get_status_display }}</span>
+            {% elif referral.status == 'no_response' %}
+                <span style="color:red;">{{ referral.get_status_display }}</span>
+            {% else %}
+                {{ referral.get_status_display }}
+            {% endif %}
+        </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+{% endblock %}

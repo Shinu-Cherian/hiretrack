@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Edit Job</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label>Company:</label><br>
+        <input type="text" name="company" value="{{ job.company }}"><br><br>
+
+        <label>Role:</label><br>
+        <input type="text" name="role" value="{{ job.role }}"><br><br>
+
+        <label>Date Applied:</label><br>
+        <input type="date" name="date" value="{{ job.date_applied|date:'Y-m-d' }}"><br><br>
+
+        <label>Job ID:</label><br>
+        <input type="text" name="job_id" value="{{ job.job_id }}"><br><br>
+
+        <label>Job Description:</label><br>
+        <textarea name="job_description">{{ job.job_description }}</textarea><br><br>
+
+        <label>Notes:</label><br>
+        <textarea name="notes">{{ job.notes }}</textarea><br><br>
+
+        <label>Status:</label><br>
+        <select name="status">
+            <option value="applied" {% if job.status == 'applied' %}selected{% endif %}>Applied</option>
+            <option value="pending" {% if job.status == 'pending' %}selected{% endif %}>Pending</option>
+            <option value="rejected" {% if job.status == 'rejected' %}selected{% endif %}>Rejected</option>
+            <option value="selected" {% if job.status == 'selected' %}selected{% endif %}>Selected</option>
+        </select><br><br>
+
+        <button type="submit">Update Job</button>
+    </form>
+
+{% endblock %}
