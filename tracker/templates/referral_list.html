@@ -10,6 +10,7 @@
             <th>Email</th>
             <th>Date</th>
             <th>Status</th>
+            <th>Notes</th>
         </tr>
 
         {% for referral in referrals %}
@@ -28,6 +29,7 @@
             {% else %}
                 {{ referral.get_status_display }}
             {% endif %}
+            <td>{{ referral.notes }}</td>
         </td>
         </tr>
         {% endfor %}
