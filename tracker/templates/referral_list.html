@@ -11,6 +11,7 @@
             <th>Date</th>
             <th>Status</th>
             <th>Notes</th>
+            <th>Action</th>
         </tr>
 
         {% for referral in referrals %}
@@ -19,18 +20,36 @@
             <td>{{ referral.company }}</td>
             <td>{{ referral.email }}</td>
             <td>{{ referral.date }}</td>
+
+            <!-- STATUS -->
             <td>
-            {% if referral.status == 'pending' %}
-                <span style="color:orange;">{{ referral.get_status_display }}</span>
-            {% elif referral.status == 'replied' %}
-                <span style="color:green;">{{ referral.get_status_display }}</span>
-            {% elif referral.status == 'no_response' %}
-                <span style="color:red;">{{ referral.get_status_display }}</span>
-            {% else %}
-                {{ referral.get_status_display }}
-            {% endif %}
-            <td>{{ referral.notes }}</td>
-        </td>
+                {% if referral.status == 'pending' %}
+                    <span style="color:orange;">{{ referral.get_status_display }}</span>
+                {% elif referral.status == 'replied' %}
+                    <span style="color:green;">{{ referral.get_status_display }}</span>
+                {% elif referral.status == 'no_response' %}
+                    <span style="color:red;">{{ referral.get_status_display }}</span>
+                {% else %}
+                    {{ referral.get_status_display }}
+                {% endif %}
+            </td>
+
+            <!-- NOTES -->
+            <td>{{ referral.notes|default:"-" }}</td>
+
+            <!-- ACTION -->
+            <td>
+                <a href="/edit-referral/{{ referral.id }}/">
+                    <button>Edit</button>
+                </a>
+                 
+
+                <a href="/delete-referral/{{ referral.id }}/"
+                   onclick="return confirm('Are you sure you want to delete this referral?')">
+                    <button>Delete</button>
+                </a>
+            </td>
+
         </tr>
         {% endfor %}
     </table>

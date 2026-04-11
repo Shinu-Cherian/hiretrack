@@ -104,3 +104,26 @@ def edit_job(request, id):
         return redirect('job_list')
 
     return render(request, 'edit_job.html', {'job': job})
+
+
+def delete_referral(request, id):
+    referral = Referral.objects.get(id=id)
+    referral.delete()
+    return redirect('referral_list')
+
+
+def edit_referral(request, id):
+    referral = Referral.objects.get(id=id)
+
+    if request.method == 'POST':
+        referral.person_name = request.POST.get('person_name')
+        referral.company = request.POST.get('company')
+        referral.email = request.POST.get('email')
+        referral.date = request.POST.get('date')
+        referral.status = request.POST.get('status')
+        referral.notes = request.POST.get('notes')
+
+        referral.save()
+        return redirect('referral_list')
+
+    return render(request, 'edit_referral.html', {'referral': referral})
