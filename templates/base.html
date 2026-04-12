@@ -3,37 +3,111 @@
 <head>
     <title>HireTrack</title>
 </head>
-<body>
 
+<body style="margin:0; font-family:Arial;">
+
+    <!-- 🔝 TOP BAR -->
+    <div style="padding:10px; background:#222; color:white; display:flex; align-items:center; justify-content:space-between;">
     
-
-    <h2>
-        <a href="/" style="text-decoration:none; color:black;">
-            HireTrack 🚀
+    <!-- ☰ MENU BUTTON -->
+        <span onclick="toggleSidebar()" style="cursor:pointer; font-size:20px;">
+            ☰
+        </span>
+        <a href="/" style="color:white; text-decoration:none;">
+            <strong>HireTrack 🚀</strong>
         </a>
-    </h2>
-    <div style="float:right; margin:10px;">
-    <a href="/notifications/" style="text-decoration:none; color:black; position:relative;">
-        🔔
-        {% if notifications|default:0 > 0 %}
-            <span style="
-                position:absolute;
-                top:-5px;
-                right:-10px;
-                background:red;
-                color:white;
-                border-radius:50%;
-                padding:2px 6px;
-                font-size:12px;
-            ">
-                {{ notifications }}
-            </span>
-        {% endif %}
-    </a>
+
+        <div style="float:right;">
+            {% if user.is_authenticated %}
+                👤 {{ user.username }}
+            {% else %}
+                <a href="/login/" style="color:white; margin-right:10px;">Login</a>
+                <a href="/signup/" style="color:white;">Signup</a>
+            {% endif %}
+        </div>
     </div>
 
-    {% block content %}
-    {% endblock %}
+    <!-- 🧱 MAIN LAYOUT -->
+    <div style="display:flex;">
+
+        <!-- 📌 SIDEBAR -->
+        <div id="sidebar" style="
+            width:220px;
+            background:#f4f4f4;
+            height:100%;
+            position:fixed;
+            left:-250px;
+            top:50px;
+            padding:15px;
+            transition:0.3s;
+        ">
+
+            {% if user.is_authenticated %}
+
+                <!-- 👤 PROFILE -->
+                <div style="margin-bottom:20px;">
+                    <strong>👤 {{ user.username }}</strong><br>
+                    <small>View Profile</small>
+                </div>
+
+                <hr>
+
+                <!-- 📂 MENU -->
+                <a href="/dashboard/" style="text-decoration:none;">🏠 Dashboard</a>
+                <p><a href="/jobs/" style="text-decoration:none;">💼 Jobs</a></p>
+                <p><a href="/referrals/" style="text-decoration:none;">🤝 Referrals</a></p>
+                <p><a href="/starred/">⭐ Starred</a></p>
+                <p><a href="/notifications/" style="text-decoration:none;">🔔 Notifications</a></p>
+
+                <hr>
+
+                <!-- ⚙️ -->
+                <p><a href="#" style="text-decoration:none;">⚙️ Profile</a></p>
+
+                <hr>
+
+                <!-- 🚪 LOGOUT -->
+                <form action="/logout/" method="POST">
+                    {% csrf_token %}
+                    <button type="submit">🚪 Logout</button>
+                </form>
+
+            {% endif %}
+
+        </div>
+
+        <!-- 📄 CONTENT -->
+        <div style="flex:1; padding:20px;">
+            {% block content %}
+            {% endblock %}
+        </div>
+
+    </div>
+    <script>
+    function toggleSidebar() {
+        let sidebar = document.getElementById("sidebar");
+
+        if (sidebar.style.left === "0px") {
+            sidebar.style.left = "-250px";
+        } else {
+            sidebar.style.left = "0px";
+        }
+    }
+
+// 🔥 OUTSIDE CLICK CLOSE
+    document.addEventListener("click", function(event) {
+        let sidebar = document.getElementById("sidebar");
+
+    // sidebar open aanenkil
+        if (sidebar.style.left === "0px") {
+
+        // click sidebar il alla AND menu button alla
+            if (!sidebar.contains(event.target) && event.target.innerText !== "☰") {
+                sidebar.style.left = "-250px";
+            }
+        }
+    });
+    </script>
 
 </body>
 </html>

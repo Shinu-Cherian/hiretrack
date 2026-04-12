@@ -3,10 +3,15 @@ from .models import Job,Referral
 from django.db.models import Q
 from datetime import datetime, timedelta
 from datetime import date
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.contrib import messages
+
 
 def home(request):
     return render(request, 'home.html')
 
+@login_required
 def add_job(request):
     if request.method == 'POST':
         company = request.POST.get('company')
@@ -20,6 +25,7 @@ def add_job(request):
         notes = request.POST.get('notes')   # 👈 add
 
         Job.objects.create(
+            user=request.user,         #multi user access
             company=company,
             role=role,
             date_applied=date_applied,
@@ -36,12 +42,12 @@ def add_job(request):
 
     return render(request, 'add_job.html')
 
-
+@login_required
 def job_list(request):
-    jobs = Job.objects.all()
+    jobs = Job.objects.filter(user=request.user)
     return render(request, 'job_list.html', {'jobs': jobs})
 
-
+@login_required
 def add_referral(request):
     if request.method == 'POST':
         person_name = request.POST.get('person_name')
@@ -55,6 +61,7 @@ def add_referral(request):
          
 
         Referral.objects.create(
+            user=request.user,             #multi user access
             person_name=person_name,
             company=company,
             email=email,
@@ -69,11 +76,12 @@ def add_referral(request):
 
     return render(request, 'add_referral.html')
 
+@login_required
 def referral_list(request):
-    referrals = Referral.objects.all()
+    referrals = Referral.objects.filter(user=request.user)
     return render(request, 'referral_list.html', {'referrals': referrals})
 
-
+@login_required
 def dashboard(request):
     total_jobs = Job.objects.count()
     pending_jobs = Job.objects.filter(status='pending').count()
@@ -101,12 +109,13 @@ def dashboard(request):
 
     return render(request, 'dashboard.html', context)
 
-
+@login_required
 def delete_job(request, id):
     job = Job.objects.get(id=id)
     job.delete()
     return redirect('job_list')
 
+@login_required
 def edit_job(request, id):
     job = Job.objects.get(id=id)
 
@@ -124,13 +133,13 @@ def edit_job(request, id):
 
     return render(request, 'edit_job.html', {'job': job})
 
-
+@login_required
 def delete_referral(request, id):
     referral = Referral.objects.get(id=id)
     referral.delete()
     return redirect('referral_list')
 
-
+@login_required
 def edit_referral(request, id):
     referral = Referral.objects.get(id=id)
 
@@ -147,7 +156,7 @@ def edit_referral(request, id):
 
     return render(request, 'edit_referral.html', {'referral': referral})
 
-
+@login_required
 def job_list(request):
     query = request.GET.get('q')
     status_filter = request.GET.get('status')
@@ -170,7 +179,7 @@ def job_list(request):
 
     return render(request, 'job_list.html', {'jobs': jobs})
 
-
+@login_required
 def referral_list(request):
     query = request.GET.get('q')
     filter_value = request.GET.get('filter')
@@ -194,7 +203,7 @@ def referral_list(request):
     return render(request, 'referral_list.html', {'referrals': referrals})
 
 
-
+@login_required
 def notifications_page(request):
     from datetime import date
     today = date.today()
@@ -209,7 +218,7 @@ def notifications_page(request):
         'total_today': total_today
     })
 
-
+@login_required
 def toggle_star_job(request, id):
     job = Job.objects.get(id=id)
 
@@ -219,7 +228,7 @@ def toggle_star_job(request, id):
 
     return redirect('job_list')
 
-
+@login_required
 def toggle_star_referral(request, id):
     referral = Referral.objects.get(id=id)
 
@@ -228,3 +237,41 @@ def toggle_star_referral(request, id):
     referral.save()
 
     return redirect('referral_list')
+
+
+
+
+def signup(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+
+        # 🔐 Password match check
+        if password != confirm_password:
+            messages.error(request, "Passwords do not match")
+            return redirect('signup')
+
+        # 🔐 Username already exists check
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Username already taken")
+            return redirect('signup')
+
+        # ✅ Create user
+        User.objects.create_user(username=username, password=password)
+
+        messages.success(request, "Account created successfully! Please login.")
+        return redirect('login')
+
+    return render(request, 'signup.html')
+
+
+@login_required
+def starred_list(request):
+    jobs = Job.objects.filter(user=request.user, is_starred=True)
+    referrals = Referral.objects.filter(user=request.user, is_starred=True)
+
+    return render(request, 'starred.html', {
+        'jobs': jobs,
+        'referrals': referrals
+    })

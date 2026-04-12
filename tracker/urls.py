@@ -15,4 +15,5 @@ urlpatterns = [
     path('notifications/', views.notifications_page, name='notifications'),
     path('toggle-star-job/<int:id>/', views.toggle_star_job, name='toggle_star_job'),
     path('toggle-star-referral/<int:id>/', views.toggle_star_referral, name='toggle_star_referral'),
+    path('starred/', views.starred_list, name='starred'),
 ]

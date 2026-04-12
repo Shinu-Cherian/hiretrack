@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Job(models.Model):
     STATUS_CHOICES = [
@@ -9,6 +10,7 @@ class Job(models.Model):
     ]
 
     date_applied = models.DateField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE) 
     company = models.CharField(max_length=255)
     role = models.CharField(max_length=255)
     job_id = models.CharField(max_length=100, blank=True, null=True)
@@ -30,6 +32,7 @@ class Referral(models.Model):   # 👈 outside Job class
     ]
 
     date = models.DateField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE) 
     person_name = models.CharField(max_length=255)
     company = models.CharField(max_length=255)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
