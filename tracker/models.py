@@ -15,6 +15,7 @@ class Job(models.Model):
     job_description = models.TextField(blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='applied')
     notes = models.TextField(blank=True, null=True)
+    follow_up_date = models.DateField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.company} - {self.role}"
@@ -33,6 +34,8 @@ class Referral(models.Model):   # 👈 outside Job class
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     notes = models.TextField(blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
+    follow_up_date = models.DateField(null=True, blank=True)
+    
 
     def __str__(self):
         return f"{self.person_name} - {self.company}"

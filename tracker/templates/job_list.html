@@ -2,6 +2,38 @@
 
 {% block content %}
     <h2>Job List</h2>
+    
+    <!-- 🔽 FILTER DROPDOWN -->
+    <form method="GET" style="margin-bottom:10px;">
+    <!-- keep search -->
+        <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Search jobs...">
+
+    <!-- dropdown -->
+    <select name="status">
+        <option value="">All</option>
+
+        <option value="applied" {% if request.GET.status == 'applied' %}selected{% endif %}>
+        Applied
+        </option>
+
+        <option value="pending" {% if request.GET.status == 'pending' %}selected{% endif %}>
+        Pending
+        </option>
+
+        <option value="rejected" {% if request.GET.status == 'rejected' %}selected{% endif %}>
+        Rejected
+        </option>
+
+        <option value="selected" {% if request.GET.status == 'selected' %}selected{% endif %}>
+        Selected
+        </option>
+    </select>
+
+    <button type="submit">Apply</button>
+    </form>
+ 
+
+<br>
 
     <table border="1">
        <tr>

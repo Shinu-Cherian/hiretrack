@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>🔔 Notifications</h2>
+    {% if total_today > 0 %}
+        <p><strong>You have {{ total_today }} reminders today</strong></p>
+    {% endif %}
+
+    <h3>Job Reminders</h3>
+    {% if job_reminders %}
+        <ul>
+            {% for job in job_reminders %}
+                <li>
+                    <a href="/edit-job/{{ job.id }}/">
+                        Follow up: {{ job.company }} - {{ job.role }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No job reminders today.</p>
+    {% endif %}
+
+    <h3>Referral Reminders</h3>
+    {% if referral_reminders %}
+        <ul>
+            {% for referral in referral_reminders %}
+                <li>
+                    <a href="/edit-referral/{{ referral.id }}/">
+                        Follow up: {{ referral.person_name }} - {{ referral.company }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No referral reminders today.</p>
+    {% endif %}
+
+{% endblock %}

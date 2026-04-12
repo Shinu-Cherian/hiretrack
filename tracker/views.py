@@ -1,5 +1,8 @@
 from django.shortcuts import render,redirect
 from .models import Job,Referral
+from django.db.models import Q
+from datetime import datetime, timedelta
+from datetime import date
 
 def home(request):
     return render(request, 'home.html')
@@ -9,6 +12,8 @@ def add_job(request):
         company = request.POST.get('company')
         role = request.POST.get('role')
         date_applied = request.POST.get('date')
+        date_obj = datetime.strptime(date_applied, "%Y-%m-%d").date()
+        follow_up_date = date_obj + timedelta(days=7)
         status = request.POST.get('status') 
         job_id = request.POST.get('job_id')   # 👈 add
         job_description = request.POST.get('job_description')   # 👈 add
@@ -21,7 +26,9 @@ def add_job(request):
             status=status,
             job_id=job_id,   # 👈 add
             job_description=job_description,   # 👈 add
-            notes=notes 
+            notes=notes,
+            follow_up_date=follow_up_date 
+
         )
 
         print("Job saved!")
@@ -41,6 +48,8 @@ def add_referral(request):
         company = request.POST.get('company')
         email = request.POST.get('email')
         date = request.POST.get('date')
+        date_obj = datetime.strptime(date, "%Y-%m-%d").date()
+        follow_up_date = date_obj + timedelta(days=3)
         status = request.POST.get('status')
         notes = request.POST.get('notes')
          
@@ -52,6 +61,7 @@ def add_referral(request):
             date=date,
             status=status,
             notes=notes,
+            follow_up_date=follow_up_date
             
         )
 
@@ -71,13 +81,22 @@ def dashboard(request):
     selected_jobs = Job.objects.filter(status='selected').count()
 
     total_referrals = Referral.objects.count()
+    today = date.today()
+
+    job_reminders = Job.objects.filter(follow_up_date=today)
+    referral_reminders = Referral.objects.filter(follow_up_date=today)
+
+    total_notifications = job_reminders.count() + referral_reminders.count()
 
     context = {
         'total_jobs': total_jobs,
         'pending_jobs': pending_jobs,
         'rejected_jobs': rejected_jobs,
         'selected_jobs': selected_jobs,
-        'total_referrals': total_referrals
+        'total_referrals': total_referrals,
+        'notifications': total_notifications,
+        'job_reminders': job_reminders,
+        'referral_reminders': referral_reminders,
     }
 
     return render(request, 'dashboard.html', context)
@@ -127,3 +146,58 @@ def edit_referral(request, id):
         return redirect('referral_list')
 
     return render(request, 'edit_referral.html', {'referral': referral})
+
+
+def job_list(request):
+    query = request.GET.get('q')
+    status_filter = request.GET.get('status')
+    jobs = Job.objects.all()
+
+    if query:
+        jobs = Job.objects.filter(
+            Q(company__icontains=query) |
+            Q(role__icontains=query) |
+            Q(job_id__icontains=query)
+        )
+    if status_filter:
+        status_filter = status_filter.lower()
+        jobs = jobs.filter(status=status_filter)
+    
+        
+
+    return render(request, 'job_list.html', {'jobs': jobs})
+
+
+def referral_list(request):
+    query = request.GET.get('q')
+    status_filter = request.GET.get('status')
+
+    referrals = Referral.objects.all() 
+
+    if query:
+        referrals = Referral.objects.filter(
+            Q(person_name__icontains=query) |
+            Q(company__icontains=query)
+        )
+    if status_filter:
+        status_filter = status_filter.lower()
+        referrals = referrals.filter(status=status_filter)
+    
+
+    return render(request, 'referral_list.html', {'referrals': referrals})
+
+
+
+def notifications_page(request):
+    from datetime import date
+    today = date.today()
+
+    job_reminders = Job.objects.filter(follow_up_date=today)
+    referral_reminders = Referral.objects.filter(follow_up_date=today)
+    total_today = job_reminders.count() + referral_reminders.count()
+
+    return render(request, 'notifications.html', {
+        'job_reminders': job_reminders,
+        'referral_reminders': referral_reminders,
+        'total_today': total_today
+    })

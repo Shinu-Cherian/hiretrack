@@ -12,4 +12,5 @@ urlpatterns = [
     path('edit-job/<int:id>/', views.edit_job, name='edit_job'),
     path('delete-referral/<int:id>/', views.delete_referral, name='delete_referral'),
     path('edit-referral/<int:id>/', views.edit_referral, name='edit_referral'),
+    path('notifications/', views.notifications_page, name='notifications'),
 ]

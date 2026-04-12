@@ -2,6 +2,33 @@
 
 {% block content %}
     <h2>Referral List</h2>
+    <form method="GET" style="margin-bottom:10px;">
+    
+    <!-- 🔍 keep search -->
+    <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Search referrals...">
+
+    <!-- 🎯 dropdown -->
+    <select name="status">
+        <option value="">All</option>
+
+        <option value="pending" {% if request.GET.status == 'pending' %}selected{% endif %}>
+            Pending
+        </option>
+
+        <option value="replied" {% if request.GET.status == 'replied' %}selected{% endif %}>
+            Replied
+        </option>
+
+        <option value="no_response" {% if request.GET.status == 'no_response' %}selected{% endif %}>
+            No Response
+        </option>
+    </select>
+
+    <button type="submit">Apply</button>
+</form>
+   
+
+<br>
 
     <table border="1">
         <tr>
