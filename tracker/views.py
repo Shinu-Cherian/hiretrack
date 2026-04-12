@@ -152,6 +152,7 @@ def job_list(request):
     query = request.GET.get('q')
     status_filter = request.GET.get('status')
     jobs = Job.objects.all()
+    filter_value = request.GET.get('filter')
 
     if query:
         jobs = Job.objects.filter(
@@ -159,9 +160,11 @@ def job_list(request):
             Q(role__icontains=query) |
             Q(job_id__icontains=query)
         )
-    if status_filter:
-        status_filter = status_filter.lower()
-        jobs = jobs.filter(status=status_filter)
+    if filter_value:
+        if filter_value == 'starred':
+            jobs = jobs.filter(is_starred=True)
+        else:
+            jobs = jobs.filter(status=filter_value)
     
         
 
@@ -170,19 +173,23 @@ def job_list(request):
 
 def referral_list(request):
     query = request.GET.get('q')
-    status_filter = request.GET.get('status')
+    filter_value = request.GET.get('filter')
 
-    referrals = Referral.objects.all() 
+    referrals = Referral.objects.all()
 
+    # 🔍 SEARCH (CHAIN FIX)
     if query:
-        referrals = Referral.objects.filter(
+        referrals = referrals.filter(
             Q(person_name__icontains=query) |
             Q(company__icontains=query)
         )
-    if status_filter:
-        status_filter = status_filter.lower()
-        referrals = referrals.filter(status=status_filter)
-    
+
+    # 🎯 FILTER (FIXED LOGIC)
+    if filter_value:
+        if filter_value == 'starred':
+            referrals = referrals.filter(is_starred=True)
+        else:
+            referrals = referrals.filter(status=filter_value)
 
     return render(request, 'referral_list.html', {'referrals': referrals})
 
@@ -201,3 +208,23 @@ def notifications_page(request):
         'referral_reminders': referral_reminders,
         'total_today': total_today
     })
+
+
+def toggle_star_job(request, id):
+    job = Job.objects.get(id=id)
+
+    # toggle
+    job.is_starred = not job.is_starred
+    job.save()
+
+    return redirect('job_list')
+
+
+def toggle_star_referral(request, id):
+    referral = Referral.objects.get(id=id)
+
+    # toggle star
+    referral.is_starred = not referral.is_starred
+    referral.save()
+
+    return redirect('referral_list')

@@ -4,28 +4,22 @@
     <h2>Referral List</h2>
     <form method="GET" style="margin-bottom:10px;">
     
-    <!-- 🔍 keep search -->
+    <!-- 🔍 SEARCH -->
     <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Search referrals...">
 
-    <!-- 🎯 dropdown -->
-    <select name="status">
+    <!-- 🎯 SINGLE FILTER -->
+    <select name="filter">
         <option value="">All</option>
 
-        <option value="pending" {% if request.GET.status == 'pending' %}selected{% endif %}>
-            Pending
-        </option>
+        <option value="pending" {% if request.GET.filter == 'pending' %}selected{% endif %}>Pending</option>
+        <option value="replied" {% if request.GET.filter == 'replied' %}selected{% endif %}>Replied</option>
+        <option value="no_response" {% if request.GET.filter == 'no_response' %}selected{% endif %}>No Response</option>
 
-        <option value="replied" {% if request.GET.status == 'replied' %}selected{% endif %}>
-            Replied
-        </option>
-
-        <option value="no_response" {% if request.GET.status == 'no_response' %}selected{% endif %}>
-            No Response
-        </option>
+        <option value="starred" {% if request.GET.filter == 'starred' %}selected{% endif %}>⭐ Starred</option>
     </select>
 
     <button type="submit">Apply</button>
-</form>
+    </form>
    
 
 <br>
@@ -75,6 +69,18 @@
                    onclick="return confirm('Are you sure you want to delete this referral?')">
                     <button>Delete</button>
                 </a>
+            </td>
+            <td>
+                <!-- ⭐ STAR -->
+                <a href="/toggle-star-referral/{{ referral.id }}/" style="text-decoration:none; font-size:18px;">
+                    {% if referral.is_starred %}
+                    ⭐
+                    {% else %}
+                    ☆
+                    {% endif %}
+                    </a>
+
+   
             </td>
 
         </tr>

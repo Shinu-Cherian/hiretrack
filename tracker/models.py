@@ -16,6 +16,7 @@ class Job(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='applied')
     notes = models.TextField(blank=True, null=True)
     follow_up_date = models.DateField(null=True, blank=True)
+    is_starred = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.company} - {self.role}"
@@ -35,6 +36,7 @@ class Referral(models.Model):   # 👈 outside Job class
     notes = models.TextField(blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
     follow_up_date = models.DateField(null=True, blank=True)
+    is_starred = models.BooleanField(default=False)
     
 
     def __str__(self):
