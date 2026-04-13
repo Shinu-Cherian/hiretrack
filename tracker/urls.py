@@ -16,4 +16,5 @@ urlpatterns = [
     path('toggle-star-job/<int:id>/', views.toggle_star_job, name='toggle_star_job'),
     path('toggle-star-referral/<int:id>/', views.toggle_star_referral, name='toggle_star_referral'),
     path('starred/', views.starred_list, name='starred'),
+    path('profile/', views.view_profile, name='profile'),
 ]

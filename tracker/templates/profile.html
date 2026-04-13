@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div style="max-width:800px; margin:auto; text-align:center;">
+
+    <!-- 👤 PROFILE PIC -->
+    {% if profile.profile_pic %}
+        <img src="{{ profile.profile_pic.url }}" width="120" style="border-radius:50%;">
+    {% else %}
+        <p>No Profile Picture</p>
+    {% endif %}
+
+    <h2>{{ profile.user.username }}</h2>
+
+    <hr>
+
+    <div style="text-align:left; margin-top:20px;">
+        <p><strong>Email:</strong> {{ profile.user.email }}</p>
+        <p><strong>Phone:</strong> {{ profile.phone }}</p>
+        <p><strong>Age:</strong> {{ profile.age }}</p>
+        <p><strong>Gender:</strong> {{ profile.gender }}</p>
+
+        <p><strong>Education:</strong> {{ profile.education }}</p>
+        <p><strong>Experience:</strong> {{ profile.experience }}</p>
+        <p><strong>Skills:</strong> {{ profile.skills }}</p>
+
+        {% if profile.resume %}
+            <p><a href="{{ profile.resume.url }}">Download Resume</a></p>
+        {% endif %}
+    </div>
+
+</div>
+
+{% endblock %}

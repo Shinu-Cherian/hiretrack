@@ -44,3 +44,24 @@ class Referral(models.Model):   # 👈 outside Job class
 
     def __str__(self):
         return f"{self.person_name} - {self.company}"
+    
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    age = models.IntegerField(null=True, blank=True)
+    gender = models.CharField(max_length=10, blank=True)
+
+    phone = models.CharField(max_length=15, blank=True)
+    email = models.EmailField(blank=True)
+
+    education = models.TextField(blank=True)
+    experience = models.TextField(blank=True)
+    skills = models.TextField(blank=True)
+
+    resume = models.FileField(upload_to='resumes/', null=True, blank=True)
+    profile_pic = models.ImageField(upload_to='profiles/', null=True, blank=True)
+
+    def __str__(self):
+        return self.user.username

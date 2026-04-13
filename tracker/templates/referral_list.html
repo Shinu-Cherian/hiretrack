@@ -36,7 +36,7 @@
         </tr>
 
         {% for referral in referrals %}
-        <tr>
+        <tr {% if referral.highlight %} style="background-color:#d1e7dd;" {% endif %}>
             <td>{{ referral.person_name }}</td>
             <td>{{ referral.company }}</td>
             <td>{{ referral.email }}</td>

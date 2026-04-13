@@ -9,7 +9,11 @@
 {% if jobs %}
     <ul>
         {% for job in jobs %}
-            <li>{{ job.company }} - {{ job.role }}</li>
+            <li>
+                <a href="/jobs/?highlight={{ job.id }}">
+                    {{ job.company }} - {{ job.role }}
+                </a>
+            </li>
         {% endfor %}
     </ul>
 {% else %}
@@ -23,7 +27,11 @@
 {% if referrals %}
     <ul>
         {% for ref in referrals %}
-            <li>{{ ref.person_name }} - {{ ref.company }}</li>
+            <li>
+                <a href="/referrals/?highlight={{ ref.id }}">
+                    {{ ref.person_name }} - {{ ref.company }}
+                </a>
+            </li>
         {% endfor %}
     </ul>
 {% else %}

@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from .models import Job,Referral
+from .models import Job,Referral,Profile
 from django.db.models import Q
 from datetime import datetime, timedelta
 from datetime import date
@@ -28,7 +28,7 @@ def add_job(request):
             user=request.user,         #multi user access
             company=company,
             role=role,
-            date_applied=date_applied,
+            date_applied=date_obj,
             status=status,
             job_id=job_id,   # 👈 add
             job_description=job_description,   # 👈 add
@@ -44,8 +44,22 @@ def add_job(request):
 
 @login_required
 def job_list(request):
+    highlight_id = request.GET.get('highlight')
+
+    # 🔥 normal user jobs
     jobs = Job.objects.filter(user=request.user)
-    return render(request, 'job_list.html', {'jobs': jobs})
+
+    # 🔥 IMPORTANT FIX → ensure highlighted job always included
+    if highlight_id:
+        jobs = jobs.filter(
+            Q(id=highlight_id) | Q(user=request.user)
+        )
+
+    return render(request, 'job_list.html', {
+        'jobs': jobs,
+        'highlight_id': highlight_id
+    })
+
 
 @login_required
 def add_referral(request):
@@ -54,25 +68,25 @@ def add_referral(request):
         company = request.POST.get('company')
         email = request.POST.get('email')
         date = request.POST.get('date')
+
         date_obj = datetime.strptime(date, "%Y-%m-%d").date()
         follow_up_date = date_obj + timedelta(days=3)
+
         status = request.POST.get('status')
         notes = request.POST.get('notes')
-         
 
         Referral.objects.create(
-            user=request.user,             #multi user access
+            user=request.user,
             person_name=person_name,
             company=company,
             email=email,
-            date=date,
+            date=date_obj,   # ✅ correct
             status=status,
             notes=notes,
             follow_up_date=follow_up_date
-            
         )
 
-        return redirect('home')
+        return redirect('referral_list')   # 🔥 better than home
 
     return render(request, 'add_referral.html')
 
@@ -158,50 +172,56 @@ def edit_referral(request, id):
 
 @login_required
 def job_list(request):
-    query = request.GET.get('q')
-    status_filter = request.GET.get('status')
-    jobs = Job.objects.all()
-    filter_value = request.GET.get('filter')
+    jobs = Job.objects.filter(user=request.user)
+    highlight_id = request.GET.get('highlight')
 
-    if query:
-        jobs = Job.objects.filter(
-            Q(company__icontains=query) |
-            Q(role__icontains=query) |
-            Q(job_id__icontains=query)
-        )
-    if filter_value:
-        if filter_value == 'starred':
-            jobs = jobs.filter(is_starred=True)
+    for job in jobs:
+        if highlight_id and str(job.id) == str(highlight_id):
+            job.highlight = True
         else:
-            jobs = jobs.filter(status=filter_value)
-    
-        
+            job.highlight = False
 
-    return render(request, 'job_list.html', {'jobs': jobs})
+    return render(request, 'job_list.html', {
+        'jobs': jobs
+    })
 
 @login_required
 def referral_list(request):
     query = request.GET.get('q')
     filter_value = request.GET.get('filter')
+    highlight_id = request.GET.get('highlight')   # 🔥 ADD THIS
 
-    referrals = Referral.objects.all()
+    referrals = Referral.objects.filter(user=request.user)
 
-    # 🔍 SEARCH (CHAIN FIX)
+    if highlight_id:
+        referrals = Referral.objects.filter(
+            Q(user=request.user) | Q(id=highlight_id)
+        )
+
+    # 🔍 SEARCH
     if query:
         referrals = referrals.filter(
             Q(person_name__icontains=query) |
             Q(company__icontains=query)
         )
 
-    # 🎯 FILTER (FIXED LOGIC)
+    # 🎯 FILTER
     if filter_value:
         if filter_value == 'starred':
             referrals = referrals.filter(is_starred=True)
         else:
             referrals = referrals.filter(status=filter_value)
 
-    return render(request, 'referral_list.html', {'referrals': referrals})
+    # 🔥 HIGHLIGHT LOGIC (ADD THIS BLOCK)
+    for ref in referrals:
+        if highlight_id and str(ref.id) == str(highlight_id):
+            ref.highlight = True
+        else:
+            ref.highlight = False
 
+    return render(request, 'referral_list.html', {
+        'referrals': referrals
+    })
 
 @login_required
 def notifications_page(request):
@@ -274,4 +294,12 @@ def starred_list(request):
     return render(request, 'starred.html', {
         'jobs': jobs,
         'referrals': referrals
+    })
+
+@login_required
+def view_profile(request):
+    profile, created = Profile.objects.get_or_create(user=request.user)
+
+    return render(request, 'profile.html', {
+        'profile': profile
     })
