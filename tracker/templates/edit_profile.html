@@ -7,9 +7,84 @@
 <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
 
-    {{ form.as_p }}
+    <!-- 👤 IMAGE PREVIEW -->
+    
+
+    <!-- 👤 CURRENT PROFILE PIC -->
+    {% if form.instance.profile_pic %}
+        <p><strong>Current Profile Picture:</strong></p>
+        <img src="{{ form.instance.profile_pic.url }}" width="120" style="border-radius:50%;">
+    {% endif %}
+
+    <!-- 📄 CURRENT RESUME -->
+    {% if form.instance.resume %}
+        <p>
+            <strong>Current Resume:</strong>
+            <a href="{{ form.instance.resume.url }}" target="_blank">View Resume</a>
+        </p>
+    {% endif %}
+
+    
+
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <!-- 👤 PROFILE PIC -->
+    <label>Profile Picture:</label><br>
+    <input type="file" name="profile_pic"><br><br>
+
+    <!-- AGE -->
+    <label>Age:</label><br>
+    <input type="number" name="age" value="{{ form.instance.age }}"><br><br>
+
+    <!-- GENDER -->
+    <label>Gender:</label><br>
+    <select name="gender">
+        <option value="">Select</option>
+        <option value="male" {% if form.instance.gender == "male" %}selected{% endif %}>Male</option>
+        <option value="female" {% if form.instance.gender == "female" %}selected{% endif %}>Female</option>
+        <option value="other" {% if form.instance.gender == "other" %}selected{% endif %}>Other</option>
+        <option value="prefer_not" {% if form.instance.gender == "prefer_not" %}selected{% endif %}>Prefer not to say</option>
+    </select><br><br>
+
+    <!-- PHONE -->
+    <label>Phone:</label><br>
+    <input type="text" name="phone" value="{{ form.instance.phone }}"><br><br>
+
+    <!-- EDUCATION -->
+    <label>Education:</label><br>
+    <textarea name="education">{{ form.instance.education }}</textarea><br><br>
+
+    <!-- EXPERIENCE -->
+    <label>Experience:</label><br>
+    <textarea name="experience">{{ form.instance.experience }}</textarea><br><br>
+
+    <!-- SKILLS -->
+    <label>Skills:</label><br>
+    <textarea name="skills">{{ form.instance.skills }}</textarea><br><br>
+
+    <!-- RESUME -->
+    <label>Resume:</label><br>
+    <input type="file" name="resume"><br><br>
 
     <button type="submit">Save Changes</button>
 </form>
+
+
+
+<script>
+    const input = document.querySelector('input[type="file"]');
+    const preview = document.getElementById('preview');
+
+    input.addEventListener('change', function () {
+        const file = this.files[0];
+        if (file) {
+            preview.style.display = "block";
+            preview.src = URL.createObjectURL(file);
+        }
+    });
+</script>
+
+
 
 {% endblock %}
