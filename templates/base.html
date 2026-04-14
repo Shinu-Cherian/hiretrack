@@ -50,11 +50,10 @@
             {% if user.is_authenticated %}
 
                 <!-- 👤 PROFILE -->
-                <div style="margin-bottom:20px;">
+                <a href="/profile/" style="text-decoration:none; color:inherit;">
                     <strong>👤 {{ user.username }}</strong><br>
                     <small>View Profile</small>
-                </div>
-
+                </a>
                 <hr>
 
                 <!-- 📂 MENU -->
@@ -67,7 +66,7 @@
                 <hr>
 
                 <!-- ⚙️ -->
-                <p><a href="#" style="text-decoration:none;">⚙️ Profile</a></p>
+                <p><a href="/settings/" style="text-decoration:none;">⚙️ Settings</a></p>
 
                 <hr>
 

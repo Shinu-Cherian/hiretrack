@@ -2,32 +2,56 @@
 
 {% block content %}
 
-<div style="max-width:800px; margin:auto; text-align:center;">
+<div style="max-width:900px; margin:auto;">
 
-    <!-- 👤 PROFILE PIC -->
-    {% if profile.profile_pic %}
-        <img src="{{ profile.profile_pic.url }}" width="120" style="border-radius:50%;">
-    {% else %}
-        <p>No Profile Picture</p>
-    {% endif %}
+    <!-- 🔝 TOP SECTION -->
+    <div style="text-align:center; margin-bottom:30px;">
+        
+        {% if profile.profile_pic %}
+            <img src="{{ profile.profile_pic.url }}" width="120" style="border-radius:50%;">
+        {% else %}
+            <p>No Profile Picture</p>
+        {% endif %}
 
-    <h2>{{ profile.user.username }}</h2>
+        <h2>{{ profile.user.username }}</h2>
+
+        <a href="/profile/edit/">
+            <button>Edit Profile</button>
+        </a>
+    </div>
 
     <hr>
 
-    <div style="text-align:left; margin-top:20px;">
-        <p><strong>Email:</strong> {{ profile.user.email }}</p>
-        <p><strong>Phone:</strong> {{ profile.phone }}</p>
-        <p><strong>Age:</strong> {{ profile.age }}</p>
-        <p><strong>Gender:</strong> {{ profile.gender }}</p>
+    <!-- 🧱 MAIN GRID -->
+    <div style="display:flex; gap:40px; margin-top:20px;">
 
-        <p><strong>Education:</strong> {{ profile.education }}</p>
-        <p><strong>Experience:</strong> {{ profile.experience }}</p>
-        <p><strong>Skills:</strong> {{ profile.skills }}</p>
+        <!-- LEFT -->
+        <div style="flex:1;">
+            <h3>Basic Info</h3>
 
-        {% if profile.resume %}
-            <p><a href="{{ profile.resume.url }}">Download Resume</a></p>
-        {% endif %}
+            <p><strong>Email:</strong> {{ profile.user.email }}</p>
+            <p><strong>Phone:</strong> {{ profile.phone }}</p>
+            <p><strong>Age:</strong> {{ profile.age }}</p>
+            <p><strong>Gender:</strong> {{ profile.gender }}</p>
+        </div>
+
+        <!-- RIGHT -->
+        <div style="flex:1;">
+            <h3>Professional Details</h3>
+
+            <p><strong>Education:</strong><br>{{ profile.education }}</p>
+            <p><strong>Experience:</strong><br>{{ profile.experience }}</p>
+            <p><strong>Skills:</strong><br>{{ profile.skills }}</p>
+
+            {% if profile.resume %}
+                <p>
+                    <a href="{{ profile.resume.url }}" target="_blank">
+                        📄 Download Resume
+                    </a>
+                </p>
+            {% endif %}
+        </div>
+
     </div>
 
 </div>

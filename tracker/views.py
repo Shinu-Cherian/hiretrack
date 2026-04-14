@@ -6,6 +6,7 @@ from datetime import date
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
+from .forms import ProfileForm
 
 
 def home(request):
@@ -303,3 +304,25 @@ def view_profile(request):
     return render(request, 'profile.html', {
         'profile': profile
     })
+
+
+
+
+@login_required
+def edit_profile(request):
+    profile, created = Profile.objects.get_or_create(user=request.user)
+
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')   # save kazhinjal profile page il pokum
+    else:
+        form = ProfileForm(instance=profile)
+
+    return render(request, 'edit_profile.html', {'form': form})
+
+
+@login_required
+def settings_view(request):
+    return render(request, 'settings.html')

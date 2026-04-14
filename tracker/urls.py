@@ -17,4 +17,6 @@ urlpatterns = [
     path('toggle-star-referral/<int:id>/', views.toggle_star_referral, name='toggle_star_referral'),
     path('starred/', views.starred_list, name='starred'),
     path('profile/', views.view_profile, name='profile'),
+    path('profile/edit/', views.edit_profile, name='edit_profile'),
+    path('settings/', views.settings_view, name='settings'),
 ]
