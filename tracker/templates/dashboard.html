@@ -1,35 +1,120 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
+<div style="max-width:1000px; margin:auto;">
+
     <h2>Dashboard</h2>
 
-    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+    <!-- 🔲 SUMMARY CARDS -->
+    <div style="display:flex; gap:20px; margin-top:20px;">
 
-        <div style="border:1px solid black; padding:20px;">
-            <h3>Total Jobs</h3>
+        <div style="padding:20px; border:1px solid #ccc; flex:1;">
+            <h4>Total Jobs</h4>
             <p>{{ total_jobs }}</p>
         </div>
 
-        <div style="border:1px solid orange; padding:20px;">
-            <h3>Pending Jobs</h3>
+        <div style="padding:20px; border:1px solid #ccc; flex:1;">
+            <h4>Pending</h4>
             <p>{{ pending_jobs }}</p>
         </div>
 
-        <div style="border:1px solid red; padding:20px;">
-            <h3>Rejected Jobs</h3>
+        <div style="padding:20px; border:1px solid #ccc; flex:1;">
+            <h4>Rejected</h4>
             <p>{{ rejected_jobs }}</p>
         </div>
 
-        <div style="border:1px solid green; padding:20px;">
-            <h3>Selected Jobs</h3>
+        <div style="padding:20px; border:1px solid #ccc; flex:1;">
+            <h4>Selected</h4>
             <p>{{ selected_jobs }}</p>
         </div>
 
-        <div style="border:1px solid blue; padding:20px;">
-            <h3>Total Referrals</h3>
+        <div style="padding:20px; border:1px solid #ccc; flex:1;">
+            <h4>Referrals</h4>
             <p>{{ total_referrals }}</p>
         </div>
 
     </div>
+
+    <!-- 📊 GRAPH SECTION -->
+    <div style="margin-top:40px;">
+
+        <h3>Application Status</h3>
+        <canvas id="statusChart" width="400" height="200"></canvas>
+
+        <h3 style="margin-top:40px;">Applications Over Time</h3>
+
+        {% if dates %}
+            <canvas id="lineChart" width="400" height="200"></canvas>
+        {% else %}
+            <p>No application data to show graph</p>
+        {% endif %}
+
+    </div>
+
+        <div style="padding:20px; border:1px solid #ccc; flex:1;">
+            <h4>Success Rate</h4>
+            <p>{{ success_rate }}%</p>
+        </div>
+
+    <!-- 💡 INSIGHTS -->
+        <div style="margin-top:40px; padding:20px; border:1px solid #ccc;">
+            <h3>Insights</h3>
+
+        {% if insights %}
+            <ul>
+                {% for insight in insights %}
+                    <li style="margin-bottom:10px;">{{ insight }}</li>
+                {% endfor %}
+            </ul>
+            {% else %}
+                <p>No insights yet</p>
+            {% endif %}
+        </div>
+
+</div>
+
+<!-- 🔥 CHART.JS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+new Chart(document.getElementById('statusChart'), {
+    type: 'pie',
+    data: {
+        labels: ['Applied', 'Pending', 'Rejected', 'Selected'],
+        datasets: [{
+            data: [
+                {{ status_data.applied }},
+                {{ status_data.pending }},
+                {{ status_data.rejected }},
+                {{ status_data.selected }}
+            ],
+            backgroundColor: [
+                '#3498db',
+                '#f1c40f',
+                '#e74c3c',
+                '#2ecc71'
+            ]
+        }]
+    }
+});
+</script>
+
+{% if dates %}
+<script>
+new Chart(document.getElementById('lineChart'), {
+    type: 'line',
+    data: {
+        labels: {{ dates|safe }},
+        datasets: [{
+            label: 'Applications',
+            data: {{ counts|safe }},
+            borderColor: '#3498db',
+            fill: false
+        }]
+    }
+});
+</script>
+{% endif %}
 
 {% endblock %}

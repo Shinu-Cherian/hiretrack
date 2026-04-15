@@ -1,12 +1,15 @@
 from django.shortcuts import render,redirect
 from .models import Job,Referral,Profile,Education,Experience
-from django.db.models import Q
+from django.db.models import Q,Count
 from datetime import datetime, timedelta
 from datetime import date
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
 from .forms import ProfileForm
+from django.db.models.functions import TruncDate
+
+
 
 
 def home(request):
@@ -96,21 +99,95 @@ def referral_list(request):
     referrals = Referral.objects.filter(user=request.user)
     return render(request, 'referral_list.html', {'referrals': referrals})
 
+
+
 @login_required
 def dashboard(request):
-    total_jobs = Job.objects.count()
-    pending_jobs = Job.objects.filter(status='pending').count()
-    rejected_jobs = Job.objects.filter(status='rejected').count()
-    selected_jobs = Job.objects.filter(status='selected').count()
 
-    total_referrals = Referral.objects.count()
+    # 🔥 ONLY CURRENT USER DATA
+    jobs = Job.objects.filter(user=request.user)
+    referrals = Referral.objects.filter(user=request.user)
+
+    # 📊 COUNTS
+    total_jobs = jobs.count()
+    pending_jobs = jobs.filter(status='pending').count()
+    rejected_jobs = jobs.filter(status='rejected').count()
+    selected_jobs = jobs.filter(status='selected').count()
+
+    total_referrals = referrals.count()
+
+    # 📊 SUCCESS RATE
+    if total_jobs > 0:
+        success_rate = (selected_jobs / total_jobs) * 100
+    else:
+        success_rate = 0
+
+
+    # 💡 INSIGHTS SYSTEM
+    insights = []
+
+# 🔴 High rejection
+    if total_jobs > 0:
+        rejection_rate = (rejected_jobs / total_jobs) * 100
+        if rejection_rate > 50:
+            insights.append("Your rejection rate is high. Try improving your resume.")
+
+# 🟡 Too many pending
+    if pending_jobs > 5:
+        insights.append("You have many pending applications. Consider following up.")
+
+# 🟢 Good performance
+    if success_rate > 30:
+        insights.append("Great job! Your success rate is strong.")
+
+# 🔵 Low activity
+    if total_jobs < 5:
+        insights.append("You have applied to very few jobs. Try applying more.")
+
+    # 🔔 NOTIFICATIONS
     today = date.today()
-
-    job_reminders = Job.objects.filter(follow_up_date=today)
-    referral_reminders = Referral.objects.filter(follow_up_date=today)
+    job_reminders = jobs.filter(follow_up_date=today)
+    referral_reminders = referrals.filter(follow_up_date=today)
 
     total_notifications = job_reminders.count() + referral_reminders.count()
 
+    # 📊 GRAPH DATA (NEW ADD)
+    status_counts = jobs.values('status').annotate(count=Count('status'))
+
+    status_data = {
+        'applied': 0,
+        'pending': 0,
+        'rejected': 0,
+        'selected': 0
+    }
+
+    for item in status_counts:
+        status_data[item['status']] = item['count']
+
+   
+
+    applications_over_time = []
+
+    for job in jobs:
+        if job.date_applied:
+           applications_over_time.append(job)
+
+     # group manually
+    date_count = {}
+
+    for job in applications_over_time:
+        date_str = str(job.date_applied)
+
+        if date_str in date_count:
+            date_count[date_str] += 1
+        else:
+            date_count[date_str] = 1
+
+    dates = list(date_count.keys())
+    counts = list(date_count.values())
+
+
+    # 📦 CONTEXT
     context = {
         'total_jobs': total_jobs,
         'pending_jobs': pending_jobs,
@@ -120,6 +197,13 @@ def dashboard(request):
         'notifications': total_notifications,
         'job_reminders': job_reminders,
         'referral_reminders': referral_reminders,
+        'dates':dates,
+        'counts':counts,
+        'success_rate': round(success_rate, 2),
+        'insights': insights,
+
+        # 🔥 SEND GRAPH DATA
+        'status_data': status_data,
     }
 
     return render(request, 'dashboard.html', context)
@@ -299,10 +383,15 @@ def starred_list(request):
 
 @login_required
 def view_profile(request):
-    profile, created = Profile.objects.get_or_create(user=request.user)
+    profile = Profile.objects.get(user=request.user)
+
+    educations = Education.objects.filter(user=request.user)
+    experiences = Experience.objects.filter(user=request.user)
 
     return render(request, 'profile.html', {
-        'profile': profile
+        'profile': profile,
+        'educations': educations,
+        'experiences': experiences
     })
 
 
@@ -380,7 +469,7 @@ def edit_profile(request):
         # 🔥 THIS LINE FIXES YOUR ERROR
         form = ProfileForm(instance=profile)
 
-        
+
     # 🔥 THIS MUST BE OUTSIDE IF
     educations = Education.objects.filter(user=request.user)
     experiences = Experience.objects.filter(user=request.user)
@@ -395,3 +484,5 @@ def edit_profile(request):
 @login_required
 def settings_view(request):
     return render(request, 'settings.html')
+
+
