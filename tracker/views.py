@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from .models import Job,Referral,Profile
+from .models import Job,Referral,Profile,Education,Experience
 from django.db.models import Q
 from datetime import datetime, timedelta
 from datetime import date
@@ -313,15 +313,84 @@ def edit_profile(request):
     profile, created = Profile.objects.get_or_create(user=request.user)
 
     if request.method == 'POST':
+
+        # 🗑 REMOVE PROFILE PIC
+        if request.POST.get('remove_profile_pic') == "true":
+            if profile.profile_pic:
+                profile.profile_pic.delete(save=False)
+            profile.profile_pic = None
+            profile.save()
+            return redirect('profile')
+
         form = ProfileForm(request.POST, request.FILES, instance=profile)
+
         if form.is_valid():
-            form.save()
-            return redirect('profile')   # save kazhinjal profile page il pokum
+            profile = form.save(commit=False)
+
+            # 📧 EMAIL UPDATE
+            profile.user.email = request.POST.get('email')
+            profile.user.save()
+
+            # 🎓 MULTIPLE EDUCATION SAVE
+
+            colleges = request.POST.getlist('education_college')
+            courses = request.POST.getlist('education_course')
+            starts = request.POST.getlist('education_start')
+            ends = request.POST.getlist('education_end')
+
+            # 🔥 old education delete
+            Education.objects.filter(user=request.user).delete()
+
+            # 🔥 new education save
+            for i in range(len(colleges)):
+                if colleges[i]:  # skip empty
+                    Education.objects.create(
+                        user=request.user,
+                        college=colleges[i],
+                        course=courses[i],
+                        start_year=starts[i],
+                        end_year=ends[i]
+                    )
+            # 💼 MULTIPLE EXPERIENCE SAVE
+
+            companies = request.POST.getlist('experience_company')
+            roles = request.POST.getlist('experience_role')
+            starts = request.POST.getlist('experience_start')
+            ends = request.POST.getlist('experience_end')
+            descs = request.POST.getlist('experience_desc')
+
+                # old experience delete
+            Experience.objects.filter(user=request.user).delete()
+
+                # save new
+            for i in range(len(companies)):
+                if companies[i]:
+                    Experience.objects.create(
+                        user=request.user,
+                        company=companies[i],
+                        role=roles[i],
+                        start_date=starts[i],
+                        end_date=ends[i],
+                        description=descs[i]
+                    )
+            profile.save()
+            return redirect('profile')
+
     else:
+        # 🔥 THIS LINE FIXES YOUR ERROR
         form = ProfileForm(instance=profile)
 
-    return render(request, 'edit_profile.html', {'form': form})
+        
+    # 🔥 THIS MUST BE OUTSIDE IF
+    educations = Education.objects.filter(user=request.user)
+    experiences = Experience.objects.filter(user=request.user)
 
+
+    return render(request, 'edit_profile.html', {
+    'form': form,
+    'educations': educations,
+    'experiences': experiences
+})
 
 @login_required
 def settings_view(request):

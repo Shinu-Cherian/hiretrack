@@ -7,37 +7,31 @@
 <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
 
-    <!-- 👤 IMAGE PREVIEW -->
-    
-
-    <!-- 👤 CURRENT PROFILE PIC -->
-    {% if form.instance.profile_pic %}
-        <p><strong>Current Profile Picture:</strong></p>
-        <img src="{{ form.instance.profile_pic.url }}" width="120" style="border-radius:50%;">
-    {% endif %}
-
-    <!-- 📄 CURRENT RESUME -->
-    {% if form.instance.resume %}
-        <p>
-            <strong>Current Resume:</strong>
-            <a href="{{ form.instance.resume.url }}" target="_blank">View Resume</a>
-        </p>
-    {% endif %}
-
-    
-
-  <form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-
     <!-- 👤 PROFILE PIC -->
-    <label>Profile Picture:</label><br>
+    <h3>Profile Picture</h3>
+
+    {% if form.instance.profile_pic %}
+        <img src="{{ form.instance.profile_pic.url }}" width="120" style="border-radius:50%;"><br><br>
+        <button type="button" onclick="confirmRemove()">Remove Profile Picture</button><br><br>
+    {% endif %}
+
     <input type="file" name="profile_pic"><br><br>
 
-    <!-- AGE -->
+    <input type="hidden" name="remove_profile_pic" id="removePic" value="false">
+
+
+    <!-- 👤 BASIC INFO -->
+    <h3>Basic Info</h3>
+
+    <label>Email:</label><br>
+    <input type="email" name="email" value="{{ form.instance.user.email }}"><br><br>
+
+    <label>Phone:</label><br>
+    <input type="text" name="phone" value="{{ form.instance.phone }}"><br><br>
+
     <label>Age:</label><br>
     <input type="number" name="age" value="{{ form.instance.age }}"><br><br>
 
-    <!-- GENDER -->
     <label>Gender:</label><br>
     <select name="gender">
         <option value="">Select</option>
@@ -47,44 +41,167 @@
         <option value="prefer_not" {% if form.instance.gender == "prefer_not" %}selected{% endif %}>Prefer not to say</option>
     </select><br><br>
 
-    <!-- PHONE -->
-    <label>Phone:</label><br>
-    <input type="text" name="phone" value="{{ form.instance.phone }}"><br><br>
 
-    <!-- EDUCATION -->
-    <label>Education:</label><br>
-    <textarea name="education">{{ form.instance.education }}</textarea><br><br>
+   <h3>Education</h3>
 
-    <!-- EXPERIENCE -->
-    <label>Experience:</label><br>
-    <textarea name="experience">{{ form.instance.experience }}</textarea><br><br>
+<div id="education-container">
 
-    <!-- SKILLS -->
-    <label>Skills:</label><br>
+    {% for edu in educations %}
+    <div class="education-block">
+
+        <label>College:</label><br>
+        <input type="text" name="education_college" value="{{ edu.college }}"><br><br>
+
+        <label>Course:</label><br>
+        <input type="text" name="education_course" value="{{ edu.course }}"><br><br>
+
+        <label>Start Year:</label><br>
+        <input type="text" name="education_start" value="{{ edu.start_year }}"><br><br>
+
+        <label>End Year:</label><br>
+        <input type="text" name="education_end" value="{{ edu.end_year }}"><br><br>
+
+        <button type="button" onclick="removeBlock(this)">Remove</button>
+
+        <hr>
+    </div>
+    {% endfor %}
+
+</div>
+
+<button type="button" onclick="addEducation()">+ Add Education</button>
+
+    <h3>Experience</h3>
+
+<div id="experience-container">
+
+    {% for exp in experiences %}
+    <div class="experience-block">
+
+        <label>Company:</label><br>
+        <input type="text" name="experience_company" value="{{ exp.company }}"><br><br>
+
+        <label>Role:</label><br>
+        <input type="text" name="experience_role" value="{{ exp.role }}"><br><br>
+
+        <label>Start Date:</label><br>
+        <input type="text" name="experience_start" value="{{ exp.start_date }}"><br><br>
+
+        <label>End Date:</label><br>
+        <input type="text" name="experience_end" value="{{ exp.end_date }}"><br><br>
+
+        <label>Description:</label><br>
+        <textarea name="experience_desc">{{ exp.description }}</textarea><br><br>
+
+        <button type="button" onclick="removeBlock(this)">Remove</button>
+
+        <hr>
+    </div>
+    {% endfor %}
+
+</div>
+
+<button type="button" onclick="addExperience()">+ Add Experience</button>
+
+
+    <!-- 🛠 SKILLS -->
+    <h3>Skills</h3>
     <textarea name="skills">{{ form.instance.skills }}</textarea><br><br>
 
-    <!-- RESUME -->
-    <label>Resume:</label><br>
+
+    <!-- 📄 RESUME -->
+    <h3>Resume</h3>
+
+    {% if form.instance.resume %}
+        <a href="{{ form.instance.resume.url }}" target="_blank">View Resume</a><br><br>
+    {% endif %}
+
     <input type="file" name="resume"><br><br>
 
+
     <button type="submit">Save Changes</button>
+
 </form>
+
+
+<script>
+function confirmRemove() {
+    if (confirm("Are you sure you want to remove the profile picture?")) {
+        document.getElementById("removePic").value = "true";
+        document.querySelector("form").submit();
+    }
+}
+</script>
+
+
 
 
 
 <script>
-    const input = document.querySelector('input[type="file"]');
-    const preview = document.getElementById('preview');
+function addEducation() {
+    const container = document.getElementById("education-container");
 
-    input.addEventListener('change', function () {
-        const file = this.files[0];
-        if (file) {
-            preview.style.display = "block";
-            preview.src = URL.createObjectURL(file);
-        }
-    });
+    const newBlock = `
+        <div class="education-block">
+
+            <label>College:</label><br>
+            <input type="text" name="education_college"><br><br>
+
+            <label>Course:</label><br>
+            <input type="text" name="education_course"><br><br>
+
+            <label>Start Year:</label><br>
+            <input type="text" name="education_start"><br><br>
+
+            <label>End Year:</label><br>
+            <input type="text" name="education_end"><br><br>
+
+            <button type="button" onclick="removeBlock(this)">Remove</button>
+
+            <hr>
+        </div>
+    `;
+
+    container.insertAdjacentHTML('beforeend', newBlock);
+}
+
+// 🗑 REMOVE BLOCK FUNCTION
+function removeBlock(button) {
+    button.parentElement.remove();
+}
 </script>
 
 
+<script>
+function addExperience() {
+    const container = document.getElementById("experience-container");
+
+    const newBlock = `
+        <div class="experience-block">
+
+            <label>Company:</label><br>
+            <input type="text" name="experience_company"><br><br>
+
+            <label>Role:</label><br>
+            <input type="text" name="experience_role"><br><br>
+
+            <label>Start Date:</label><br>
+            <input type="text" name="experience_start"><br><br>
+
+            <label>End Date:</label><br>
+            <input type="text" name="experience_end"><br><br>
+
+            <label>Description:</label><br>
+            <textarea name="experience_desc"></textarea><br><br>
+
+            <button type="button" onclick="removeBlock(this)">Remove</button>
+
+            <hr>
+        </div>
+    `;
+
+    container.insertAdjacentHTML('beforeend', newBlock);
+}
+</script>
 
 {% endblock %}

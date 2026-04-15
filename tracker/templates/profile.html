@@ -22,10 +22,9 @@
 
     <hr>
 
-    <!-- 🧱 MAIN GRID -->
     <div style="display:flex; gap:40px; margin-top:20px;">
 
-        <!-- LEFT -->
+        <!-- LEFT SIDE -->
         <div style="flex:1;">
             <h3>Basic Info</h3>
 
@@ -35,14 +34,32 @@
             <p><strong>Gender:</strong> {{ profile.gender }}</p>
         </div>
 
-        <!-- RIGHT -->
+        <!-- RIGHT SIDE -->
         <div style="flex:1;">
             <h3>Professional Details</h3>
 
-            <p><strong>Education:</strong><br>{{ profile.education }}</p>
-            <p><strong>Experience:</strong><br>{{ profile.experience }}</p>
-            <p><strong>Skills:</strong><br>{{ profile.skills }}</p>
+            <!-- 🎓 EDUCATION -->
+            <p><strong>Education:</strong></p>
+            <p>
+                {{ profile.education_course }} <br>
+                {{ profile.education_college }} <br>
+                {{ profile.education_start }} - {{ profile.education_end }}
+            </p>
 
+            <!-- 💼 EXPERIENCE -->
+            <p><strong>Experience:</strong></p>
+            <p>
+                {{ profile.experience_role }} <br>
+                {{ profile.experience_company }} <br>
+                {{ profile.experience_start }} - {{ profile.experience_end }} <br>
+                {{ profile.experience_desc }}
+            </p>
+
+            <!-- 🛠 SKILLS -->
+            <p><strong>Skills:</strong></p>
+            <p>{{ profile.skills }}</p>
+
+            <!-- 📄 RESUME -->
             {% if profile.resume %}
                 <p>
                     <a href="{{ profile.resume.url }}" target="_blank">
