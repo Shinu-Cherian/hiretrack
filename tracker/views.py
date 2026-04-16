@@ -144,6 +144,14 @@ def dashboard(request):
     if total_jobs < 5:
         insights.append("You have applied to very few jobs. Try applying more.")
 
+
+
+   
+
+
+
+
+
     # 🔔 NOTIFICATIONS
     today = date.today()
     job_reminders = jobs.filter(follow_up_date=today)
@@ -153,6 +161,39 @@ def dashboard(request):
 
     # 📊 GRAPH DATA (NEW ADD)
     status_counts = jobs.values('status').annotate(count=Count('status'))
+    # 📊 GRAPH DATA (NEW ADD)
+    status_counts = jobs.values('status').annotate(count=Count('status'))
+
+    # 📊 REFERRAL STATUS DATA
+    referral_status_counts = referrals.values('status').annotate(count=Count('status'))
+
+    referral_status_data = {
+        'pending': 0,
+        'replied': 0,
+        'no_response': 0,
+    }
+
+    for item in referral_status_counts:
+        referral_status_data[item['status']] = item['count']
+
+     # 💡 REFERRAL INSIGHTS
+
+        # 🔴 Low reply rate
+    if total_referrals > 0:
+        reply_rate = (referral_status_data['replied'] / total_referrals) * 100
+
+    if reply_rate < 20:
+        insights.append("You are not getting many replies. Try improving your referral message.")
+
+    # 🟡 Too many no response
+    if referral_status_data['no_response'] > 5:
+        insights.append("Many referrals have no response. Consider following up.")
+
+    # 🟢 Good performance
+    if total_referrals > 0 and reply_rate > 40:
+        insights.append("Great! You are getting good referral responses.")
+
+    
 
     status_data = {
         'applied': 0,
@@ -204,6 +245,7 @@ def dashboard(request):
 
         # 🔥 SEND GRAPH DATA
         'status_data': status_data,
+        'referral_status_data': referral_status_data,
     }
 
     return render(request, 'dashboard.html', context)

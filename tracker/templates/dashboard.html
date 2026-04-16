@@ -44,6 +44,9 @@
 
         <h3 style="margin-top:40px;">Applications Over Time</h3>
 
+        <h3 style="margin-top:40px;">Referral Status</h3>
+        <canvas id="referralChart" width="400" height="200"></canvas>
+
         {% if dates %}
             <canvas id="lineChart" width="400" height="200"></canvas>
         {% else %}
@@ -116,5 +119,26 @@ new Chart(document.getElementById('lineChart'), {
 });
 </script>
 {% endif %}
+
+<script>
+new Chart(document.getElementById('referralChart'), {
+    type: 'pie',
+    data: {
+        labels: ['Pending', 'Replied', 'No Response'],
+        datasets: [{
+            data: [
+                {{ referral_status_data.pending }},
+                {{ referral_status_data.replied }},
+                {{ referral_status_data.no_response }}
+            ],
+            backgroundColor: [
+                '#f1c40f',   // yellow
+                '#2ecc71',   // green
+                '#e74c3c'    // red
+            ]
+        }]
+    }
+});
+</script>
 
 {% endblock %}
