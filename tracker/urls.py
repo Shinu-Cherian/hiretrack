@@ -19,4 +19,5 @@ urlpatterns = [
     path('profile/', views.view_profile, name='profile'),
     path('profile/edit/', views.edit_profile, name='edit_profile'),
     path('settings/', views.settings_view, name='settings'),
+    path('api/dashboard/', views.dashboard_api),
 ]

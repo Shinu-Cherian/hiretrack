@@ -2,36 +2,41 @@
 
 {% block content %}
 
-<div style="max-width:1000px; margin:auto;">
+<div class="min-h-screen bg-gray-100 p-6">
 
-    <h2>Dashboard</h2>
+    <!-- 🔝 HEADER -->
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold text-gray-800">Dashboard</h1>
+        <p class="text-gray-500">Track your job applications and referrals</p>
+    </div>
 
-    <!-- 🔲 SUMMARY CARDS -->
-    <div style="display:flex; gap:20px; margin-top:20px;">
+    <!-- 🔲 CARDS GRID -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
 
-        <div style="padding:20px; border:1px solid #ccc; flex:1;">
-            <h4>Total Jobs</h4>
-            <p>{{ total_jobs }}</p>
+        <!-- CARD -->
+        <div class="bg-white rounded-2xl shadow p-5 hover:shadow-lg transition">
+            <h4 class="text-gray-500 text-sm">Total Jobs</h4>
+            <p class="text-2xl font-bold text-gray-800 mt-2">{{ total_jobs }}</p>
         </div>
 
-        <div style="padding:20px; border:1px solid #ccc; flex:1;">
-            <h4>Pending</h4>
-            <p>{{ pending_jobs }}</p>
+        <div class="bg-white rounded-2xl shadow p-5 hover:shadow-lg transition">
+            <h4 class="text-gray-500 text-sm">Pending</h4>
+            <p class="text-2xl font-bold text-yellow-500 mt-2">{{ pending_jobs }}</p>
         </div>
 
-        <div style="padding:20px; border:1px solid #ccc; flex:1;">
-            <h4>Rejected</h4>
-            <p>{{ rejected_jobs }}</p>
+        <div class="bg-white rounded-2xl shadow p-5 hover:shadow-lg transition">
+            <h4 class="text-gray-500 text-sm">Rejected</h4>
+            <p class="text-2xl font-bold text-red-500 mt-2">{{ rejected_jobs }}</p>
         </div>
 
-        <div style="padding:20px; border:1px solid #ccc; flex:1;">
-            <h4>Selected</h4>
-            <p>{{ selected_jobs }}</p>
+        <div class="bg-white rounded-2xl shadow p-5 hover:shadow-lg transition">
+            <h4 class="text-gray-500 text-sm">Selected</h4>
+            <p class="text-2xl font-bold text-green-500 mt-2">{{ selected_jobs }}</p>
         </div>
 
-        <div style="padding:20px; border:1px solid #ccc; flex:1;">
-            <h4>Referrals</h4>
-            <p>{{ total_referrals }}</p>
+        <div class="bg-white rounded-2xl shadow p-5 hover:shadow-lg transition">
+            <h4 class="text-gray-500 text-sm">Referrals</h4>
+            <p class="text-2xl font-bold text-blue-500 mt-2">{{ total_referrals }}</p>
         </div>
 
     </div>

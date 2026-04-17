@@ -8,6 +8,8 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from .forms import ProfileForm
 from django.db.models.functions import TruncDate
+from django.http import JsonResponse
+from .models import Job, Referral
 
 
 
@@ -527,4 +529,28 @@ def edit_profile(request):
 def settings_view(request):
     return render(request, 'settings.html')
 
+
+
+
+
+@login_required
+def dashboard_api(request):
+    user = request.user  # now guaranteed logged in
+
+    jobs = Job.objects.filter(user=user)
+    referrals = Referral.objects.filter(user=user)
+
+    data = {
+        "total_jobs": jobs.count(),
+        "pending_jobs": jobs.filter(status='pending').count(),
+        "rejected_jobs": jobs.filter(status='rejected').count(),
+        "selected_jobs": jobs.filter(status='selected').count(),
+
+        "total_referrals": referrals.count(),
+        "pending_referrals": referrals.filter(status='pending').count(),
+        "replied_referrals": referrals.filter(status='replied').count(),
+        "no_response_referrals": referrals.filter(status='no_response').count(),
+    }
+
+    return JsonResponse(data)
 
