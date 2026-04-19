@@ -60,10 +60,10 @@ if (!data) return <h2>Loading...</h2>;
         {/* CARDS */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
 
-          <Card title="Total Jobs"  value={data.total_jobs}icon={<Briefcase />} />
-          <Card title="Pending" value={data.total_jobs} icon={<Clock />} />
-          <Card title="Rejected" value={data.total_jobs} icon={<XCircle />} />
-          <Card title="Selected" value={data.total_jobs} icon={<CheckCircle />} />
+            <Card title="Total Jobs" value={data.total_jobs} icon={<Briefcase />} />
+            <Card title="Pending" value={data.pending_jobs} icon={<Clock />} />
+            <Card title="Rejected" value={data.rejected_jobs} icon={<XCircle />} />
+            <Card title="Selected" value={data.selected_jobs} icon={<CheckCircle />} />
          
 
         </div>
@@ -114,11 +114,10 @@ if (!data) return <h2>Loading...</h2>;
         {/* REFERRAL CARDS */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
 
-            <Card title="Total Requests" value={data.total_referrals} icon={<Users />} />
-            <Card title="Pending" value={data.total_referrals} icon={<Clock />} />
-            <Card title="Replied" value={data.total_referrals} icon={<CheckCircle />} />
-            <Card title="No Response" value={data.total_referrals} icon={<XCircle />} />
-            <Card title="Success Rate" value={data.total_referrals} icon={<CheckCircle />} />
+            <Card title="Total Referrals" value={data.total_referrals} icon={<Users />} />
+            <Card title="Pending" value={data.pending_referrals} icon={<Clock />} />
+            <Card title="Replied" value={data.replied_referrals} icon={<CheckCircle />} />
+            <Card title="No Response" value={data.no_response_referrals} icon={<XCircle />} />
 
         </div>
 

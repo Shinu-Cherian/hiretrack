@@ -1,3 +1,187 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* CUSTOM COLORS */
+:root {
+  --background: #ffffff;
+  --foreground: #0f172a;
+  --muted: #6b7280;
+  --primary: #000000;
+}
+
+/* APPLY COLORS */
+.bg-background {
+  background-color: var(--background);
+}
+
+.text-muted-foreground {
+  color: var(--muted);
+}
+
+.text-primary {
+  color: var(--primary);
+}
+
+/* SIMPLE ANIMATIONS */
+.animate-fade-in {
+  animation: fadeIn 1s ease-in-out;
+}
+
+.animate-fade-in-up {
+  animation: fadeUp 0.8s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* GRADIENTS */
+.bg-gradient-hero {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+}
+
+.bg-gradient-subtle {
+  background: linear-gradient(to bottom, #ffffff, #f3f4f6);
+}
+
+/* CARD STYLE */
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px #0000001a;
+}
+
+
+/* TEXT ANIMATION */
+.animate-fade-in-up {
+  animation: fadeUp 0.8s ease-in-out;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* BUTTON HOVER */
+button {
+  transition: all 0.2s ease-in-out;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+/* SECTION SPACING */
+.section {
+  padding: 80px 20px;
+}
+
+
+/* COLORS */
+:root {
+  --background: #ffffff;
+  --muted: #6b7280;
+  --primary: #6366f1;
+}
+
+/* UTIL */
+.bg-background { background-color: var(--background); }
+.text-muted-foreground { color: var(--muted); }
+.text-primary { color: var(--primary); }
+
+/* GRADIENTS */
+.bg-gradient-hero {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+}
+
+.bg-gradient-subtle {
+  background: linear-gradient(to bottom, #ffffff, #f3f4f6);
+}
+
+/* CARD */
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  transition: 0.3s;
+}
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+}
+
+/* ANIMATION */
+.animate-fade-in-up {
+  animation: fadeUp 0.8s ease;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(25px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* BUTTON */
+button {
+  transition: all 0.2s ease;
+}
+button:hover {
+  transform: scale(1.05);
+}
+
+
+/* GLASS EFFECT */
+.glass {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+/* SOFT SHADOW */
+.soft-shadow {
+  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+}
+
+
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-overlay {
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-box {
+  animation: scaleIn 0.3s ease;
+}

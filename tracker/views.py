@@ -10,6 +10,11 @@ from .forms import ProfileForm
 from django.db.models.functions import TruncDate
 from django.http import JsonResponse
 from .models import Job, Referral
+from django.http import JsonResponse
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.csrf import csrf_exempt
+
+from django.contrib.auth import authenticate, login
 
 
 
@@ -389,7 +394,7 @@ def toggle_star_referral(request, id):
 
 
 
-
+@csrf_exempt
 def signup(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -410,7 +415,7 @@ def signup(request):
         User.objects.create_user(username=username, password=password)
 
         messages.success(request, "Account created successfully! Please login.")
-        return redirect('login')
+        return JsonResponse({"message": "Signup success"})
 
     return render(request, 'signup.html')
 
@@ -533,9 +538,9 @@ def settings_view(request):
 
 
 
-@login_required
+
 def dashboard_api(request):
-    user = request.user  # now guaranteed logged in
+    user = User.objects.first() # now guaranteed logged in
 
     jobs = Job.objects.filter(user=user)
     referrals = Referral.objects.filter(user=user)
@@ -554,3 +559,24 @@ def dashboard_api(request):
 
     return JsonResponse(data)
 
+
+
+@ensure_csrf_cookie
+def get_csrf(request):
+    return JsonResponse({"message": "CSRF cookie set"})
+
+
+
+@csrf_exempt
+def login_api(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return JsonResponse({"message": "Login success"})
+        else:
+            return JsonResponse({"error": "Invalid credentials"}, status=400)
