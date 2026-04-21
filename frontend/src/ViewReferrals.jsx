@@ -1,54 +1,62 @@
 import { useState } from "react";
 import Header from "./Header";
 
-export default function JobsPage() {
+export default function ViewReferrals() {
 
-  const [jobs, setJobs] = useState([]);
   const [search, setSearch] = useState("");
-  const [open, setOpen] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+
+  const [referrals, setReferrals] = useState([
+    {
+      id: 1,
+      name: "Rahul",
+      company: "Google",
+      role: "SDE",
+      status: "requested",
+      date: "2026-04-20"
+    }
+  ]);
 
   const [form, setForm] = useState({
-    jobTitle: "",
+    name: "",
     company: "",
-    jobId: "",
-    platform: "",
-    dateApplied: "",
-    status: "applied",
-    salary: "",
-    jd: "",
-    notes: "",
+    email: "",
+    linkedin: "",
+    date: "",
+    status: "requested",
+    notes: ""
   });
 
   const handleChange = (field, value) => {
     setForm({ ...form, [field]: value });
   };
 
-  const handleSave = () => {
-    if (!form.jobTitle || !form.company) return;
-
-    const newJob = {
-      ...form,
+  const handleAdd = () => {
+    const newReferral = {
       id: Date.now(),
+      name: form.name,
+      company: form.company,
+      role: "Referral",
+      status: form.status,
+      date: form.date
     };
 
-    setJobs([newJob, ...jobs]);
-    setOpen(false);
+    setReferrals([newReferral, ...referrals]);
+    setShowModal(false);
 
     setForm({
-      jobTitle: "",
+      name: "",
       company: "",
-      jobId: "",
-      platform: "",
-      dateApplied: "",
-      status: "applied",
-      salary: "",
-      jd: "",
-      notes: "",
+      email: "",
+      linkedin: "",
+      date: "",
+      status: "requested",
+      notes: ""
     });
   };
 
-  const filtered = jobs.filter(j =>
-    (j.jobTitle + j.company + j.platform)
+  const filtered = referrals.filter(r =>
+    (r.name + r.company + r.role)
       .toLowerCase()
       .includes(search.toLowerCase())
   );
@@ -59,29 +67,29 @@ export default function JobsPage() {
       {/* 🔥 HEADER */}
       <Header />
 
-      {/* 🔥 CONTENT */}
+      {/* 🔥 CONTENT WRAPPER */}
       <div className="p-8">
 
         {/* PAGE HEADER */}
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-3xl font-bold">Jobs</h1>
-            <p className="text-gray-500 text-sm mt-1">
-              {jobs.length} applications tracked
+            <h1 className="text-3xl font-bold">Referrals</h1>
+            <p className="text-gray-500 text-sm">
+              {referrals.length} referrals tracked
             </p>
           </div>
 
           <button
-            onClick={() => setOpen(true)}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg"
+            onClick={() => setShowModal(true)}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
           >
-            + Add Job
+            + Add Referral
           </button>
         </div>
 
         {/* SEARCH */}
         <input
-          placeholder="Search jobs..."
+          placeholder="Search referrals..."
           className="border p-2 rounded w-full max-w-sm"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -90,11 +98,10 @@ export default function JobsPage() {
         {/* TABLE */}
         <div className="mt-6 bg-white rounded-xl shadow overflow-hidden">
 
-          <div className="grid grid-cols-7 p-4 border-b text-sm text-gray-500">
-            <span>Job Title</span>
+          <div className="grid grid-cols-6 p-4 border-b text-sm text-gray-500">
+            <span>Name</span>
             <span>Company</span>
-            <span>Job ID</span>
-            <span>Platform</span>
+            <span>Role</span>
             <span>Date</span>
             <span>Status</span>
             <span>Actions</span>
@@ -102,22 +109,24 @@ export default function JobsPage() {
 
           {filtered.length === 0 ? (
             <div className="p-10 text-center text-gray-400">
-              No jobs found
+              No referrals found
             </div>
           ) : (
-            filtered.map(job => (
-              <div key={job.id} className="grid grid-cols-7 p-4 border-t">
-                <span>{job.jobTitle}</span>
-                <span>{job.company}</span>
-                <span>{job.jobId || "-"}</span>
-                <span>{job.platform || "-"}</span>
-                <span>{job.dateApplied || "-"}</span>
-                <span>{job.status}</span>
+            filtered.map(ref => (
+              <div key={ref.id} className="grid grid-cols-6 p-4 border-t">
+                <span>{ref.name}</span>
+                <span>{ref.company}</span>
+                <span>{ref.role}</span>
+                <span>{ref.date}</span>
+
+                <span className="text-blue-600 capitalize">
+                  {ref.status}
+                </span>
 
                 <span>
                   <button
                     onClick={() =>
-                      setJobs(jobs.filter(j => j.id !== job.id))
+                      setReferrals(referrals.filter(r => r.id !== ref.id))
                     }
                     className="text-red-500"
                   >
@@ -131,25 +140,29 @@ export default function JobsPage() {
 
       </div>
 
-      {/* 🔥 MODAL */}
-      {open && (
+      {/* 🔥 MODAL OUTSIDE CONTENT */}
+      {showModal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center">
 
-          <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl p-6 overflow-y-auto max-h-[90vh]">
+          <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl p-6 relative">
 
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold">Add New Job</h2>
-              <button onClick={() => setOpen(false)}>✕</button>
-            </div>
+            <button
+              onClick={() => setShowModal(false)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-black"
+            >
+              ✕
+            </button>
+
+            <h2 className="text-xl font-semibold mb-6">Add New Referral</h2>
 
             <div className="grid gap-5">
 
               <div className="grid grid-cols-2 gap-4">
                 <input
-                  placeholder="Software Engineer"
+                  placeholder="John Doe"
                   className="p-3 border rounded-xl"
-                  value={form.jobTitle}
-                  onChange={(e) => handleChange("jobTitle", e.target.value)}
+                  value={form.name}
+                  onChange={(e) => handleChange("name", e.target.value)}
                 />
                 <input
                   placeholder="Google"
@@ -161,16 +174,16 @@ export default function JobsPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <input
-                  placeholder="JOB-12345"
+                  placeholder="john@email.com"
                   className="p-3 border rounded-xl"
-                  value={form.jobId}
-                  onChange={(e) => handleChange("jobId", e.target.value)}
+                  value={form.email}
+                  onChange={(e) => handleChange("email", e.target.value)}
                 />
                 <input
-                  placeholder="LinkedIn"
+                  placeholder="linkedin.com/in/..."
                   className="p-3 border rounded-xl"
-                  value={form.platform}
-                  onChange={(e) => handleChange("platform", e.target.value)}
+                  value={form.linkedin}
+                  onChange={(e) => handleChange("linkedin", e.target.value)}
                 />
               </div>
 
@@ -178,34 +191,32 @@ export default function JobsPage() {
                 <input
                   type="date"
                   className="p-3 border rounded-xl"
-                  value={form.dateApplied}
-                  onChange={(e) => handleChange("dateApplied", e.target.value)}
+                  value={form.date}
+                  onChange={(e) => handleChange("date", e.target.value)}
                 />
                 <select
                   className="p-3 border rounded-xl"
                   value={form.status}
                   onChange={(e) => handleChange("status", e.target.value)}
                 >
-                  <option value="applied">Applied</option>
-                  <option value="screening">Screening</option>
-                  <option value="interviewing">Interviewing</option>
-                  <option value="offered">Offered</option>
+                  <option value="requested">Requested</option>
+                  <option value="accepted">Accepted</option>
                   <option value="rejected">Rejected</option>
                 </select>
               </div>
 
               <textarea
-                placeholder="Notes..."
+                placeholder="Any notes..."
                 className="p-3 border rounded-xl"
                 value={form.notes}
                 onChange={(e) => handleChange("notes", e.target.value)}
               />
 
               <button
-                onClick={handleSave}
-                className="bg-blue-600 text-white py-3 rounded-xl"
+                onClick={handleAdd}
+                className="w-full bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700"
               >
-                Add Job
+                Add Referral
               </button>
 
             </div>

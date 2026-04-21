@@ -5,9 +5,9 @@ import {
 } from 'lucide-react';
 
 const modules = [
-  { icon: Plus, title: 'Add Job', to: '/jobs', desc: 'Log every application with role, company, JD, status and date.' },
+  { icon: Plus, title: 'Add Job', to: '/add-job', desc: 'Log every application with role, company, JD, status and date.' },
   { icon: ListChecks, title: 'View Jobs', to: '/jobs', desc: 'Search, filter and update your application pipeline.' },
-  { icon: Users, title: 'Add Referral', to: '/referrals', desc: 'Record who you asked for a referral.' },
+  { icon: Users, title: 'Add Referral', to: '/add-referral', desc: 'Record who you asked for a referral.' },
   { icon: Briefcase, title: 'View Referrals', to: '/referrals', desc: 'See referral statuses at a glance.' },
   { icon: LayoutDashboard, title: 'Dashboard', to: '/dashboard', desc: 'Visualise acceptance and response rates.' },
 ];
@@ -63,6 +63,7 @@ export default function Home() {
           </div>
         </div>
       </header>
+       
 
       {/* HERO */}
       <section className="relative overflow-hidden py-32 text-center bg-gradient-subtle">
@@ -73,7 +74,7 @@ export default function Home() {
         </h1>
 
         <p className="mt-4 text-gray-600 animate-fade-in-up">
-          Manage jobs, referrals and track your progress with clean insights.
+          HireTrack keeps your job applications, referral requests, and follow-ups organised — with a clean dashboard, charts, and insights that tell you exactly what to do next.
         </p>
 
         <div className="mt-8 flex gap-4 justify-center animate-fade-in-up">
