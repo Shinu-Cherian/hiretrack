@@ -1,6 +1,18 @@
 import { Star, Bell, Settings, LogOut } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function Sidebar({ isOpen, onClose }) {
+
+
+const navigate = useNavigate();
+
+const handleLogout = () => {
+  localStorage.removeItem("isLoggedIn"); // remove login flag
+  onClose(); // close sidebar
+  navigate("/"); // go home
+  window.location.reload(); // refresh UI
+};
+
   return (
     <>
       {/* OVERLAY */}
@@ -10,6 +22,8 @@ export default function Sidebar({ isOpen, onClose }) {
           onClick={onClose}
         ></div>
       )}
+
+      
 
       {/* SIDEBAR */}
       <div
@@ -54,7 +68,11 @@ export default function Sidebar({ isOpen, onClose }) {
           <hr className="my-4" />
 
           {/* LOGOUT */}
-          <button className="flex items-center gap-3 p-2 w-full rounded-lg hover:bg-red-100 text-red-600 transition">
+          <button
+           onClick={handleLogout} 
+          className="flex items-center gap-3 p-2 w-full rounded-lg hover:bg-red-100 text-red-600 transition"
+          >
+            
             <LogOut size={18} /> Logout
           </button>
 

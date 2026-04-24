@@ -1,54 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "./Header";
 
 export default function JobsPage() {
 
   const [jobs, setJobs] = useState([]);
   const [search, setSearch] = useState("");
-  const [open, setOpen] = useState(false);
 
-  const [form, setForm] = useState({
-    jobTitle: "",
-    company: "",
-    jobId: "",
-    platform: "",
-    dateApplied: "",
-    status: "applied",
-    salary: "",
-    jd: "",
-    notes: "",
-  });
-
-  const handleChange = (field, value) => {
-    setForm({ ...form, [field]: value });
-  };
-
-  const handleSave = () => {
-    if (!form.jobTitle || !form.company) return;
-
-    const newJob = {
-      ...form,
-      id: Date.now(),
-    };
-
-    setJobs([newJob, ...jobs]);
-    setOpen(false);
-
-    setForm({
-      jobTitle: "",
-      company: "",
-      jobId: "",
-      platform: "",
-      dateApplied: "",
-      status: "applied",
-      salary: "",
-      jd: "",
-      notes: "",
-    });
-  };
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/api/jobs/")
+      .then(res => res.json())
+      .then(data => setJobs(data));
+  }, []);
 
   const filtered = jobs.filter(j =>
-    (j.jobTitle + j.company + j.platform)
+    (j.jobTitle + j.company)
       .toLowerCase()
       .includes(search.toLowerCase())
   );
@@ -56,30 +21,12 @@ export default function JobsPage() {
   return (
     <div className="min-h-screen bg-gray-50">
 
-      {/* 🔥 HEADER */}
       <Header />
 
-      {/* 🔥 CONTENT */}
       <div className="p-8">
 
-        {/* PAGE HEADER */}
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-3xl font-bold">Jobs</h1>
-            <p className="text-gray-500 text-sm mt-1">
-              {jobs.length} applications tracked
-            </p>
-          </div>
+        <h1 className="text-3xl font-bold mb-4">Jobs</h1>
 
-          <button
-            onClick={() => setOpen(true)}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg"
-          >
-            + Add Job
-          </button>
-        </div>
-
-        {/* SEARCH */}
         <input
           placeholder="Search jobs..."
           className="border p-2 rounded w-full max-w-sm"
@@ -87,17 +34,15 @@ export default function JobsPage() {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        {/* TABLE */}
-        <div className="mt-6 bg-white rounded-xl shadow overflow-hidden">
+        <div className="mt-6 bg-white rounded-xl shadow">
 
-          <div className="grid grid-cols-7 p-4 border-b text-sm text-gray-500">
+          <div className="grid grid-cols-6 p-4 border-b text-sm text-gray-500">
             <span>Job Title</span>
             <span>Company</span>
             <span>Job ID</span>
-            <span>Platform</span>
             <span>Date</span>
             <span>Status</span>
-            <span>Actions</span>
+            <span>Notes</span>
           </div>
 
           {filtered.length === 0 ? (
@@ -106,113 +51,20 @@ export default function JobsPage() {
             </div>
           ) : (
             filtered.map(job => (
-              <div key={job.id} className="grid grid-cols-7 p-4 border-t">
+              <div key={job.id} className="grid grid-cols-6 p-4 border-t">
                 <span>{job.jobTitle}</span>
                 <span>{job.company}</span>
                 <span>{job.jobId || "-"}</span>
-                <span>{job.platform || "-"}</span>
                 <span>{job.dateApplied || "-"}</span>
                 <span>{job.status}</span>
-
-                <span>
-                  <button
-                    onClick={() =>
-                      setJobs(jobs.filter(j => j.id !== job.id))
-                    }
-                    className="text-red-500"
-                  >
-                    Delete
-                  </button>
-                </span>
+                <span>{job.notes || "-"}</span>
               </div>
             ))
           )}
+
         </div>
 
       </div>
-
-      {/* 🔥 MODAL */}
-      {open && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center">
-
-          <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl p-6 overflow-y-auto max-h-[90vh]">
-
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold">Add New Job</h2>
-              <button onClick={() => setOpen(false)}>✕</button>
-            </div>
-
-            <div className="grid gap-5">
-
-              <div className="grid grid-cols-2 gap-4">
-                <input
-                  placeholder="Software Engineer"
-                  className="p-3 border rounded-xl"
-                  value={form.jobTitle}
-                  onChange={(e) => handleChange("jobTitle", e.target.value)}
-                />
-                <input
-                  placeholder="Google"
-                  className="p-3 border rounded-xl"
-                  value={form.company}
-                  onChange={(e) => handleChange("company", e.target.value)}
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <input
-                  placeholder="JOB-12345"
-                  className="p-3 border rounded-xl"
-                  value={form.jobId}
-                  onChange={(e) => handleChange("jobId", e.target.value)}
-                />
-                <input
-                  placeholder="LinkedIn"
-                  className="p-3 border rounded-xl"
-                  value={form.platform}
-                  onChange={(e) => handleChange("platform", e.target.value)}
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <input
-                  type="date"
-                  className="p-3 border rounded-xl"
-                  value={form.dateApplied}
-                  onChange={(e) => handleChange("dateApplied", e.target.value)}
-                />
-                <select
-                  className="p-3 border rounded-xl"
-                  value={form.status}
-                  onChange={(e) => handleChange("status", e.target.value)}
-                >
-                  <option value="applied">Applied</option>
-                  <option value="screening">Screening</option>
-                  <option value="interviewing">Interviewing</option>
-                  <option value="offered">Offered</option>
-                  <option value="rejected">Rejected</option>
-                </select>
-              </div>
-
-              <textarea
-                placeholder="Notes..."
-                className="p-3 border rounded-xl"
-                value={form.notes}
-                onChange={(e) => handleChange("notes", e.target.value)}
-              />
-
-              <button
-                onClick={handleSave}
-                className="bg-blue-600 text-white py-3 rounded-xl"
-              >
-                Add Job
-              </button>
-
-            </div>
-
-          </div>
-        </div>
-      )}
 
     </div>
   );

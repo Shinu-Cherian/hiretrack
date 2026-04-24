@@ -22,36 +22,33 @@ from django.contrib.auth import authenticate, login
 def home(request):
     return render(request, 'home.html')
 
-@login_required
-def add_job(request):
-    if request.method == 'POST':
-        company = request.POST.get('company')
-        role = request.POST.get('role')
-        date_applied = request.POST.get('date')
+@csrf_exempt
+
+def add_job_api(request):
+    if request.method == "POST":
+        import json
+        from datetime import datetime, timedelta
+
+        data = json.loads(request.body)
+        
+        date_applied = data.get("dateApplied")
         date_obj = datetime.strptime(date_applied, "%Y-%m-%d").date()
         follow_up_date = date_obj + timedelta(days=7)
-        status = request.POST.get('status') 
-        job_id = request.POST.get('job_id')   # 👈 add
-        job_description = request.POST.get('job_description')   # 👈 add
-        notes = request.POST.get('notes')   # 👈 add
+        user = User.objects.first()
 
         Job.objects.create(
-            user=request.user,         #multi user access
-            company=company,
-            role=role,
+            user=user,
+            company=data.get("company"),
+            role=data.get("jobTitle"),
             date_applied=date_obj,
-            status=status,
-            job_id=job_id,   # 👈 add
-            job_description=job_description,   # 👈 add
-            notes=notes,
-            follow_up_date=follow_up_date 
-
+            status=data.get("status"),
+            job_id=data.get("jobId"),
+            job_description=data.get("jd"),
+            notes=data.get("notes"),
+            follow_up_date=follow_up_date
         )
 
-        print("Job saved!")
-        return redirect('home')
-
-    return render(request, 'add_job.html')
+        return JsonResponse({"message": "Job added"})
 
 @login_required
 def job_list(request):
@@ -72,34 +69,27 @@ def job_list(request):
     })
 
 
-@login_required
-def add_referral(request):
-    if request.method == 'POST':
-        person_name = request.POST.get('person_name')
-        company = request.POST.get('company')
-        email = request.POST.get('email')
-        date = request.POST.get('date')
+@csrf_exempt
+def add_referral_api(request):
+    if request.method == "POST":
+        import json
+        from django.contrib.auth.models import User
 
-        date_obj = datetime.strptime(date, "%Y-%m-%d").date()
-        follow_up_date = date_obj + timedelta(days=3)
+        user = User.objects.first()
 
-        status = request.POST.get('status')
-        notes = request.POST.get('notes')
+        data = json.loads(request.body)
 
         Referral.objects.create(
-            user=request.user,
-            person_name=person_name,
-            company=company,
-            email=email,
-            date=date_obj,   # ✅ correct
-            status=status,
-            notes=notes,
-            follow_up_date=follow_up_date
+            user=user,
+            person_name=data.get("person_name"),
+            company=data.get("company"),
+            email=data.get("email"),
+            date=data.get("date"),
+            status=data.get("status"),
+            notes=data.get("notes"),
         )
 
-        return redirect('referral_list')   # 🔥 better than home
-
-    return render(request, 'add_referral.html')
+        return JsonResponse({"message": "Referral added"})
 
 @login_required
 def referral_list(request):
@@ -580,3 +570,50 @@ def login_api(request):
             return JsonResponse({"message": "Login success"})
         else:
             return JsonResponse({"error": "Invalid credentials"}, status=400)
+
+
+
+def get_jobs_api(request):
+    from django.contrib.auth.models import User
+
+    user = User.objects.first()  # temp
+
+    jobs = Job.objects.filter(user=user)
+
+    data = []
+
+    for job in jobs:
+        data.append({
+             
+    "id": job.id,
+    "jobTitle": job.role,
+    "company": job.company,
+    "jobId": job.job_id,
+    "dateApplied": job.date_applied,
+    "status": job.status,
+    "notes": job.notes,
+
+        })
+
+    return JsonResponse(data, safe=False)
+
+
+def get_referrals_api(request):
+    from django.contrib.auth.models import User
+    user = User.objects.first()
+
+    refs = Referral.objects.filter(user=user)
+
+    data = []
+
+    for r in refs:
+        data.append({
+            "id": r.id,
+            "person_name": r.person_name,
+            "company": r.company,
+            "date": r.date,
+            "status": r.status,
+            "notes": r.notes,
+        })
+
+    return JsonResponse(data, safe=False)

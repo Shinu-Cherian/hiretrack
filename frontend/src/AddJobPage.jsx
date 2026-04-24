@@ -10,10 +10,8 @@ export default function AddJobPage() {
     jobTitle: "",
     company: "",
     jobId: "",
-    platform: "",
     dateApplied: "",
     status: "applied",
-    salary: "",
     jd: "",
     notes: "",
   });
@@ -22,18 +20,27 @@ export default function AddJobPage() {
     setForm({ ...form, [field]: value });
   };
 
-  const handleSave = () => {
-    console.log(form);
-    navigate("/jobs");
+  const handleSave = async () => {
+    const res = await fetch("http://127.0.0.1:8000/api/add-job/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(form),
+    });
+
+    if (res.ok) {
+      navigate("/jobs");
+    } else {
+      alert("Error adding job");
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
 
-      {/* 🔥 HEADER */}
       <Header />
 
-      {/* 🔥 CENTER CONTENT */}
       <div className="flex items-center justify-center p-6">
 
         <div className="bg-white w-full max-w-xl rounded-2xl shadow-xl p-6">
@@ -42,62 +49,48 @@ export default function AddJobPage() {
 
           <div className="grid gap-5">
 
-            <div className="grid grid-cols-2 gap-4">
-              <input
-                placeholder="Software Engineer"
-                className="p-3 border rounded-xl"
-                onChange={(e) => handleChange("jobTitle", e.target.value)}
-              />
-              <input
-                placeholder="Google"
-                className="p-3 border rounded-xl"
-                onChange={(e) => handleChange("company", e.target.value)}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <input
-                placeholder="JOB-12345"
-                className="p-3 border rounded-xl"
-                onChange={(e) => handleChange("jobId", e.target.value)}
-              />
-              <input
-                placeholder="LinkedIn, Indeed..."
-                className="p-3 border rounded-xl"
-                onChange={(e) => handleChange("platform", e.target.value)}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <input
-                type="date"
-                className="p-3 border rounded-xl"
-                onChange={(e) => handleChange("dateApplied", e.target.value)}
-              />
-              <select
-                className="p-3 border rounded-xl"
-                onChange={(e) => handleChange("status", e.target.value)}
-              >
-                <option value="applied">Applied</option>
-                <option value="interview">Interview</option>
-                <option value="offer">Offer</option>
-              </select>
-            </div>
-
             <input
-              placeholder="$100k - $150k"
+              placeholder="Software Engineer"
               className="p-3 border rounded-xl"
-              onChange={(e) => handleChange("salary", e.target.value)}
+              onChange={(e) => handleChange("jobTitle", e.target.value)}
             />
 
+            <input
+              placeholder="Google"
+              className="p-3 border rounded-xl"
+              onChange={(e) => handleChange("company", e.target.value)}
+            />
+
+            <input
+              placeholder="JOB-12345"
+              className="p-3 border rounded-xl"
+              onChange={(e) => handleChange("jobId", e.target.value)}
+            />
+
+            <input
+              type="date"
+              className="p-3 border rounded-xl"
+              onChange={(e) => handleChange("dateApplied", e.target.value)}
+            />
+
+            <select
+              className="p-3 border rounded-xl"
+              onChange={(e) => handleChange("status", e.target.value)}
+            >
+              <option value="applied">Applied</option>
+              <option value="pending">Pending</option>
+              <option value="rejected">Rejected</option>
+              <option value="selected">Selected</option>
+            </select>
+
             <textarea
-              placeholder="Paste JD here..."
+              placeholder="Job Description"
               className="p-3 border rounded-xl"
               onChange={(e) => handleChange("jd", e.target.value)}
             />
 
             <textarea
-              placeholder="Notes..."
+              placeholder="Notes"
               className="p-3 border rounded-xl"
               onChange={(e) => handleChange("notes", e.target.value)}
             />

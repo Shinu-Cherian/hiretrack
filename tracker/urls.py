@@ -3,9 +3,9 @@ from . import views
 
 urlpatterns = [
     path('', views.home, name='home'),
-    path('add-job/', views.add_job, name='add_job'),
+    path('api/add-job/', views.add_job_api),
     path('jobs/', views.job_list, name='job_list'),
-    path('add-referral/', views.add_referral, name='add_referral'),
+    path('api/add-referral/', views.add_referral_api),
     path('referrals/', views.referral_list, name='referral_list'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('delete-job/<int:id>/', views.delete_job, name='delete_job'),
@@ -20,4 +20,7 @@ urlpatterns = [
     path('profile/edit/', views.edit_profile, name='edit_profile'),
     path('settings/', views.settings_view, name='settings'),
     path('api/dashboard/', views.dashboard_api),
+    path('api/jobs/', views.get_jobs_api),
+    path('api/referrals/', views.get_referrals_api),
+    
 ]

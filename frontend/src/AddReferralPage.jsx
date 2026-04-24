@@ -7,12 +7,11 @@ export default function AddReferralPage() {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
-    name: "",
+    person_name: "",
     company: "",
     email: "",
-    linkedin: "",
     date: "",
-    status: "requested",
+    status: "pending",
     notes: ""
   });
 
@@ -20,18 +19,27 @@ export default function AddReferralPage() {
     setForm({ ...form, [field]: value });
   };
 
-  const handleSave = () => {
-    console.log(form);
-    navigate("/referrals");
+  const handleSave = async () => {
+    const res = await fetch("http://127.0.0.1:8000/api/add-referral/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(form),
+    });
+
+    if (res.ok) {
+      navigate("/referrals");
+    } else {
+      alert("Error adding referral");
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
 
-      {/* 🔥 HEADER */}
       <Header />
 
-      {/* 🔥 CENTER CONTENT */}
       <div className="flex items-center justify-center p-6">
 
         <div className="bg-white w-full max-w-xl rounded-2xl shadow-xl p-6">
@@ -40,92 +48,53 @@ export default function AddReferralPage() {
 
           <div className="grid gap-5">
 
-            {/* ROW 1 */}
             <div className="grid grid-cols-2 gap-4">
-
-              <div>
-                <label className="text-sm font-medium">Person Name *</label>
-                <input
-                  placeholder="John Doe"
-                  className="mt-1 w-full p-3 border rounded-xl"
-                  onChange={(e) => handleChange("name", e.target.value)}
-                />
-              </div>
-
-              <div>
-                <label className="text-sm font-medium">Company *</label>
-                <input
-                  placeholder="Google"
-                  className="mt-1 w-full p-3 border rounded-xl"
-                  onChange={(e) => handleChange("company", e.target.value)}
-                />
-              </div>
-
-            </div>
-
-            {/* ROW 2 */}
-            <div className="grid grid-cols-2 gap-4">
-
-              <div>
-                <label className="text-sm font-medium">Email</label>
-                <input
-                  placeholder="john@email.com"
-                  className="mt-1 w-full p-3 border rounded-xl"
-                  onChange={(e) => handleChange("email", e.target.value)}
-                />
-              </div>
-
-              <div>
-                <label className="text-sm font-medium">LinkedIn</label>
-                <input
-                  placeholder="linkedin.com/in/..."
-                  className="mt-1 w-full p-3 border rounded-xl"
-                  onChange={(e) => handleChange("linkedin", e.target.value)}
-                />
-              </div>
-
-            </div>
-
-            {/* ROW 3 */}
-            <div className="grid grid-cols-2 gap-4">
-
-              <div>
-                <label className="text-sm font-medium">Date Requested</label>
-                <input
-                  type="date"
-                  className="mt-1 w-full p-3 border rounded-xl"
-                  onChange={(e) => handleChange("date", e.target.value)}
-                />
-              </div>
-
-              <div>
-                <label className="text-sm font-medium">Status</label>
-                <select
-                  className="mt-1 w-full p-3 border rounded-xl"
-                  onChange={(e) => handleChange("status", e.target.value)}
-                >
-                  <option value="requested">Requested</option>
-                  <option value="accepted">Accepted</option>
-                  <option value="rejected">Rejected</option>
-                </select>
-              </div>
-
-            </div>
-
-            {/* NOTES */}
-            <div>
-              <label className="text-sm font-medium">Notes</label>
-              <textarea
-                placeholder="Any notes..."
-                className="mt-1 w-full p-3 border rounded-xl"
-                onChange={(e) => handleChange("notes", e.target.value)}
+              <input
+                placeholder="John Doe"
+                className="p-3 border rounded-xl"
+                onChange={(e) => handleChange("person_name", e.target.value)}
+              />
+              <input
+                placeholder="Google"
+                className="p-3 border rounded-xl"
+                onChange={(e) => handleChange("company", e.target.value)}
               />
             </div>
 
-            {/* BUTTON */}
+            <div className="grid grid-cols-2 gap-4">
+              <input
+                placeholder="john@email.com"
+                className="p-3 border rounded-xl"
+                onChange={(e) => handleChange("email", e.target.value)}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <input
+                type="date"
+                className="p-3 border rounded-xl"
+                onChange={(e) => handleChange("date", e.target.value)}
+              />
+
+              <select
+                className="p-3 border rounded-xl"
+                onChange={(e) => handleChange("status", e.target.value)}
+              >
+                <option value="pending">Pending</option>
+                <option value="replied">Replied</option>
+                <option value="no_response">No Response</option>
+              </select>
+            </div>
+
+            <textarea
+              placeholder="Notes"
+              className="p-3 border rounded-xl"
+              onChange={(e) => handleChange("notes", e.target.value)}
+            />
+
             <button
               onClick={handleSave}
-              className="bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 transition"
+              className="bg-blue-600 text-white py-3 rounded-xl"
             >
               Add Referral
             </button>
