@@ -15,6 +15,8 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.csrf import csrf_exempt
 
 from django.contrib.auth import authenticate, login
+from datetime import date, timedelta
+from django.http import JsonResponse
 
 
 
@@ -592,6 +594,7 @@ def get_jobs_api(request):
     "dateApplied": job.date_applied,
     "status": job.status,
     "notes": job.notes,
+    "is_starred": job.is_starred,
 
         })
 
@@ -614,6 +617,153 @@ def get_referrals_api(request):
             "date": r.date,
             "status": r.status,
             "notes": r.notes,
+            "is_starred": r.is_starred,
         })
 
     return JsonResponse(data, safe=False)
+
+
+@csrf_exempt
+def toggle_star_job_api(request, id):
+    job = Job.objects.get(id=id)
+    job.is_starred = not job.is_starred
+    job.save()
+    return JsonResponse({"success": True})
+
+
+@csrf_exempt
+def delete_job_api(request, id):
+    job = Job.objects.get(id=id)
+    job.delete()
+    return JsonResponse({"success": True})
+
+
+@csrf_exempt
+def toggle_star_referral_api(request, id):
+    ref = Referral.objects.get(id=id)
+    ref.is_starred = not ref.is_starred
+    ref.save()
+    return JsonResponse({"success": True})
+
+
+@csrf_exempt
+def delete_referral_api(request, id):
+    ref = Referral.objects.get(id=id)
+    ref.delete()
+    return JsonResponse({"success": True})
+
+
+def starred_api(request):
+    from django.contrib.auth.models import User
+
+    user = User.objects.first()
+
+    jobs = Job.objects.filter(user=user, is_starred=True)
+    refs = Referral.objects.filter(user=user, is_starred=True)
+
+    job_data = []
+    for j in jobs:
+        job_data.append({
+            "id": j.id,
+            "type": "job",
+            "jobTitle": j.role,
+            "company": j.company,
+            "jobId": j.job_id,
+            "dateApplied": j.date_applied,
+            "status": j.status,
+            "notes": j.notes,
+        })
+
+    ref_data = []
+    for r in refs:
+        ref_data.append({
+            "id": r.id,
+            "type": "referral",
+            "person_name": r.person_name,
+            "company": r.company,
+            "date": r.date,
+            "status": r.status,
+            "notes": r.notes,
+            "email": r.email,
+        })
+
+    return JsonResponse({
+        "jobs": job_data,
+        "referrals": ref_data
+    })
+
+
+def notifications_api(request):
+    from django.contrib.auth.models import User
+
+    user = User.objects.first()
+
+    today = date.today()
+
+    # 🔥 JOB → 5 days
+    job_alert_date = today - timedelta(days=5)
+    jobs = Job.objects.filter(user=user, date_applied__lte=job_alert_date)
+
+    # 🔥 REFERRAL → 1 day
+    ref_alert_date = today - timedelta(days=1)
+    refs = Referral.objects.filter(user=user, date__lte=ref_alert_date)
+
+    data = []
+
+    for j in jobs:
+        data.append({
+            "type": "job",
+            "message": f"Follow up: {j.role} at {j.company}",
+            "date": j.date_applied
+        })
+
+    for r in refs:
+        data.append({
+            "type": "referral",
+            "message": f"Check referral: {r.person_name} at {r.company}",
+            "date": r.date
+        })
+
+    return JsonResponse(data, safe=False)
+
+
+def profile_api(request):
+    from django.contrib.auth.models import User
+
+    user = User.objects.first()
+
+    # 🔥 FIX (IMPORTANT)
+    profile, created = Profile.objects.get_or_create(user=user)
+
+    educations = Education.objects.filter(user=user)
+    experiences = Experience.objects.filter(user=user)
+
+    return JsonResponse({
+        "username": user.username,
+        "email": user.email,
+        "phone": profile.phone,
+        "age": profile.age,
+        "gender": profile.gender,
+        "skills": profile.skills,
+        "profile_pic": profile.profile_pic.url if profile.profile_pic else None,
+        "resume": profile.resume.url if profile.resume else None,
+
+        "educations": [
+            {
+                "course": e.course,
+                "college": e.college,
+                "start_year": e.start_year,
+                "end_year": e.end_year
+            } for e in educations
+        ],
+
+        "experiences": [
+            {
+                "role": e.role,
+                "company": e.company,
+                "start_date": e.start_date,
+                "end_date": e.end_date,
+                "description": e.description
+            } for e in experiences
+        ]
+    })

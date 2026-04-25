@@ -7,6 +7,10 @@ import JobsPage from "./JobsPage";
 import AddJobPage from "./AddJobPage";
 import ViewReferrals from "./ViewReferrals";
 import AddReferralPage from "./AddReferralPage";
+import StarredPage from "./StarredPage";
+import NotificationsPage from "./NotificationsPage";
+import ProfilePage from "./ProfilePage";
+
 
 function App() {
   return (
@@ -28,6 +32,12 @@ function App() {
         <Route path="/referrals" element={<ViewReferrals />} />
 
         <Route path="/add-referral" element={<AddReferralPage />} />
+
+        <Route path="/starred" element={<StarredPage />} />
+
+        <Route path="/notifications" element={<NotificationsPage />} />
+
+        <Route path="/profile" element={<ProfilePage />} />
 
       </Routes>
     </BrowserRouter>

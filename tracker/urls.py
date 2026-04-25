@@ -22,5 +22,14 @@ urlpatterns = [
     path('api/dashboard/', views.dashboard_api),
     path('api/jobs/', views.get_jobs_api),
     path('api/referrals/', views.get_referrals_api),
+
+    path('api/job/star/<int:id>/', views.toggle_star_job_api),
+    path('api/job/delete/<int:id>/', views.delete_job_api),
+
+    path('api/referral/star/<int:id>/', views.toggle_star_referral_api),
+    path('api/referral/delete/<int:id>/', views.delete_referral_api),
+
+    path('api/starred/', views.starred_api),
+    path('api/notifications/', views.notifications_api),
     
 ]

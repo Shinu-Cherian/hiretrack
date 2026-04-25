@@ -36,13 +36,14 @@ export default function JobsPage() {
 
         <div className="mt-6 bg-white rounded-xl shadow">
 
-          <div className="grid grid-cols-6 p-4 border-b text-sm text-gray-500">
+          <div className="grid grid-cols-7 p-4 border-b text-sm text-gray-500">
             <span>Job Title</span>
             <span>Company</span>
             <span>Job ID</span>
             <span>Date</span>
             <span>Status</span>
             <span>Notes</span>
+            <span>Actions</span>
           </div>
 
           {filtered.length === 0 ? (
@@ -51,13 +52,39 @@ export default function JobsPage() {
             </div>
           ) : (
             filtered.map(job => (
-              <div key={job.id} className="grid grid-cols-6 p-4 border-t">
+              <div key={job.id} className="grid grid-cols-7 p-4 border-t">
                 <span>{job.jobTitle}</span>
                 <span>{job.company}</span>
                 <span>{job.jobId || "-"}</span>
                 <span>{job.dateApplied || "-"}</span>
                 <span>{job.status}</span>
                 <span>{job.notes || "-"}</span>
+                <span className="flex gap-3">
+
+  {/* ⭐ STAR */}
+  <button
+    onClick={async () => {
+      await fetch(`http://127.0.0.1:8000/api/job/star/${job.id}/`);
+      setJobs(jobs.map(j =>
+        j.id === job.id ? { ...j, is_starred: !j.is_starred } : j
+      ));
+    }}
+  >
+    {job.is_starred ? "⭐" : "☆"}
+  </button>
+
+  {/* 🗑 DELETE */}
+  <button
+    onClick={async () => {
+      await fetch(`http://127.0.0.1:8000/api/job/delete/${job.id}/`);
+      setJobs(jobs.filter(j => j.id !== job.id));
+    }}
+    className="text-red-500"
+  >
+    Delete
+  </button>
+
+</span>
               </div>
             ))
           )}
