@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import Header from "./Header";
+import { apiUrl } from "./api";
 
 export default function NotificationsPage() {
 
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/notifications/")
+    fetch(apiUrl("/api/notifications/"), {
+      credentials: "include",
+    })
       .then(res => res.json())
       .then(data => setData(data));
   }, []);

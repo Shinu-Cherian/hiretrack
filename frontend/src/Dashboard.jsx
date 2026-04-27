@@ -1,163 +1,195 @@
-import { Briefcase, Clock, XCircle, CheckCircle, Users } from "lucide-react";
+import { Briefcase, CheckCircle, Clock, Target, TrendingUp, Users, XCircle } from "lucide-react";
 import {
-  PieChart, Pie, Cell, Tooltip,
-  LineChart, Line, XAxis, YAxis, CartesianGrid
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
 } from "recharts";
 import { useState, useEffect } from "react";
 import Header from "./Header";
+import { apiUrl } from "./api";
 
-function Dashboard() {
-
+export default function Dashboard() {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/dashboard/", {
-      credentials: "include"
+    fetch(apiUrl("/api/dashboard/"), {
+      credentials: "include",
     })
-      .then(res => res.json())
-      .then(data => setData(data))
-      .catch(err => console.log(err));
+      .then((res) => res.json())
+      .then((data) => setData(data))
+      .catch((err) => console.log(err));
   }, []);
 
-  if (!data) return <h2>Loading...</h2>;
+  if (!data) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="p-8 text-center">Loading dashboard...</div>
+      </div>
+    );
+  }
 
-  const jobData = [
-    { name: "Pending", value: 5 },
-    { name: "Rejected", value: 3 },
-    { name: "Selected", value: 2 },
+  const jobStatus = [
+    { name: "Applied", value: data.job_status?.applied || 0, color: "#3b82f6" },
+    { name: "Pending", value: data.job_status?.pending || 0, color: "#f59e0b" },
+    { name: "Rejected", value: data.job_status?.rejected || 0, color: "#ef4444" },
+    { name: "Selected", value: data.job_status?.selected || 0, color: "#10b981" },
   ];
 
-  const jobLine = [
-    { day: "Mon", value: 2 },
-    { day: "Tue", value: 4 },
-    { day: "Wed", value: 3 },
-    { day: "Thu", value: 5 },
-    { day: "Fri", value: 6 },
+  const referralStatus = [
+    { name: "Pending", value: data.referral_status?.pending || 0, color: "#f59e0b" },
+    { name: "Replied", value: data.referral_status?.replied || 0, color: "#10b981" },
+    { name: "No Response", value: data.referral_status?.no_response || 0, color: "#ef4444" },
   ];
 
-  const referralData = [
-    { name: "Pending", value: 4 },
-    { name: "Replied", value: 2 },
-    { name: "No Response", value: 3 },
-  ];
-
-  const referralLine = [
-    { day: "Mon", value: 1 },
-    { day: "Tue", value: 2 },
-    { day: "Wed", value: 1 },
-    { day: "Thu", value: 3 },
-    { day: "Fri", value: 2 },
-  ];
+  const progress = data.applications_over_time?.length
+    ? data.applications_over_time
+    : [{ date: "No activity", count: 0 }];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200">
-
-      {/* HEADER */}
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 via-white to-gray-200">
       <Header />
 
-      {/* CONTENT */}
-      <div className="p-6">
-
-        <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
-
-        {/* JOBS */}
-        <div className="mb-12">
-          <h2 className="text-2xl font-bold mb-6">Jobs Analytics</h2>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-            <Card title="Total Jobs" value={data.total_jobs} icon={<Briefcase />} />
-            <Card title="Pending" value={data.pending_jobs} icon={<Clock />} />
-            <Card title="Rejected" value={data.rejected_jobs} icon={<XCircle />} />
-            <Card title="Selected" value={data.selected_jobs} icon={<CheckCircle />} />
+      <main className="max-w-7xl mx-auto p-6 animate-fade-in-up">
+        <section className="relative overflow-hidden rounded-2xl bg-gray-950 text-white p-6 md:p-8 shadow-xl">
+          <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,#3b82f6,transparent_35%),radial-gradient(circle_at_bottom_left,#10b981,transparent_30%)]" />
+          <div className="relative grid grid-cols-1 lg:grid-cols-3 gap-6 items-end">
+            <div className="lg:col-span-2">
+              <p className="text-blue-200 text-sm uppercase tracking-wider">HireTrack Command Center</p>
+              <h1 className="text-3xl md:text-4xl font-bold mt-2">Your job search at a glance</h1>
+              <p className="text-gray-300 mt-3 max-w-2xl">
+                Monitor applications, referral momentum, follow-up pressure, and conversion signals from one focused workspace.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <MiniMetric label="Success" value={`${data.success_rate}%`} />
+              <MiniMetric label="Reply Rate" value={`${data.reply_rate}%`} />
+            </div>
           </div>
+        </section>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+        <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mt-6">
+          <Metric title="Total Jobs" value={data.total_jobs} icon={<Briefcase />} tone="blue" />
+          <Metric title="Pending Jobs" value={data.pending_jobs} icon={<Clock />} tone="amber" />
+          <Metric title="Selected" value={data.selected_jobs} icon={<CheckCircle />} tone="green" />
+          <Metric title="Referrals" value={data.total_referrals} icon={<Users />} tone="violet" />
+        </section>
 
-            <ChartCard title="Job Status">
-              <PieChart width={300} height={300}>
-                <Pie data={jobData} dataKey="value">
-                  {jobData.map((_, i) => (
-                    <Cell key={i} fill={["#facc15", "#ef4444", "#22c55e"][i]} />
-                  ))}
+        <section className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-6">
+          <ChartPanel title="Applications Over Time" subtitle="Daily application volume" wide>
+            <ResponsiveContainer width="100%" height={300}>
+              <AreaChart data={progress}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis dataKey="date" />
+                <YAxis allowDecimals={false} />
+                <Tooltip />
+                <Area type="monotone" dataKey="count" stroke="#2563eb" fill="#bfdbfe" strokeWidth={3} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </ChartPanel>
+
+          <ChartPanel title="Job Pipeline" subtitle="Status distribution">
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie data={jobStatus} dataKey="value" innerRadius={62} outerRadius={100} paddingAngle={4}>
+                  {jobStatus.map((item) => <Cell key={item.name} fill={item.color} />)}
                 </Pie>
                 <Tooltip />
               </PieChart>
-            </ChartCard>
+            </ResponsiveContainer>
+          </ChartPanel>
+        </section>
 
-            <ChartCard title="Applications Over Time">
-              <LineChart width={400} height={300} data={jobLine}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="day" />
-                <YAxis />
-                <Line type="monotone" dataKey="value" stroke="#3b82f6" />
-              </LineChart>
-            </ChartCard>
+        <section className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6 pb-8">
+          <ChartPanel title="Referral Health" subtitle="Response quality">
+            <ResponsiveContainer width="100%" height={260}>
+              <BarChart data={referralStatus}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis dataKey="name" />
+                <YAxis allowDecimals={false} />
+                <Tooltip />
+                <Bar dataKey="value" radius={[10, 10, 0, 0]}>
+                  {referralStatus.map((item) => <Cell key={item.name} fill={item.color} />)}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </ChartPanel>
 
-          </div>
-        </div>
+          <InsightCard
+            icon={<Target />}
+            title="Focus Area"
+            text={data.pending_jobs > 5 ? "You have many pending applications. Prioritize follow-ups today." : "Your pending queue is manageable. Keep adding high-quality applications."}
+          />
+          <InsightCard
+            icon={<TrendingUp />}
+            title="Momentum"
+            text={data.reply_rate > 30 ? "Referral replies are trending well. Keep using messages that worked." : "Referral replies are low. Try shorter, more specific outreach."}
+          />
+        </section>
+      </main>
+    </div>
+  );
+}
 
-        {/* REFERRALS */}
+function Metric({ title, value, icon, tone }) {
+  const tones = {
+    blue: "bg-blue-50 text-blue-700",
+    amber: "bg-amber-50 text-amber-700",
+    green: "bg-emerald-50 text-emerald-700",
+    violet: "bg-violet-50 text-violet-700",
+  };
+
+  return (
+    <div className="bg-white/85 rounded-2xl shadow p-5 hover:-translate-y-1 transition">
+      <div className="flex justify-between items-start">
         <div>
-          <h2 className="text-2xl font-bold mb-6">Referral Analytics</h2>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
-            <Card title="Total Referrals" value={data.total_referrals} icon={<Users />} />
-            <Card title="Pending" value={data.pending_referrals} icon={<Clock />} />
-            <Card title="Replied" value={data.replied_referrals} icon={<CheckCircle />} />
-            <Card title="No Response" value={data.no_response_referrals} icon={<XCircle />} />
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-            <ChartCard title="Referral Status">
-              <PieChart width={300} height={300}>
-                <Pie data={referralData} dataKey="value">
-                  {referralData.map((_, i) => (
-                    <Cell key={i} fill={["#facc15", "#22c55e", "#ef4444"][i]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ChartCard>
-
-            <ChartCard title="Referrals Over Time">
-              <LineChart width={400} height={300} data={referralLine}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="day" />
-                <YAxis />
-                <Line type="monotone" dataKey="value" stroke="#10b981" />
-              </LineChart>
-            </ChartCard>
-
-          </div>
+          <p className="text-sm text-gray-500">{title}</p>
+          <h2 className="text-3xl font-bold mt-2">{value}</h2>
         </div>
-
+        <div className={`p-3 rounded-2xl ${tones[tone]}`}>{icon}</div>
       </div>
     </div>
   );
 }
 
-/* COMPONENTS */
-
-function Card({ title, value, icon }) {
+function MiniMetric({ label, value }) {
   return (
-    <div className="bg-white/80 p-5 rounded-2xl shadow-md flex justify-between">
-      <div>
-        <p className="text-sm text-gray-500">{title}</p>
-        <h2 className="text-2xl font-bold">{value}</h2>
+    <div className="rounded-2xl bg-white/10 border border-white/10 p-4">
+      <p className="text-sm text-gray-300">{label}</p>
+      <h3 className="text-2xl font-bold">{value}</h3>
+    </div>
+  );
+}
+
+function ChartPanel({ title, subtitle, children, wide = false }) {
+  return (
+    <div className={`bg-white/85 rounded-2xl shadow p-6 ${wide ? "xl:col-span-2" : ""}`}>
+      <div className="mb-4">
+        <h3 className="font-semibold text-lg">{title}</h3>
+        <p className="text-sm text-gray-500">{subtitle}</p>
       </div>
-      {icon}
+      {children}
     </div>
   );
 }
 
-function ChartCard({ title, children }) {
+function InsightCard({ icon, title, text }) {
   return (
-    <div className="bg-white/80 p-6 rounded-2xl shadow-md">
-      <h3 className="mb-4 font-semibold">{title}</h3>
-      <div className="flex justify-center">{children}</div>
+    <div className="bg-white/85 rounded-2xl shadow p-6">
+      <div className="w-12 h-12 rounded-2xl bg-gray-900 text-white flex items-center justify-center mb-4">
+        {icon}
+      </div>
+      <h3 className="font-semibold text-lg">{title}</h3>
+      <p className="text-gray-500 mt-2">{text}</p>
     </div>
   );
 }
-
-export default Dashboard;

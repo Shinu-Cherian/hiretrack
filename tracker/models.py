@@ -14,6 +14,8 @@ class Job(models.Model):
     company = models.CharField(max_length=255)
     role = models.CharField(max_length=255)
     job_id = models.CharField(max_length=100, blank=True, null=True)
+    platform = models.CharField(max_length=100, blank=True, null=True)
+    salary_range = models.CharField(max_length=100, blank=True, null=True)
     job_description = models.TextField(blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='applied')
     notes = models.TextField(blank=True, null=True)
@@ -38,6 +40,7 @@ class Referral(models.Model):   # 👈 outside Job class
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     notes = models.TextField(blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
+    linkedin = models.URLField(blank=True, null=True)
     follow_up_date = models.DateField(null=True, blank=True)
     is_starred = models.BooleanField(default=False)
     

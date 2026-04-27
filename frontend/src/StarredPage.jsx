@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Header from "./Header";
+import { apiUrl } from "./api";
 
 export default function StarredPage() {
 
@@ -7,7 +8,9 @@ export default function StarredPage() {
   const [refs, setRefs] = useState([]);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/starred/")
+    fetch(apiUrl("/api/starred/"), {
+      credentials: "include",
+    })
       .then(res => res.json())
       .then(data => {
         setJobs(data.jobs || []);

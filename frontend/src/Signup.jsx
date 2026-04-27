@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Briefcase } from 'lucide-react';
+import { apiUrl } from "./api";
 
 function getCSRFToken() {
   return document.cookie
@@ -21,12 +22,12 @@ export default function Signup() {
     e.preventDefault();
     setSubmitting(true);
     // 👇 MUST ADD THIS
-await fetch("http://127.0.0.1:8000/get-csrf/", {
+await fetch(apiUrl("/get-csrf/"), {
   credentials: "include",
 });
 
 // 👇 YOUR EXISTING CODE
-const res = await fetch("http://127.0.0.1:8000/signup/", {
+const res = await fetch(apiUrl("/signup/"), {
   method: "POST",
   headers: {
     "Content-Type": "application/x-www-form-urlencoded",

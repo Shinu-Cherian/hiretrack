@@ -185,3 +185,88 @@ button:hover {
 .modal-box {
   animation: scaleIn 0.3s ease;
 }
+
+@keyframes rise {
+  from {
+    transform: scaleY(0.25);
+    opacity: 0.35;
+  }
+  to {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+.animate-rise {
+  animation: rise 0.7s ease both;
+  transform-origin: bottom;
+}
+
+.hero-grid {
+  background-image:
+    linear-gradient(rgba(59, 130, 246, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59, 130, 246, 0.08) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(circle at center, black, transparent 72%);
+}
+
+.form-input {
+  width: 100%;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  background: #f8fafc;
+  padding: 16px 18px;
+  font-size: 20px;
+  color: #111827;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.form-input::placeholder {
+  color: #6b7280;
+}
+
+.form-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
+  background: #ffffff;
+}
+
+.dark body,
+.dark .bg-gray-50,
+.dark .bg-gray-100,
+.dark .bg-gradient-subtle,
+.dark .bg-gradient-to-br {
+  background: #0f172a;
+  color: #e5e7eb;
+}
+
+.dark .bg-white,
+.dark .bg-white\/80,
+.dark .bg-white\/85,
+.dark .glass {
+  background: rgba(15, 23, 42, 0.88);
+  color: #e5e7eb;
+  border-color: rgba(148, 163, 184, 0.25);
+}
+
+.dark .text-gray-400,
+.dark .text-gray-500,
+.dark .text-gray-600,
+.dark .text-gray-700 {
+  color: #cbd5e1;
+}
+
+.dark input,
+.dark select,
+.dark textarea {
+  background: #111827;
+  color: #e5e7eb;
+  border-color: #334155;
+}
+
+.dark .border,
+.dark .border-b,
+.dark .border-t {
+  border-color: rgba(148, 163, 184, 0.24);
+}

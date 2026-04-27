@@ -1,12 +1,37 @@
 import { Link } from "react-router-dom";
 import { Briefcase } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
+import { API_BASE, apiUrl } from "./api";
 
 export default function Header() {
 
   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [profile, setProfile] = useState(null);
+
+  useEffect(() => {
+    if (!isLoggedIn) return;
+
+    fetch(apiUrl("/api/profile/"), {
+      credentials: "include",
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data) {
+          setProfile(data);
+          localStorage.setItem("username", data.username || "User");
+          if (data.profile_pic) {
+            localStorage.setItem("profile_pic", data.profile_pic);
+          } else {
+            localStorage.removeItem("profile_pic");
+          }
+        }
+      })
+      .catch(() => {});
+  }, [isLoggedIn]);
+
+  const profilePic = profile?.profile_pic || localStorage.getItem("profile_pic");
 
   return (
     <>
@@ -24,8 +49,9 @@ export default function Header() {
             {isLoggedIn ? (
               <>
                 <img
-                  src="/default-avatar.png"
+                  src={profilePic ? `${API_BASE}${profilePic}` : "/default-avatar.png"}
                   className="w-8 h-8 rounded-full border cursor-pointer"
+                  alt="Profile"
                   onClick={() => setSidebarOpen(true)}
                 />
               </>
@@ -51,6 +77,7 @@ export default function Header() {
       <Sidebar
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
+        profile={profile}
       />
     </>
   );

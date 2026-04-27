@@ -25,11 +25,16 @@ urlpatterns = [
 
     path('api/job/star/<int:id>/', views.toggle_star_job_api),
     path('api/job/delete/<int:id>/', views.delete_job_api),
+    path('api/job/update/<int:id>/', views.update_job_api),
 
     path('api/referral/star/<int:id>/', views.toggle_star_referral_api),
     path('api/referral/delete/<int:id>/', views.delete_referral_api),
+    path('api/referral/update/<int:id>/', views.update_referral_api),
 
     path('api/starred/', views.starred_api),
     path('api/notifications/', views.notifications_api),
+    path('api/profile/', views.profile_api),
+    path('api/profile/update/', views.update_profile_api),
+    path('api/change-password/', views.change_password_api),
     
 ]

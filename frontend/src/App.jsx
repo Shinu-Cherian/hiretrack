@@ -10,6 +10,8 @@ import AddReferralPage from "./AddReferralPage";
 import StarredPage from "./StarredPage";
 import NotificationsPage from "./NotificationsPage";
 import ProfilePage from "./ProfilePage";
+import EditProfilePage from "./EditProfilePage";
+import SettingsPage from "./SettingsPage";
 
 
 function App() {
@@ -38,6 +40,10 @@ function App() {
         <Route path="/notifications" element={<NotificationsPage />} />
 
         <Route path="/profile" element={<ProfilePage />} />
+
+        <Route path="/profile/edit" element={<EditProfilePage />} />
+
+        <Route path="/settings" element={<SettingsPage />} />
 
       </Routes>
     </BrowserRouter>

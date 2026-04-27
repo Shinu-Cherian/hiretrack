@@ -1,14 +1,17 @@
 import { Star, Bell, Settings, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { API_BASE, apiUrl } from "./api";
 
-export default function Sidebar({ isOpen, onClose }) {
+export default function Sidebar({ isOpen, onClose, profile }) {
 
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/notifications/")
+    fetch(apiUrl("/api/notifications/"), {
+      credentials: "include",
+    })
       .then(res => res.json())
       .then(data => setNotifications(data));
   }, []);
@@ -19,6 +22,9 @@ export default function Sidebar({ isOpen, onClose }) {
     navigate("/");
     window.location.reload();
   };
+
+  const profilePic = profile?.profile_pic || localStorage.getItem("profile_pic");
+  const username = profile?.username || localStorage.getItem("username") || "User";
 
   return (
     <>
@@ -41,12 +47,13 @@ export default function Sidebar({ isOpen, onClose }) {
 
           <div className="flex items-center gap-3 mb-6">
             <img
-              src="/default-avatar.png"
-              className="w-10 h-10 rounded-full"
+              src={profilePic ? `${API_BASE}${profilePic}` : "/default-avatar.png"}
+              className="w-10 h-10 rounded-full object-cover border"
+              alt="Profile"
             />
             <div>
               <h3 className="font-semibold">
-                {localStorage.getItem("username") || "User"}
+                {username}
               </h3>
               <p
   onClick={() => {
@@ -92,7 +99,13 @@ export default function Sidebar({ isOpen, onClose }) {
             </div>
 
             {/* ⚙ SETTINGS */}
-            <div className="flex items-center gap-3 p-2 rounded-lg cursor-pointer hover:bg-gray-100 transition">
+            <div
+              onClick={() => {
+                navigate("/settings");
+                onClose();
+              }}
+              className="flex items-center gap-3 p-2 rounded-lg cursor-pointer hover:bg-gray-100 transition"
+            >
               <Settings size={18} /> Settings
             </div>
 

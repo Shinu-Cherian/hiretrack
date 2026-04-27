@@ -1,135 +1,176 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { BriefcaseBusiness, GraduationCap, Mail, Pencil, Phone, Sparkles, UserRound } from "lucide-react";
 import Header from "./Header";
+import { API_BASE, apiUrl } from "./api";
 
 export default function ProfilePage() {
 
   const [data, setData] = useState(null);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/profile/")
+    fetch(apiUrl("/api/profile/"), {
+      credentials: "include"
+    })
       .then(res => {
+        if (res.status === 401) {
+          throw new Error("Please login again to view your profile.");
+        }
         if (!res.ok) {
-          throw new Error("API error");
+          throw new Error("Error loading profile");
         }
         return res.json();
       })
       .then(data => setData(data))
       .catch(err => {
         console.error(err);
-        setError(true);
+        setError(err.message);
       });
   }, []);
 
   // ❌ API ERROR
   if (error) {
-    return <p className="p-8 text-red-500">Error loading profile</p>;
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="p-8 text-center text-red-500">{error}</div>
+      </div>
+    );
   }
 
-  // ⏳ LOADING
   if (!data) {
-    return <p className="p-8">Loading...</p>;
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="p-8 text-center">Loading...</div>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 via-white to-gray-200">
 
       <Header />
 
-      <div className="max-w-4xl mx-auto p-8">
+      <main className="max-w-6xl mx-auto p-6 animate-fade-in-up">
+        <section className="bg-white/85 rounded-2xl soft-shadow overflow-hidden">
+          <div className="h-32 bg-gradient-to-r from-blue-600 via-indigo-500 to-emerald-400" />
 
-        {/* TOP */}
-        <div className="text-center mb-8">
+          <div className="px-6 pb-6">
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-5 -mt-14">
+              <div className="flex flex-col sm:flex-row sm:items-end gap-4">
+                {data.profile_pic ? (
+                  <img
+                    src={`${API_BASE}${data.profile_pic}`}
+                    className="w-28 h-28 rounded-full border-4 border-white object-cover shadow-lg"
+                    alt="Profile"
+                  />
+                ) : (
+                  <div className="w-28 h-28 rounded-full border-4 border-white bg-gray-900 text-white shadow-lg flex items-center justify-center">
+                    <UserRound size={46} />
+                  </div>
+                )}
 
-          {data.profile_pic ? (
-            <img
-              src={`http://127.0.0.1:8000${data.profile_pic}`}
-              className="w-28 h-28 rounded-full mx-auto"
-            />
-          ) : (
-            <p>No Profile Picture</p>
-          )}
+                <div className="pb-2">
+                  <h1 className="text-3xl font-bold">{data.username}</h1>
+                  <p className="text-gray-500 flex items-center gap-2 mt-1">
+                    <Mail size={16} /> {data.email || "No email added"}
+                  </p>
+                </div>
+              </div>
 
-          <h2 className="text-2xl font-bold mt-4">{data.username}</h2>
+              <Link to="/profile/edit">
+                <button className="inline-flex items-center gap-2 bg-blue-600 text-white px-5 py-3 rounded-xl shadow">
+                  <Pencil size={18} /> Edit Profile
+                </button>
+              </Link>
+            </div>
+          </div>
+        </section>
 
-          <button className="mt-3 px-4 py-2 bg-blue-500 text-white rounded">
-            Edit Profile
-          </button>
-        </div>
-
-        <hr className="mb-6" />
-
-        <div className="grid grid-cols-2 gap-8">
-
-          {/* LEFT */}
-          <div>
-            <h3 className="font-semibold mb-3">Basic Info</h3>
-
-            <p><strong>Email:</strong> {data.email}</p>
-            <p><strong>Phone:</strong> {data.phone}</p>
-            <p><strong>Age:</strong> {data.age}</p>
-            <p><strong>Gender:</strong> {data.gender}</p>
+        <section className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+          <div className="bg-white/85 rounded-2xl shadow p-6">
+            <h2 className="font-semibold text-lg mb-4 flex items-center gap-2">
+              <UserRound size={20} /> Basic Info
+            </h2>
+            <Info label="Phone" value={data.phone} icon={<Phone size={16} />} />
+            <Info label="Age" value={data.age} />
+            <Info label="Gender" value={data.gender} />
           </div>
 
-          {/* RIGHT */}
-          <div>
-
-            <h3 className="font-semibold mb-3">Professional Details</h3>
-
-            <p className="font-medium">Education:</p>
-
-            {data.educations.length === 0 ? (
-              <p>No education added</p>
+          <div className="lg:col-span-2 bg-white/85 rounded-2xl shadow p-6">
+            <h2 className="font-semibold text-lg mb-4 flex items-center gap-2">
+              <Sparkles size={20} /> Skills
+            </h2>
+            {data.skills ? (
+              <div className="flex flex-wrap gap-2">
+                {data.skills.split(",").map((skill, i) => (
+                  <span key={i} className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm">
+                    {skill.trim()}
+                  </span>
+                ))}
+              </div>
             ) : (
-              data.educations.map((edu, i) => (
-                <div key={i} className="mb-3 border-b pb-2">
-                  <strong>{edu.course}</strong><br />
-                  {edu.college}<br />
-                  {edu.start_year} - {edu.end_year}
-                </div>
-              ))
+              <p className="text-gray-500">No skills added</p>
             )}
 
-            <p className="font-medium mt-4">Experience:</p>
-
-            {data.experiences.length === 0 ? (
-              <p>No experience added</p>
-            ) : (
-              data.experiences.map((exp, i) => (
-                <div key={i} className="mb-3 border-b pb-2">
-                  <strong>{exp.role}</strong><br />
-                  {exp.company}<br />
-                  {exp.start_date} - {exp.end_date}<br />
-                  {exp.description}
-                </div>
-              ))
-            )}
-
-            <p className="font-medium mt-4">Skills:</p>
-            <p>{data.skills}</p>
-
-            <h4 className="mt-4 font-medium">Resume</h4>
-
+            <h2 className="font-semibold text-lg mt-8 mb-4">Resume</h2>
             {data.resume ? (
-              <a
-                href={`http://127.0.0.1:8000${data.resume}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <button className="mt-2 px-3 py-2 bg-blue-500 text-white rounded">
-                  View Resume
-                </button>
+              <a href={`${API_BASE}${data.resume}`} target="_blank" rel="noreferrer">
+                <button className="px-4 py-2 bg-gray-900 text-white rounded-xl">View Resume</button>
               </a>
             ) : (
-              <p>No resume uploaded</p>
+              <p className="text-gray-500">No resume uploaded</p>
             )}
-
           </div>
+        </section>
 
-        </div>
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6 pb-8">
+          <Timeline title="Education" icon={<GraduationCap />} empty="No education added">
+            {(data.educations || []).map((edu, i) => (
+              <TimelineItem key={i} title={edu.course} subtitle={edu.college} meta={`${edu.start_year || "-"} - ${edu.end_year || "-"}`} />
+            ))}
+          </Timeline>
 
-      </div>
+          <Timeline title="Experience" icon={<BriefcaseBusiness />} empty="No experience added">
+            {(data.experiences || []).map((exp, i) => (
+              <TimelineItem key={i} title={exp.role} subtitle={exp.company} meta={`${exp.start_date || "-"} - ${exp.end_date || "-"}`} note={exp.description} />
+            ))}
+          </Timeline>
+        </section>
+      </main>
+    </div>
+  );
+}
 
+function Info({ label, value, icon }) {
+  return (
+    <div className="flex justify-between gap-4 border-b py-3 last:border-b-0">
+      <span className="text-gray-500 flex items-center gap-2">{icon}{label}</span>
+      <strong className="text-right">{value || "-"}</strong>
+    </div>
+  );
+}
+
+function Timeline({ title, icon, empty, children }) {
+  const items = Array.isArray(children) ? children.filter(Boolean) : children;
+
+  return (
+    <div className="bg-white/85 rounded-2xl shadow p-6">
+      <h2 className="font-semibold text-lg mb-4 flex items-center gap-2">{icon}{title}</h2>
+      {items && items.length > 0 ? <div className="space-y-4">{items}</div> : <p className="text-gray-500">{empty}</p>}
+    </div>
+  );
+}
+
+function TimelineItem({ title, subtitle, meta, note }) {
+  return (
+    <div className="border-l-4 border-blue-500 pl-4 py-1">
+      <h3 className="font-semibold">{title || "-"}</h3>
+      <p className="text-gray-600">{subtitle || "-"}</p>
+      <p className="text-sm text-gray-400">{meta}</p>
+      {note && <p className="text-sm text-gray-600 mt-2">{note}</p>}
     </div>
   );
 }
