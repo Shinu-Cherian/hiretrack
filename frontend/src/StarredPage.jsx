@@ -1,104 +1,117 @@
 import { useEffect, useState } from "react";
+import { Briefcase, Calendar, Handshake, Star } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import Header from "./Header";
 import { apiUrl } from "./api";
+import BackButton from "./components/BackButton";
+import Card from "./components/Card";
 
 export default function StarredPage() {
-
   const [jobs, setJobs] = useState([]);
   const [refs, setRefs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(apiUrl("/api/starred/"), {
-      credentials: "include",
-    })
-      .then(res => res.json())
-      .then(data => {
+    fetch(apiUrl("/api/starred/"), { credentials: "include" })
+      .then((res) => res.json())
+      .then((data) => {
         setJobs(data.jobs || []);
         setRefs(data.referrals || []);
-      });
+      })
+      .finally(() => setLoading(false));
   }, []);
 
-  return (
-    <div className="min-h-screen bg-gray-50">
+  const openItem = (type, id) => {
+    navigate(type === "referral" ? `/referrals?highlight=${id}` : `/jobs?highlight=${id}`);
+  };
 
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 via-white to-gray-200">
       <Header />
 
-      <div className="p-8">
+      <main className="mx-auto max-w-5xl p-6 animate-fade-in-up">
+        <BackButton className="mb-5" />
 
-        <h1 className="text-3xl font-bold mb-8">⭐ Starred</h1>
-
-        {/* ================= JOBS ================= */}
-        <div className="mb-10">
-          <h2 className="text-xl font-semibold mb-4">📌 Starred Jobs</h2>
-
-          <div className="bg-white rounded-xl shadow">
-
-            <div className="grid grid-cols-6 p-4 border-b text-sm text-gray-500">
-              <span>Role</span>
-              <span>Company</span>
-              <span>Job ID</span>
-              <span>Date</span>
-              <span>Status</span>
-              <span>Notes</span>
-            </div>
-
-            {jobs.length === 0 ? (
-              <div className="p-6 text-center text-gray-400">
-                No starred jobs
-              </div>
-            ) : (
-              jobs.map(job => (
-                <div key={job.id} className="grid grid-cols-6 p-4 border-t">
-                  <span>{job.jobTitle}</span>
-                  <span>{job.company}</span>
-                  <span>{job.jobId || "-"}</span>
-                  <span>{job.dateApplied}</span>
-                  <span>{job.status}</span>
-                  <span>{job.notes || "-"}</span>
-                </div>
-              ))
-            )}
-
-          </div>
+        <div className="mb-6">
+          <h1 className="flex items-center gap-3 text-3xl font-bold text-gray-950">
+            <Star className="fill-yellow-400 text-yellow-400" /> Starred
+          </h1>
+          <p className="mt-1 text-gray-500">Open a saved item to jump to it and highlight it in context.</p>
         </div>
 
-        {/* ================= REFERRALS ================= */}
-        <div>
-          <h2 className="text-xl font-semibold mb-4">🤝 Starred Referrals</h2>
+        {loading ? (
+          <Card className="p-10 text-center text-gray-500">Loading starred items...</Card>
+        ) : (
+          <div className="space-y-8">
+            <StarredSection
+              title="Starred Jobs"
+              empty="No starred jobs"
+              items={jobs}
+              renderItem={(job) => (
+                <StarredButton key={job.id} icon={<Briefcase size={19} />} onClick={() => openItem("job", job.id)}>
+                  <span>
+                    <span className="block font-semibold text-gray-950">{job.jobTitle} at {job.company}</span>
+                    <span className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-500">
+                      <span className="inline-flex items-center gap-1"><Calendar size={14} /> {job.dateApplied || "-"}</span>
+                      <span className="capitalize">{job.status || "-"}</span>
+                      <span>{job.platform || "No platform"}</span>
+                    </span>
+                  </span>
+                </StarredButton>
+              )}
+            />
 
-          <div className="bg-white rounded-xl shadow">
-
-            <div className="grid grid-cols-6 p-4 border-b text-sm text-gray-500">
-              <span>Name</span>
-              <span>Company</span>
-              <span>Email</span>
-              <span>Date</span>
-              <span>Status</span>
-              <span>Notes</span>
-            </div>
-
-            {refs.length === 0 ? (
-              <div className="p-6 text-center text-gray-400">
-                No starred referrals
-              </div>
-            ) : (
-              refs.map(ref => (
-                <div key={ref.id} className="grid grid-cols-6 p-4 border-t">
-                  <span>{ref.person_name}</span>
-                  <span>{ref.company}</span>
-                  <span>{ref.email || "-"}</span>
-                  <span>{ref.date}</span>
-                  <span>{ref.status}</span>
-                  <span>{ref.notes || "-"}</span>
-                </div>
-              ))
-            )}
-
+            <StarredSection
+              title="Starred Referrals"
+              empty="No starred referrals"
+              items={refs}
+              renderItem={(ref) => (
+                <StarredButton key={ref.id} icon={<Handshake size={19} />} onClick={() => openItem("referral", ref.id)}>
+                  <span>
+                    <span className="block font-semibold text-gray-950">{ref.person_name} at {ref.company}</span>
+                    <span className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-500">
+                      <span className="inline-flex items-center gap-1"><Calendar size={14} /> {ref.date || "-"}</span>
+                      <span className="capitalize">{ref.status || "-"}</span>
+                      <span>{ref.email || "No email"}</span>
+                    </span>
+                  </span>
+                </StarredButton>
+              )}
+            />
           </div>
-        </div>
-
-      </div>
-
+        )}
+      </main>
     </div>
+  );
+}
+
+function StarredSection({ title, empty, items, renderItem }) {
+  return (
+    <section>
+      <h2 className="mb-3 text-xl font-semibold text-gray-950">{title}</h2>
+      <Card className="overflow-hidden">
+        {items.length === 0 ? (
+          <div className="p-8 text-center text-gray-400">{empty}</div>
+        ) : (
+          items.map(renderItem)
+        )}
+      </Card>
+    </section>
+  );
+}
+
+function StarredButton({ icon, children, onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="flex w-full items-center gap-4 border-b border-gray-100 p-4 text-left transition hover:bg-blue-50/70 last:border-b-0"
+    >
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-950 text-white">
+        {icon}
+      </span>
+      <span className="min-w-0 flex-1">{children}</span>
+    </button>
   );
 }

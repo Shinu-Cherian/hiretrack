@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
-import { Building2, Calendar, Edit3, Link2, Mail, Search, Star, Trash2, UserRound, X } from "lucide-react";
+import { Building2, Calendar, Edit3, Link2, Mail, Search, Star, Trash2, UserRound } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import Header from "./Header";
 import { apiUrl } from "./api";
 import BackButton from "./components/BackButton";
 import Card from "./components/Card";
 import HighlightableItem from "./components/HighlightableItem";
+import Modal from "./components/Modal";
 import ReferralForm from "./components/ReferralForm";
 
 export default function ViewReferrals() {
@@ -161,9 +162,10 @@ export default function ViewReferrals() {
       </main>
 
       {editing && (
-        <EditModal title="Edit Referral" onClose={() => setEditing(null)}>
+        <Modal title="Edit Referral" onClose={() => setEditing(null)}>
+          <BackButton className="mb-6" />
           <ReferralForm key={editing.id} initialValues={editing} submitLabel="Save Changes" onSubmit={saveEdit} onCancel={() => setEditing(null)} />
-        </EditModal>
+        </Modal>
       )}
     </div>
   );
@@ -188,24 +190,5 @@ function IconButton({ children, onClick, danger = false, label }) {
     >
       {children}
     </button>
-  );
-}
-
-function EditModal({ title, children, onClose }) {
-  return (
-    <div className="modal-overlay fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4 md:p-8">
-      <section className="modal-box w-full max-w-3xl rounded-xl bg-white p-6 shadow-2xl md:p-8">
-        <div className="mb-7 flex items-center justify-between gap-4">
-          <div>
-            <BackButton />
-            <h2 className="mt-4 text-2xl font-bold text-gray-950">{title}</h2>
-          </div>
-          <button type="button" onClick={onClose} className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900" aria-label="Close">
-            <X size={22} />
-          </button>
-        </div>
-        {children}
-      </section>
-    </div>
   );
 }

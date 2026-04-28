@@ -666,45 +666,142 @@ def dashboard_api(request):
 
     jobs = Job.objects.filter(user=user)
     referrals = Referral.objects.filter(user=user)
-    status_counts = {item["status"]: item["count"] for item in jobs.values("status").annotate(count=Count("status"))}
-    referral_status_counts = {item["status"]: item["count"] for item in referrals.values("status").annotate(count=Count("status"))}
+    since = date.today() - timedelta(days=29)
 
-    date_counts = {}
-    for job in jobs.order_by("date_applied"):
-        key = str(job.date_applied)
-        date_counts[key] = date_counts.get(key, 0) + 1
+    job_status_counts = {
+        item["status"]: item["count"]
+        for item in jobs.values("status").annotate(count=Count("id"))
+    }
+    referral_status_counts = {
+        item["status"]: item["count"]
+        for item in referrals.values("status").annotate(count=Count("id"))
+    }
 
     total_jobs = jobs.count()
-    selected_jobs = jobs.filter(status='selected').count()
+    applied_jobs = job_status_counts.get("applied", 0)
+    pending_jobs = job_status_counts.get("pending", 0)
+    rejected_jobs = job_status_counts.get("rejected", 0)
+    selected_jobs = job_status_counts.get("selected", 0)
+
     total_referrals = referrals.count()
-    replied_referrals = referrals.filter(status='replied').count()
+    pending_referrals = referral_status_counts.get("pending", 0)
+    replied_referrals = referral_status_counts.get("replied", 0)
+    no_response_referrals = referral_status_counts.get("no_response", 0)
+
+    job_timeline = [
+        {"date": str(item["day"]), "count": item["count"]}
+        for item in (
+            jobs.filter(date_applied__gte=since)
+            .annotate(day=TruncDate("date_applied"))
+            .values("day")
+            .annotate(count=Count("id"))
+            .order_by("day")
+        )
+    ]
+
+    referral_timeline = [
+        {"date": str(item["day"]), "count": item["count"]}
+        for item in (
+            referrals.filter(date__gte=since)
+            .annotate(day=TruncDate("date"))
+            .values("day")
+            .annotate(count=Count("id"))
+            .order_by("day")
+        )
+    ]
+
+    job_companies = [
+        {"name": item["company"] or "Unknown", "count": item["count"]}
+        for item in (
+            jobs.values("company")
+            .annotate(count=Count("id"))
+            .order_by("-count", "company")[:8]
+        )
+    ]
+
+    referral_companies = [
+        {"name": item["company"] or "Unknown", "count": item["count"]}
+        for item in (
+            referrals.values("company")
+            .annotate(count=Count("id"))
+            .order_by("-count", "company")[:8]
+        )
+    ]
+
+    job_platforms = [
+        {"name": item["platform"] or "Not specified", "count": item["count"]}
+        for item in (
+            jobs.values("platform")
+            .annotate(count=Count("id"))
+            .order_by("-count", "platform")[:8]
+        )
+    ]
+
+    acceptance_rate = round((selected_jobs / total_jobs) * 100, 1) if total_jobs else 0
+    rejection_rate = round((rejected_jobs / total_jobs) * 100, 1) if total_jobs else 0
+    response_rate = round((replied_referrals / total_referrals) * 100, 1) if total_referrals else 0
 
     data = {
-        "total_jobs": total_jobs,
-        "pending_jobs": jobs.filter(status='pending').count(),
-        "rejected_jobs": jobs.filter(status='rejected').count(),
-        "selected_jobs": selected_jobs,
+        "job_analytics": {
+            "stats": {
+                "total": total_jobs,
+                "applied": applied_jobs,
+                "pending": pending_jobs,
+                "rejected": rejected_jobs,
+                "selected": selected_jobs,
+                "acceptance_rate": acceptance_rate,
+                "rejection_rate": rejection_rate,
+                "status_counts": {
+                    "applied": applied_jobs,
+                    "pending": pending_jobs,
+                    "rejected": rejected_jobs,
+                    "selected": selected_jobs,
+                },
+            },
+            "timeline": job_timeline,
+            "companies": job_companies,
+            "platforms": job_platforms,
+        },
+        "referral_analytics": {
+            "stats": {
+                "total": total_referrals,
+                "pending": pending_referrals,
+                "replied": replied_referrals,
+                "no_response": no_response_referrals,
+                "response_rate": response_rate,
+                "status_counts": {
+                    "pending": pending_referrals,
+                    "replied": replied_referrals,
+                    "no_response": no_response_referrals,
+                },
+            },
+            "timeline": referral_timeline,
+            "companies": referral_companies,
+        },
 
+        # Legacy keys kept for older frontend surfaces during the React migration.
+        "total_jobs": total_jobs,
+        "pending_jobs": pending_jobs,
+        "rejected_jobs": rejected_jobs,
+        "selected_jobs": selected_jobs,
         "total_referrals": total_referrals,
-        "pending_referrals": referrals.filter(status='pending').count(),
+        "pending_referrals": pending_referrals,
         "replied_referrals": replied_referrals,
-        "no_response_referrals": referrals.filter(status='no_response').count(),
-        "success_rate": round((selected_jobs / total_jobs) * 100, 1) if total_jobs else 0,
-        "reply_rate": round((replied_referrals / total_referrals) * 100, 1) if total_referrals else 0,
+        "no_response_referrals": no_response_referrals,
+        "success_rate": acceptance_rate,
+        "reply_rate": response_rate,
         "job_status": {
-            "applied": status_counts.get("applied", 0),
-            "pending": status_counts.get("pending", 0),
-            "rejected": status_counts.get("rejected", 0),
-            "selected": status_counts.get("selected", 0),
+            "applied": applied_jobs,
+            "pending": pending_jobs,
+            "rejected": rejected_jobs,
+            "selected": selected_jobs,
         },
         "referral_status": {
-            "pending": referral_status_counts.get("pending", 0),
-            "replied": referral_status_counts.get("replied", 0),
-            "no_response": referral_status_counts.get("no_response", 0),
+            "pending": pending_referrals,
+            "replied": replied_referrals,
+            "no_response": no_response_referrals,
         },
-        "applications_over_time": [
-            {"date": key, "count": value} for key, value in date_counts.items()
-        ],
+        "applications_over_time": job_timeline,
     }
 
     return JsonResponse(data)

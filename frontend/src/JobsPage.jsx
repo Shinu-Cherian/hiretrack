@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Briefcase, Calendar, DollarSign, Edit3, FileText, Monitor, Search, Star, Trash2, X } from "lucide-react";
+import { Briefcase, Calendar, DollarSign, Edit3, FileText, Monitor, Search, Star, Trash2 } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import Header from "./Header";
 import { apiUrl } from "./api";
@@ -7,11 +7,13 @@ import BackButton from "./components/BackButton";
 import Card from "./components/Card";
 import HighlightableItem from "./components/HighlightableItem";
 import JobForm from "./components/JobForm";
+import Modal from "./components/Modal";
 
 export default function JobsPage() {
   const [jobs, setJobs] = useState([]);
   const [search, setSearch] = useState("");
   const [editing, setEditing] = useState(null);
+  const [viewingJd, setViewingJd] = useState(null);
   const [activeHighlight, setActiveHighlight] = useState(null);
   const [searchParams] = useSearchParams();
 
@@ -142,9 +144,17 @@ export default function JobsPage() {
                   </IconButton>
                 </span>
                 {(job.jd || job.notes) && (
-                  <div className="rounded-lg bg-gray-50 p-3 text-sm text-gray-600 lg:col-span-8">
-                    {job.jd && <p className="line-clamp-2"><strong>JD:</strong> {job.jd}</p>}
-                    {job.notes && <p className="mt-1"><strong>Notes:</strong> {job.notes}</p>}
+                  <div className="flex flex-col gap-2 rounded-lg bg-gray-50 p-3 text-sm text-gray-600 lg:col-span-8 md:flex-row md:items-center md:justify-between">
+                    <p><strong>Notes:</strong> {job.notes || "-"}</p>
+                    {job.jd && (
+                      <button
+                        type="button"
+                        onClick={() => setViewingJd(job)}
+                        className="inline-flex w-fit items-center gap-1 rounded-lg bg-white px-3 py-2 font-semibold text-blue-700 shadow-sm hover:bg-blue-50"
+                      >
+                        <strong>JD:</strong> Show JD
+                      </button>
+                    )}
                   </div>
                 )}
               </HighlightableItem>
@@ -154,9 +164,18 @@ export default function JobsPage() {
       </main>
 
       {editing && (
-        <EditModal title="Edit Job" onClose={() => setEditing(null)}>
+        <Modal title="Edit Job" onClose={() => setEditing(null)}>
+          <BackButton className="mb-6" />
           <JobForm key={editing.id} initialValues={editing} submitLabel="Save Changes" onSubmit={saveEdit} onCancel={() => setEditing(null)} />
-        </EditModal>
+        </Modal>
+      )}
+
+      {viewingJd && (
+        <Modal title={`${viewingJd.jobTitle} JD`} onClose={() => setViewingJd(null)}>
+          <div className="max-h-[60vh] overflow-y-auto rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm leading-6 text-gray-700 whitespace-pre-wrap">
+            {viewingJd.jd || "No job description added."}
+          </div>
+        </Modal>
       )}
     </div>
   );
@@ -181,24 +200,5 @@ function IconButton({ children, onClick, danger = false, label }) {
     >
       {children}
     </button>
-  );
-}
-
-function EditModal({ title, children, onClose }) {
-  return (
-    <div className="modal-overlay fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4 md:p-8">
-      <section className="modal-box w-full max-w-3xl rounded-xl bg-white p-6 shadow-2xl md:p-8">
-        <div className="mb-7 flex items-center justify-between gap-4">
-          <div>
-            <BackButton />
-            <h2 className="mt-4 text-2xl font-bold text-gray-950">{title}</h2>
-          </div>
-          <button type="button" onClick={onClose} className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900" aria-label="Close">
-            <X size={22} />
-          </button>
-        </div>
-        {children}
-      </section>
-    </div>
   );
 }
