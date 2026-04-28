@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { BriefcaseBusiness, GraduationCap, Mail, Pencil, Phone, Sparkles, UserRound } from "lucide-react";
 import Header from "./Header";
 import { API_BASE, apiUrl } from "./api";
+import Avatar from "./components/Avatar";
 
 export default function ProfilePage() {
 
@@ -60,17 +61,7 @@ export default function ProfilePage() {
           <div className="px-6 pb-6">
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-5 -mt-14">
               <div className="flex flex-col sm:flex-row sm:items-end gap-4">
-                {data.profile_pic ? (
-                  <img
-                    src={`${API_BASE}${data.profile_pic}`}
-                    className="w-28 h-28 rounded-full border-4 border-white object-cover shadow-lg"
-                    alt="Profile"
-                  />
-                ) : (
-                  <div className="w-28 h-28 rounded-full border-4 border-white bg-gray-900 text-white shadow-lg flex items-center justify-center">
-                    <UserRound size={46} />
-                  </div>
-                )}
+                <Avatar src={data.profile_pic} username={data.username} size="lg" className="border-4 border-white shadow-lg" />
 
                 <div className="pb-2">
                   <h1 className="text-3xl font-bold">{data.username}</h1>

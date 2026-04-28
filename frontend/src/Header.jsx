@@ -2,7 +2,8 @@ import { Link } from "react-router-dom";
 import { Briefcase } from "lucide-react";
 import { useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
-import { API_BASE, apiUrl } from "./api";
+import { apiUrl } from "./api";
+import Avatar from "./components/Avatar";
 
 export default function Header() {
 
@@ -32,6 +33,7 @@ export default function Header() {
   }, [isLoggedIn]);
 
   const profilePic = profile?.profile_pic || localStorage.getItem("profile_pic");
+  const username = profile?.username || localStorage.getItem("username") || "User";
 
   return (
     <>
@@ -48,12 +50,7 @@ export default function Header() {
           <div className="flex items-center gap-3">
             {isLoggedIn ? (
               <>
-                <img
-                  src={profilePic ? `${API_BASE}${profilePic}` : "/default-avatar.png"}
-                  className="w-8 h-8 rounded-full border cursor-pointer"
-                  alt="Profile"
-                  onClick={() => setSidebarOpen(true)}
-                />
+                <Avatar src={profilePic} username={username} size="sm" onClick={() => setSidebarOpen(true)} />
               </>
             ) : (
               <>

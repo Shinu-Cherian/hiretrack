@@ -81,15 +81,6 @@
   }
 }
 
-/* BUTTON HOVER */
-button {
-  transition: all 0.2s ease-in-out;
-}
-
-button:hover {
-  transform: scale(1.05);
-}
-
 /* SECTION SPACING */
 .section {
   padding: 80px 20px;
@@ -137,15 +128,6 @@ button:hover {
   from { opacity: 0; transform: translateY(25px); }
   to { opacity: 1; transform: translateY(0); }
 }
-
-/* BUTTON */
-button {
-  transition: all 0.2s ease;
-}
-button:hover {
-  transform: scale(1.05);
-}
-
 
 /* GLASS EFFECT */
 .glass {
@@ -212,11 +194,11 @@ button:hover {
 
 .form-input {
   width: 100%;
-  border-radius: 16px;
+  border-radius: 10px;
   border: 1px solid #e5e7eb;
   background: #f8fafc;
-  padding: 16px 18px;
-  font-size: 20px;
+  padding: 12px 14px;
+  font-size: 15px;
   color: #111827;
   outline: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;

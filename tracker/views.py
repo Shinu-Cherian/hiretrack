@@ -990,6 +990,7 @@ def notifications_api(request):
 
     for j in jobs:
         data.append({
+            "id": j.id,
             "type": "job",
             "message": f"Follow up: {j.role} at {j.company}",
             "date": j.date_applied
@@ -997,6 +998,7 @@ def notifications_api(request):
 
     for r in refs:
         data.append({
+            "id": r.id,
             "type": "referral",
             "message": f"Check referral: {r.person_name} at {r.company}",
             "date": r.date

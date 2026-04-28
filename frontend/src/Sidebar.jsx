@@ -1,7 +1,8 @@
 import { Star, Bell, Settings, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { API_BASE, apiUrl } from "./api";
+import { apiUrl } from "./api";
+import Avatar from "./components/Avatar";
 
 export default function Sidebar({ isOpen, onClose, profile }) {
 
@@ -46,11 +47,7 @@ export default function Sidebar({ isOpen, onClose, profile }) {
           {/* PROFILE */}
 
           <div className="flex items-center gap-3 mb-6">
-            <img
-              src={profilePic ? `${API_BASE}${profilePic}` : "/default-avatar.png"}
-              className="w-10 h-10 rounded-full object-cover border"
-              alt="Profile"
-            />
+            <Avatar src={profilePic} username={username} />
             <div>
               <h3 className="font-semibold">
                 {username}
