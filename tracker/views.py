@@ -7,7 +7,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
 from .forms import ProfileForm
-from django.db.models.functions import TruncDate
 from django.http import JsonResponse
 from .models import Job, Referral
 from django.http import JsonResponse
@@ -16,7 +15,13 @@ from django.views.decorators.csrf import csrf_exempt
 
 from django.contrib.auth import authenticate, login, update_session_auth_hash
 from datetime import date, timedelta
-from django.http import JsonResponse
+from django.http import FileResponse, Http404, JsonResponse
+import re
+from io import BytesIO
+from collections import Counter
+from html import unescape
+from zipfile import ZipFile
+from xml.etree import ElementTree
 
 
 def api_user(request):
@@ -31,6 +36,223 @@ def login_required_json(user):
     return None
 
 
+STOP_WORDS = {
+    "a", "an", "and", "are", "as", "at", "be", "by", "for", "from", "has",
+    "have", "in", "is", "it", "of", "on", "or", "our", "that", "the", "this",
+    "to", "we", "with", "you", "your", "will", "work", "role", "job", "team",
+    "experience", "candidate", "responsibilities", "requirements", "hiring",
+    "developer", "engineer", "preferred", "required", "looking"
+}
+
+SKILL_ALIASES = {
+    "javascript": ["javascript", "js", "ecmascript"],
+    "typescript": ["typescript", "ts"],
+    "react": ["react", "react.js", "reactjs"],
+    "frontend": ["frontend", "front-end", "front end"],
+    "django": ["django", "django rest framework", "drf"],
+    "python": ["python"],
+    "sql": ["sql", "postgresql", "mysql", "sqlite"],
+    "api": ["api", "apis", "rest", "restful"],
+    "aws": ["aws", "amazon web services"],
+    "docker": ["docker", "container"],
+    "kubernetes": ["kubernetes", "k8s"],
+    "git": ["git", "github", "gitlab"],
+    "testing": ["testing", "unit test", "integration test", "pytest", "jest"],
+    "tailwind": ["tailwind", "tailwind css"],
+    "node": ["node", "node.js", "express"],
+    "java": ["java", "spring"],
+    "communication": ["communication", "stakeholder", "collaboration"],
+    "analytics": ["analytics", "dashboard", "dashboards", "reporting", "metrics"],
+    "machine learning": ["machine learning", "ml", "model"],
+    "data analysis": ["data analysis", "pandas", "numpy", "excel"],
+}
+
+SECTION_HEADERS = ["summary", "experience", "projects", "skills", "education", "certifications"]
+ACTION_VERBS = [
+    "built", "developed", "created", "designed", "implemented", "optimized",
+    "improved", "managed", "led", "delivered", "automated", "integrated"
+]
+
+
+def normalize_text(text):
+    return re.sub(r"[^a-z0-9+#.\s-]", " ", (text or "").lower())
+
+
+def compact_text(text):
+    return re.sub(r"\s+", " ", (text or "")).strip()
+
+
+def extract_keywords(text, limit=45):
+    words = re.findall(r"[a-z][a-z0-9+#.-]{2,}", normalize_text(text))
+    filtered = [word.strip(".-") for word in words if word not in STOP_WORDS and len(word.strip(".-")) > 2]
+    counts = Counter(filtered)
+    return [word for word, _ in counts.most_common(limit)]
+
+
+def read_uploaded_text(uploaded_file):
+    if not uploaded_file:
+        return "", []
+    filename = uploaded_file.name.lower()
+    raw = uploaded_file.read()
+    warnings = []
+
+    if filename.endswith(".docx"):
+        try:
+            with ZipFile(BytesIO(raw)) as docx:
+                xml = docx.read("word/document.xml")
+            root = ElementTree.fromstring(xml)
+            texts = [node.text for node in root.iter() if node.tag.endswith("}t") and node.text]
+            return compact_text(unescape(" ".join(texts))), warnings
+        except Exception:
+            warnings.append("Could not read DOCX file. Paste resume text if the score looks low.")
+            return "", warnings
+
+    if filename.endswith(".pdf"):
+        try:
+            from pypdf import PdfReader
+            uploaded_file.seek(0)
+            reader = PdfReader(uploaded_file)
+            text = "\n".join(page.extract_text() or "" for page in reader.pages)
+            return compact_text(text), warnings
+        except Exception:
+            warnings.append("PDF text extraction needs the pypdf package or a text-selectable PDF. Paste resume text for best accuracy.")
+            return "", warnings
+
+    for encoding in ("utf-8", "latin-1"):
+        try:
+            return raw.decode(encoding), warnings
+        except UnicodeDecodeError:
+            continue
+    warnings.append("Could not read uploaded file. Paste resume text for analysis.")
+    return "", warnings
+
+
+def contains_any(text, aliases):
+    normalized = normalize_text(text)
+    for alias in aliases:
+        escaped = re.escape(alias)
+        plural = "s?" if alias.isalpha() and len(alias) > 3 else ""
+        if re.search(rf"(?<![a-z0-9]){escaped}{plural}(?![a-z0-9])", normalized):
+            return True
+    return False
+
+
+def extract_skills_from(text):
+    return sorted([skill for skill, aliases in SKILL_ALIASES.items() if contains_any(text, aliases)])
+
+
+def extract_title(text):
+    patterns = [
+        r"(?:job title|role|position)\s*[:\-]\s*([a-zA-Z /+-]{3,60})",
+        r"we are hiring\s+(?:a|an)?\s*([a-zA-Z /+-]{3,60})",
+        r"apply for\s+(?:the)?\s*([a-zA-Z /+-]{3,60})",
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, text or "", re.IGNORECASE)
+        if match:
+            return compact_text(match.group(1)).title()
+    keywords = extract_keywords(text, 6)
+    return " ".join(keywords[:3]).title() if keywords else "the role"
+
+
+def extract_company(text):
+    match = re.search(r"(?:company|at)\s*[:\-]\s*([a-zA-Z0-9 &.-]{2,50})", text or "", re.IGNORECASE)
+    return compact_text(match.group(1)).title() if match else "your company"
+
+
+def important_terms(text, limit=35):
+    skills = extract_skills_from(text)
+    keywords = extract_keywords(text, 80)
+    terms = []
+    for item in [*skills, *keywords]:
+        if item not in terms and len(item) > 2:
+            terms.append(item)
+    return terms[:limit]
+
+
+def sentence_evidence(resume_text, matched_terms, limit=3):
+    sentences = re.split(r"(?<=[.!?])\s+|\n+", resume_text or "")
+    scored = []
+    for sentence in sentences:
+        normalized = normalize_text(sentence)
+        hits = sum(1 for term in matched_terms if term in normalized)
+        has_action = any(verb in normalized for verb in ACTION_VERBS)
+        has_metric = bool(re.search(r"\d+%?|\$|x\b", sentence))
+        score = hits + (1 if has_action else 0) + (1 if has_metric else 0)
+        if score > 0 and len(sentence.strip()) > 25:
+            scored.append((score, compact_text(sentence)))
+    scored.sort(reverse=True, key=lambda item: item[0])
+    return [sentence for _, sentence in scored[:limit]]
+
+
+def ats_analysis(resume_text, jd_text):
+    resume_terms = set(important_terms(resume_text, 70))
+    jd_terms = important_terms(jd_text, 45)
+    matched = [term for term in jd_terms if term in resume_terms or contains_any(resume_text, [term])]
+    missing = [term for term in jd_terms if term not in matched]
+
+    jd_skills = extract_skills_from(jd_text)
+    resume_skills = extract_skills_from(resume_text)
+    matched_skills = [skill for skill in jd_skills if skill in resume_skills]
+
+    section_hits = [section for section in SECTION_HEADERS if re.search(rf"\b{section}\b", normalize_text(resume_text))]
+    action_hits = [verb for verb in ACTION_VERBS if re.search(rf"\b{verb}\b", normalize_text(resume_text))]
+    metric_count = len(re.findall(r"\d+%?|\$[0-9]|[0-9]+x\b", resume_text or ""))
+
+    keyword_score = (len(matched) / len(jd_terms)) * 45 if jd_terms else 0
+    skill_score = (len(matched_skills) / len(jd_skills)) * 25 if jd_skills else 15
+    section_score = min(len(section_hits), 5) / 5 * 15
+    impact_score = min(len(action_hits), 6) / 6 * 8 + min(metric_count, 4) / 4 * 7
+    score = round(min(100, keyword_score + skill_score + section_score + impact_score), 1)
+
+    suggestions = []
+    if missing[:6]:
+        suggestions.append(f"Add truthful evidence for these JD priorities: {', '.join(missing[:6])}.")
+    if len(section_hits) < 4:
+        suggestions.append("Use clear ATS-friendly section headings such as Summary, Skills, Experience, Projects, and Education.")
+    if metric_count < 2:
+        suggestions.append("Add measurable outcomes to bullets, such as percentages, counts, speed, cost, or scale.")
+    if len(matched_skills) < max(1, len(jd_skills) // 2):
+        suggestions.append("Move the most relevant technical skills into a visible Skills section and repeat them naturally in project bullets.")
+    if not suggestions:
+        suggestions.append("Strong alignment. Do a final pass for concise bullets, consistent formatting, and measurable impact.")
+
+    return {
+        "score": score,
+        "matched": matched[:30],
+        "missing": missing[:30],
+        "matched_skills": matched_skills,
+        "missing_skills": [skill for skill in jd_skills if skill not in matched_skills],
+        "section_hits": section_hits,
+        "impact_terms": action_hits[:10],
+        "suggestions": suggestions,
+    }
+
+
+def build_cover_letter(resume_text, jd_text):
+    analysis = ats_analysis(resume_text, jd_text)
+    title = extract_title(jd_text)
+    company = extract_company(jd_text)
+    strengths = ", ".join((analysis["matched_skills"] or analysis["matched"])[:5] or ["relevant experience", "problem solving", "clear communication"])
+    priorities = ", ".join((analysis["missing_skills"] or analysis["missing"])[:4] or important_terms(jd_text, 4) or ["the role requirements"])
+    evidence = sentence_evidence(resume_text, analysis["matched"], 2)
+    evidence_text = " ".join(evidence) if evidence else (
+        "My resume shows hands-on experience delivering practical work, learning quickly, and applying structured problem solving."
+    )
+
+    return (
+        "Dear Hiring Manager,\n\n"
+        f"I am excited to apply for the {title} position at {company}. After reviewing the job description, "
+        f"I see a strong connection between the role's needs and my background in {strengths}.\n\n"
+        f"{evidence_text}\n\n"
+        f"The role appears to place particular importance on {priorities}. I would approach those responsibilities with "
+        "a practical, detail-oriented mindset, clear communication, and a focus on producing reliable outcomes for the team.\n\n"
+        "I would welcome the opportunity to discuss how my experience can support your goals. Thank you for your time and consideration.\n\n"
+        "Sincerely,\n"
+        "Your Name"
+    )
+
+
 
 
 def home(request):
@@ -43,7 +265,7 @@ def add_job_api(request):
         import json
         from datetime import datetime, timedelta
 
-        data = json.loads(request.body)
+        data = request.POST if request.content_type and request.content_type.startswith("multipart/form-data") else json.loads(request.body)
         
         date_applied = data.get("dateApplied")
         date_obj = datetime.strptime(date_applied, "%Y-%m-%d").date()
@@ -64,7 +286,9 @@ def add_job_api(request):
             salary_range=data.get("salaryRange"),
             job_description=data.get("jd"),
             notes=data.get("notes"),
-            follow_up_date=follow_up_date
+            follow_up_date=follow_up_date,
+            resume_file=request.FILES.get("resume_file"),
+            cover_letter_file=request.FILES.get("cover_letter_file")
         )
 
         return JsonResponse({"message": "Job added"})
@@ -667,6 +891,7 @@ def dashboard_api(request):
     jobs = Job.objects.filter(user=user)
     referrals = Referral.objects.filter(user=user)
     since = date.today() - timedelta(days=29)
+    week_since = date.today() - timedelta(days=6)
 
     job_status_counts = {
         item["status"]: item["count"]
@@ -689,24 +914,22 @@ def dashboard_api(request):
     no_response_referrals = referral_status_counts.get("no_response", 0)
 
     job_timeline = [
-        {"date": str(item["day"]), "count": item["count"]}
+        {"date": str(item["date_applied"]), "count": item["count"]}
         for item in (
             jobs.filter(date_applied__gte=since)
-            .annotate(day=TruncDate("date_applied"))
-            .values("day")
+            .values("date_applied")
             .annotate(count=Count("id"))
-            .order_by("day")
+            .order_by("date_applied")
         )
     ]
 
     referral_timeline = [
-        {"date": str(item["day"]), "count": item["count"]}
+        {"date": str(item["date"]), "count": item["count"]}
         for item in (
             referrals.filter(date__gte=since)
-            .annotate(day=TruncDate("date"))
-            .values("day")
+            .values("date")
             .annotate(count=Count("id"))
-            .order_by("day")
+            .order_by("date")
         )
     ]
 
@@ -777,6 +1000,10 @@ def dashboard_api(request):
             },
             "timeline": referral_timeline,
             "companies": referral_companies,
+        },
+        "weekly": {
+            "applications": jobs.filter(date_applied__gte=week_since).count(),
+            "referrals": referrals.filter(date__gte=week_since).count(),
         },
 
         # Legacy keys kept for older frontend surfaces during the React migration.
@@ -859,6 +1086,8 @@ def get_jobs_api(request):
     "jd": job.job_description,
     "notes": job.notes,
     "is_starred": job.is_starred,
+    "resumeFile": job.resume_file.url if job.resume_file else None,
+    "coverLetterFile": job.cover_letter_file.url if job.cover_letter_file else None,
 
         })
 
@@ -925,7 +1154,7 @@ def update_job_api(request, id):
         return auth_error
 
     import json
-    data = json.loads(request.body)
+    data = request.POST if request.content_type and request.content_type.startswith("multipart/form-data") else json.loads(request.body)
     job = get_object_or_404(Job, id=id, user=user)
 
     job.role = data.get("jobTitle", job.role)
@@ -937,9 +1166,17 @@ def update_job_api(request, id):
     job.status = data.get("status", job.status)
     job.job_description = data.get("jd", job.job_description)
     job.notes = data.get("notes", job.notes)
+    if request.FILES.get("resume_file"):
+        job.resume_file = request.FILES["resume_file"]
+    if request.FILES.get("cover_letter_file"):
+        job.cover_letter_file = request.FILES["cover_letter_file"]
     job.save()
 
-    return JsonResponse({"success": True})
+    return JsonResponse({
+        "success": True,
+        "resumeFile": job.resume_file.url if job.resume_file else None,
+        "coverLetterFile": job.cover_letter_file.url if job.cover_letter_file else None,
+    })
 
 
 @csrf_exempt
@@ -1065,6 +1302,132 @@ def starred_api(request):
         "jobs": job_data,
         "referrals": ref_data
     })
+
+
+@csrf_exempt
+def resume_analyze_api(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required"}, status=405)
+
+    uploaded_text, warnings = read_uploaded_text(request.FILES.get("resume_file"))
+    resume_text = request.POST.get("resume", "") + "\n" + uploaded_text
+    jd_text = request.POST.get("job_description", "")
+    if len(compact_text(resume_text)) < 200:
+        warnings.append("Very little resume text was detected. Paste the resume text or upload a text-selectable document for a reliable score.")
+
+    analysis = ats_analysis(resume_text, jd_text)
+    analysis["warnings"] = warnings
+    analysis["resume_chars"] = len(compact_text(resume_text))
+    return JsonResponse(analysis)
+
+
+@csrf_exempt
+def generate_cover_letter_api(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required"}, status=405)
+
+    uploaded_text, warnings = read_uploaded_text(request.FILES.get("resume_file"))
+    resume_text = request.POST.get("resume", "") + "\n" + uploaded_text
+    jd_text = request.POST.get("job_description", "")
+    if len(compact_text(resume_text)) < 200:
+        warnings.append("Very little resume text was detected. The draft may be generic unless you paste more resume detail.")
+    return JsonResponse({
+        "cover_letter": build_cover_letter(resume_text, jd_text),
+        "warnings": warnings,
+        "resume_chars": len(compact_text(resume_text)),
+    })
+
+
+def career_vault_api(request):
+    user = api_user(request)
+    auth_error = login_required_json(user)
+    if auth_error:
+        return auth_error
+
+    jobs = Job.objects.filter(user=user).filter(
+        Q(resume_file__isnull=False) | Q(cover_letter_file__isnull=False)
+    ).order_by("-date_applied", "-id")
+    return JsonResponse({
+        "items": [
+            {
+                "id": job.id,
+                "jobTitle": job.role,
+                "company": job.company,
+                "dateApplied": job.date_applied,
+                "resumeFile": job.resume_file.url if job.resume_file else None,
+                "coverLetterFile": job.cover_letter_file.url if job.cover_letter_file else None,
+                "resumeDownload": f"/api/job/document/{job.id}/resume/" if job.resume_file else None,
+                "coverLetterDownload": f"/api/job/document/{job.id}/cover-letter/" if job.cover_letter_file else None,
+            }
+            for job in jobs
+        ]
+    })
+
+
+def job_document_download_api(request, id, kind):
+    user = api_user(request)
+    auth_error = login_required_json(user)
+    if auth_error:
+        return auth_error
+
+    job = get_object_or_404(Job, id=id, user=user)
+    document = job.resume_file if kind == "resume" else job.cover_letter_file
+    if not document:
+        raise Http404("Document not found")
+    return FileResponse(document.open("rb"), as_attachment=True, filename=document.name.split("/")[-1])
+
+
+def streak_api(request):
+    user = api_user(request)
+    auth_error = login_required_json(user)
+    if auth_error:
+        return auth_error
+
+    job_activity = list(
+        Job.objects.filter(user=user)
+        .values("date_applied")
+        .annotate(count=Count("id"))
+        .order_by("date_applied")
+    )
+    referral_activity = list(
+        Referral.objects.filter(user=user)
+        .values("date")
+        .annotate(count=Count("id"))
+        .order_by("date")
+    )
+
+    job_days = {item["date_applied"]: item["count"] for item in job_activity}
+    referral_days = {item["date"]: item["count"] for item in referral_activity}
+    job_streak = calculate_streak(set(job_days.keys()))
+    referral_streak = calculate_streak(set(referral_days.keys()))
+
+    return JsonResponse({
+        "jobs": {
+            "heatmap": [{"date": str(day), "count": count} for day, count in job_days.items()],
+            "streak": job_streak,
+            "badges": earned_badges(job_streak),
+        },
+        "referrals": {
+            "heatmap": [{"date": str(day), "count": count} for day, count in referral_days.items()],
+            "streak": referral_streak,
+            "badges": earned_badges(referral_streak),
+        },
+    })
+
+
+def calculate_streak(active_days):
+    current = date.today()
+    streak = 0
+    while current in active_days:
+        streak += 1
+        current = current - timedelta(days=1)
+    return streak
+
+
+def earned_badges(streak):
+    milestones = [30, 50]
+    milestones.extend(range(100, max(streak, 100) + 1, 50))
+    return [day for day in milestones if streak >= day]
 
 
 def notifications_api(request):

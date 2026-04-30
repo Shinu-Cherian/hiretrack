@@ -11,6 +11,8 @@ import {
   Sparkles,
   Users,
   Zap,
+  FileSearch,
+  PenLine,
 } from "lucide-react";
 import Header from "./Header";
 
@@ -20,6 +22,8 @@ const modules = [
   { icon: Users, title: "Add Referral", to: "/add-referral", desc: "Record referral requests with person, company, date, and status." },
   { icon: Briefcase, title: "View Referrals", to: "/referrals", desc: "Track who replied, who is pending, and who needs a nudge." },
   { icon: LayoutDashboard, title: "Dashboard", to: "/dashboard", desc: "Visualize progress with clean charts and useful insights." },
+  { icon: FileSearch, title: "ATS Resume Analyzer", to: "/resume-analyzer", desc: "Compare your resume to a JD and see missing keywords." },
+  { icon: PenLine, title: "Cover Letter Generator", to: "/cover-letter", desc: "Create a structured cover letter draft from your resume and JD." },
 ];
 
 const features = [
@@ -93,7 +97,7 @@ export default function Home() {
             <p className="text-gray-500 mt-3">Open exactly the workspace you need and keep moving.</p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-5">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-5">
             {modules.map((module, i) => (
               <Link key={module.title} to={module.to} className="group">
                 <div className="relative h-full p-5 rounded-2xl bg-white/85 shadow-md transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-xl overflow-hidden">

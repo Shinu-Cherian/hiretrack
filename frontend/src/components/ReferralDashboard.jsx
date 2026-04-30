@@ -30,13 +30,16 @@ export default function ReferralDashboard({ data }) {
   const insights = buildReferralInsights(stats);
 
   return (
-    <section className="space-y-6">
-      <div>
-        <p className="text-sm font-semibold uppercase tracking-wider text-emerald-600">Referral Analytics</p>
-        <h2 className="text-2xl font-bold text-gray-950">Outreach performance</h2>
+    <section className="rounded-xl border border-gray-200 bg-white/50 p-4 shadow-sm">
+      <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wider text-emerald-600">Referral Analytics</p>
+          <h2 className="text-xl font-bold text-gray-950">Outreach performance</h2>
+        </div>
+        <p className="text-sm text-gray-500">Requests, replies, and company response patterns</p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5">
         <StatsCard title="Total Requests" value={stats.total || 0} icon={<Users />} tone="blue" />
         <StatsCard title="Pending" value={stats.pending || 0} icon={<Clock />} tone="amber" />
         <StatsCard title="Replied" value={stats.replied || 0} icon={<MessageCircleReply />} tone="green" />
@@ -44,9 +47,9 @@ export default function ReferralDashboard({ data }) {
         <StatsCard title="Response Rate" value={`${stats.response_rate || 0}%`} icon={<Percent />} tone="green" />
       </div>
 
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
-        <ChartCard title="Referral Timeline" subtitle="Last 30 days grouped by request date" className="xl:col-span-2">
-          <ResponsiveContainer width="100%" height={300}>
+      <div className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-12">
+        <ChartCard title="Referral Timeline" subtitle="Last 30 days" className="xl:col-span-5">
+          <ResponsiveContainer width="100%" height={230}>
             <LineChart data={timeline}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis dataKey="date" />
@@ -57,10 +60,10 @@ export default function ReferralDashboard({ data }) {
           </ResponsiveContainer>
         </ChartCard>
 
-        <ChartCard title="Referral Status Distribution" subtitle="Pending, replied, and no response">
-          <ResponsiveContainer width="100%" height={300}>
+        <ChartCard title="Referral Status" subtitle="Distribution" className="xl:col-span-3">
+          <ResponsiveContainer width="100%" height={230}>
             <PieChart>
-              <Pie data={statusData} dataKey="value" nameKey="name" innerRadius={62} outerRadius={102} paddingAngle={4}>
+              <Pie data={statusData} dataKey="value" nameKey="name" innerRadius={48} outerRadius={78} paddingAngle={4}>
                 {statusData.map((item) => <Cell key={item.key} fill={item.color} />)}
               </Pie>
               <Tooltip />
@@ -68,8 +71,8 @@ export default function ReferralDashboard({ data }) {
           </ResponsiveContainer>
         </ChartCard>
 
-        <ChartCard title="Top Referral Companies" subtitle="Companies with the most referral requests" className="xl:col-span-3">
-          <ResponsiveContainer width="100%" height={300}>
+        <ChartCard title="Top Referral Companies" subtitle="Most requests" className="xl:col-span-4">
+          <ResponsiveContainer width="100%" height={230}>
             <BarChart data={companies}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis dataKey="name" />
@@ -79,9 +82,9 @@ export default function ReferralDashboard({ data }) {
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>
-      </div>
 
-      <InsightPanel icon={<MailCheck size={20} />} title="Referral Insights" insights={insights} />
+        <InsightPanel icon={<MailCheck size={18} />} title="Referral Insights" insights={insights} />
+      </div>
     </section>
   );
 }
@@ -106,11 +109,11 @@ function buildReferralInsights(stats) {
 
 function InsightPanel({ icon, title, insights }) {
   return (
-    <section className="rounded-xl border border-gray-200/80 bg-white/90 p-5 shadow-sm">
-      <h3 className="flex items-center gap-2 text-lg font-semibold text-gray-950">{icon}{title}</h3>
-      <div className="mt-4 grid gap-3 md:grid-cols-3">
+    <section className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm xl:col-span-12">
+      <h3 className="flex items-center gap-2 text-base font-semibold text-gray-950">{icon}{title}</h3>
+      <div className="mt-3 grid gap-3 md:grid-cols-3">
         {insights.map((insight) => (
-          <p key={insight} className="rounded-lg bg-emerald-50 p-4 text-sm text-emerald-900">{insight}</p>
+          <p key={insight} className="rounded-lg bg-emerald-50 p-3 text-sm leading-6 text-emerald-900">{insight}</p>
         ))}
       </div>
     </section>

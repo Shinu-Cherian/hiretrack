@@ -11,11 +11,15 @@ export default function AddJobPage() {
   const closePage = () => navigate(-1);
 
   const handleSave = async (form) => {
+    const body = new FormData();
+    Object.entries(form).forEach(([key, value]) => {
+      if (value !== null && value !== undefined) body.append(key, value);
+    });
+
     const res = await fetch(apiUrl("/api/add-job/"), {
       method: "POST",
       credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      body,
     });
 
     if (res.ok) {

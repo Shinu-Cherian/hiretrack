@@ -1,4 +1,4 @@
-import { Star, Bell, Settings, LogOut } from "lucide-react";
+import { Star, Bell, Settings, LogOut, Archive } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { apiUrl } from "./api";
@@ -8,6 +8,7 @@ export default function Sidebar({ isOpen, onClose, profile }) {
 
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState([]);
+  const [readVersion, setReadVersion] = useState(0);
 
   useEffect(() => {
     fetch(apiUrl("/api/notifications/"), {
@@ -15,6 +16,12 @@ export default function Sidebar({ isOpen, onClose, profile }) {
     })
       .then(res => res.json())
       .then(data => setNotifications(data));
+  }, []);
+
+  useEffect(() => {
+    const refresh = () => setReadVersion((value) => value + 1);
+    window.addEventListener("notifications-read", refresh);
+    return () => window.removeEventListener("notifications-read", refresh);
   }, []);
 
   const handleLogout = () => {
@@ -26,6 +33,7 @@ export default function Sidebar({ isOpen, onClose, profile }) {
 
   const profilePic = profile?.profile_pic || localStorage.getItem("profile_pic");
   const username = profile?.username || localStorage.getItem("username") || "User";
+  const hasUnread = notifications.some((item) => !readNotificationKeys().has(notificationKey(item))) && readVersion >= 0;
 
   return (
     <>
@@ -90,7 +98,7 @@ export default function Sidebar({ isOpen, onClose, profile }) {
             >
               <Bell size={18} /> Notifications
 
-              {notifications.length > 0 && (
+              {hasUnread && (
                 <span className="absolute right-2 top-2 w-2 h-2 bg-red-500 rounded-full"></span>
               )}
             </div>
@@ -104,6 +112,16 @@ export default function Sidebar({ isOpen, onClose, profile }) {
               className="flex items-center gap-3 p-2 rounded-lg cursor-pointer hover:bg-gray-100 transition"
             >
               <Settings size={18} /> Settings
+            </div>
+
+            <div
+              onClick={() => {
+                navigate("/career-vault");
+                onClose();
+              }}
+              className="flex items-center gap-3 p-2 rounded-lg cursor-pointer hover:bg-gray-100 transition"
+            >
+              <Archive size={18} /> Career Vault
             </div>
 
           </div>
@@ -122,4 +140,16 @@ export default function Sidebar({ isOpen, onClose, profile }) {
       </div>
     </>
   );
+}
+
+function notificationKey(item) {
+  return `${item.type}-${item.id}-${item.date}`;
+}
+
+function readNotificationKeys() {
+  try {
+    return new Set(JSON.parse(localStorage.getItem("read_notifications") || "[]"));
+  } catch {
+    return new Set();
+  }
 }

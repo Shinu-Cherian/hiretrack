@@ -32,13 +32,16 @@ export default function JobDashboard({ data }) {
   const insights = buildJobInsights(stats);
 
   return (
-    <section className="space-y-6">
-      <div>
-        <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">Jobs Analytics</p>
-        <h2 className="text-2xl font-bold text-gray-950">Application performance</h2>
+    <section className="rounded-xl border border-gray-200 bg-white/50 p-4 shadow-sm">
+      <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">Jobs Analytics</p>
+          <h2 className="text-xl font-bold text-gray-950">Application performance</h2>
+        </div>
+        <p className="text-sm text-gray-500">Pipeline, channels, and company concentration</p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-6">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6">
         <StatsCard title="Total Applied" value={stats.total || 0} icon={<Briefcase />} tone="blue" />
         <StatsCard title="Pending" value={stats.pending || 0} icon={<Clock />} tone="amber" />
         <StatsCard title="Rejected" value={stats.rejected || 0} icon={<ShieldX />} tone="red" />
@@ -47,9 +50,9 @@ export default function JobDashboard({ data }) {
         <StatsCard title="Rejection Rate" value={`${stats.rejection_rate || 0}%`} icon={<Percent />} tone="red" />
       </div>
 
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-        <ChartCard title="Application Timeline" subtitle="Last 30 days grouped by application date">
-          <ResponsiveContainer width="100%" height={300}>
+      <div className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-12">
+        <ChartCard title="Application Timeline" subtitle="Last 30 days" className="xl:col-span-5">
+          <ResponsiveContainer width="100%" height={230}>
             <LineChart data={timeline}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis dataKey="date" />
@@ -60,10 +63,10 @@ export default function JobDashboard({ data }) {
           </ResponsiveContainer>
         </ChartCard>
 
-        <ChartCard title="Job Status Distribution" subtitle="Applied, pending, rejected, and selected">
-          <ResponsiveContainer width="100%" height={300}>
+        <ChartCard title="Job Status" subtitle="Distribution" className="xl:col-span-3">
+          <ResponsiveContainer width="100%" height={230}>
             <PieChart>
-              <Pie data={statusData} dataKey="value" nameKey="name" innerRadius={64} outerRadius={105} paddingAngle={4}>
+              <Pie data={statusData} dataKey="value" nameKey="name" innerRadius={48} outerRadius={78} paddingAngle={4}>
                 {statusData.map((item) => <Cell key={item.key} fill={item.color} />)}
               </Pie>
               <Tooltip />
@@ -71,8 +74,8 @@ export default function JobDashboard({ data }) {
           </ResponsiveContainer>
         </ChartCard>
 
-        <ChartCard title="Top Companies Applied" subtitle="Companies with the most applications">
-          <ResponsiveContainer width="100%" height={300}>
+        <ChartCard title="Top Companies" subtitle="Most applications" className="xl:col-span-4">
+          <ResponsiveContainer width="100%" height={230}>
             <BarChart data={companies}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis dataKey="name" />
@@ -83,8 +86,8 @@ export default function JobDashboard({ data }) {
           </ResponsiveContainer>
         </ChartCard>
 
-        <ChartCard title="Application Platforms" subtitle="Where applications are coming from">
-          <ResponsiveContainer width="100%" height={300}>
+        <ChartCard title="Application Platforms" subtitle="Source mix" className="xl:col-span-6">
+          <ResponsiveContainer width="100%" height={220}>
             <BarChart data={platforms}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis dataKey="name" />
@@ -94,9 +97,9 @@ export default function JobDashboard({ data }) {
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>
-      </div>
 
-      <InsightPanel icon={<Send size={20} />} title="Job Insights" insights={insights} />
+        <InsightPanel icon={<Send size={18} />} title="Job Insights" insights={insights} />
+      </div>
     </section>
   );
 }
@@ -121,11 +124,11 @@ function buildJobInsights(stats) {
 
 function InsightPanel({ icon, title, insights }) {
   return (
-    <section className="rounded-xl border border-gray-200/80 bg-white/90 p-5 shadow-sm">
-      <h3 className="flex items-center gap-2 text-lg font-semibold text-gray-950">{icon}{title}</h3>
-      <div className="mt-4 grid gap-3 md:grid-cols-3">
+    <section className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm xl:col-span-6">
+      <h3 className="flex items-center gap-2 text-base font-semibold text-gray-950">{icon}{title}</h3>
+      <div className="mt-3 grid gap-3 md:grid-cols-3">
         {insights.map((insight) => (
-          <p key={insight} className="rounded-lg bg-blue-50 p-4 text-sm text-blue-900">{insight}</p>
+          <p key={insight} className="rounded-lg bg-blue-50 p-3 text-sm leading-6 text-blue-900">{insight}</p>
         ))}
       </div>
     </section>

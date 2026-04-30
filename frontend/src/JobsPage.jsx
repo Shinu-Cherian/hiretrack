@@ -45,15 +45,20 @@ export default function JobsPage() {
   );
 
   const saveEdit = async (form) => {
+    const body = new FormData();
+    Object.entries(form).forEach(([key, value]) => {
+      if (value !== null && value !== undefined) body.append(key, value);
+    });
+
     const res = await fetch(apiUrl(`/api/job/update/${editing.id}/`), {
       method: "POST",
       credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      body,
     });
 
     if (res.ok) {
-      setJobs((current) => current.map((job) => (job.id === editing.id ? { ...job, ...form } : job)));
+      const payload = await res.json();
+      setJobs((current) => current.map((job) => (job.id === editing.id ? { ...job, ...form, ...payload } : job)));
       setEditing(null);
       return;
     }
@@ -117,7 +122,9 @@ export default function JobsPage() {
                 key={job.id}
                 id={`job-${job.id}`}
                 highlighted={String(job.id) === String(activeHighlight)}
-                className="grid grid-cols-1 gap-3 border-t p-4 first:border-t-0 lg:grid-cols-8 lg:items-center"
+                className={`grid grid-cols-1 gap-3 border-t p-4 first:border-t-0 lg:grid-cols-8 lg:items-center ${
+                  job.status === "selected" ? "border-emerald-300 bg-emerald-50/70 shadow-[0_0_0_4px_rgba(16,185,129,0.12)]" : ""
+                }`}
               >
                 <div className="lg:col-span-2">
                   <p className="font-semibold text-gray-950">{job.jobTitle}</p>

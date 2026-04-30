@@ -17,6 +17,8 @@ class Job(models.Model):
     platform = models.CharField(max_length=100, blank=True, null=True)
     salary_range = models.CharField(max_length=100, blank=True, null=True)
     job_description = models.TextField(blank=True, null=True)
+    resume_file = models.FileField(upload_to='job_documents/resumes/', null=True, blank=True)
+    cover_letter_file = models.FileField(upload_to='job_documents/cover_letters/', null=True, blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='applied')
     notes = models.TextField(blank=True, null=True)
     follow_up_date = models.DateField(null=True, blank=True)

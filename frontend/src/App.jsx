@@ -12,6 +12,10 @@ import NotificationsPage from "./NotificationsPage";
 import ProfilePage from "./ProfilePage";
 import EditProfilePage from "./EditProfilePage";
 import SettingsPage from "./SettingsPage";
+import CareerVault from "./CareerVault";
+import StreakPage from "./StreakPage";
+import ResumeAnalyzerPage from "./ResumeAnalyzerPage";
+import CoverLetterPage from "./CoverLetterPage";
 
 
 function App() {
@@ -44,6 +48,14 @@ function App() {
         <Route path="/profile/edit" element={<EditProfilePage />} />
 
         <Route path="/settings" element={<SettingsPage />} />
+
+        <Route path="/career-vault" element={<CareerVault />} />
+
+        <Route path="/streaks" element={<StreakPage />} />
+
+        <Route path="/resume-analyzer" element={<ResumeAnalyzerPage />} />
+
+        <Route path="/cover-letter" element={<CoverLetterPage />} />
 
       </Routes>
     </BrowserRouter>

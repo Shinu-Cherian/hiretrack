@@ -13,7 +13,13 @@ export default function NotificationsPage() {
   useEffect(() => {
     fetch(apiUrl("/api/notifications/"), { credentials: "include" })
       .then((res) => res.json())
-      .then((items) => setData(Array.isArray(items) ? items : []));
+      .then((items) => {
+        const list = Array.isArray(items) ? items : [];
+        setData(list);
+        const keys = list.map(notificationKey);
+        localStorage.setItem("read_notifications", JSON.stringify(keys));
+        window.dispatchEvent(new Event("notifications-read"));
+      });
   }, []);
 
   const openNotification = (notification) => {
@@ -60,4 +66,8 @@ export default function NotificationsPage() {
       </main>
     </div>
   );
+}
+
+function notificationKey(item) {
+  return `${item.type}-${item.id}-${item.date}`;
 }

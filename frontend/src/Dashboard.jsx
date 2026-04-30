@@ -4,6 +4,8 @@ import { apiUrl } from "./api";
 import BackButton from "./components/BackButton";
 import JobDashboard from "./components/JobDashboard";
 import ReferralDashboard from "./components/ReferralDashboard";
+import StatsCard from "./components/StatsCard";
+import { Briefcase, Users } from "lucide-react";
 
 export default function Dashboard() {
   const [data, setData] = useState(null);
@@ -20,18 +22,34 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 via-white to-gray-200">
+    <div className="min-h-screen bg-[#f5f7fb]">
       <Header />
 
-      <main className="mx-auto max-w-7xl space-y-8 p-6 animate-fade-in-up">
-        <BackButton />
+      <main className="w-full space-y-5 px-4 py-5 animate-fade-in-up sm:px-6 lg:px-8 2xl:px-10">
+        <div className="flex items-center justify-between">
+          <BackButton />
+          <div className="hidden rounded-full border border-gray-200 bg-white px-3 py-1 text-sm font-medium text-gray-500 shadow-sm sm:block">
+            Live analytics
+          </div>
+        </div>
 
-        <section className="rounded-xl bg-gray-950 p-6 text-white shadow-xl md:p-8">
-          <p className="text-sm font-semibold uppercase tracking-wider text-blue-200">HireTrack Analytics</p>
-          <h1 className="mt-2 text-3xl font-bold md:text-4xl">Production dashboard</h1>
-          <p className="mt-3 max-w-3xl text-gray-300">
-            Track application health, referral response quality, channel performance, and follow-up pressure using live data from your Django API.
-          </p>
+        <section className="overflow-hidden rounded-xl border border-gray-900 bg-gray-950 px-5 py-5 text-white shadow-lg md:px-6">
+          <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-blue-200">HireTrack Analytics</p>
+              <h1 className="mt-1 text-2xl font-bold md:text-3xl">Dashboard</h1>
+              <p className="mt-2 max-w-4xl text-sm leading-6 text-gray-300">
+                Application health, referral response quality, channels, companies, and follow-up pressure from live Django API data.
+              </p>
+            </div>
+            {data && (
+              <div className="grid grid-cols-3 gap-2 text-right">
+                <HeroMetric label="Jobs" value={data.job_analytics?.stats?.total || 0} />
+                <HeroMetric label="Referrals" value={data.referral_analytics?.stats?.total || 0} />
+                <HeroMetric label="Reply" value={`${data.referral_analytics?.stats?.response_rate || 0}%`} />
+              </div>
+            )}
+          </div>
         </section>
 
         {error && (
@@ -47,12 +65,28 @@ export default function Dashboard() {
         )}
 
         {data && (
-          <>
+          <div className="space-y-5">
+            <section>
+              <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500">This Week</p>
+              <div className="grid gap-3 md:grid-cols-2">
+                <StatsCard title="Total Applications" value={data.weekly?.applications || 0} helper="Last 7 days" icon={<Briefcase />} tone="blue" />
+                <StatsCard title="Total Referrals" value={data.weekly?.referrals || 0} helper="Last 7 days" icon={<Users />} tone="green" />
+              </div>
+            </section>
             <JobDashboard data={data.job_analytics} />
             <ReferralDashboard data={data.referral_analytics} />
-          </>
+          </div>
         )}
       </main>
+    </div>
+  );
+}
+
+function HeroMetric({ label, value }) {
+  return (
+    <div className="min-w-24 rounded-lg border border-white/10 bg-white/10 px-4 py-3">
+      <p className="text-xs text-gray-300">{label}</p>
+      <p className="text-xl font-bold text-white">{value}</p>
     </div>
   );
 }

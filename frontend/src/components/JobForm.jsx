@@ -11,6 +11,8 @@ const emptyJob = {
   salaryRange: "",
   jd: "",
   notes: "",
+  resume_file: null,
+  cover_letter_file: null,
 };
 
 export default function JobForm({ initialValues = emptyJob, submitLabel = "Save Job", onSubmit, onCancel }) {
@@ -71,6 +73,24 @@ export default function JobForm({ initialValues = emptyJob, submitLabel = "Save 
 
         <Field label="Notes" wide>
           <TextArea rows={3} placeholder="Interview notes, follow-up reminders..." value={form.notes} onChange={(value) => update("notes", value)} />
+        </Field>
+
+        <Field label="Resume Used">
+          <input
+            type="file"
+            className="form-input"
+            accept=".pdf,.doc,.docx,.txt"
+            onChange={(event) => update("resume_file", event.target.files?.[0] || null)}
+          />
+        </Field>
+
+        <Field label="Cover Letter Used">
+          <input
+            type="file"
+            className="form-input"
+            accept=".pdf,.doc,.docx,.txt"
+            onChange={(event) => update("cover_letter_file", event.target.files?.[0] || null)}
+          />
         </Field>
       </div>
 
