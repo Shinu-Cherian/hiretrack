@@ -40,39 +40,39 @@ export default function Sidebar({ isOpen, onClose, profile }) {
       {/* OVERLAY */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/40 z-40"
+          className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-40 transition-opacity"
           onClick={onClose}
         ></div>
       )}
 
       {/* SIDEBAR */}
       <div
-        className={`fixed top-0 right-0 h-full w-72 bg-white shadow-xl z-50 transform transition-transform duration-300 
+        className={`fixed top-0 right-0 h-full w-72 glass z-50 transform transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]
         ${isOpen ? "translate-x-0" : "translate-x-full"}`}
       >
-        <div className="p-5">
+        <div className="p-6">
 
           {/* PROFILE */}
 
           <div className="flex items-center gap-3 mb-6">
             <Avatar src={profilePic} username={username} />
             <div>
-              <h3 className="font-semibold">
+              <h3 className="font-bold text-gray-900">
                 {username}
               </h3>
               <p
-  onClick={() => {
-    navigate("/profile");
-    onClose();
-  }}
-  className="text-sm text-gray-500 cursor-pointer hover:underline"
->
-  View Profile
-</p>
+                onClick={() => {
+                  navigate("/profile");
+                  onClose();
+                }}
+                className="text-sm text-gray-500 font-light cursor-pointer hover:text-gray-900 hover:underline transition-colors"
+              >
+                View Profile
+              </p>
             </div>
           </div>
 
-          <hr className="mb-4" />
+          <div className="h-px bg-gray-200/50 my-6" />
 
           {/* MENU */}
           <div className="space-y-2">
@@ -83,9 +83,9 @@ export default function Sidebar({ isOpen, onClose, profile }) {
                 navigate("/starred");
                 onClose();
               }}
-              className="flex items-center gap-3 p-2 rounded-lg cursor-pointer hover:bg-gray-100 transition"
+              className="flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-white/60 hover:shadow-sm text-gray-600 hover:text-gray-900 transition-all font-medium"
             >
-              <Star size={18} /> Starred
+              <Star size={18} strokeWidth={1.5} /> Starred
             </div>
 
             {/* 🔔 NOTIFICATIONS */}
@@ -94,12 +94,12 @@ export default function Sidebar({ isOpen, onClose, profile }) {
                 navigate("/notifications");
                 onClose();
               }}
-              className="relative flex items-center gap-3 p-2 rounded-lg cursor-pointer hover:bg-gray-100 transition"
+              className="relative flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-white/60 hover:shadow-sm text-gray-600 hover:text-gray-900 transition-all font-medium"
             >
-              <Bell size={18} /> Notifications
+              <Bell size={18} strokeWidth={1.5} /> Notifications
 
               {hasUnread && (
-                <span className="absolute right-2 top-2 w-2 h-2 bg-red-500 rounded-full"></span>
+                <span className="absolute right-3 top-3.5 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
               )}
             </div>
 
@@ -109,9 +109,9 @@ export default function Sidebar({ isOpen, onClose, profile }) {
                 navigate("/settings");
                 onClose();
               }}
-              className="flex items-center gap-3 p-2 rounded-lg cursor-pointer hover:bg-gray-100 transition"
+              className="flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-white/60 hover:shadow-sm text-gray-600 hover:text-gray-900 transition-all font-medium"
             >
-              <Settings size={18} /> Settings
+              <Settings size={18} strokeWidth={1.5} /> Settings
             </div>
 
             <div
@@ -119,21 +119,21 @@ export default function Sidebar({ isOpen, onClose, profile }) {
                 navigate("/career-vault");
                 onClose();
               }}
-              className="flex items-center gap-3 p-2 rounded-lg cursor-pointer hover:bg-gray-100 transition"
+              className="flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-white/60 hover:shadow-sm text-gray-600 hover:text-gray-900 transition-all font-medium"
             >
-              <Archive size={18} /> Career Vault
+              <Archive size={18} strokeWidth={1.5} /> Career Vault
             </div>
 
           </div>
 
-          <hr className="my-4" />
+          <div className="h-px bg-gray-200/50 my-6" />
 
           {/* LOGOUT */}
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 p-2 w-full rounded-lg hover:bg-red-100 text-red-600 transition"
+            className="flex items-center gap-3 p-3 w-full rounded-xl hover:bg-red-50 hover:shadow-sm text-red-500 font-medium transition-all"
           >
-            <LogOut size={18} /> Logout
+            <LogOut size={18} strokeWidth={1.5} /> Logout
           </button>
 
         </div>

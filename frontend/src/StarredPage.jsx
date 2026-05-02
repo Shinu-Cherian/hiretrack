@@ -27,7 +27,7 @@ export default function StarredPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 via-white to-gray-200">
+    <div className="min-h-screen bg-gray-50 bg-dot-pattern font-sans">
       <Header />
 
       <main className="mx-auto max-w-5xl p-6 animate-fade-in-up">
@@ -41,7 +41,7 @@ export default function StarredPage() {
         </div>
 
         {loading ? (
-          <Card className="p-10 text-center text-gray-500">Loading starred items...</Card>
+          <div className="saas-card p-10 text-center text-gray-500">Loading starred items...</div>
         ) : (
           <div className="space-y-8">
             <StarredSection
@@ -90,13 +90,13 @@ function StarredSection({ title, empty, items, renderItem }) {
   return (
     <section>
       <h2 className="mb-3 text-xl font-semibold text-gray-950">{title}</h2>
-      <Card className="overflow-hidden">
+      <div className="saas-card overflow-hidden">
         {items.length === 0 ? (
           <div className="p-8 text-center text-gray-400">{empty}</div>
         ) : (
           items.map(renderItem)
         )}
-      </Card>
+      </div>
     </section>
   );
 }

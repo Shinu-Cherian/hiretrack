@@ -56,46 +56,47 @@ export default function Header() {
   return (
     <>
       {/* HEADER */}
-      <header className="sticky top-0 z-50 glass">
-        <div className="flex justify-between items-center p-4">
+      <header className="sticky top-0 z-40 glass border-b border-gray-200/50 shadow-sm backdrop-blur-xl bg-white/70">
+        <div className="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
 
           {/* LEFT */}
-          <Link to="/" className="flex items-center gap-2 font-bold text-xl">
-            <Briefcase /> HireTrack
+          <Link to="/" className="flex items-center gap-2 font-extrabold text-xl tracking-tight text-gray-900">
+            <Briefcase className="text-gray-900" size={24} /> Hire<span className="text-gray-500 font-light">Track</span>
           </Link>
 
           {/* RIGHT */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             {isLoggedIn ? (
               <>
-                <Avatar src={profilePic} username={username} size="sm" onClick={() => setSidebarOpen(true)} />
-                <button
-                  type="button"
-                  onClick={() => navigate("/notifications")}
-                  className="relative rounded-full bg-blue-50 p-2 text-blue-600 shadow-sm hover:bg-blue-100"
-                  aria-label="Open notifications"
-                >
-                  <Bell size={18} />
-                  {hasUnread && <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-red-500" />}
-                </button>
                 <button
                   type="button"
                   onClick={() => navigate("/streaks")}
-                  className="rounded-full bg-orange-50 p-2 text-orange-600 shadow-sm hover:bg-orange-100"
+                  className="rounded-full bg-orange-50 p-2 text-orange-500 shadow-sm hover:bg-orange-100 transition-colors"
                   aria-label="Open streaks"
                 >
-                  <Flame size={18} />
+                  <Flame size={18} strokeWidth={1.5} />
                 </button>
+                <button
+                  type="button"
+                  onClick={() => navigate("/notifications")}
+                  className="relative rounded-full bg-gray-50 p-2 text-gray-600 shadow-sm hover:bg-gray-100 transition-colors"
+                  aria-label="Open notifications"
+                >
+                  <Bell size={18} strokeWidth={1.5} />
+                  {hasUnread && <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-red-500 animate-pulse" />}
+                </button>
+                <div className="w-px h-6 bg-gray-200 mx-1"></div>
+                <Avatar src={profilePic} username={username} size="sm" onClick={() => setSidebarOpen(true)} className="cursor-pointer hover:ring-2 hover:ring-gray-200 transition-all" />
               </>
             ) : (
               <>
                 <Link to="/login">
-                  <button className="px-4 py-2 text-sm">Login</button>
+                  <button className="px-5 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">Sign In</button>
                 </Link>
 
                 <Link to="/signup">
-                  <button className="px-4 py-2 bg-black text-white rounded">
-                    Sign up
+                  <button className="px-5 py-2 bg-gray-900 text-white text-sm font-medium rounded-xl shadow-sm hover:bg-gray-800 hover:shadow transition-all hover:-translate-y-0.5">
+                    Start for free
                   </button>
                 </Link>
               </>

@@ -161,7 +161,7 @@ export default function EditProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 via-white to-gray-200">
+    <div className="min-h-screen bg-gray-50 bg-dot-pattern font-sans">
       <Header />
 
       <main className="max-w-6xl mx-auto p-6 animate-fade-in-up">
@@ -185,7 +185,7 @@ export default function EditProfilePage() {
         )}
 
         <form onSubmit={handleSave} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <section className="bg-white/85 rounded-2xl shadow p-6 h-fit">
+          <section className="saas-card p-6 h-fit">
             <div className="flex flex-col items-center text-center">
               {form.profile_pic && !removeProfilePic ? (
                 <img
@@ -286,7 +286,7 @@ export default function EditProfilePage() {
               <button
                 type="button"
                 onClick={() => addRow("educations", emptyEducation)}
-                className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-50 text-blue-700"
+                className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
               >
                 <Plus size={18} /> Add Education
               </button>
@@ -322,7 +322,7 @@ export default function EditProfilePage() {
               <button
                 type="button"
                 onClick={() => addRow("experiences", emptyExperience)}
-                className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-50 text-blue-700"
+                className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
               >
                 <Plus size={18} /> Add Experience
               </button>
@@ -332,7 +332,7 @@ export default function EditProfilePage() {
               <button
                 type="submit"
                 disabled={saving}
-                className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl shadow disabled:opacity-60"
+                className="inline-flex items-center gap-2 bg-gray-900 text-white px-6 py-3 rounded-xl shadow-sm hover:bg-gray-800 transition-colors disabled:opacity-60"
               >
                 <Save size={18} /> {saving ? "Saving..." : "Save Profile"}
               </button>
@@ -346,7 +346,7 @@ export default function EditProfilePage() {
 
 function Panel({ title, icon, children }) {
   return (
-    <div className="bg-white/85 rounded-2xl shadow p-6">
+    <div className="saas-card p-6">
       <h2 className="font-semibold text-lg mb-4 flex items-center gap-2">{icon}{title}</h2>
       {children}
     </div>
@@ -361,7 +361,7 @@ function Input({ label, value, onChange, type = "text" }) {
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="mt-1 w-full rounded-xl border p-3 outline-none focus:ring-2 focus:ring-blue-200"
+        className="form-input mt-1"
       />
     </label>
   );
@@ -376,7 +376,7 @@ function Textarea({ label, value, onChange, placeholder = "" }) {
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
         rows={4}
-        className="mt-1 w-full rounded-xl border p-3 outline-none focus:ring-2 focus:ring-blue-200"
+        className="form-input mt-1"
       />
     </label>
   );

@@ -230,23 +230,52 @@ def ats_analysis(resume_text, jd_text):
 
 
 def build_cover_letter(resume_text, jd_text):
+    import requests
+    
+    prompt = f"""
+You are an expert career coach and professional copywriter. 
+Your task is to write a highly tailored, professional, and compelling cover letter.
+
+JOB DESCRIPTION:
+{jd_text}
+
+CANDIDATE RESUME:
+{resume_text}
+
+INSTRUCTIONS:
+1. Extract the candidate's actual name, phone number, email, and links from the resume to use in the header/footer. If not found, use placeholders like [Your Name].
+2. Identify the target Job Title and Company from the Job Description.
+3. Write a professional cover letter directly connecting the candidate's specific past experience (from the resume) to the core requirements of the job description.
+4. Do NOT invent or hallucinate any experience, skills, or metrics that are not explicitly stated in the resume.
+5. Do NOT include any conversational filler like "Here is the cover letter:" or "Let me know if you need changes." Just output the raw cover letter text.
+6. Use a standard business letter format.
+"""
+    
+    try:
+        data = {
+            "messages": [{"role": "user", "content": prompt}],
+            "model": "openai"
+        }
+        res = requests.post("https://text.pollinations.ai/", json=data, timeout=30)
+        if res.status_code == 200:
+            content = res.text.strip()
+            if len(content) > 100:
+                return content
+    except Exception as e:
+        print(f"Error calling AI API: {e}")
+        pass
+
+    # Fallback to simple template if API fails
     analysis = ats_analysis(resume_text, jd_text)
     title = extract_title(jd_text)
     company = extract_company(jd_text)
     strengths = ", ".join((analysis["matched_skills"] or analysis["matched"])[:5] or ["relevant experience", "problem solving", "clear communication"])
-    priorities = ", ".join((analysis["missing_skills"] or analysis["missing"])[:4] or important_terms(jd_text, 4) or ["the role requirements"])
-    evidence = sentence_evidence(resume_text, analysis["matched"], 2)
-    evidence_text = " ".join(evidence) if evidence else (
-        "My resume shows hands-on experience delivering practical work, learning quickly, and applying structured problem solving."
-    )
-
+    
     return (
         "Dear Hiring Manager,\n\n"
         f"I am excited to apply for the {title} position at {company}. After reviewing the job description, "
         f"I see a strong connection between the role's needs and my background in {strengths}.\n\n"
-        f"{evidence_text}\n\n"
-        f"The role appears to place particular importance on {priorities}. I would approach those responsibilities with "
-        "a practical, detail-oriented mindset, clear communication, and a focus on producing reliable outcomes for the team.\n\n"
+        "My resume shows hands-on experience delivering practical work, learning quickly, and applying structured problem solving.\n\n"
         "I would welcome the opportunity to discuss how my experience can support your goals. Thank you for your time and consideration.\n\n"
         "Sincerely,\n"
         "Your Name"

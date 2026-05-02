@@ -50,13 +50,13 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 via-white to-gray-200">
+    <div className="min-h-screen bg-gray-50 bg-dot-pattern font-sans">
 
       <Header />
 
       <main className="max-w-6xl mx-auto p-6 animate-fade-in-up">
-        <section className="bg-white/85 rounded-2xl soft-shadow overflow-hidden">
-          <div className="h-32 bg-gradient-to-r from-blue-600 via-indigo-500 to-emerald-400" />
+        <section className="saas-card overflow-hidden">
+          <div className="h-32 bg-gray-100 border-b border-gray-200/50" />
 
           <div className="px-6 pb-6">
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-5 -mt-14">
@@ -72,7 +72,7 @@ export default function ProfilePage() {
               </div>
 
               <Link to="/profile/edit">
-                <button className="inline-flex items-center gap-2 bg-blue-600 text-white px-5 py-3 rounded-xl shadow">
+                <button className="inline-flex items-center gap-2 bg-gray-900 text-white px-5 py-3 rounded-xl shadow-sm hover:bg-gray-800 transition-colors">
                   <Pencil size={18} /> Edit Profile
                 </button>
               </Link>
@@ -81,7 +81,7 @@ export default function ProfilePage() {
         </section>
 
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-          <div className="bg-white/85 rounded-2xl shadow p-6">
+          <div className="saas-card p-6">
             <h2 className="font-semibold text-lg mb-4 flex items-center gap-2">
               <UserRound size={20} /> Basic Info
             </h2>
@@ -90,7 +90,7 @@ export default function ProfilePage() {
             <Info label="Gender" value={data.gender} />
           </div>
 
-          <div className="lg:col-span-2 bg-white/85 rounded-2xl shadow p-6">
+          <div className="lg:col-span-2 saas-card p-6">
             <h2 className="font-semibold text-lg mb-4 flex items-center gap-2">
               <Sparkles size={20} /> Skills
             </h2>
@@ -148,7 +148,7 @@ function Timeline({ title, icon, empty, children }) {
   const items = Array.isArray(children) ? children.filter(Boolean) : children;
 
   return (
-    <div className="bg-white/85 rounded-2xl shadow p-6">
+    <div className="saas-card p-6">
       <h2 className="font-semibold text-lg mb-4 flex items-center gap-2">{icon}{title}</h2>
       {items && items.length > 0 ? <div className="space-y-4">{items}</div> : <p className="text-gray-500">{empty}</p>}
     </div>
@@ -157,7 +157,7 @@ function Timeline({ title, icon, empty, children }) {
 
 function TimelineItem({ title, subtitle, meta, note }) {
   return (
-    <div className="border-l-4 border-blue-500 pl-4 py-1">
+    <div className="border-l-4 border-gray-900 pl-4 py-1">
       <h3 className="font-semibold">{title || "-"}</h3>
       <p className="text-gray-600">{subtitle || "-"}</p>
       <p className="text-sm text-gray-400">{meta}</p>

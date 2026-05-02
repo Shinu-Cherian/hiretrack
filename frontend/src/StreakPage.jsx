@@ -37,16 +37,16 @@ export default function StreakPage() {
   }, [data]);
 
   return (
-    <div className="min-h-screen bg-[#f5f7fb]">
+    <div className="min-h-screen bg-gray-50 bg-dot-pattern font-sans">
       <Header />
       <BadgePopup badge={popupBadge} onClose={() => setPopupBadge(null)} />
 
       <main className="mx-auto max-w-7xl space-y-6 p-6">
         <BackButton />
-        <section className="rounded-xl bg-gray-950 p-6 text-white shadow-lg">
-          <p className="text-sm font-semibold uppercase tracking-wider text-orange-200">HireTrack Streaks</p>
-          <h1 className="mt-1 text-3xl font-bold">Consistency dashboard</h1>
-          <p className="mt-2 text-gray-300">Track daily momentum for applications and referrals.</p>
+        <section className="saas-card bg-white p-6 shadow-sm border border-gray-200">
+          <p className="text-sm font-semibold uppercase tracking-wider text-orange-600">HireTrack Streaks</p>
+          <h1 className="mt-1 text-3xl font-bold text-gray-900">Consistency dashboard</h1>
+          <p className="mt-2 text-gray-500">Track daily momentum for applications and referrals.</p>
         </section>
 
         {!data ? (
@@ -95,7 +95,7 @@ export default function StreakPage() {
 function StreakSection({ title, label, count, heatmapTitle, heatmap, badges, onExplore }) {
   return (
     <section className="space-y-4">
-      <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+      <div className="saas-card p-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <p className="text-sm font-semibold uppercase tracking-wider text-orange-600">{title}</p>

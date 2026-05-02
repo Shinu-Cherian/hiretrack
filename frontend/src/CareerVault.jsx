@@ -17,7 +17,7 @@ export default function CareerVault() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#f5f7fb]">
+    <div className="min-h-screen bg-gray-50 bg-dot-pattern font-sans">
       <Header />
       <main className="mx-auto max-w-7xl p-6">
         <BackButton className="mb-5" />
@@ -26,7 +26,7 @@ export default function CareerVault() {
           <p className="mt-1 text-gray-500">Only applications with uploaded documents appear here.</p>
         </div>
 
-        <Card className="overflow-hidden">
+        <div className="saas-card overflow-hidden">
           <div className="hidden grid-cols-5 gap-4 border-b border-gray-100 p-4 text-sm font-semibold text-gray-500 lg:grid">
             <span className="col-span-2">Job</span>
             <span>Applied Date</span>
@@ -51,7 +51,7 @@ export default function CareerVault() {
               </div>
             ))
           )}
-        </Card>
+        </div>
       </main>
     </div>
   );

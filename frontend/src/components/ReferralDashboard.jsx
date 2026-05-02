@@ -30,8 +30,8 @@ export default function ReferralDashboard({ data }) {
   const insights = buildReferralInsights(stats);
 
   return (
-    <section className="rounded-xl border border-gray-200 bg-white/50 p-4 shadow-sm">
-      <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+    <section className="saas-card p-6">
+      <div className="mb-6 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wider text-emerald-600">Referral Analytics</p>
           <h2 className="text-xl font-bold text-gray-950">Outreach performance</h2>
@@ -109,7 +109,7 @@ function buildReferralInsights(stats) {
 
 function InsightPanel({ icon, title, insights }) {
   return (
-    <section className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm xl:col-span-12">
+    <section className="saas-card p-5 hover-3d xl:col-span-12">
       <h3 className="flex items-center gap-2 text-base font-semibold text-gray-950">{icon}{title}</h3>
       <div className="mt-3 grid gap-3 md:grid-cols-3">
         {insights.map((insight) => (

@@ -75,29 +75,38 @@ export default function ViewReferrals() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 via-white to-gray-200">
+    <div className="min-h-screen bg-gray-50 bg-dot-pattern font-sans">
       <Header />
 
-      <main className="mx-auto max-w-7xl p-6 animate-fade-in-up">
-        <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <div>
-            <BackButton className="mb-4" />
-            <h1 className="text-3xl font-bold text-gray-950">Referrals</h1>
-            <p className="text-gray-500">{referrals.length} referrals tracked for this account</p>
+      <main className="mx-auto max-w-7xl p-6 lg:p-8 animate-fade-in-up">
+        <BackButton className="mb-6" />
+        
+        {/* Hero Header */}
+        <div className="saas-card p-8 mb-8 flex flex-col md:flex-row md:items-center md:justify-between relative overflow-hidden">
+          <div className="absolute right-0 top-0 w-1/3 h-full bg-gradient-to-l from-gray-100/50 to-transparent pointer-events-none" />
+          
+          <div className="relative z-10 flex-1">
+            <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 mb-2">Referrals</h1>
+            <p className="text-lg text-gray-500 font-light max-w-xl">
+              You are currently tracking <strong className="font-semibold text-gray-900">{referrals.length}</strong> referrals. Build and manage your network here.
+            </p>
           </div>
+        </div>
 
-          <div className="relative w-full max-w-sm">
-            <Search className="absolute left-3 top-3.5 text-gray-400" size={18} />
+        {/* Search & Filters */}
+        <div className="mb-6 flex justify-end">
+          <div className="relative w-full max-w-md">
+            <Search className="absolute left-4 top-3.5 text-gray-400" size={18} />
             <input
-              placeholder="Search referrals..."
-              className="w-full rounded-lg border border-gray-200 bg-white/90 p-3 pl-10 shadow-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+              placeholder="Search by contact, company, or email..."
+              className="form-input pl-11 shadow-sm"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
             />
           </div>
         </div>
 
-        <Card className="overflow-hidden">
+        <div className="saas-card overflow-hidden">
           <div className="hidden grid-cols-8 gap-3 border-b border-gray-100 p-4 text-sm font-semibold text-gray-500 lg:grid">
             <span className="col-span-2">Contact</span>
             <span>Company</span>
@@ -158,7 +167,7 @@ export default function ViewReferrals() {
               </HighlightableItem>
             ))
           )}
-        </Card>
+        </div>
       </main>
 
       {editing && (

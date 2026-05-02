@@ -22,57 +22,85 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#f5f7fb]">
+    <div className="min-h-screen bg-gray-50 bg-dot-pattern">
       <Header />
 
-      <main className="w-full space-y-5 px-4 py-5 animate-fade-in-up sm:px-6 lg:px-8 2xl:px-10">
+      <main className="mx-auto w-full max-w-7xl space-y-6 px-6 py-8 animate-fade-in-up">
         <div className="flex items-center justify-between">
           <BackButton />
-          <div className="hidden rounded-full border border-gray-200 bg-white px-3 py-1 text-sm font-medium text-gray-500 shadow-sm sm:block">
+          <div className="hidden rounded-full border border-gray-200 bg-white px-4 py-1.5 text-sm font-medium text-gray-600 shadow-sm sm:block">
+            <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-2 animate-pulse"></span>
             Live analytics
           </div>
         </div>
 
-        <section className="overflow-hidden rounded-xl border border-gray-900 bg-gray-950 px-5 py-5 text-white shadow-lg md:px-6">
-          <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-blue-200">HireTrack Analytics</p>
-              <h1 className="mt-1 text-2xl font-bold md:text-3xl">Dashboard</h1>
-              <p className="mt-2 max-w-4xl text-sm leading-6 text-gray-300">
-                Application health, referral response quality, channels, companies, and follow-up pressure from live Django API data.
+        {/* Hero Section */}
+        <section className="relative overflow-hidden saas-card">
+          <div className="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-gray-100 to-transparent pointer-events-none" />
+          
+          <div className="grid lg:grid-cols-2 gap-8 items-center p-8 md:p-12">
+            <div className="z-10">
+              <p className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">HireTrack Analytics</p>
+              <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight">Your Dashboard</h1>
+              <p className="mt-4 text-lg font-light text-gray-500 max-w-xl">
+                Monitor your application pipeline, referral response rates, and daily follow-up pressure in one unified workspace.
               </p>
+
+              {data && (
+                <div className="mt-8 flex flex-wrap gap-4">
+                  <HeroMetric label="Jobs Tracked" value={data.job_analytics?.stats?.total || 0} />
+                  <HeroMetric label="Referrals" value={data.referral_analytics?.stats?.total || 0} />
+                  <HeroMetric label="Reply Rate" value={`${data.referral_analytics?.stats?.response_rate || 0}%`} highlight />
+                </div>
+              )}
             </div>
-            {data && (
-              <div className="grid grid-cols-3 gap-2 text-right">
-                <HeroMetric label="Jobs" value={data.job_analytics?.stats?.total || 0} />
-                <HeroMetric label="Referrals" value={data.referral_analytics?.stats?.total || 0} />
-                <HeroMetric label="Reply" value={`${data.referral_analytics?.stats?.response_rate || 0}%`} />
-              </div>
-            )}
+
+            {/* 3D Illustration Side */}
+            <div className="hidden lg:flex justify-end items-center relative perspective-1000">
+               <img 
+                 src="/dashboard_illustration.png" 
+                 alt="Analytics 3D" 
+                 className="w-full max-w-[350px] object-contain drop-shadow-xl animate-fade-in-up delay-200"
+               />
+            </div>
           </div>
         </section>
 
         {error && (
-          <div className="rounded-xl border border-red-200 bg-red-50 p-5 text-red-700">
+          <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-red-700 font-medium">
             {error}
           </div>
         )}
 
         {!data && !error && (
-          <div className="rounded-xl border border-gray-200 bg-white/90 p-10 text-center text-gray-500 shadow-sm">
-            Loading analytics...
+          <div className="saas-card p-12 text-center text-gray-500 flex flex-col items-center gap-4">
+            <div className="w-8 h-8 border-4 border-gray-200 border-t-gray-900 rounded-full animate-spin"></div>
+            <p>Aggregating analytics data...</p>
           </div>
         )}
 
         {data && (
-          <div className="space-y-5">
+          <div className="space-y-8 animate-fade-in-up delay-100">
             <section>
-              <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500">This Week</p>
-              <div className="grid gap-3 md:grid-cols-2">
-                <StatsCard title="Total Applications" value={data.weekly?.applications || 0} helper="Last 7 days" icon={<Briefcase />} tone="blue" />
-                <StatsCard title="Total Referrals" value={data.weekly?.referrals || 0} helper="Last 7 days" icon={<Users />} tone="green" />
+              <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-500">Activity This Week</p>
+              <div className="grid gap-4 md:grid-cols-2">
+                <StatsCard 
+                  title="Total Applications" 
+                  value={data.weekly?.applications || 0} 
+                  helper="Last 7 days" 
+                  icon={<Briefcase />} 
+                  tone="blue" 
+                />
+                <StatsCard 
+                  title="Total Referrals" 
+                  value={data.weekly?.referrals || 0} 
+                  helper="Last 7 days" 
+                  icon={<Users />} 
+                  tone="green" 
+                />
               </div>
             </section>
+            
             <JobDashboard data={data.job_analytics} />
             <ReferralDashboard data={data.referral_analytics} />
           </div>
@@ -82,11 +110,11 @@ export default function Dashboard() {
   );
 }
 
-function HeroMetric({ label, value }) {
+function HeroMetric({ label, value, highlight = false }) {
   return (
-    <div className="min-w-24 rounded-lg border border-white/10 bg-white/10 px-4 py-3">
-      <p className="text-xs text-gray-300">{label}</p>
-      <p className="text-xl font-bold text-white">{value}</p>
+    <div className={`hover-3d min-w-32 rounded-xl border px-5 py-4 ${highlight ? 'bg-gray-900 border-gray-900 text-white shadow-lg' : 'bg-gray-50 border-gray-200 shadow-sm'}`}>
+      <p className={`text-xs font-medium uppercase tracking-wider ${highlight ? 'text-gray-400' : 'text-gray-500'}`}>{label}</p>
+      <p className={`mt-1 text-3xl font-bold ${highlight ? 'text-white' : 'text-gray-900'}`}>{value}</p>
     </div>
   );
 }

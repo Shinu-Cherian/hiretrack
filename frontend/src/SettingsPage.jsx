@@ -46,7 +46,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 via-white to-gray-200">
+    <div className="min-h-screen bg-gray-50 bg-dot-pattern font-sans">
       <Header />
 
       <main className="max-w-5xl mx-auto p-6 animate-fade-in-up">
@@ -56,7 +56,7 @@ export default function SettingsPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <section className="lg:col-span-1 bg-white/85 rounded-2xl shadow p-6">
+          <section className="lg:col-span-1 saas-card p-6">
             <div className="w-12 h-12 rounded-2xl bg-gray-900 text-white flex items-center justify-center mb-4">
               <ShieldCheck />
             </div>
@@ -82,7 +82,7 @@ export default function SettingsPage() {
             </div>
           </section>
 
-          <section className="lg:col-span-2 bg-white/85 rounded-2xl shadow p-6">
+          <section className="lg:col-span-2 saas-card p-6">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-11 h-11 rounded-2xl bg-blue-50 text-blue-700 flex items-center justify-center">
                 <KeyRound />
@@ -115,7 +115,7 @@ export default function SettingsPage() {
 
               <button
                 disabled={saving}
-                className="mt-2 inline-flex w-fit items-center gap-2 bg-blue-600 text-white px-5 py-3 rounded-xl shadow disabled:opacity-60"
+                className="mt-2 inline-flex w-fit items-center gap-2 bg-gray-900 text-white px-5 py-3 rounded-xl shadow-sm hover:bg-gray-800 transition-colors disabled:opacity-60"
               >
                 <Save size={18} /> {saving ? "Saving..." : "Update Password"}
               </button>
@@ -135,7 +135,7 @@ function PasswordInput({ label, value, onChange }) {
         type="password"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="mt-1 w-full rounded-xl border p-3 outline-none focus:ring-2 focus:ring-blue-200"
+        className="form-input mt-1"
       />
     </label>
   );

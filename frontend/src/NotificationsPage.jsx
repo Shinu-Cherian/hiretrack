@@ -28,7 +28,7 @@ export default function NotificationsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 via-white to-gray-200">
+    <div className="min-h-screen bg-gray-50 bg-dot-pattern font-sans">
       <Header />
 
       <main className="mx-auto max-w-4xl p-6 animate-fade-in-up">
@@ -41,7 +41,7 @@ export default function NotificationsPage() {
           <p className="mt-1 text-gray-500">Click a reminder to jump to the matching job or referral.</p>
         </div>
 
-        <Card className="overflow-hidden">
+        <div className="saas-card overflow-hidden">
           {data.length === 0 ? (
             <div className="p-10 text-center text-gray-400">No notifications</div>
           ) : (
@@ -62,7 +62,7 @@ export default function NotificationsPage() {
               </button>
             ))
           )}
-        </Card>
+        </div>
       </main>
     </div>
   );
