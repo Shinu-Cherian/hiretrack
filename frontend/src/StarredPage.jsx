@@ -31,7 +31,7 @@ export default function StarredPage() {
       <Header />
 
       <main className="mx-auto max-w-5xl p-6 animate-fade-in-up">
-        <BackButton className="mb-5" />
+        <BackButton className="mb-5" isMenu={true} />
 
         <div className="mb-6">
           <h1 className="flex items-center gap-3 text-3xl font-bold text-gray-950">

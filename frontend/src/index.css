@@ -34,6 +34,13 @@
   --primary: #000000;
 }
 
+.dark {
+  --background: #0f172a;
+  --foreground: #f8fafc;
+  --muted: #94a3b8;
+  --primary: #ffffff;
+}
+
 /* APPLY COLORS */
 .bg-background {
   background-color: var(--background);
@@ -183,4 +190,72 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* GLOBAL DARK MODE OVERRIDES */
+html.dark body {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+.dark .bg-white { background-color: #1e293b !important; }
+.dark .bg-white\/70 { background-color: rgba(30,41,59,0.7) !important; }
+.dark .bg-white\/80 { background-color: rgba(30,41,59,0.8) !important; }
+.dark .bg-white\/60 { background-color: rgba(30,41,59,0.6) !important; }
+.dark .bg-gray-50 { background-color: #0f172a !important; }
+.dark .bg-gray-100 { background-color: #1e293b !important; }
+.dark .bg-gray-900 { background-color: #38bdf8 !important; color: #0f172a !important; }
+.dark .bg-gray-900\/40 { background-color: rgba(15,23,42,0.6) !important; }
+.dark .text-gray-900 { color: #f8fafc !important; }
+.dark .text-gray-950 { color: #ffffff !important; }
+.dark .text-black { color: #ffffff !important; }
+.dark .text-gray-800 { color: #f1f5f9 !important; }
+.dark .text-gray-700 { color: #e2e8f0 !important; }
+.dark .text-gray-600 { color: #cbd5e1 !important; }
+.dark .text-gray-500 { color: #94a3b8 !important; }
+.dark .text-gray-400 { color: #64748b !important; }
+.dark .border-gray-200, .dark .border-gray-100, .dark .border { border-color: #334155 !important; }
+.dark .border-gray-300 { border-color: #475569 !important; }
+.dark .border-t-gray-900 { border-top-color: #38bdf8 !important; }
+
+/* Gradients fallback */
+.dark .from-gray-100 { --tw-gradient-from: #1e293b !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(30, 41, 59, 0)) !important; }
+.dark .from-gray-100\/50 { --tw-gradient-from: rgba(30, 41, 59, 0.5) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(30, 41, 59, 0)) !important; }
+.dark .from-white\/40 { --tw-gradient-from: rgba(15, 23, 42, 0.4) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(15, 23, 42, 0)) !important; }
+
+/* Custom components overrides */
+.dark .saas-card { 
+  background: rgba(30, 41, 59, 0.8) !important; 
+  border-color: rgba(51, 65, 85, 0.5) !important; 
+}
+.dark .form-input {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+.dark .form-input:focus {
+  background: #1e293b !important;
+  border-color: #38bdf8 !important;
+}
+.dark .bg-dot-pattern {
+  background-image: radial-gradient(#334155 1px, transparent 1px) !important;
+}
+.dark .bg-grid-pattern {
+  background-image: 
+    linear-gradient(to right, #334155 1px, transparent 1px),
+    linear-gradient(to bottom, #334155 1px, transparent 1px) !important;
+}
+.dark .text-gradient-modern {
+  background: linear-gradient(135deg, #f8fafc 0%, #94a3b8 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+.dark .glass {
+  background: rgba(30, 41, 59, 0.7) !important;
+  border-color: rgba(51, 65, 85, 0.5) !important;
+}
+.dark .isometric-card, .dark .isometric-card-layer-1, .dark .isometric-card-layer-2 {
+  background: rgba(30, 41, 59, 0.95) !important;
+  border-color: rgba(51, 65, 85, 0.8) !important;
 }

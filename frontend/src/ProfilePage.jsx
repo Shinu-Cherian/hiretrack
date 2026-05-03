@@ -4,6 +4,7 @@ import { BriefcaseBusiness, GraduationCap, Mail, Pencil, Phone, Sparkles, UserRo
 import Header from "./Header";
 import { API_BASE, apiUrl } from "./api";
 import Avatar from "./components/Avatar";
+import BackButton from "./components/BackButton";
 
 export default function ProfilePage() {
 
@@ -55,6 +56,7 @@ export default function ProfilePage() {
       <Header />
 
       <main className="max-w-6xl mx-auto p-6 animate-fade-in-up">
+        <BackButton className="mb-5" isMenu={true} />
         <section className="saas-card overflow-hidden">
           <div className="h-32 bg-gray-100 border-b border-gray-200/50" />
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Bell, Briefcase, Handshake } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Header from "./Header";
 import { apiUrl } from "./api";
 import BackButton from "./components/BackButton";
@@ -9,6 +9,8 @@ import Card from "./components/Card";
 export default function NotificationsPage() {
   const [data, setData] = useState([]);
   const navigate = useNavigate();
+  const location = useLocation();
+  const fromSidebar = location.state?.fromSidebar || false;
 
   useEffect(() => {
     fetch(apiUrl("/api/notifications/"), { credentials: "include" })
@@ -32,7 +34,7 @@ export default function NotificationsPage() {
       <Header />
 
       <main className="mx-auto max-w-4xl p-6 animate-fade-in-up">
-        <BackButton className="mb-5" />
+        <BackButton className="mb-5" isMenu={fromSidebar} />
 
         <div className="mb-6">
           <h1 className="flex items-center gap-3 text-3xl font-bold text-gray-950">

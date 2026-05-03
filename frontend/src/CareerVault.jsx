@@ -20,7 +20,7 @@ export default function CareerVault() {
     <div className="min-h-screen bg-gray-50 bg-dot-pattern font-sans">
       <Header />
       <main className="mx-auto max-w-7xl p-6">
-        <BackButton className="mb-5" />
+        <BackButton className="mb-5" isMenu={true} />
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-950">Career Vault</h1>
           <p className="mt-1 text-gray-500">Only applications with uploaded documents appear here.</p>

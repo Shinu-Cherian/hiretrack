@@ -31,7 +31,7 @@ export default function ResumeAnalyzer() {
   };
 
   return (
-    <section className="rounded-2xl border border-gray-200 bg-white/90 p-6 shadow-md">
+    <section className="saas-card p-6">
       <div className="mb-5 flex items-center gap-3">
         <div className="rounded-xl bg-blue-50 p-3 text-blue-700"><FileSearch size={22} /></div>
         <div>

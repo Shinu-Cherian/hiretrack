@@ -45,8 +45,15 @@ export default function Header() {
 
   useEffect(() => {
     const refresh = () => setReadVersion((value) => value + 1);
+    const openSidebar = () => setSidebarOpen(true);
+    
     window.addEventListener("notifications-read", refresh);
-    return () => window.removeEventListener("notifications-read", refresh);
+    window.addEventListener("open-sidebar", openSidebar);
+    
+    return () => {
+      window.removeEventListener("notifications-read", refresh);
+      window.removeEventListener("open-sidebar", openSidebar);
+    };
   }, []);
 
   const profilePic = profile?.profile_pic || localStorage.getItem("profile_pic");
@@ -57,7 +64,7 @@ export default function Header() {
     <>
       {/* HEADER */}
       <header className="sticky top-0 z-40 glass border-b border-gray-200/50 shadow-sm backdrop-blur-xl bg-white/70">
-        <div className="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
+        <div className="flex justify-between items-center px-6 py-4 max-w-[1600px] mx-auto">
 
           {/* LEFT */}
           <Link to="/" className="flex items-center gap-2 font-extrabold text-xl tracking-tight text-gray-900">

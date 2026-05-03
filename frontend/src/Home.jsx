@@ -37,34 +37,34 @@ const features = [
 const modalContent = {
   about: {
     title: "About Us",
-    body: "HireTrack was built to solve a simple problem: the modern job hunt is messy. Spreadsheets get outdated, and tracking referrals across different networks is a nightmare. Our mission is to provide serious job seekers with a unified, professional workspace. With HireTrack, you can manage your entire application pipeline, track crucial referrals, and leverage AI to perfectly tailor your cover letters to job descriptions. We're here to help you land your next role with precision and confidence."
+    body: "At HireTrack, our mission is to empower job seekers by transforming the chaotic application process into a streamlined, unified workspace. We built this platform for serious professionals who need more than just a spreadsheet. We help you manage your entire pipeline, track crucial referrals, and leverage intelligent AI tools to craft the perfect cover letter. Trusted by thousands of candidates globally, we are your definitive career management partner."
   },
   faq: {
     title: "Frequently Asked Questions",
     body: (
       <div className="space-y-4">
         <div>
+          <h4 className="font-semibold text-gray-900">How does the AI Cover Letter Generator work?</h4>
+          <p className="text-gray-600 mt-1">Our intelligent AI engine reads your specific resume and the target job description, bridging the gap between your real past experiences and the core requirements of the role.</p>
+        </div>
+        <div>
           <h4 className="font-semibold text-gray-900">Is HireTrack completely free?</h4>
-          <p className="text-gray-600 mt-1">Yes, the core tracking features and AI generations are currently free for all registered users.</p>
+          <p className="text-gray-600 mt-1">Yes, the core tracking features and AI generation tools are currently free for all registered users.</p>
         </div>
         <div>
-          <h4 className="font-semibold text-gray-900">How does the ATS Resume Analyzer work?</h4>
-          <p className="text-gray-600 mt-1">We compare the text of your uploaded resume against the job description to identify missing keywords and skills, giving you a match score.</p>
-        </div>
-        <div>
-          <h4 className="font-semibold text-gray-900">How does the Cover Letter Generator work?</h4>
-          <p className="text-gray-600 mt-1">Unlike basic templates, our AI acts as a career coach. It reads your specific resume and connects your real past experiences to the core requirements listed in the job description.</p>
+          <h4 className="font-semibold text-gray-900">How secure is my data?</h4>
+          <p className="text-gray-600 mt-1">We take data privacy very seriously. We use enterprise-grade security and do not sell your personal data or application history to third-party data brokers.</p>
         </div>
       </div>
     )
   },
   privacy: {
     title: "Privacy Policy",
-    body: "Your privacy is our priority. HireTrack securely stores your application data, resume files, and job descriptions solely for the purpose of providing you with our tracking and analysis services. We do not sell your personal data, resume information, or application history to third-party data brokers or advertisers. All uploaded files are processed securely. By using HireTrack, you consent to this data collection for the strict purpose of enhancing your job search experience."
+    body: "Your privacy is our priority. Types of Data Collected: We collect your name, email address, uploaded resumes, and job tracking data when you use HireTrack. Purpose of Collection: This data is strictly used to process your application logs, generate AI cover letters, and provide the core functionality of our service. Third-Party Sharing: We do not sell your personal data. We may share anonymized usage metrics with trusted analytics providers (e.g., Google Analytics) or use secure LLM APIs (e.g., Pollinations AI) strictly for generating your requested documents. User Rights: You maintain full control over your data. You may request the deletion of your account and all associated data at any time. Data Security: All data is transmitted securely via SSL encryption."
   },
   terms: {
     title: "Terms of Use",
-    body: "By accessing and using HireTrack, you agree to use the platform solely for its intended purpose: managing your personal job search. You agree not to misuse the platform by attempting to upload malicious files or scrape data. The AI-generated content (like cover letters) is provided as a tool to assist you, but you remain solely responsible for reviewing and verifying the accuracy of any documents before submitting them to employers. We reserve the right to terminate accounts that violate these terms."
+    body: "Acceptance of Terms: By accessing HireTrack, you agree to these terms of use. Prohibited Activities: You agree not to misuse the platform by attempting to upload malicious files, scrape data, or use our AI generation endpoints for unauthorized bulk processing. Intellectual Property: All UI designs, text, logos, and features of HireTrack remain our exclusive property. Limitation of Liability: HireTrack provides tools to assist in your job search, but we cannot guarantee employment outcomes. The AI-generated content (like cover letters) is provided as a draft; you remain solely responsible for reviewing and verifying the accuracy of any documents before submitting them to employers. We reserve the right to terminate accounts that violate these terms."
   }
 };
 
@@ -82,10 +82,10 @@ export default function Home() {
       <Header />
 
       {/* HERO SECTION */}
-      <section className="relative min-h-screen flex items-center pt-20 pb-32 px-6 lg:px-8 bg-dot-pattern">
-        <div className="absolute inset-0 bg-gradient-to-b from-white/40 to-white/95 pointer-events-none" />
+      <section className="relative min-h-screen flex items-center pt-20 pb-32 px-6 lg:px-12 bg-dot-pattern">
+        <div className="absolute inset-0 bg-gradient-to-b from-white/40 to-white/95 dark:from-slate-900/60 dark:to-slate-900/95 pointer-events-none" />
         
-        <div className="relative max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-16 items-center">
+        <div className="relative max-w-[1600px] mx-auto w-full grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
           
           {/* Left Content */}
           <div className="text-center lg:text-left z-10">
@@ -136,17 +136,17 @@ export default function Home() {
 
           {/* Right 3D Visual - Restored and Enhanced */}
           <div className="relative w-full h-full min-h-[500px] flex items-center justify-center perspective-1000 animate-fade-in delay-300 hidden md:flex z-10">
-            <div className="absolute inset-0 bg-gradient-to-tr from-gray-100 to-transparent rounded-full opacity-50 blur-3xl pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-tr from-gray-100 dark:from-slate-800 to-transparent rounded-full opacity-50 blur-3xl pointer-events-none" />
             <Dashboard3DPreview />
           </div>
         </div>
       </section>
 
       {/* MODULES SECTION */}
-      <section className="relative py-32 px-6 lg:px-8 bg-gray-50 border-t border-gray-100 overflow-hidden">
+      <section className="relative py-32 px-6 lg:px-12 bg-gray-50 border-t border-gray-100 overflow-hidden">
         <div className="absolute top-0 right-0 w-1/2 h-full bg-grid-pattern opacity-30 pointer-events-none" />
         
-        <div className="relative max-w-7xl mx-auto w-full z-10">
+        <div className="relative max-w-[1600px] mx-auto w-full z-10">
           <div className="text-center mb-20">
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900">A suite of powerful tools.</h2>
             <p className="text-xl text-gray-500 mt-4 font-light max-w-2xl mx-auto">Everything you need for a successful job hunt, perfectly integrated.</p>
@@ -174,8 +174,8 @@ export default function Home() {
       </section>
 
       {/* FEATURES SECTION */}
-      <section className="py-32 px-6 lg:px-8 bg-white">
-        <div className="max-w-7xl mx-auto w-full">
+      <section className="py-32 px-6 lg:px-12 bg-white">
+        <div className="max-w-[1600px] mx-auto w-full">
           <div className="grid lg:grid-cols-2 gap-20 items-center">
             
             <div className="order-2 lg:order-1 relative perspective-1000">
@@ -242,7 +242,7 @@ export default function Home() {
       
       {/* FOOTER */}
       <footer className="border-t border-gray-200 bg-gray-50 pt-16 pb-8 text-gray-500">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="max-w-[1600px] mx-auto px-6 lg:px-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
             {/* Brand & Contact */}
             <div className="col-span-1 md:col-span-1">
@@ -258,12 +258,10 @@ export default function Home() {
 
             {/* Navigation */}
             <div>
-              <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Site Navigation</h4>
+              <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Company</h4>
               <ul className="space-y-3 text-sm">
-                <li><Link to="/" className="hover:text-gray-900 transition-colors">Home</Link></li>
                 <li><a href="#" onClick={(e) => openModal(e, 'about')} className="hover:text-gray-900 transition-colors">About Us</a></li>
                 <li><a href="#" onClick={(e) => openModal(e, 'faq')} className="hover:text-gray-900 transition-colors">FAQ</a></li>
-                <li><Link to="/dashboard" className="hover:text-gray-900 transition-colors">Dashboard</Link></li>
               </ul>
             </div>
 
@@ -340,7 +338,7 @@ export default function Home() {
 // Restored and Enhanced 3D Isometric Dashboard Component for Hero
 function Dashboard3DPreview() {
   return (
-    <div className="isometric-container w-full max-w-lg">
+    <div className="isometric-container w-full max-w-lg origin-center transition-transform duration-500">
       {/* Base Layer - Main Dashboard */}
       <div className="bg-white rounded-2xl border border-gray-200 p-6 isometric-card w-full h-[400px] flex flex-col shadow-xl">
         {/* Mock Header */}

@@ -91,7 +91,7 @@ export default function Sidebar({ isOpen, onClose, profile }) {
             {/* 🔔 NOTIFICATIONS */}
             <div
               onClick={() => {
-                navigate("/notifications");
+                navigate("/notifications", { state: { fromSidebar: true } });
                 onClose();
               }}
               className="relative flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-white/60 hover:shadow-sm text-gray-600 hover:text-gray-900 transition-all font-medium"

@@ -25,9 +25,9 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gray-50 bg-dot-pattern">
       <Header />
 
-      <main className="mx-auto w-full max-w-7xl space-y-6 px-6 py-8 animate-fade-in-up">
+      <main className="mx-auto w-full max-w-[1600px] space-y-6 px-6 py-8 animate-fade-in-up">
         <div className="flex items-center justify-between">
-          <BackButton />
+          <BackButton label="Back" />
           <div className="hidden rounded-full border border-gray-200 bg-white px-4 py-1.5 text-sm font-medium text-gray-600 shadow-sm sm:block">
             <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-2 animate-pulse"></span>
             Live analytics
@@ -37,7 +37,7 @@ export default function Dashboard() {
         {/* Hero Section */}
         <section className="relative overflow-hidden saas-card">
           <div className="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-gray-100 to-transparent pointer-events-none" />
-          
+
           <div className="grid lg:grid-cols-2 gap-8 items-center p-8 md:p-12">
             <div className="z-10">
               <p className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">HireTrack Analytics</p>
@@ -57,11 +57,11 @@ export default function Dashboard() {
 
             {/* 3D Illustration Side */}
             <div className="hidden lg:flex justify-end items-center relative perspective-1000">
-               <img 
-                 src="/dashboard_illustration.png" 
-                 alt="Analytics 3D" 
-                 className="w-full max-w-[350px] object-contain drop-shadow-xl animate-fade-in-up delay-200"
-               />
+              <img
+                src="/dashboard_illustration.png"
+                alt="Analytics 3D"
+                className="w-full max-w-[380px] object-contain drop-shadow-xl animate-fade-in-up delay-200"
+              />
             </div>
           </div>
         </section>
@@ -84,23 +84,23 @@ export default function Dashboard() {
             <section>
               <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-500">Activity This Week</p>
               <div className="grid gap-4 md:grid-cols-2">
-                <StatsCard 
-                  title="Total Applications" 
-                  value={data.weekly?.applications || 0} 
-                  helper="Last 7 days" 
-                  icon={<Briefcase />} 
-                  tone="blue" 
+                <StatsCard
+                  title="Total Applications"
+                  value={data.weekly?.applications || 0}
+                  helper="Last 7 days"
+                  icon={<Briefcase />}
+                  tone="blue"
                 />
-                <StatsCard 
-                  title="Total Referrals" 
-                  value={data.weekly?.referrals || 0} 
-                  helper="Last 7 days" 
-                  icon={<Users />} 
-                  tone="green" 
+                <StatsCard
+                  title="Total Referrals"
+                  value={data.weekly?.referrals || 0}
+                  helper="Last 7 days"
+                  icon={<Users />}
+                  tone="green"
                 />
               </div>
             </section>
-            
+
             <JobDashboard data={data.job_analytics} />
             <ReferralDashboard data={data.referral_analytics} />
           </div>
