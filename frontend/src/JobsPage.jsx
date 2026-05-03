@@ -98,8 +98,8 @@ export default function JobsPage() {
             </p>
           </div>
           
-          <div className="hidden md:block relative w-48 h-32 flex-shrink-0">
-             <img src="/jobs_illustration.png" alt="Jobs Pipeline" className="absolute -top-10 -right-4 w-64 object-contain drop-shadow-xl opacity-90 animate-fade-in delay-200" />
+          <div className="hidden md:block relative w-64 h-32 flex-shrink-0 perspective-1000">
+             <Jobs3DHero />
           </div>
         </div>
 
@@ -117,7 +117,7 @@ export default function JobsPage() {
         </div>
 
         <div className="saas-card overflow-hidden">
-          <div className="hidden grid-cols-8 gap-3 border-b border-gray-100 p-4 text-sm font-semibold text-gray-500 lg:grid">
+          <div className="hidden grid-cols-8 gap-3 border-b border-gray-100 dark:border-gray-800 p-4 text-sm font-semibold text-gray-500 lg:grid">
             <span className="col-span-2">Role</span>
             <span>Company</span>
             <span>Platform</span>
@@ -136,7 +136,7 @@ export default function JobsPage() {
                 id={`job-${job.id}`}
                 highlighted={String(job.id) === String(activeHighlight)}
                 className={`grid grid-cols-1 gap-3 border-t p-4 first:border-t-0 lg:grid-cols-8 lg:items-center ${
-                  job.status === "selected" ? "border-emerald-300 bg-emerald-50/70 shadow-[0_0_0_4px_rgba(16,185,129,0.12)]" : ""
+                  job.status === "selected" ? "border-emerald-300 dark:border-emerald-500/50 bg-emerald-50/70 dark:bg-emerald-500/10 shadow-[0_0_0_4px_rgba(16,185,129,0.12)]" : ""
                 }`}
               >
                 <div className="lg:col-span-2">
@@ -201,6 +201,42 @@ export default function JobsPage() {
   );
 }
 
+function Jobs3DHero() {
+  return (
+    <div className="isometric-container w-full max-w-[200px] scale-75 lg:scale-90 origin-right">
+      <div className="bg-white rounded-xl border border-gray-100 p-3 isometric-card w-full h-[180px] flex flex-col shadow-lg relative">
+        <div className="flex items-center gap-2 mb-3 border-b border-gray-50 pb-2">
+           <div className="w-4 h-4 rounded-full bg-emerald-500"></div>
+           <div className="text-[10px] font-bold text-gray-800 uppercase tracking-tighter">Active Tracking</div>
+        </div>
+        
+        <div className="space-y-2 flex-1">
+          {[80, 60, 90, 40].map((w, i) => (
+            <div key={i} className="flex flex-col gap-1">
+              <div className="w-1/3 h-1 bg-gray-100 rounded-full"></div>
+              <div className="h-2 bg-blue-50 rounded-full overflow-hidden">
+                <div className="h-full bg-blue-500 rounded-full" style={{ width: `${w}%` }}></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="absolute -right-4 top-6 w-24 bg-gray-900 rounded-xl p-2 isometric-card-layer-1 shadow-xl">
+        <div className="flex items-center gap-2">
+          <div className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></div>
+          <div className="text-[8px] font-bold text-white tracking-widest uppercase">Pipeline</div>
+        </div>
+      </div>
+
+      <div className="absolute -left-4 bottom-6 w-20 bg-white border border-gray-100 rounded-xl p-2 isometric-card-layer-2 shadow-lg">
+         <div className="w-full h-1 bg-gray-100 rounded-full mb-1"></div>
+         <div className="w-2/3 h-1 bg-gray-50 rounded-full"></div>
+      </div>
+    </div>
+  );
+}
+
 function Meta({ icon, value }) {
   return (
     <span className="flex min-w-0 items-center gap-2 text-sm text-gray-600">
@@ -216,7 +252,7 @@ function IconButton({ children, onClick, danger = false, label }) {
       type="button"
       aria-label={label}
       onClick={onClick}
-      className={`rounded-lg p-2 transition hover:-translate-y-0.5 ${danger ? "text-red-500 hover:bg-red-50" : "text-gray-600 hover:bg-gray-100 hover:text-gray-950"}`}
+      className={`rounded-lg p-2 transition hover:-translate-y-0.5 ${danger ? "text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10" : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-800 hover:text-gray-950 dark:hover:text-white"}`}
     >
       {children}
     </button>

@@ -28,7 +28,7 @@ export default function Heatmap({ title, data = [], noun = "submissions" }) {
   }
 
   return (
-    <section className="saas-card p-6">
+    <section className="p-6">
       <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between mb-6">
         <div>
           <h3 className="text-lg font-bold text-gray-950">{title}</h3>

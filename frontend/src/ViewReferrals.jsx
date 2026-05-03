@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Building2, Calendar, Edit3, Link2, Mail, Search, Star, Trash2, UserRound } from "lucide-react";
+import { Building2, Calendar, Edit3, Link2, Mail, Search, Star, Trash2, UserRound, Users } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import Header from "./Header";
 import { apiUrl } from "./api";
@@ -91,6 +91,10 @@ export default function ViewReferrals() {
               You are currently tracking <strong className="font-semibold text-gray-900">{referrals.length}</strong> referrals. Build and manage your network here.
             </p>
           </div>
+
+          <div className="hidden md:block relative w-64 h-32 flex-shrink-0 perspective-1000">
+             <Referrals3DHero />
+          </div>
         </div>
 
         {/* Search & Filters */}
@@ -180,6 +184,38 @@ export default function ViewReferrals() {
   );
 }
 
+function Referrals3DHero() {
+  return (
+    <div className="isometric-container w-full max-w-[200px] scale-75 lg:scale-90 origin-right">
+      <div className="bg-white rounded-xl border border-gray-100 p-3 isometric-card w-full h-[180px] flex flex-col shadow-lg relative">
+        <div className="flex items-center gap-2 mb-4 border-b border-gray-50 pb-2">
+           <Users size={16} className="text-blue-600" />
+           <div className="text-[10px] font-bold text-gray-800 uppercase tracking-tighter">Network Map</div>
+        </div>
+        
+        <div className="flex-1 flex items-center justify-center relative">
+           <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+              <Users size={20} className="text-blue-600" />
+           </div>
+           
+           {/* Floating connection lines/nodes */}
+           <div className="absolute top-2 right-4 w-6 h-6 rounded-full bg-gray-50 border border-gray-100"></div>
+           <div className="absolute bottom-2 left-4 w-5 h-5 rounded-full bg-gray-50 border border-gray-100"></div>
+           <div className="absolute top-10 left-2 w-4 h-4 rounded-full bg-gray-50 border border-gray-100"></div>
+        </div>
+
+        <div className="mt-2 h-1.5 w-full bg-gray-50 rounded-full overflow-hidden">
+           <div className="h-full bg-blue-400 rounded-full w-2/3"></div>
+        </div>
+      </div>
+
+      <div className="absolute -right-4 top-10 w-24 bg-gray-900 rounded-xl p-2 isometric-card-layer-1 shadow-xl">
+        <div className="text-[8px] font-bold text-white tracking-widest uppercase">Growing</div>
+      </div>
+    </div>
+  );
+}
+
 function Meta({ icon, value }) {
   return (
     <span className="flex min-w-0 items-center gap-2 text-sm text-gray-600">
@@ -195,7 +231,7 @@ function IconButton({ children, onClick, danger = false, label }) {
       type="button"
       aria-label={label}
       onClick={onClick}
-      className={`rounded-lg p-2 transition hover:-translate-y-0.5 ${danger ? "text-red-500 hover:bg-red-50" : "text-gray-600 hover:bg-gray-100 hover:text-gray-950"}`}
+      className={`rounded-lg p-2 transition hover:-translate-y-0.5 ${danger ? "text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10" : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-800 hover:text-gray-950 dark:hover:text-white"}`}
     >
       {children}
     </button>

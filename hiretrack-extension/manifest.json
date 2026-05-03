@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "HireTrack Quick Entry",
+  "version": "1.0",
+  "description": "Quickly add job applications and referrals to your HireTrack dashboard from any website.",
+  "permissions": [
+    "storage"
+  ],
+  "action": {
+    "default_title": "HireTrack Quick Entry"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["content.css"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["logo.png"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

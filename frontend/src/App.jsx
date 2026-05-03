@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Home from "./Home";
 import Login from "./Login";  
 import Signup from "./Signup";
@@ -16,49 +16,50 @@ import CareerVault from "./CareerVault";
 import StreakPage from "./StreakPage";
 import ResumeAnalyzerPage from "./ResumeAnalyzerPage";
 import CoverLetterPage from "./CoverLetterPage";
+import ExtensionFormPage from "./ExtensionFormPage";
 
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
+    <Routes>
 
-        <Route path="/" element={<Home />} />
+      <Route path="/extension/:type" element={<ExtensionFormPage />} />
 
-        <Route path="/login" element={<Login />} />
+      <Route path="/" element={<Home />} />
 
-        <Route path="/signup" element={<Signup />} />
+      <Route path="/login" element={<Login />} />
 
-        <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/signup" element={<Signup />} />
 
-        <Route path="/jobs" element={<JobsPage />} />
+      <Route path="/dashboard" element={<Dashboard />} />
 
-        <Route path="/add-job" element={<AddJobPage />} />
+      <Route path="/jobs" element={<JobsPage />} />
 
-        <Route path="/referrals" element={<ViewReferrals />} />
+      <Route path="/add-job" element={<AddJobPage />} />
 
-        <Route path="/add-referral" element={<AddReferralPage />} />
+      <Route path="/referrals" element={<ViewReferrals />} />
 
-        <Route path="/starred" element={<StarredPage />} />
+      <Route path="/add-referral" element={<AddReferralPage />} />
 
-        <Route path="/notifications" element={<NotificationsPage />} />
+      <Route path="/starred" element={<StarredPage />} />
 
-        <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/notifications" element={<NotificationsPage />} />
 
-        <Route path="/profile/edit" element={<EditProfilePage />} />
+      <Route path="/profile" element={<ProfilePage />} />
 
-        <Route path="/settings" element={<SettingsPage />} />
+      <Route path="/profile/edit" element={<EditProfilePage />} />
 
-        <Route path="/career-vault" element={<CareerVault />} />
+      <Route path="/settings" element={<SettingsPage />} />
 
-        <Route path="/streaks" element={<StreakPage />} />
+      <Route path="/career-vault" element={<CareerVault />} />
 
-        <Route path="/resume-analyzer" element={<ResumeAnalyzerPage />} />
+      <Route path="/streaks" element={<StreakPage />} />
 
-        <Route path="/cover-letter" element={<CoverLetterPage />} />
+      <Route path="/resume-analyzer" element={<ResumeAnalyzerPage />} />
 
-      </Routes>
-    </BrowserRouter>
+      <Route path="/cover-letter" element={<CoverLetterPage />} />
+
+    </Routes>
   );
 }
 

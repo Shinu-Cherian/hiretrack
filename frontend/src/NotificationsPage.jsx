@@ -52,7 +52,7 @@ export default function NotificationsPage() {
                 key={`${notification.type}-${notification.id}`}
                 type="button"
                 onClick={() => openNotification(notification)}
-                className="flex w-full items-center gap-4 border-b border-gray-100 p-4 text-left transition hover:bg-blue-50/70 last:border-b-0"
+                className="flex w-full items-center gap-4 border-b border-gray-100 dark:border-gray-800 p-4 text-left transition hover:bg-gray-50 dark:hover:bg-slate-800/50 last:border-b-0"
               >
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-950 text-white">
                   {notification.type === "referral" ? <Handshake size={19} /> : <Briefcase size={19} />}
