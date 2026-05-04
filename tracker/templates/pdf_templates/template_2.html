@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        @page {
+            size: a4 portrait;
+            margin: 2.5cm;
+        }
+        body {
+            font-family: Times, serif;
+            color: #1a1a1a;
+            line-height: 1.6;
+            font-size: 12pt;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 1px solid #000;
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+        }
+        .name {
+            font-size: 26pt;
+            font-weight: normal;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+        .contact {
+            font-size: 10pt;
+            font-style: italic;
+        }
+        .date {
+            margin-bottom: 30px;
+        }
+        .content {
+            white-space: pre-wrap;
+            text-align: justify;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="name">{{ user_name|default:"[Your Name]" }}</div>
+        <div class="contact">
+            {{ user_email }} &bull; {{ user_phone }} &bull; {{ user_linkedin }}{% if user_github %} &bull; {{ user_github }}{% endif %}
+        </div>
+    </div>
+    <div class="date">{{ current_date }}</div>
+    <div class="content">
+        {{ cover_letter_text|safe }}
+    </div>
+</body>
+</html>

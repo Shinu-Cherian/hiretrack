@@ -40,6 +40,7 @@ urlpatterns = [
     path('api/generate-cover-letter/', views.generate_cover_letter_api),
     path('api/career-vault/', views.career_vault_api),
     path('api/job/document/<int:id>/<str:kind>/', views.job_document_download_api),
+    path('api/generate-cover-letter-pdf/', views.generate_cover_letter_pdf_api),
     path('api/streaks/', views.streak_api),
     
 ]

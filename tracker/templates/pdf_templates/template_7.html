@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        @page {
+            size: a4 portrait;
+            margin: 0;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 100%;
+        }
+        .header-bar {
+            background-color: #1e3a8a;
+            color: white;
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+        .name {
+            font-size: 30pt;
+            font-weight: bold;
+        }
+        .main {
+            padding: 0 40px 40px 40px;
+        }
+        .content {
+            font-size: 11pt;
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-bar">
+        <div class="name">{{ user_name|default:"[Your Name]" }}</div>
+        <div>
+            {{ user_email }} | {{ user_phone }}
+            {% if user_linkedin %} | {{ user_linkedin }}{% endif %}
+            {% if user_github %} | {{ user_github }}{% endif %}
+        </div>
+    </div>
+    <div class="main">
+        <div class="content">
+            {{ cover_letter_text|safe }}
+        </div>
+    </div>
+</body>
+</html>

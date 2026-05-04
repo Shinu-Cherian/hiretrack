@@ -12,10 +12,12 @@ from .models import Job, Referral
 from django.http import JsonResponse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.csrf import csrf_exempt
+from .utils_pdf import render_to_pdf
+
 
 from django.contrib.auth import authenticate, login, update_session_auth_hash
 from datetime import date, timedelta
-from django.http import FileResponse, Http404, JsonResponse
+from django.http import FileResponse, Http404, JsonResponse, HttpResponse
 import re
 from io import BytesIO
 from collections import Counter
@@ -229,57 +231,109 @@ def ats_analysis(resume_text, jd_text):
     }
 
 
-def build_cover_letter(resume_text, jd_text):
-    import requests
-    
-    prompt = f"""
-You are an expert career coach and professional copywriter. 
-Your task is to write a highly tailored, professional, and compelling cover letter.
+def build_cover_letter(resume_text, jd_text, profile=None):
+    import requests, json as _json
 
-JOB DESCRIPTION:
-{jd_text}
+    if profile is None:
+        profile = {}
+    candidate_name     = profile.get("name", "")
+    candidate_email    = profile.get("email", "")
+    candidate_phone    = profile.get("phone", "")
+    candidate_linkedin = profile.get("linkedin", "")
+    candidate_location = profile.get("location", "")
 
-CANDIDATE RESUME:
-{resume_text}
+    # --- Build header block (reference format) ---
+    # Line 1: Name
+    # Line 2: email | phone
+    # Line 3: linkedin | location
+    header_line2_parts = [p for p in [candidate_email, candidate_phone] if p]
+    header_line3_parts = [p for p in [candidate_linkedin, candidate_location] if p]
+    header_block = candidate_name
+    if header_line2_parts:
+        header_block += "\n" + " | ".join(header_line2_parts)
+    if header_line3_parts:
+        header_block += "\n" + " | ".join(header_line3_parts)
 
-INSTRUCTIONS:
-1. Extract the candidate's actual name, phone number, email, and links from the resume to use in the header/footer. If not found, use placeholders like [Your Name].
-2. Identify the target Job Title and Company from the Job Description.
-3. Write a professional cover letter directly connecting the candidate's specific past experience (from the resume) to the core requirements of the job description.
-4. Do NOT invent or hallucinate any experience, skills, or metrics that are not explicitly stated in the resume.
-5. Do NOT include any conversational filler like "Here is the cover letter:" or "Let me know if you need changes." Just output the raw cover letter text.
-6. Use a standard business letter format.
-"""
-    
+    # --- Sanitize resume_text: remove 'Envelope' prefix from email ---
+    import re as _re
+    clean_resume = _re.sub(r'Envelope\s*', '', resume_text, flags=_re.IGNORECASE)
+
+    system_msg = (
+        "You are a professional cover letter writer. "
+        "Output ONLY the cover letter text — no reasoning, no commentary, no JSON, no markdown. "
+        "Plain text only."
+    )
+
+    user_msg = (
+        "Write a complete, professional cover letter using this EXACT structure.\n\n"
+        "--- HEADER (copy exactly) ---\n"
+        + header_block + "\n\n"
+        "Hiring Manager\n"
+        "[Company Name from JD] \u2014 [Team or Division from JD]\n\n"
+        "Re: [Exact Job Title from JD] \u2014 [Company Name from JD]\n\n"
+        "Dear Hiring Manager,\n\n"
+        "[Para 1: State the role, your degree, and 3 matching technical skills from your resume. "
+        "End with one sentence on the domain intersection this role sits at.]\n\n"
+        "[Para 2: What specifically draws you to THIS company and role. "
+        "Reference something concrete from the JD (mission, framing, technical challenge). "
+        "Link it to a real architectural decision or discipline from one of your projects.]\n\n"
+        "[Para 3: Weave 2 real projects from the resume into natural flowing prose. "
+        "For each project: name it, state the technical problem, what you built, and the result. "
+        "Do NOT use bold headers or labels.]\n\n"
+        "[Para 4: Express genuine domain curiosity. "
+        "State that you understand the depth required for this role. "
+        "End with one sentence on your location and availability.]\n\n"
+        "Yours sincerely,\n"
+        + candidate_name + "\n\n"
+        "RULES:\n"
+        "- Candidate email is " + candidate_email + " \u2014 use EXACTLY this, ignore what appears in the resume.\n"
+        "- Plain text only. No bold, no asterisks, no markdown.\n"
+        "- No labels like 'CAR', 'Context', 'Action', 'Result', 'Recipient Block'.\n"
+        "- Use REAL project names from the resume.\n"
+        "- Use REAL percentages/numbers from the resume.\n"
+        "- Complete all 4 paragraphs. Under 350 words.\n\n"
+        "JD:\n" + jd_text[:1200] + "\n\n"
+        "RESUME:\n" + clean_resume[:2000]
+    )
+
     try:
         data = {
-            "messages": [{"role": "user", "content": prompt}],
+            "messages": [
+                {"role": "system", "content": system_msg},
+                {"role": "user",   "content": user_msg}
+            ],
             "model": "openai"
         }
-        res = requests.post("https://text.pollinations.ai/", json=data, timeout=30)
+        res = requests.post("https://text.pollinations.ai/", json=data, timeout=60)
         if res.status_code == 200:
-            content = res.text.strip()
-            if len(content) > 100:
-                return content
-    except Exception as e:
-        print(f"Error calling AI API: {e}")
-        pass
+            raw = res.text.strip()
 
-    # Fallback to simple template if API fails
-    analysis = ats_analysis(resume_text, jd_text)
-    title = extract_title(jd_text)
-    company = extract_company(jd_text)
-    strengths = ", ".join((analysis["matched_skills"] or analysis["matched"])[:5] or ["relevant experience", "problem solving", "clear communication"])
-    
-    return (
-        "Dear Hiring Manager,\n\n"
-        f"I am excited to apply for the {title} position at {company}. After reviewing the job description, "
-        f"I see a strong connection between the role's needs and my background in {strengths}.\n\n"
-        "My resume shows hands-on experience delivering practical work, learning quickly, and applying structured problem solving.\n\n"
-        "I would welcome the opportunity to discuss how my experience can support your goals. Thank you for your time and consideration.\n\n"
-        "Sincerely,\n"
-        "Your Name"
-    )
+            # --- Fix: API sometimes returns JSON with reasoning instead of plain text ---
+            # Try parsing as JSON and extracting the actual letter content
+            if raw.startswith("{") or raw.startswith("["):
+                try:
+                    parsed = _json.loads(raw)
+                    # OpenAI-compatible: choices[0].message.content
+                    if isinstance(parsed, dict):
+                        content = (
+                            parsed.get("choices", [{}])[0].get("message", {}).get("content")
+                            or parsed.get("content")
+                            or parsed.get("message")
+                            or parsed.get("text")
+                        )
+                        if content and len(content) > 100:
+                            return content.strip()
+                    # If we couldn't extract content from JSON, fall through
+                except _json.JSONDecodeError:
+                    pass
+            else:
+                # Plain text response — use directly
+                if len(raw) > 100:
+                    return raw
+    except Exception as e:
+        print(f"DEBUG: AI Call Failed: {e}")
+
+    return "ERROR: The AI took too long or encountered a network error. Please check your internet and try again."
 
 
 
@@ -1358,13 +1412,120 @@ def generate_cover_letter_api(request):
     uploaded_text, warnings = read_uploaded_text(request.FILES.get("resume_file"))
     resume_text = request.POST.get("resume", "") + "\n" + uploaded_text
     jd_text = request.POST.get("job_description", "")
-    if len(compact_text(resume_text)) < 200:
-        warnings.append("Very little resume text was detected. The draft may be generic unless you paste more resume detail.")
+    # Get user profile for frontend preview
+    user = api_user(request)
+    profile_data = {}
+    if user:
+        p, _ = Profile.objects.get_or_create(user=user)
+        profile_data = {
+            "name": user.username,
+            "email": user.email,
+            "phone": p.phone or "",
+            "address": "",
+            "linkedin": "",
+            "github": ""
+        }
+        # --- Name extraction from resume ---
+        name_from_resume = ""
+        for line in resume_text.strip().split("\n"):
+            line = line.strip()
+            if line and len(line) < 50 and "@" not in line and ".com" not in line and not any(c.isdigit() for c in line[:5]):
+                name_from_resume = line
+                break
+        if name_from_resume:
+            profile_data["name"] = name_from_resume.strip().title()
+
+        # --- Email: PREFER user.email from DB (already clean), only fallback to PDF if missing ---
+        if not profile_data["email"]:
+            e_match = re.search(r"\b[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}\b", resume_text)
+            if e_match:
+                profile_data["email"] = e_match.group(0).strip()
+
+        # --- Phone: from profile first, then PDF ---
+        if not profile_data["phone"]:
+            p_match = re.search(r"\+?\d[\d\s\-().]{7,15}\d", resume_text)
+            if p_match:
+                profile_data["phone"] = p_match.group(0).strip()
+
+        # --- LinkedIn and GitHub ---
+        l_match = re.search(r"linkedin\.com/in/[a-zA-Z0-9_-]+", resume_text, re.IGNORECASE)
+        g_match = re.search(r"github\.com/[a-zA-Z0-9_-]+", resume_text, re.IGNORECASE)
+        if l_match:
+            profile_data["linkedin"] = l_match.group(0)
+        if g_match:
+            profile_data["github"] = g_match.group(0)
+
+        # --- Location from resume (City, State, Country pattern) ---
+        loc_match = re.search(
+            r"[A-Z][a-z]+(?:[\s,]+[A-Z][a-z]+){1,3},?\s*India",
+            resume_text
+        )
+        if loc_match:
+            profile_data["location"] = loc_match.group(0).strip()
+
     return JsonResponse({
-        "cover_letter": build_cover_letter(resume_text, jd_text),
+        "cover_letter": build_cover_letter(resume_text, jd_text, profile=profile_data),
         "warnings": warnings,
         "resume_chars": len(compact_text(resume_text)),
+        "profile": profile_data
     })
+
+
+@csrf_exempt
+def generate_cover_letter_pdf_api(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required"}, status=405)
+
+    import json
+    try:
+        data = json.loads(request.body)
+    except:
+        data = request.POST
+
+    text = data.get("text", "")
+    template_id = data.get("template_id", "1")
+    
+    user = api_user(request)
+    user_name = "[Your Name]"
+    user_email = ""
+    user_phone = ""
+    user_linkedin = ""
+    user_github = ""
+
+    # Deep extraction from resume text if possible
+    linkedin_match = re.search(r"linkedin\.com/in/[a-zA-Z0-9_-]+", text + "\n" + (user.profile.resume.name if user and hasattr(user, 'profile') and user.profile.resume else ""), re.IGNORECASE)
+    github_match = re.search(r"github\.com/[a-zA-Z0-9_-]+", text, re.IGNORECASE)
+    
+    if user:
+        user_name = user.username
+        profile, _ = Profile.objects.get_or_create(user=user)
+        user_email = user.email
+        user_phone = profile.phone or ""
+        
+    if linkedin_match: user_linkedin = linkedin_match.group(0)
+    if github_match: user_github = github_match.group(0)
+
+    # Convert newlines to HTML breaks for xhtml2pdf
+    formatted_text = text.replace("\n", "<br />")
+
+    context = {
+        "cover_letter_text": formatted_text,
+        "user_name": user_name,
+        "user_email": user_email,
+        "user_phone": user_phone,
+        "user_linkedin": user_linkedin,
+        "user_github": user_github,
+        "current_date": date.today().strftime("%B %d, %Y"),
+    }
+
+    pdf = render_to_pdf(f"pdf_templates/template_{template_id}.html", context)
+    if pdf:
+        response = HttpResponse(pdf, content_type="application/pdf")
+        filename = f"Cover_Letter_Style_{template_id}.pdf"
+        response["Content-Disposition"] = f'attachment; filename="{filename}"'
+        return response
+    
+    return JsonResponse({"error": "PDF generation failed"}, status=500)
 
 
 def career_vault_api(request):

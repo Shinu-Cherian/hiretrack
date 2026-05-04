@@ -2,3 +2,4 @@ Django==5.2.13
 django-cors-headers==4.9.0
 pillow==12.2.0
 pypdf==6.10.2
+xhtml2pdf==0.2.16
