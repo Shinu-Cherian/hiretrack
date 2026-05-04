@@ -18,9 +18,9 @@ export default function BackButton({ label = "Back", className = "", isMenu = fa
     <button
       type="button"
       onClick={handleClick}
-      className={`inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:-translate-y-0.5 hover:bg-gray-50 hover:text-gray-950 ${className}`}
+      className={`inline-flex items-center gap-2 rounded-xl bg-[#FF6044] px-4 py-2 text-sm font-black text-[#121313] shadow-lg shadow-[#FF6044]/20 transition-all hover:-translate-y-0.5 hover:shadow-[#FF6044]/40 active:scale-95 ${className}`}
     >
-      <ArrowLeft size={16} />
+      <ArrowLeft size={18} strokeWidth={3} />
       {isMenu ? "Menu" : label}
     </button>
   );

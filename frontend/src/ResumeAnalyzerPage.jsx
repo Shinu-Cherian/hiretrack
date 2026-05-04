@@ -4,7 +4,7 @@ import ResumeAnalyzer from "./components/ResumeAnalyzer";
 
 export default function ResumeAnalyzerPage() {
   return (
-    <div className="min-h-screen bg-gray-50 bg-dot-pattern font-sans">
+    <div className="min-h-screen bg-[#121313] bg-dot-pattern font-sans text-white">
       <Header />
       <main className="mx-auto max-w-6xl p-6">
         <BackButton className="mb-5" />

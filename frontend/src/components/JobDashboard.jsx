@@ -35,10 +35,10 @@ export default function JobDashboard({ data }) {
     <section className="saas-card p-6">
       <div className="mb-6 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">Jobs Analytics</p>
-          <h2 className="text-xl font-bold text-gray-950">Application performance</h2>
+          <p className="text-xs font-bold uppercase tracking-wider text-[#FF6044]">Jobs Analytics</p>
+          <h2 className="text-xl font-extrabold text-white">Application performance</h2>
         </div>
-        <p className="text-sm text-gray-500">Pipeline, channels, and company concentration</p>
+        <p className="text-sm text-gray-400">Pipeline, channels, and company concentration</p>
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6">
@@ -54,11 +54,14 @@ export default function JobDashboard({ data }) {
         <ChartCard title="Application Timeline" subtitle="Last 30 days" className="xl:col-span-5">
           <ResponsiveContainer width="100%" height={230}>
             <LineChart data={timeline}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey="date" />
-              <YAxis allowDecimals={false} />
-              <Tooltip />
-              <Line type="monotone" dataKey="count" stroke="#2563eb" strokeWidth={3} dot={{ r: 3 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+              <XAxis dataKey="date" stroke="#6b7280" fontSize={10} tickLine={false} axisLine={false} />
+              <YAxis allowDecimals={false} stroke="#6b7280" fontSize={10} tickLine={false} axisLine={false} />
+              <Tooltip 
+                contentStyle={{ backgroundColor: '#121313', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                itemStyle={{ color: '#FF6044' }}
+              />
+              <Line type="monotone" dataKey="count" stroke="#FF6044" strokeWidth={3} dot={{ r: 4, fill: '#FF6044', strokeWidth: 2 }} activeDot={{ r: 6 }} />
             </LineChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -77,11 +80,13 @@ export default function JobDashboard({ data }) {
         <ChartCard title="Top Companies" subtitle="Most applications" className="xl:col-span-4">
           <ResponsiveContainer width="100%" height={230}>
             <BarChart data={companies}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey="name" />
-              <YAxis allowDecimals={false} />
-              <Tooltip />
-              <Bar dataKey="count" fill="#2563eb" radius={[8, 8, 0, 0]} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+              <XAxis dataKey="name" stroke="#6b7280" fontSize={10} tickLine={false} axisLine={false} />
+              <YAxis allowDecimals={false} stroke="#6b7280" fontSize={10} tickLine={false} axisLine={false} />
+              <Tooltip 
+                contentStyle={{ backgroundColor: '#121313', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+              />
+              <Bar dataKey="count" fill="#FF6044" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -89,11 +94,13 @@ export default function JobDashboard({ data }) {
         <ChartCard title="Application Platforms" subtitle="Source mix" className="xl:col-span-6">
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={platforms}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey="name" />
-              <YAxis allowDecimals={false} />
-              <Tooltip />
-              <Bar dataKey="count" fill="#7c3aed" radius={[8, 8, 0, 0]} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+              <XAxis dataKey="name" stroke="#6b7280" fontSize={10} tickLine={false} axisLine={false} />
+              <YAxis allowDecimals={false} stroke="#6b7280" fontSize={10} tickLine={false} axisLine={false} />
+              <Tooltip 
+                contentStyle={{ backgroundColor: '#121313', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+              />
+              <Bar dataKey="count" fill="#FF6044" radius={[4, 4, 0, 0]} opacity={0.8} />
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -124,11 +131,11 @@ function buildJobInsights(stats) {
 
 function InsightPanel({ icon, title, insights }) {
   return (
-    <section className="saas-card p-5 hover-3d xl:col-span-6">
-      <h3 className="flex items-center gap-2 text-base font-semibold text-gray-950">{icon}{title}</h3>
+    <section className="saas-card p-5 hover-3d xl:col-span-6 border-white/5 bg-[#121313]">
+      <h3 className="flex items-center gap-2 text-base font-extrabold text-[#FF6044]">{icon}{title}</h3>
       <div className="mt-3 grid gap-3 md:grid-cols-3">
         {insights.map((insight) => (
-          <p key={insight} className="rounded-lg bg-blue-50 p-3 text-sm leading-6 text-blue-900">{insight}</p>
+          <p key={insight} className="rounded-lg bg-white/5 p-3 text-sm leading-6 text-gray-300 border border-white/5">{insight}</p>
         ))}
       </div>
     </section>

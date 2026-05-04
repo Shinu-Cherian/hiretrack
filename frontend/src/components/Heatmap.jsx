@@ -31,14 +31,14 @@ export default function Heatmap({ title, data = [], noun = "submissions" }) {
     <section className="p-6">
       <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between mb-6">
         <div>
-          <h3 className="text-lg font-bold text-gray-950">{title}</h3>
-          <p className="text-sm text-gray-500 mt-1">
-            <span className="text-2xl font-bold text-gray-900">{total}</span> {noun} in the past one year
+          <h3 className="text-lg font-extrabold text-white">{title}</h3>
+          <p className="text-sm text-gray-400 mt-1">
+            <span className="text-2xl font-black text-[#FF6044]">{total}</span> {noun} in the past one year
           </p>
         </div>
-        <div className="flex gap-6 text-sm text-gray-500 bg-gray-50 px-4 py-2 rounded-xl border border-gray-100">
-          <span>Total active days: <strong className="text-gray-950">{activeDays}</strong></span>
-          <span>Max streak: <strong className="text-gray-950">{maxStreak}</strong></span>
+        <div className="flex gap-6 text-sm text-gray-400 bg-white/5 px-4 py-2 rounded-xl border border-white/5">
+          <span>Total active days: <strong className="text-white">{activeDays}</strong></span>
+          <span>Max streak: <strong className="text-white">{maxStreak}</strong></span>
         </div>
       </div>
 
@@ -101,8 +101,8 @@ function calculateMaxStreak(activeDays) {
 }
 
 function colorFor(count) {
-  if (count >= 5) return "bg-emerald-500";
-  if (count >= 3) return "bg-emerald-400";
-  if (count >= 1) return "bg-emerald-300";
-  return "bg-gray-100";
+  if (count >= 5) return "bg-[#FF6044]";
+  if (count >= 3) return "bg-[#FF6044]/70";
+  if (count >= 1) return "bg-[#FF6044]/40";
+  return "bg-white/5 border border-white/5";
 }

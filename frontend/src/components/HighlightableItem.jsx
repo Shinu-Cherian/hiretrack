@@ -8,10 +8,10 @@ const HighlightableItem = forwardRef(function HighlightableItem(
     <div
       ref={ref}
       id={id}
-      className={`transition-all duration-500 hover:bg-gray-50 dark:hover:bg-slate-800/50 ${
+      className={`transition-all duration-500 hover:bg-white/5 ${
         highlighted 
-          ? "border-blue-400 bg-blue-50/80 dark:bg-blue-900/30 dark:border-blue-500/50 shadow-[0_0_0_4px_rgba(59,130,246,0.12)]" 
-          : "border-gray-100 dark:border-gray-800"
+          ? "border-[#FF6044]/50 bg-[#FF6044]/10 shadow-[0_0_20px_rgba(255,96,68,0.1)]" 
+          : "border-white/5"
       } ${className}`}
     >
       {children}

@@ -47,17 +47,16 @@ export default function Sidebar({ isOpen, onClose, profile }) {
 
       {/* SIDEBAR */}
       <div
-        className={`fixed top-0 right-0 h-full w-72 glass z-50 transform transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]
+        className={`fixed top-0 right-0 h-full w-80 bg-[#121313] border-l border-white/5 z-50 transform transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[-10px_0_30px_rgba(0,0,0,0.5)]
         ${isOpen ? "translate-x-0" : "translate-x-full"}`}
       >
-        <div className="p-6">
+        <div className="p-8">
 
           {/* PROFILE */}
-
-          <div className="flex items-center gap-3 mb-6">
-            <Avatar src={profilePic} username={username} />
-            <div>
-              <h3 className="font-bold text-gray-900">
+          <div className="flex items-center gap-4 mb-8">
+            <Avatar src={profilePic} username={username} size="md" className="ring-2 ring-white/5" />
+            <div className="min-w-0">
+              <h3 className="font-black text-white truncate text-lg tracking-tight">
                 {username}
               </h3>
               <p
@@ -65,17 +64,17 @@ export default function Sidebar({ isOpen, onClose, profile }) {
                   navigate("/profile");
                   onClose();
                 }}
-                className="text-sm text-gray-500 font-light cursor-pointer hover:text-gray-900 hover:underline transition-colors"
+                className="text-xs text-[#FF6044] font-bold uppercase tracking-widest cursor-pointer hover:text-white transition-colors mt-0.5"
               >
-                View Profile
+                Profile Settings
               </p>
             </div>
           </div>
 
-          <div className="h-px bg-gray-200/50 my-6" />
+          <div className="h-px bg-white/5 my-8" />
 
           {/* MENU */}
-          <div className="space-y-2">
+          <div className="space-y-3">
 
             {/* ⭐ STARRED */}
             <div
@@ -83,9 +82,9 @@ export default function Sidebar({ isOpen, onClose, profile }) {
                 navigate("/starred");
                 onClose();
               }}
-              className="flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-white/60 hover:shadow-sm text-gray-600 hover:text-gray-900 transition-all font-medium"
+              className="group flex items-center gap-4 p-4 rounded-2xl cursor-pointer hover:bg-white/5 text-gray-400 hover:text-white transition-all font-bold"
             >
-              <Star size={18} strokeWidth={1.5} /> Starred
+              <Star size={20} className="group-hover:text-[#FF6044] transition-colors" /> Starred
             </div>
 
             {/* 🔔 NOTIFICATIONS */}
@@ -94,12 +93,12 @@ export default function Sidebar({ isOpen, onClose, profile }) {
                 navigate("/notifications", { state: { fromSidebar: true } });
                 onClose();
               }}
-              className="relative flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-white/60 hover:shadow-sm text-gray-600 hover:text-gray-900 transition-all font-medium"
+              className="group relative flex items-center gap-4 p-4 rounded-2xl cursor-pointer hover:bg-white/5 text-gray-400 hover:text-white transition-all font-bold"
             >
-              <Bell size={18} strokeWidth={1.5} /> Notifications
+              <Bell size={20} className="group-hover:text-[#FF6044] transition-colors" /> Notifications
 
               {hasUnread && (
-                <span className="absolute right-3 top-3.5 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 w-2 h-2 bg-[#FF6044] rounded-full animate-pulse shadow-[0_0_10px_#FF6044]"></span>
               )}
             </div>
 
@@ -109,31 +108,32 @@ export default function Sidebar({ isOpen, onClose, profile }) {
                 navigate("/settings");
                 onClose();
               }}
-              className="flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-white/60 hover:shadow-sm text-gray-600 hover:text-gray-900 transition-all font-medium"
+              className="group flex items-center gap-4 p-4 rounded-2xl cursor-pointer hover:bg-white/5 text-gray-400 hover:text-white transition-all font-bold"
             >
-              <Settings size={18} strokeWidth={1.5} /> Settings
+              <Settings size={20} className="group-hover:text-[#FF6044] transition-colors" /> Settings
             </div>
 
+            {/* 📦 VAULT */}
             <div
               onClick={() => {
                 navigate("/career-vault");
                 onClose();
               }}
-              className="flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-white/60 hover:shadow-sm text-gray-600 hover:text-gray-900 transition-all font-medium"
+              className="group flex items-center gap-4 p-4 rounded-2xl cursor-pointer hover:bg-white/5 text-gray-400 hover:text-white transition-all font-bold"
             >
-              <Archive size={18} strokeWidth={1.5} /> Career Vault
+              <Archive size={20} className="group-hover:text-[#FF6044] transition-colors" /> Career Vault
             </div>
 
           </div>
 
-          <div className="h-px bg-gray-200/50 my-6" />
+          <div className="h-px bg-white/5 my-8" />
 
           {/* LOGOUT */}
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 p-3 w-full rounded-xl hover:bg-red-50 hover:shadow-sm text-red-500 font-medium transition-all"
+            className="group flex items-center gap-4 p-4 w-full rounded-2xl hover:bg-red-500/10 text-red-500 font-bold transition-all"
           >
-            <LogOut size={18} strokeWidth={1.5} /> Logout
+            <LogOut size={20} className="group-hover:translate-x-1 transition-transform" /> Logout
           </button>
 
         </div>

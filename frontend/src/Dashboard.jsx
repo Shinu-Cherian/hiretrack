@@ -22,27 +22,27 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 bg-dot-pattern">
+    <div className="min-h-screen bg-[#121313] bg-dot-pattern text-white">
       <Header />
 
       <main className="mx-auto w-full max-w-[1600px] space-y-6 px-6 py-8 animate-fade-in-up">
         <div className="flex items-center justify-between">
           <BackButton label="Back" />
-          <div className="hidden rounded-full border border-gray-200 bg-white px-4 py-1.5 text-sm font-medium text-gray-600 shadow-sm sm:block">
+          <div className="hidden rounded-full border border-white/10 bg-transparent px-4 py-1.5 text-sm font-medium text-gray-400 shadow-sm sm:block">
             <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-2 animate-pulse"></span>
             Live analytics
           </div>
         </div>
 
         {/* Hero Section */}
-        <section className="relative overflow-hidden saas-card">
-          <div className="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-orange-50/20 to-transparent pointer-events-none" />
+        <section className="relative overflow-hidden rounded-2xl border border-white/10 bg-[#121313] p-1 shadow-2xl">
+          <div className="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-[#FF6044]/10 to-transparent pointer-events-none" />
 
           <div className="grid lg:grid-cols-2 gap-8 items-center p-6 md:p-8">
             <div className="z-10">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-orange-600 mb-2">HireTrack Intelligence</p>
-              <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Your Dashboard</h1>
-              <p className="mt-2 text-base font-light text-gray-500 max-w-lg leading-relaxed">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[#FF6044] mb-2 drop-shadow-[0_0_10px_rgba(255,96,68,0.5)]">HireTrack Intelligence</p>
+              <h1 className="text-3xl font-extrabold text-white tracking-tight">Your Dashboard</h1>
+              <p className="mt-2 text-base font-light text-gray-400 max-w-lg leading-relaxed">
                 A unified view of your application pipeline and networking momentum.
               </p>
 
@@ -63,14 +63,14 @@ export default function Dashboard() {
         </section>
 
         {error && (
-          <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-red-700 font-medium">
+          <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-6 text-red-400 font-medium">
             {error}
           </div>
         )}
 
         {!data && !error && (
-          <div className="saas-card p-12 text-center text-gray-500 flex flex-col items-center gap-4">
-            <div className="w-8 h-8 border-4 border-gray-200 border-t-gray-900 rounded-full animate-spin"></div>
+          <div className="rounded-2xl border border-white/5 bg-[#121313] p-12 text-center text-gray-400 flex flex-col items-center gap-4">
+            <div className="w-8 h-8 border-4 border-white/5 border-t-[#FF6044] rounded-full animate-spin"></div>
             <p>Aggregating analytics data...</p>
           </div>
         )}
@@ -78,7 +78,7 @@ export default function Dashboard() {
         {data && (
           <div className="space-y-8 animate-fade-in-up delay-100">
             <section>
-              <p className="mb-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">Recent Activity</p>
+              <p className="mb-4 text-[10px] font-bold uppercase tracking-widest text-[#FF6044]">Recent Activity</p>
               <div className="grid gap-4 md:grid-cols-2">
                 <StatsCard
                   title="Total Applications"
@@ -108,9 +108,9 @@ export default function Dashboard() {
 
 function HeroMetric({ label, value, highlight = false }) {
   return (
-    <div className={`hover-3d min-w-[120px] rounded-xl border px-4 py-3 transition-all ${highlight ? 'bg-gray-950 border-gray-900 text-white shadow-lg' : 'bg-white border-gray-100 shadow-sm'}`}>
-      <p className={`text-[10px] font-bold uppercase tracking-widest ${highlight ? 'text-gray-400' : 'text-gray-400'}`}>{label}</p>
-      <p className={`mt-0.5 text-2xl font-black ${highlight ? 'text-white' : 'text-gray-900'}`}>{value}</p>
+    <div className={`hover-3d min-w-[120px] rounded-xl border px-4 py-3 transition-all ${highlight ? 'bg-[#FF6044] border-[#FF6044] text-white shadow-lg shadow-[#FF6044]/20' : 'bg-transparent border-white/5 shadow-sm'}`}>
+      <p className={`text-[10px] font-bold uppercase tracking-widest ${highlight ? 'text-white/80' : 'text-gray-400'}`}>{label}</p>
+      <p className={`mt-0.5 text-2xl font-black ${highlight ? 'text-white' : 'text-[#FF6044]'}`}>{value}</p>
     </div>
   );
 }
@@ -118,29 +118,29 @@ function HeroMetric({ label, value, highlight = false }) {
 function Dashboard3DHero() {
   return (
     <div className="isometric-container w-full max-w-[320px] opacity-90">
-      <div className="bg-white rounded-xl border border-gray-100 p-4 isometric-card w-full h-[220px] flex flex-col shadow-xl">
-        <div className="flex justify-between items-center mb-4 border-b border-gray-50 pb-2">
+      <div className="bg-transparent rounded-xl border border-white/5 p-4 isometric-card w-full h-[220px] flex flex-col shadow-xl">
+        <div className="flex justify-between items-center mb-4 border-b border-white/5 pb-2">
           <div className="flex items-center gap-2">
-             <div className="w-5 h-5 rounded bg-blue-600"></div>
-             <div className="text-[10px] font-bold text-gray-800 uppercase tracking-tighter">Live Monitor</div>
+             <div className="w-5 h-5 rounded bg-[#FF6044]"></div>
+             <div className="text-[10px] font-bold text-white uppercase tracking-tighter">Live Monitor</div>
           </div>
-          <div className="w-12 h-1.5 bg-gray-100 rounded-full"></div>
+          <div className="w-12 h-1.5 bg-white/5 rounded-full"></div>
         </div>
         
         <div className="grid grid-cols-2 gap-2 mb-3">
-          <div className="bg-blue-50 rounded-lg p-2">
-            <div className="w-full h-1 bg-blue-200 rounded-full mb-1"></div>
-            <div className="w-2/3 h-1 bg-blue-100 rounded-full"></div>
+          <div className="bg-[#FF6044]/10 rounded-lg p-2">
+            <div className="w-full h-1 bg-[#FF6044]/20 rounded-full mb-1"></div>
+            <div className="w-2/3 h-1 bg-[#FF6044]/10 rounded-full"></div>
           </div>
-          <div className="bg-orange-50 rounded-lg p-2">
-            <div className="w-full h-1 bg-orange-200 rounded-full mb-1"></div>
-            <div className="w-2/3 h-1 bg-orange-100 rounded-full"></div>
+          <div className="bg-white/5 rounded-lg p-2">
+            <div className="w-full h-1 bg-white/10 rounded-full mb-1"></div>
+            <div className="w-2/3 h-1 bg-white/5 rounded-full"></div>
           </div>
         </div>
 
-        <div className="flex-1 bg-gray-50 rounded-lg flex items-end p-2 gap-1.5">
+        <div className="flex-1 bg-[#121313] rounded-lg flex items-end p-2 gap-1.5">
            {[30, 60, 45, 90, 65, 40, 75].map((h, i) => (
-             <div key={i} className="flex-1 bg-gray-200 rounded-t-sm" style={{ height: `${h}%` }} />
+             <div key={i} className="flex-1 bg-white/10 rounded-t-sm" style={{ height: `${h}%` }} />
            ))}
         </div>
       </div>
@@ -153,10 +153,10 @@ function Dashboard3DHero() {
         </div>
       </div>
 
-      <div className="absolute -left-6 bottom-10 w-28 bg-white border border-gray-100 rounded-xl p-3 isometric-card-layer-2 shadow-xl flex flex-col gap-1.5">
-         <div className="w-full h-1 bg-gray-100 rounded-full"></div>
-         <div className="w-4/5 h-1 bg-gray-100 rounded-full"></div>
-         <div className="w-1/2 h-1 bg-blue-500 rounded-full mt-1"></div>
+      <div className="absolute -left-6 bottom-10 w-28 bg-transparent border border-white/5 rounded-xl p-3 isometric-card-layer-2 shadow-xl flex flex-col gap-1.5">
+         <div className="w-full h-1 bg-white/5 rounded-full"></div>
+         <div className="w-4/5 h-1 bg-white/5 rounded-full"></div>
+         <div className="w-1/2 h-1 bg-[#FF6044] rounded-full mt-1"></div>
       </div>
     </div>
   );

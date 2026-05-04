@@ -75,7 +75,7 @@ export default function ViewReferrals() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 bg-dot-pattern font-sans">
+    <div className="min-h-screen bg-[#121313] bg-dot-pattern font-sans text-white">
       <Header />
 
       <main className="mx-auto max-w-7xl p-6 lg:p-8 animate-fade-in-up">
@@ -86,9 +86,9 @@ export default function ViewReferrals() {
           <div className="absolute right-0 top-0 w-1/3 h-full bg-gradient-to-l from-gray-100/50 to-transparent pointer-events-none" />
           
           <div className="relative z-10 flex-1">
-            <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 mb-2">Referrals</h1>
-            <p className="text-lg text-gray-500 font-light max-w-xl">
-              You are currently tracking <strong className="font-semibold text-gray-900">{referrals.length}</strong> referrals. Build and manage your network here.
+            <h1 className="text-4xl font-extrabold tracking-tight text-white mb-2">Referrals</h1>
+            <p className="text-lg text-gray-400 font-light max-w-xl">
+              You are currently tracking <strong className="font-semibold text-white">{referrals.length}</strong> referrals. Build and manage your network here.
             </p>
           </div>
 
@@ -111,7 +111,7 @@ export default function ViewReferrals() {
         </div>
 
         <div className="saas-card overflow-hidden">
-          <div className="hidden grid-cols-8 gap-3 border-b border-gray-100 p-4 text-sm font-semibold text-gray-500 lg:grid">
+          <div className="hidden grid-cols-8 gap-3 border-b border-white/10 p-4 text-sm font-bold text-[#FF6044] lg:grid">
             <span className="col-span-2">Contact</span>
             <span>Company</span>
             <span className="col-span-2">Email</span>
@@ -128,14 +128,14 @@ export default function ViewReferrals() {
                 key={referral.id}
                 id={`referral-${referral.id}`}
                 highlighted={String(referral.id) === String(activeHighlight)}
-                className="grid grid-cols-1 gap-3 border-t p-4 first:border-t-0 lg:grid-cols-8 lg:items-center"
+                className="grid grid-cols-1 gap-3 border-t border-white/5 p-4 first:border-t-0 lg:grid-cols-8 lg:items-center"
               >
                 <div className="lg:col-span-2">
-                  <p className="flex items-center gap-2 font-semibold text-gray-950">
+                  <p className="flex items-center gap-2 font-semibold text-white">
                     <UserRound size={16} /> {referral.person_name}
                   </p>
                   {referral.linkedin ? (
-                    <a href={referral.linkedin} target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-1 text-sm text-blue-600 hover:underline">
+                    <a href={referral.linkedin} target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-1 text-sm text-[#FF6044] hover:underline font-bold">
                       <Link2 size={14} /> LinkedIn URL
                     </a>
                   ) : (
@@ -150,7 +150,7 @@ export default function ViewReferrals() {
                 </div>
                 <Meta icon={<Calendar size={15} />} value={referral.date} />
                 <span className="capitalize">
-                  <span className="rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700">{referral.status}</span>
+                  <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-sm font-bold text-emerald-400 border border-emerald-500/20">{referral.status}</span>
                 </span>
                 <span className="flex gap-2">
                   <IconButton label="Toggle star" onClick={() => toggleStar(referral)}>
@@ -164,7 +164,7 @@ export default function ViewReferrals() {
                   </IconButton>
                 </span>
                 {referral.notes && (
-                  <div className="rounded-lg bg-gray-50 p-3 text-sm text-gray-600 lg:col-span-8">
+                  <div className="rounded-lg bg-[#121313] p-3 text-sm text-gray-400 lg:col-span-8">
                     <strong>Notes:</strong> {referral.notes}
                   </div>
                 )}
@@ -187,30 +187,29 @@ export default function ViewReferrals() {
 function Referrals3DHero() {
   return (
     <div className="isometric-container w-full max-w-[200px] scale-75 lg:scale-90 origin-right">
-      <div className="bg-white rounded-xl border border-gray-100 p-3 isometric-card w-full h-[180px] flex flex-col shadow-lg relative">
-        <div className="flex items-center gap-2 mb-4 border-b border-gray-50 pb-2">
-           <Users size={16} className="text-blue-600" />
-           <div className="text-[10px] font-bold text-gray-800 uppercase tracking-tighter">Network Map</div>
+      <div className="bg-transparent rounded-xl border border-white/5 p-3 isometric-card w-full h-[180px] flex flex-col shadow-lg relative">
+        <div className="flex items-center gap-2 mb-4 border-b border-white/10 pb-2">
+           <Users size={16} className="text-[#FF6044]" />
+           <div className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Network Map</div>
         </div>
         
         <div className="flex-1 flex items-center justify-center relative">
-           <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-              <Users size={20} className="text-blue-600" />
+           <div className="w-10 h-10 rounded-full bg-[#FF6044]/20 flex items-center justify-center">
+              <Users size={20} className="text-[#FF6044]" />
            </div>
            
-           {/* Floating connection lines/nodes */}
-           <div className="absolute top-2 right-4 w-6 h-6 rounded-full bg-gray-50 border border-gray-100"></div>
-           <div className="absolute bottom-2 left-4 w-5 h-5 rounded-full bg-gray-50 border border-gray-100"></div>
-           <div className="absolute top-10 left-2 w-4 h-4 rounded-full bg-gray-50 border border-gray-100"></div>
+           <div className="absolute top-2 right-4 w-6 h-6 rounded-full bg-[#121313] border border-white/5"></div>
+           <div className="absolute bottom-2 left-4 w-5 h-5 rounded-full bg-[#121313] border border-white/5"></div>
+           <div className="absolute top-10 left-2 w-4 h-4 rounded-full bg-[#121313] border border-white/5"></div>
         </div>
 
-        <div className="mt-2 h-1.5 w-full bg-gray-50 rounded-full overflow-hidden">
-           <div className="h-full bg-blue-400 rounded-full w-2/3"></div>
+        <div className="mt-2 h-1.5 w-full bg-[#121313] rounded-full overflow-hidden">
+           <div className="h-full bg-[#FF6044] rounded-full w-2/3"></div>
         </div>
       </div>
 
-      <div className="absolute -right-4 top-10 w-24 bg-gray-900 rounded-xl p-2 isometric-card-layer-1 shadow-xl">
-        <div className="text-[8px] font-bold text-white tracking-widest uppercase">Growing</div>
+      <div className="absolute -right-4 top-10 w-24 bg-[#121313] rounded-xl p-2 isometric-card-layer-1 shadow-xl border border-white/5">
+        <div className="text-[8px] font-bold text-[#FF6044] tracking-widest uppercase">Growing</div>
       </div>
     </div>
   );
@@ -218,7 +217,7 @@ function Referrals3DHero() {
 
 function Meta({ icon, value }) {
   return (
-    <span className="flex min-w-0 items-center gap-2 text-sm text-gray-600">
+    <span className="flex min-w-0 items-center gap-2 text-sm text-gray-400">
       <span className="text-gray-400">{icon}</span>
       <span className="truncate">{value || "-"}</span>
     </span>
@@ -231,7 +230,7 @@ function IconButton({ children, onClick, danger = false, label }) {
       type="button"
       aria-label={label}
       onClick={onClick}
-      className={`rounded-lg p-2 transition hover:-translate-y-0.5 ${danger ? "text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10" : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-800 hover:text-gray-950 dark:hover:text-white"}`}
+      className={`rounded-lg p-2 transition hover:-translate-y-0.5 ${danger ? "text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10" : "text-gray-400 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-800 hover:text-white dark:hover:text-white"}`}
     >
       {children}
     </button>

@@ -30,17 +30,17 @@ export default function NotificationsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 bg-dot-pattern font-sans">
+    <div className="min-h-screen bg-[#121313] bg-dot-pattern font-sans text-white">
       <Header />
 
-      <main className="mx-auto max-w-4xl p-6 animate-fade-in-up">
+      <main className="mx-auto max-w-[1600px] p-6 animate-fade-in-up">
         <BackButton className="mb-5" isMenu={fromSidebar} />
 
         <div className="mb-6">
-          <h1 className="flex items-center gap-3 text-3xl font-bold text-gray-950">
-            <Bell className="text-blue-600" /> Notifications
+          <h1 className="flex items-center gap-3 text-3xl font-extrabold text-white">
+            <Bell className="text-[#FF6044]" /> Notifications
           </h1>
-          <p className="mt-1 text-gray-500">Click a reminder to jump to the matching job or referral.</p>
+          <p className="mt-1 text-gray-400">Click a reminder to jump to the matching job or referral.</p>
         </div>
 
         <div className="saas-card overflow-hidden">
@@ -52,14 +52,14 @@ export default function NotificationsPage() {
                 key={`${notification.type}-${notification.id}`}
                 type="button"
                 onClick={() => openNotification(notification)}
-                className="flex w-full items-center gap-4 border-b border-gray-100 dark:border-gray-800 p-4 text-left transition hover:bg-gray-50 dark:hover:bg-slate-800/50 last:border-b-0"
+                className="flex w-full items-center gap-4 border-b border-white/5 p-4 text-left transition hover:bg-white/5 last:border-b-0"
               >
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-950 text-white">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#FF6044] text-[#121313]">
                   {notification.type === "referral" ? <Handshake size={19} /> : <Briefcase size={19} />}
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block font-semibold text-gray-950">{notification.message}</span>
-                  <span className="block text-sm text-gray-500">{notification.date}</span>
+                  <span className="block font-bold text-white">{notification.message}</span>
+                  <span className="block text-sm text-gray-400">{notification.date}</span>
                 </span>
               </button>
             ))

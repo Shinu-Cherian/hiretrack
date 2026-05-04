@@ -34,7 +34,7 @@ export default function ProfilePage() {
   // ❌ API ERROR
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-[#121313]">
         <Header />
         <div className="p-8 text-center text-red-500">{error}</div>
       </div>
@@ -43,7 +43,7 @@ export default function ProfilePage() {
 
   if (!data) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-[#121313]">
         <Header />
         <div className="p-8 text-center">Loading...</div>
       </div>
@@ -51,14 +51,14 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 bg-dot-pattern font-sans">
+    <div className="min-h-screen bg-[#121313] bg-dot-pattern font-sans">
 
       <Header />
 
       <main className="max-w-6xl mx-auto p-6 animate-fade-in-up">
         <BackButton className="mb-5" isMenu={true} />
         <section className="saas-card overflow-hidden">
-          <div className="h-32 bg-gray-100 border-b border-gray-200/50" />
+          <div className="h-32 bg-[#1a1b1b] border-b border-white/5" />
 
           <div className="px-6 pb-6">
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-5 -mt-14">
@@ -67,14 +67,14 @@ export default function ProfilePage() {
 
                 <div className="pb-2">
                   <h1 className="text-3xl font-bold">{data.username}</h1>
-                  <p className="text-gray-500 flex items-center gap-2 mt-1">
+                  <p className="text-gray-400 flex items-center gap-2 mt-1">
                     <Mail size={16} /> {data.email || "No email added"}
                   </p>
                 </div>
               </div>
 
               <Link to="/profile/edit">
-                <button className="inline-flex items-center gap-2 bg-gray-900 text-white px-5 py-3 rounded-xl shadow-sm hover:bg-gray-800 transition-colors">
+                <button className="inline-flex items-center gap-2 bg-[#FF6044] text-white px-5 py-3 rounded-xl font-bold shadow-lg shadow-[#FF6044]/20 hover:bg-[#ff4d2e] transition-all">
                   <Pencil size={18} /> Edit Profile
                 </button>
               </Link>
@@ -99,13 +99,13 @@ export default function ProfilePage() {
             {data.skills ? (
               <div className="flex flex-wrap gap-2">
                 {data.skills.split(",").map((skill, i) => (
-                  <span key={i} className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm">
+                  <span key={i} className="px-3 py-1 bg-[#FF6044]/10 text-[#FF6044] rounded-full text-sm font-bold border border-[#FF6044]/20">
                     {skill.trim()}
                   </span>
                 ))}
               </div>
             ) : (
-              <p className="text-gray-500">No skills added</p>
+              <p className="text-gray-400">No skills added</p>
             )}
 
             <h2 className="font-semibold text-lg mt-8 mb-4">Resume</h2>
@@ -114,7 +114,7 @@ export default function ProfilePage() {
                 <button className="px-4 py-2 bg-gray-900 text-white rounded-xl">View Resume</button>
               </a>
             ) : (
-              <p className="text-gray-500">No resume uploaded</p>
+              <p className="text-gray-400">No resume uploaded</p>
             )}
           </div>
         </section>
@@ -140,7 +140,7 @@ export default function ProfilePage() {
 function Info({ label, value, icon }) {
   return (
     <div className="flex justify-between gap-4 border-b py-3 last:border-b-0">
-      <span className="text-gray-500 flex items-center gap-2">{icon}{label}</span>
+      <span className="text-gray-400 flex items-center gap-2">{icon}{label}</span>
       <strong className="text-right">{value || "-"}</strong>
     </div>
   );
@@ -152,18 +152,18 @@ function Timeline({ title, icon, empty, children }) {
   return (
     <div className="saas-card p-6">
       <h2 className="font-semibold text-lg mb-4 flex items-center gap-2">{icon}{title}</h2>
-      {items && items.length > 0 ? <div className="space-y-4">{items}</div> : <p className="text-gray-500">{empty}</p>}
+      {items && items.length > 0 ? <div className="space-y-4">{items}</div> : <p className="text-gray-400">{empty}</p>}
     </div>
   );
 }
 
 function TimelineItem({ title, subtitle, meta, note }) {
   return (
-    <div className="border-l-4 border-gray-900 pl-4 py-1">
+    <div className="border-l-4 border-[#FF6044] pl-4 py-1">
       <h3 className="font-semibold">{title || "-"}</h3>
-      <p className="text-gray-600">{subtitle || "-"}</p>
+      <p className="text-gray-400">{subtitle || "-"}</p>
       <p className="text-sm text-gray-400">{meta}</p>
-      {note && <p className="text-sm text-gray-600 mt-2">{note}</p>}
+      {note && <p className="text-sm text-gray-400 mt-2">{note}</p>}
     </div>
   );
 }

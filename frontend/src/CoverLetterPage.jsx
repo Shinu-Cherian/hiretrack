@@ -4,7 +4,7 @@ import CoverLetterGenerator from "./components/CoverLetterGenerator";
 
 export default function CoverLetterPage() {
   return (
-    <div className="min-h-screen bg-gray-50 bg-dot-pattern font-sans">
+    <div className="min-h-screen bg-[#121313] text-white">
       <Header />
       <main className="mx-auto max-w-6xl p-6">
         <BackButton className="mb-5" />

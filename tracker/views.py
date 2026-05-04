@@ -187,6 +187,121 @@ def sentence_evidence(resume_text, matched_terms, limit=3):
     return [sentence for _, sentence in scored[:limit]]
 
 
+# ── Comprehensive section header patterns ────────────────────────────────────
+# People name sections in many ways. Cover all common variants.
+SECTION_PATTERNS = {
+    "has_summary": [
+        "summary", "professional summary", "career summary", "executive summary",
+        "objective", "career objective", "professional objective",
+        "profile", "professional profile", "about me", "about",
+        "overview", "introduction", "personal statement", "career profile",
+    ],
+    "has_skills": [
+        # Generic
+        "skills", "skill set", "skillset", "key skills", "core skills", "hard skills",
+        "soft skills", "relevant skills", "transferable skills",
+        # Technical variants (the most common misses)
+        "technical skills", "technical expertise", "technical proficiency",
+        "technical knowledge", "technical competencies", "tech skills",
+        "tech stack", "technology stack", "technologies", "tools & technologies",
+        "tools and technologies", "software skills", "software & tools",
+        "software and tools", "programming skills",
+        # Competency variants
+        "core competencies", "competencies", "areas of expertise", "expertise",
+        "specializations", "specialties",
+        # Language/framework variants
+        "programming languages", "languages", "languages & tools",
+        "languages and tools", "frameworks", "frameworks & libraries",
+        "frameworks and libraries", "libraries", "platforms",
+        # Other common names
+        "qualifications", "capabilities", "proficiencies",
+    ],
+    "has_experience": [
+        "experience", "work experience", "professional experience",
+        "relevant experience", "industry experience", "career experience",
+        "employment", "employment history", "work history", "job history",
+        "professional background", "career history", "positions held",
+        "work background", "internships", "internship experience",
+        "industry background",
+    ],
+    "has_projects": [
+        "projects", "personal projects", "academic projects", "key projects",
+        "notable projects", "selected projects", "featured projects",
+        "side projects", "project work", "project experience",
+        "portfolio", "open source", "github projects", "independent projects",
+        "capstone", "final year project",
+    ],
+    "has_education": [
+        "education", "educational background", "academic background",
+        "academic qualifications", "academic history",
+        "qualifications", "degrees", "degree", "qualification",
+        "schooling", "academic credentials",
+        "university", "college", "academics",
+    ],
+    "has_certifications": [
+        "certifications", "certification", "certificates", "certificate",
+        "professional certifications", "licenses", "license",
+        "courses", "online courses", "professional development",
+        "credentials", "training", "training & certifications",
+        "awards", "honors", "achievements", "accomplishments",
+        "badges",
+    ],
+}
+
+
+def detect_sections(resume_text):
+    """
+    Two-pass section detection:
+    Pass 1 – Line-by-line: check if a line IS a section header (preserves
+              original structure even after compact_text is applied).
+    Pass 2 – Full-text word-boundary search as fallback.
+    This correctly handles names like 'Technical Skills', 'Tech Stack', etc.
+    """
+    result = {key: False for key in SECTION_PATTERNS}
+
+    # Pass 1: scan every line; if a stripped line matches a pattern, mark found
+    lines = (resume_text or "").splitlines()
+    for raw_line in lines:
+        clean = raw_line.strip().lower()
+        # Remove trailing punctuation/colons that sometimes follow headers
+        clean = re.sub(r"[\s:•\-|]+$", "", clean)
+        if not clean or len(clean) > 60:   # headers are short
+            continue
+        for key, patterns in SECTION_PATTERNS.items():
+            if result[key]:
+                continue
+            for p in patterns:
+                if clean == p or clean.startswith(p + " ") or clean.endswith(" " + p):
+                    result[key] = True
+                    break
+
+    # Pass 2: word-boundary search on full normalized text (fallback)
+    normalized = normalize_text(resume_text)
+    for key, patterns in SECTION_PATTERNS.items():
+        if result[key]:
+            continue
+        for p in patterns:
+            if re.search(rf"\b{re.escape(p)}\b", normalized):
+                result[key] = True
+                break
+
+    return result
+
+
+# Stop words to filter from keyword lists
+KEYWORD_STOP_WORDS = {
+    "the", "and", "for", "are", "with", "this", "that", "have", "has", "been",
+    "will", "you", "your", "our", "not", "all", "its", "into", "them", "their",
+    "they", "from", "use", "using", "used", "can", "may", "also", "but", "or",
+    "was", "were", "out", "get", "set", "just", "any", "well", "new", "per",
+    "via", "we", "us", "she", "he", "it", "is", "be", "do", "did", "had",
+    "both", "some", "such", "each", "than", "more", "most", "own", "other",
+    "build", "check", "site", "type", "value", "power", "features", "status",
+    "position", "senior", "junior", "candidates", "qualifications", "employment",
+    "differences", "discipline", "including", "engineers", "problems", "coding",
+}
+
+
 def ats_analysis(resume_text, jd_text):
     resume_terms = set(important_terms(resume_text, 70))
     jd_terms = important_terms(jd_text, 45)
@@ -197,37 +312,53 @@ def ats_analysis(resume_text, jd_text):
     resume_skills = extract_skills_from(resume_text)
     matched_skills = [skill for skill in jd_skills if skill in resume_skills]
 
-    section_hits = [section for section in SECTION_HEADERS if re.search(rf"\b{section}\b", normalize_text(resume_text))]
+    # Get sections using the robust new logic
+    section_analysis = detect_sections(resume_text)
+    section_hits = [k.replace("has_", "") for k, v in section_analysis.items() if v]
+    
     action_hits = [verb for verb in ACTION_VERBS if re.search(rf"\b{verb}\b", normalize_text(resume_text))]
     metric_count = len(re.findall(r"\d+%?|\$[0-9]|[0-9]+x\b", resume_text or ""))
 
-    keyword_score = (len(matched) / len(jd_terms)) * 45 if jd_terms else 0
-    skill_score = (len(matched_skills) / len(jd_skills)) * 25 if jd_skills else 15
-    section_score = min(len(section_hits), 5) / 5 * 15
-    impact_score = min(len(action_hits), 6) / 6 * 8 + min(metric_count, 4) / 4 * 7
-    score = round(min(100, keyword_score + skill_score + section_score + impact_score), 1)
+    # Compute sub-scores on 50/30/10/10 scale
+    kw_score      = round((len(matched) / len(jd_terms)) * 50, 1) if jd_terms else 0
+    skill_score   = round((len(matched_skills) / len(jd_skills)) * 30, 1) if jd_skills else 12
+    section_score = round(min(len(section_hits), 5) / 5 * 10, 1)
+    impact_score  = round(
+        min(len(action_hits), 6) / 6 * 5 + min(metric_count, 4) / 4 * 5, 1
+    )
+    score = round(min(100, kw_score + skill_score + section_score + impact_score), 1)
 
     suggestions = []
     if missing[:6]:
         suggestions.append(f"Add truthful evidence for these JD priorities: {', '.join(missing[:6])}.")
     if len(section_hits) < 4:
-        suggestions.append("Use clear ATS-friendly section headings such as Summary, Skills, Experience, Projects, and Education.")
+        suggestions.append("Use clear ATS-friendly section headings: Summary, Skills, Experience, Projects, Education.")
     if metric_count < 2:
-        suggestions.append("Add measurable outcomes to bullets, such as percentages, counts, speed, cost, or scale.")
+        suggestions.append("Add measurable outcomes to bullets (percentages, counts, speed, cost, scale).")
     if len(matched_skills) < max(1, len(jd_skills) // 2):
-        suggestions.append("Move the most relevant technical skills into a visible Skills section and repeat them naturally in project bullets.")
+        suggestions.append("Move relevant technical skills into a dedicated Skills section.")
     if not suggestions:
-        suggestions.append("Strong alignment. Do a final pass for concise bullets, consistent formatting, and measurable impact.")
+        suggestions.append("Strong alignment. Do a final pass for concise bullets and measurable impact.")
 
     return {
         "score": score,
-        "matched": matched[:30],
-        "missing": missing[:30],
-        "matched_skills": matched_skills,
-        "missing_skills": [skill for skill in jd_skills if skill not in matched_skills],
-        "section_hits": section_hits,
-        "impact_terms": action_hits[:10],
-        "suggestions": suggestions,
+        "keyword_match_score": kw_score,
+        "skill_match_score":   skill_score,
+        "format_score":        section_score,
+        "impact_score":        impact_score,
+        "matched":             matched[:30],
+        "missing":             missing[:30],
+        "matched_skills":      matched_skills,
+        "missing_skills":      [skill for skill in jd_skills if skill not in matched_skills],
+        "matched_keywords":    matched[:30],
+        "missing_keywords":    missing[:30],
+        "section_hits":        section_hits,
+        "section_analysis":    section_analysis,
+        "impact_terms":        action_hits[:10],
+        "suggestions":         suggestions,
+        "experience_match":    "",
+        "title_match":         "",
+        "ai_powered":          False,
     }
 
 
@@ -1395,13 +1526,151 @@ def resume_analyze_api(request):
     uploaded_text, warnings = read_uploaded_text(request.FILES.get("resume_file"))
     resume_text = request.POST.get("resume", "") + "\n" + uploaded_text
     jd_text = request.POST.get("job_description", "")
-    if len(compact_text(resume_text)) < 200:
-        warnings.append("Very little resume text was detected. Paste the resume text or upload a text-selectable document for a reliable score.")
 
-    analysis = ats_analysis(resume_text, jd_text)
+    if len(compact_text(resume_text)) < 200:
+        warnings.append("Very little resume text detected. Paste your resume text or upload a text-selectable PDF for accurate scoring.")
+
+    # Use AI-powered analysis (real backend, like Jobscan)
+    analysis = ai_ats_analysis(resume_text, jd_text)
     analysis["warnings"] = warnings
     analysis["resume_chars"] = len(compact_text(resume_text))
     return JsonResponse(analysis)
+
+
+def ai_ats_analysis(resume_text, jd_text):
+    """
+    HYBRID ATS engine:
+    - Old regex engine: reliable sub-scores (50/30/10/10), section detection, keyword match
+    - AI engine: qualitative insights — broad skill detection, experience match, suggestions
+    Best of both worlds, like Jobscan.
+    """
+    import requests as _req
+    import json as _json
+    import re as _re
+
+    # Step 1: Run reliable regex engine first (always works, no network needed)
+    base = ats_analysis(resume_text, jd_text)
+
+    # Step 2: Clean resume text
+    clean_resume = _re.sub(r'Envelope\s*', '', resume_text, flags=_re.IGNORECASE)
+
+    # Step 3: Ask AI for qualitative insights only (skills + experience + suggestions)
+    system_msg = (
+        "You are a senior technical recruiter and ATS expert. "
+        "Analyze the resume against the job description. "
+        "Return ONLY a raw JSON object — no markdown, no code blocks, no extra text."
+    )
+
+    user_msg = (
+        "Analyze this resume vs job description. Return exactly this JSON structure:\n\n"
+        "{\n"
+        '  "matched_skills": [list of specific technical skills/tools found in BOTH resume and JD],\n'
+        '  "missing_skills": [list of specific technical skills/tools in JD but missing from resume],\n'
+        '  "matched_keywords": [list of role-specific domain keywords matched - NO stop words],\n'
+        '  "missing_keywords": [list of meaningful JD keywords missing - NO stop words like "them", "not", "into"],\n'
+        '  "experience_match": "1-2 sentence honest assessment of experience level alignment",\n'
+        '  "title_match": "1 sentence on how well candidate role history matches JD title",\n'
+        '  "suggestions": [4-6 specific actionable improvements mentioning real skill names]\n'
+        "}\n\n"
+        "RULES:\n"
+        "- matched_skills and missing_skills must be specific tech names (Python, FastAPI, Redis, not 'coding' or 'tools')\n"
+        "- matched_keywords and missing_keywords must be meaningful domain terms (microservices, KYC, CI/CD — not 'them', 'not', 'build', 'use')\n"
+        "- suggestions must name actual technologies or sections\n\n"
+        "JD:\n" + jd_text[:1200] + "\n\n"
+        "RESUME:\n" + clean_resume[:2000]
+    )
+
+    try:
+        resp = _req.post(
+            "https://text.pollinations.ai/",
+            json={
+                "messages": [
+                    {"role": "system", "content": system_msg},
+                    {"role": "user",   "content": user_msg}
+                ],
+                "model": "openai"
+            },
+            timeout=60
+        )
+        if resp.status_code == 200:
+            raw = resp.text.strip()
+            ai_data = None
+
+            # Extract JSON from various response formats
+            for candidate in [raw]:
+                # If it's a JSON object check for direct or wrapped response
+                if candidate.startswith("{"):
+                    try:
+                        parsed = _json.loads(candidate)
+                        if "matched_skills" in parsed or "suggestions" in parsed:
+                            ai_data = parsed
+                        elif "choices" in parsed:
+                            content = parsed["choices"][0]["message"]["content"]
+                            m = _re.search(r'\{[\s\S]+\}', content)
+                            if m:
+                                ai_data = _json.loads(m.group(0))
+                        elif "content" in parsed:
+                            m = _re.search(r'\{[\s\S]+\}', parsed["content"])
+                            if m:
+                                ai_data = _json.loads(m.group(0))
+                    except Exception:
+                        pass
+                else:
+                    # Plain text — find JSON block inside
+                    m = _re.search(r'\{[\s\S]+\}', candidate)
+                    if m:
+                        try:
+                            ai_data = _json.loads(m.group(0))
+                        except Exception:
+                            pass
+
+            if ai_data:
+                # Filter stop words from keyword lists
+                def clean_keywords(lst):
+                    if not isinstance(lst, list):
+                        return []
+                    return [
+                        k for k in lst
+                        if isinstance(k, str)
+                        and k.lower().strip() not in KEYWORD_STOP_WORDS
+                        and len(k.strip()) > 2
+                    ]
+
+                safe_list = lambda v: v if isinstance(v, list) else []
+                safe_str  = lambda v: str(v) if v else ""
+
+                # Merge: base engine scores + section detection + AI qualitative insights
+                return {
+                    "ai_powered":          True,
+                    # Scores from reliable regex engine
+                    "score":               base["score"],
+                    "keyword_match_score": base["keyword_match_score"],
+                    "skill_match_score":   base["skill_match_score"],
+                    "format_score":        base["format_score"],
+                    "impact_score":        base["impact_score"],
+                    # Section analysis from reliable regex
+                    "section_analysis":    base["section_analysis"],
+                    "section_hits":        base["section_hits"],
+                    # Skills and keywords: prefer AI (broader), fallback to regex
+                    "matched_skills":   clean_keywords(safe_list(ai_data.get("matched_skills"))) or base["matched_skills"],
+                    "missing_skills":   clean_keywords(safe_list(ai_data.get("missing_skills"))) or base["missing_skills"],
+                    "matched_keywords": clean_keywords(safe_list(ai_data.get("matched_keywords"))) or base["matched"],
+                    "missing_keywords": clean_keywords(safe_list(ai_data.get("missing_keywords"))) or base["missing"],
+                    "matched":          clean_keywords(safe_list(ai_data.get("matched_keywords"))) or base["matched"],
+                    "missing":          clean_keywords(safe_list(ai_data.get("missing_keywords"))) or base["missing"],
+                    # Qualitative insights from AI
+                    "experience_match": safe_str(ai_data.get("experience_match")),
+                    "title_match":      safe_str(ai_data.get("title_match")),
+                    "suggestions":      safe_list(ai_data.get("suggestions")) or base["suggestions"],
+                }
+
+    except Exception as e:
+        print(f"DEBUG: AI ATS qualitative call failed: {e}")
+
+    # Full fallback: regex engine only
+    print("DEBUG: Using regex-only ATS engine")
+    return base
+
 
 
 @csrf_exempt

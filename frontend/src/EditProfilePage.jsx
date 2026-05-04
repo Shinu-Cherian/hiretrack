@@ -161,18 +161,18 @@ export default function EditProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 bg-dot-pattern font-sans">
+    <div className="min-h-screen bg-[#121313] text-white">
       <Header />
 
       <main className="max-w-6xl mx-auto p-6 animate-fade-in-up">
         <div className="flex items-center justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-3xl font-bold">Edit Profile</h1>
-            <p className="text-gray-500">Keep your profile ready for every application.</p>
+            <h1 className="text-3xl font-extrabold text-white">Edit Profile</h1>
+            <p className="text-gray-400">Keep your profile ready for every application.</p>
           </div>
 
           <Link to="/profile">
-            <button className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white shadow">
+            <button className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white font-bold shadow hover:bg-white/10 transition-all">
               <ArrowLeft size={18} /> Back
             </button>
           </Link>
@@ -199,7 +199,7 @@ export default function EditProfilePage() {
                 </div>
               )}
 
-              <label className="mt-5 w-full cursor-pointer rounded-xl border border-dashed border-blue-300 bg-blue-50 px-4 py-3 text-blue-700 flex items-center justify-center gap-2">
+              <label className="mt-5 w-full cursor-pointer rounded-xl border border-dashed border-[#FF6044]/30 bg-[#FF6044]/5 px-4 py-3 text-[#FF6044] flex items-center justify-center gap-2 font-bold hover:bg-[#FF6044]/10 transition-all">
                 <Upload size={18} /> Upload Photo
                 <input
                   type="file"
@@ -229,7 +229,7 @@ export default function EditProfilePage() {
               <Input label="Phone" value={form.phone} onChange={(value) => updateField("phone", value)} />
               <Input label="Age" type="number" value={form.age} onChange={(value) => updateField("age", value)} />
               <label className="block">
-                <span className="text-sm font-medium text-gray-600">Gender</span>
+                <span className="text-sm font-medium text-gray-400">Gender</span>
                 <select
                   className="mt-1 w-full rounded-xl border p-3 outline-none focus:ring-2 focus:ring-blue-200"
                   value={form.gender}
@@ -249,7 +249,7 @@ export default function EditProfilePage() {
               <Textarea label="Skills" value={form.skills} onChange={(value) => updateField("skills", value)} placeholder="React, Django, SQL, Communication" />
 
               <label className="block mt-4">
-                <span className="text-sm font-medium text-gray-600">Resume</span>
+                <span className="text-sm font-medium text-gray-400">Resume</span>
                 <input
                   type="file"
                   className="mt-1 w-full rounded-xl border bg-white p-3"
@@ -286,7 +286,7 @@ export default function EditProfilePage() {
               <button
                 type="button"
                 onClick={() => addRow("educations", emptyEducation)}
-                className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
+                className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 text-white font-bold border border-white/10 hover:bg-white/10 transition-all"
               >
                 <Plus size={18} /> Add Education
               </button>
@@ -322,7 +322,7 @@ export default function EditProfilePage() {
               <button
                 type="button"
                 onClick={() => addRow("experiences", emptyExperience)}
-                className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
+                className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 text-white font-bold border border-white/10 hover:bg-white/10 transition-all"
               >
                 <Plus size={18} /> Add Experience
               </button>
@@ -332,7 +332,7 @@ export default function EditProfilePage() {
               <button
                 type="submit"
                 disabled={saving}
-                className="inline-flex items-center gap-2 bg-gray-900 text-white px-6 py-3 rounded-xl shadow-sm hover:bg-gray-800 transition-colors disabled:opacity-60"
+                className="inline-flex items-center gap-2 bg-[#FF6044] text-white px-8 py-3 rounded-xl font-extrabold shadow-lg shadow-[#FF6044]/20 hover:bg-[#ff4d2e] hover:shadow-[#FF6044]/40 hover:-translate-y-1 transition-all disabled:opacity-60"
               >
                 <Save size={18} /> {saving ? "Saving..." : "Save Profile"}
               </button>
@@ -356,7 +356,7 @@ function Panel({ title, icon, children }) {
 function Input({ label, value, onChange, type = "text" }) {
   return (
     <label className="block">
-      <span className="text-sm font-medium text-gray-600">{label}</span>
+      <span className="text-sm font-medium text-gray-400">{label}</span>
       <input
         type={type}
         value={value}
@@ -370,7 +370,7 @@ function Input({ label, value, onChange, type = "text" }) {
 function Textarea({ label, value, onChange, placeholder = "" }) {
   return (
     <label className="block">
-      <span className="text-sm font-medium text-gray-600">{label}</span>
+      <span className="text-sm font-medium text-gray-400">{label}</span>
       <textarea
         value={value}
         placeholder={placeholder}

@@ -17,17 +17,17 @@ export default function CareerVault() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 bg-dot-pattern font-sans">
+    <div className="min-h-screen bg-[#121313] bg-dot-pattern font-sans text-white">
       <Header />
       <main className="mx-auto max-w-7xl p-6">
         <BackButton className="mb-5" isMenu={true} />
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-950">Career Vault</h1>
-          <p className="mt-1 text-gray-500">Only applications with uploaded documents appear here.</p>
+          <h1 className="text-3xl font-extrabold text-white">Career Vault</h1>
+          <p className="mt-1 text-gray-400">Only applications with uploaded documents appear here.</p>
         </div>
 
         <div className="saas-card overflow-hidden">
-          <div className="hidden grid-cols-5 gap-4 border-b border-gray-100 p-4 text-sm font-semibold text-gray-500 lg:grid">
+          <div className="hidden grid-cols-5 gap-4 border-b border-white/5 p-4 text-sm font-bold text-gray-400 lg:grid">
             <span className="col-span-2">Job</span>
             <span>Applied Date</span>
             <span>Resume Used</span>
@@ -42,8 +42,8 @@ export default function CareerVault() {
             items.map((item) => (
               <div key={item.id} className="grid grid-cols-1 gap-4 border-b border-gray-100 p-4 last:border-b-0 lg:grid-cols-5 lg:items-center">
                 <div className="lg:col-span-2">
-                  <p className="font-semibold text-gray-950">{item.jobTitle}</p>
-                  <p className="text-sm text-gray-500">{item.company}</p>
+                  <p className="font-bold text-white">{item.jobTitle}</p>
+                  <p className="text-sm text-gray-400">{item.company}</p>
                 </div>
                 <span className="text-sm text-gray-600">{item.dateApplied || "-"}</span>
                 <DocumentActions file={item.resumeFile} download={item.resumeDownload} empty="No resume" />
@@ -61,10 +61,10 @@ function DocumentActions({ file, download, empty }) {
   if (!file) return <span className="text-sm text-gray-400">{empty}</span>;
   return (
     <div className="flex flex-wrap gap-2">
-      <a href={`${API_BASE}${file}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-lg bg-blue-50 px-3 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-100">
+      <a href={`${API_BASE}${file}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-lg bg-[#FF6044]/10 px-3 py-2 text-sm font-bold text-[#FF6044] hover:bg-[#FF6044]/20 transition-all">
         <Eye size={15} /> Preview
       </a>
-      <a href={`${API_BASE}${download}`} className="inline-flex items-center gap-1 rounded-lg bg-gray-950 px-3 py-2 text-sm font-semibold text-white hover:bg-gray-800">
+      <a href={`${API_BASE}${download}`} className="inline-flex items-center gap-1 rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-sm font-bold text-white hover:bg-white/10 transition-all">
         <Download size={15} /> Download
       </a>
     </div>

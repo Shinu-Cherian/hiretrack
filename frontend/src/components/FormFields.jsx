@@ -1,7 +1,7 @@
 export function Field({ label, wide = false, children }) {
   return (
     <label className={wide ? "md:col-span-2" : ""}>
-      <span className="mb-2 block text-sm font-semibold text-gray-700">{label}</span>
+      <span className="mb-2 block text-sm font-bold text-gray-400">{label}</span>
       {children}
     </label>
   );

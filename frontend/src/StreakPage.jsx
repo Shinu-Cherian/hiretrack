@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Award, Flame, Info, ArrowRight } from "lucide-react";
+import { Award, Flame, Info, ArrowRight, Trophy, Crown } from "lucide-react";
 import Header from "./Header";
 import { apiUrl } from "./api";
 import BackButton from "./components/BackButton";
@@ -8,9 +8,9 @@ import Heatmap from "./components/Heatmap";
 import Modal from "./components/Modal";
 
 const BADGE_PREVIEW = [
-  { days: 30, detail: "Stay active for 30 continuous days." },
-  { days: 50, detail: "Continue your streak for 50 continuous days." },
-  { days: 100, detail: "Reach a 100-day consistency milestone." },
+  { days: 30, detail: "Stay active for 30 continuous days.", icon: <Flame size={24} /> },
+  { days: 50, detail: "Continue your streak for 50 continuous days.", icon: <Trophy size={24} /> },
+  { days: 100, detail: "Reach a 100-day consistency milestone.", icon: <Crown size={24} /> },
 ];
 
 export default function StreakPage() {
@@ -37,34 +37,34 @@ export default function StreakPage() {
   }, [data]);
 
   return (
-    <div className="min-h-screen bg-gray-50 bg-dot-pattern font-sans pb-12">
+    <div className="min-h-screen bg-[#121313] bg-dot-pattern font-sans pb-12 text-white">
       <Header />
       <BadgePopup badge={popupBadge} onClose={() => setPopupBadge(null)} />
 
       <main className="mx-auto max-w-[1600px] space-y-8 p-6 animate-fade-in-up">
         <div className="flex items-center justify-between">
           <BackButton />
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
-            <span className="w-2 h-2 rounded-full bg-orange-500"></span>
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gray-400">
+            <span className="w-2 h-2 rounded-full bg-[#FF6044]"></span>
             Real-time consistency tracking
           </div>
         </div>
 
-        <section className="saas-card bg-white p-8 relative overflow-hidden">
-          <div className="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-orange-50/50 to-transparent pointer-events-none" />
+        <section className="saas-card bg-transparent border-white/5 p-8 relative overflow-hidden">
+          <div className="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-[#FF6044]/5 to-transparent pointer-events-none" />
           <div className="relative z-10">
-            <p className="text-xs font-bold uppercase tracking-widest text-orange-600">HireTrack Performance</p>
-            <h1 className="mt-2 text-4xl font-extrabold text-gray-900 tracking-tight">Consistency dashboard</h1>
-            <p className="mt-3 text-lg text-gray-500 font-light max-w-2xl">
+            <p className="text-xs font-bold uppercase tracking-widest text-[#FF6044]">HireTrack Performance</p>
+            <h1 className="mt-2 text-4xl font-extrabold text-white tracking-tight">Consistency dashboard</h1>
+            <p className="mt-3 text-lg text-gray-400 font-light max-w-2xl">
               Success is the sum of small efforts repeated day in and day out. Monitor your daily momentum and keep the flame alive.
             </p>
           </div>
         </section>
 
         {!data ? (
-          <div className="saas-card p-20 text-center text-gray-500 flex flex-col items-center gap-4">
-            <div className="w-10 h-10 border-4 border-orange-100 border-t-orange-500 rounded-full animate-spin"></div>
-            <p className="font-medium">Syncing your momentum data...</p>
+          <div className="saas-card p-20 text-center text-gray-400 flex flex-col items-center gap-4">
+            <div className="w-10 h-10 border-4 border-white/10 border-t-[#FF6044] rounded-full animate-spin"></div>
+            <p className="font-bold">Syncing your momentum data...</p>
           </div>
         ) : (
           <div className="grid lg:grid-cols-2 gap-8">
@@ -96,15 +96,17 @@ export default function StreakPage() {
       {badgeInfo && (
         <Modal title="Badge milestones" onClose={() => setBadgeInfo(null)} maxWidth="max-w-xl">
           <div className="grid gap-3 p-2">
-            <p className="text-sm text-gray-500 mb-2">Maintain consistency to unlock these exclusive badges.</p>
+            <p className="text-sm text-gray-400 mb-2 font-bold uppercase tracking-tight">Maintain consistency to unlock these exclusive badges.</p>
             {BADGE_PREVIEW.map((badge) => (
-              <div key={badge.days} className="flex items-center gap-4 rounded-2xl border border-gray-100 bg-gray-50 p-5 transition-all hover:shadow-md">
-                <div className="w-12 h-12 rounded-full bg-white shadow-inner flex items-center justify-center border border-gray-200">
-                  <Flame size={24} className="text-orange-500" />
+              <div key={badge.days} className="group flex items-center gap-4 rounded-2xl border border-white/5 bg-white/5 p-5 transition-all hover:bg-white/10 hover:translate-x-1">
+                <div className="w-12 h-12 rounded-2xl bg-[#FF6044]/10 shadow-inner flex items-center justify-center border border-[#FF6044]/20 transition-all duration-300 group-hover:bg-[#FF6044] group-hover:shadow-[0_0_25px_rgba(255,96,68,0.5)] group-hover:scale-110">
+                  <div className="text-[#FF6044] transition-all duration-300 group-hover:text-white">
+                    {badge.icon}
+                  </div>
                 </div>
                 <div>
-                  <p className="font-bold text-gray-950">{badge.days}-day milestone</p>
-                  <p className="text-sm text-gray-600 font-light">{badge.detail}</p>
+                  <p className="font-bold text-white transition-all duration-300 group-hover:text-[#FF6044]">{badge.days}-day milestone</p>
+                  <p className="text-sm text-gray-400 font-light">{badge.detail}</p>
                 </div>
               </div>
             ))}
@@ -130,11 +132,11 @@ function StreakSection({ title, label, count, heatmapTitle, heatmap, badges, onE
           <div className="flex flex-col gap-6 xl:flex-row xl:items-center xl:justify-between">
             <div>
               <p className={`text-xs font-bold uppercase tracking-widest ${accentClass}`}>{title}</p>
-              <h2 className="mt-2 text-2xl font-bold text-gray-950 tracking-tight">{label}</h2>
-              <p className="text-sm text-gray-500 mt-1">Consistency is key to results.</p>
+              <h2 className="mt-2 text-2xl font-bold text-white font-black">{label}</h2>
+              <p className="text-sm text-gray-400">Consistency is key to results.</p>
             </div>
             
-            <div className={`flex items-center gap-5 rounded-2xl ${bgClass} px-8 py-6 ${textClass} border ${borderClass} transition-all duration-500 group-hover:scale-[1.02] group-hover:shadow-lg`}>
+            <div className={`flex items-center gap-5 rounded-2xl bg-white/5 px-8 py-6 text-[#FF6044] border border-white/10 transition-all duration-500 group-hover:scale-[1.02] group-hover:shadow-lg group-hover:shadow-[#FF6044]/10`}>
               <Flame size={48} className={count > 0 ? "animate-pulse" : "opacity-30"} />
               <div>
                 <p className="text-xs font-bold uppercase tracking-widest opacity-70">Current streak</p>
@@ -146,19 +148,19 @@ function StreakSection({ title, label, count, heatmapTitle, heatmap, badges, onE
             </div>
           </div>
 
-          <div className="mt-10 pt-8 border-t border-gray-100">
+          <div className="mt-10 pt-8 border-t border-white/5">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="flex items-center gap-2 font-bold text-gray-950 text-sm uppercase tracking-wider">
-                <Award size={18} className={accentClass} /> 
+              <h3 className="flex items-center gap-2 font-bold text-white uppercase tracking-wider">
+                <Award size={18} className="text-[#FF6044]" /> 
                 Achievements
               </h3>
-              {badges.length > 0 && <span className="text-[10px] font-bold bg-gray-100 px-2 py-1 rounded text-gray-500 uppercase">{badges.length} Unlocked</span>}
+              {badges.length > 0 && <span className="text-[10px] font-bold bg-white/5 px-2 py-1 rounded text-gray-400 uppercase border border-white/10">{badges.length} Unlocked</span>}
             </div>
             
             {badges.length ? (
               <div className="flex flex-wrap gap-3">
                 {badges.map((badge) => (
-                  <div key={badge} className={`group/badge relative flex items-center gap-2 rounded-xl ${bgClass} border ${borderClass} px-4 py-2 text-sm font-bold ${textClass} hover:shadow-md transition-all`}>
+                  <div key={badge} className="group/badge relative flex items-center gap-2 rounded-xl bg-[#FF6044]/10 border border-[#FF6044]/20 px-4 py-2 text-sm font-bold text-[#FF6044] hover:bg-[#FF6044]/20 transition-all">
                     <Flame size={14} />
                     {badge} Days
                   </div>
@@ -167,7 +169,7 @@ function StreakSection({ title, label, count, heatmapTitle, heatmap, badges, onE
             ) : (
               <button 
                 onClick={onExplore} 
-                className="w-full flex items-center justify-between rounded-xl border border-dashed border-gray-200 p-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900 transition-all group/btn"
+                className="w-full flex items-center justify-between rounded-xl border border-dashed border-white/10 p-4 text-sm font-bold text-gray-400 hover:bg-white/5 hover:text-white transition-all group/btn"
               >
                 <div className="flex items-center gap-3">
                   <Info size={18} className="opacity-50" />

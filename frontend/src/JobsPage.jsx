@@ -81,7 +81,7 @@ export default function JobsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 bg-dot-pattern font-sans">
+    <div className="min-h-screen bg-[#121313] bg-dot-pattern font-sans text-white">
       <Header />
 
       <main className="mx-auto max-w-7xl p-6 lg:p-8 animate-fade-in-up">
@@ -92,9 +92,9 @@ export default function JobsPage() {
           <div className="absolute right-0 top-0 w-1/3 h-full bg-gradient-to-l from-gray-100/50 to-transparent pointer-events-none" />
           
           <div className="relative z-10 flex-1">
-            <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 mb-2">Job Pipeline</h1>
-            <p className="text-lg text-gray-500 font-light max-w-xl">
-              You are currently tracking <strong className="font-semibold text-gray-900">{jobs.length}</strong> applications. Search, edit, or update statuses below.
+            <h1 className="text-4xl font-extrabold tracking-tight text-white mb-2">Job Pipeline</h1>
+            <p className="text-lg text-gray-400 font-light max-w-xl">
+              You are currently tracking <strong className="font-semibold text-white">{jobs.length}</strong> applications. Search, edit, or update statuses below.
             </p>
           </div>
           
@@ -117,7 +117,7 @@ export default function JobsPage() {
         </div>
 
         <div className="saas-card overflow-hidden">
-          <div className="hidden grid-cols-8 gap-3 border-b border-gray-100 dark:border-gray-800 p-4 text-sm font-semibold text-gray-500 lg:grid">
+          <div className="hidden grid-cols-8 gap-3 border-b border-white/10 p-4 text-sm font-bold text-[#FF6044] lg:grid">
             <span className="col-span-2">Role</span>
             <span>Company</span>
             <span>Platform</span>
@@ -135,13 +135,13 @@ export default function JobsPage() {
                 key={job.id}
                 id={`job-${job.id}`}
                 highlighted={String(job.id) === String(activeHighlight)}
-                className={`grid grid-cols-1 gap-3 border-t p-4 first:border-t-0 lg:grid-cols-8 lg:items-center ${
-                  job.status === "selected" ? "border-emerald-300 dark:border-emerald-500/50 bg-emerald-50/70 dark:bg-emerald-500/10 shadow-[0_0_0_4px_rgba(16,185,129,0.12)]" : ""
+                className={`grid grid-cols-1 gap-3 border-t border-white/5 p-4 first:border-t-0 lg:grid-cols-8 lg:items-center ${
+                  job.status === "selected" ? "border-emerald-500/20 bg-emerald-500/5 shadow-[0_0_20px_rgba(16,185,129,0.05)]" : ""
                 }`}
               >
                 <div className="lg:col-span-2">
-                  <p className="font-semibold text-gray-950">{job.jobTitle}</p>
-                  <p className="mt-1 flex items-center gap-1 text-sm text-gray-500">
+                  <p className="font-semibold text-white">{job.jobTitle}</p>
+                  <p className="mt-1 flex items-center gap-1 text-sm text-gray-400">
                     <FileText size={14} /> {job.jobId || "No job ID"}
                   </p>
                 </div>
@@ -150,7 +150,7 @@ export default function JobsPage() {
                 <Meta icon={<DollarSign size={15} />} value={job.salaryRange} />
                 <Meta icon={<Calendar size={15} />} value={job.dateApplied} />
                 <span className="capitalize">
-                  <span className="rounded-full bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700">{job.status}</span>
+                  <span className="rounded-full bg-[#FF6044]/10 px-3 py-1 text-sm font-bold text-[#FF6044]">{job.status}</span>
                 </span>
                 <span className="flex gap-2">
                   <IconButton label="Toggle star" onClick={() => toggleStar(job)}>
@@ -164,13 +164,13 @@ export default function JobsPage() {
                   </IconButton>
                 </span>
                 {(job.jd || job.notes) && (
-                  <div className="flex flex-col gap-2 rounded-lg bg-gray-50 p-3 text-sm text-gray-600 lg:col-span-8 md:flex-row md:items-center md:justify-between">
+                  <div className="flex flex-col gap-2 rounded-lg bg-[#121313] p-3 text-sm text-gray-400 lg:col-span-8 md:flex-row md:items-center md:justify-between">
                     <p><strong>Notes:</strong> {job.notes || "-"}</p>
                     {job.jd && (
                       <button
                         type="button"
                         onClick={() => setViewingJd(job)}
-                        className="inline-flex w-fit items-center gap-1 rounded-lg bg-white px-3 py-2 font-semibold text-blue-700 shadow-sm hover:bg-blue-50"
+                        className="inline-flex w-fit items-center gap-1 rounded-lg bg-transparent px-3 py-2 font-semibold text-blue-700 shadow-sm hover:bg-blue-50"
                       >
                         <strong>JD:</strong> Show JD
                       </button>
@@ -192,7 +192,7 @@ export default function JobsPage() {
 
       {viewingJd && (
         <Modal title={`${viewingJd.jobTitle} JD`} onClose={() => setViewingJd(null)}>
-          <div className="max-h-[60vh] overflow-y-auto rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm leading-6 text-gray-700 whitespace-pre-wrap">
+          <div className="max-h-[60vh] overflow-y-auto rounded-lg border border-white/10 bg-[#121313] p-4 text-sm leading-6 text-gray-700 whitespace-pre-wrap">
             {viewingJd.jd || "No job description added."}
           </div>
         </Modal>
@@ -204,7 +204,7 @@ export default function JobsPage() {
 function Jobs3DHero() {
   return (
     <div className="isometric-container w-full max-w-[200px] scale-75 lg:scale-90 origin-right">
-      <div className="bg-white rounded-xl border border-gray-100 p-3 isometric-card w-full h-[180px] flex flex-col shadow-lg relative">
+      <div className="bg-transparent rounded-xl border border-white/5 p-3 isometric-card w-full h-[180px] flex flex-col shadow-lg relative">
         <div className="flex items-center gap-2 mb-3 border-b border-gray-50 pb-2">
            <div className="w-4 h-4 rounded-full bg-emerald-500"></div>
            <div className="text-[10px] font-bold text-gray-800 uppercase tracking-tighter">Active Tracking</div>
@@ -229,9 +229,9 @@ function Jobs3DHero() {
         </div>
       </div>
 
-      <div className="absolute -left-4 bottom-6 w-20 bg-white border border-gray-100 rounded-xl p-2 isometric-card-layer-2 shadow-lg">
+      <div className="absolute -left-4 bottom-6 w-20 bg-transparent border border-white/5 rounded-xl p-2 isometric-card-layer-2 shadow-lg">
          <div className="w-full h-1 bg-gray-100 rounded-full mb-1"></div>
-         <div className="w-2/3 h-1 bg-gray-50 rounded-full"></div>
+         <div className="w-2/3 h-1 bg-[#121313] rounded-full"></div>
       </div>
     </div>
   );
@@ -239,7 +239,7 @@ function Jobs3DHero() {
 
 function Meta({ icon, value }) {
   return (
-    <span className="flex min-w-0 items-center gap-2 text-sm text-gray-600">
+    <span className="flex min-w-0 items-center gap-2 text-sm text-gray-400">
       <span className="text-gray-400">{icon}</span>
       <span className="truncate">{value || "-"}</span>
     </span>
@@ -252,7 +252,7 @@ function IconButton({ children, onClick, danger = false, label }) {
       type="button"
       aria-label={label}
       onClick={onClick}
-      className={`rounded-lg p-2 transition hover:-translate-y-0.5 ${danger ? "text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10" : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-800 hover:text-gray-950 dark:hover:text-white"}`}
+      className={`rounded-lg p-2 transition hover:-translate-y-0.5 ${danger ? "text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10" : "text-gray-400 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-800 hover:text-white dark:hover:text-white"}`}
     >
       {children}
     </button>

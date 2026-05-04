@@ -4,7 +4,6 @@ import Header from "./Header";
 import { apiUrl } from "./api";
 
 export default function SettingsPage() {
-  const [darkMode, setDarkMode] = useState(localStorage.getItem("theme") === "dark");
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
   const [form, setForm] = useState({
     current_password: "",
@@ -14,11 +13,6 @@ export default function SettingsPage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
-
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", darkMode);
-    localStorage.setItem("theme", darkMode ? "dark" : "light");
-  }, [darkMode]);
 
   const changePassword = async (event) => {
     event.preventDefault();
@@ -51,62 +45,38 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 bg-dot-pattern font-sans">
+    <div className="min-h-screen bg-[#121313] bg-dot-pattern font-sans text-white">
       <Header />
 
-      <main className="max-w-5xl mx-auto p-6 animate-fade-in-up">
-        {/* Back to menu button */}
-        <button 
-          onClick={() => window.dispatchEvent(new Event("open-sidebar"))}
-          className="mb-6 flex items-center gap-2 text-gray-500 hover:text-gray-900 transition-colors font-medium"
-        >
-          <ArrowLeft size={18} /> Menu
-        </button>
-
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold">Settings</h1>
-          <p className="text-gray-500">Personalize your workspace and secure your account.</p>
+      <main className="max-w-[1600px] mx-auto p-6 animate-fade-in-up">
+        {/* Navigation */}
+        <div className="mb-10 flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-black text-white tracking-tight">Settings</h1>
+            <p className="text-gray-400 mt-1">Manage your account security and platform preferences.</p>
+          </div>
+          <button 
+            onClick={() => window.dispatchEvent(new Event("open-sidebar"))}
+            className="flex items-center gap-2 rounded-xl bg-white/5 border border-white/10 px-6 py-3 text-sm font-black text-white hover:bg-white/10 transition-all shadow-lg active:scale-95"
+          >
+            <ArrowLeft size={18} strokeWidth={3} /> Menu
+          </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-3xl">
-          <section className="saas-card p-6">
-            <div className="w-12 h-12 rounded-2xl bg-gray-900 text-white flex items-center justify-center mb-4">
-              <ShieldCheck />
+        <div className="max-w-2xl">
+          {/* Security Card */}
+          <section className="saas-card p-10 flex flex-col items-center text-center">
+            <div className="w-20 h-20 rounded-3xl bg-[#FF6044] text-[#121313] flex items-center justify-center mb-6 shadow-2xl shadow-[#FF6044]/30">
+              <ShieldCheck size={40} strokeWidth={2.5} />
             </div>
-            <h2 className="text-xl font-semibold">Workspace</h2>
-            <p className="text-gray-500 text-sm mt-1">Make HireTrack feel comfortable during long job-hunt sessions.</p>
-
-            <div className="mt-6 rounded-2xl border p-4 flex items-center justify-between bg-white">
-              <div className="flex items-center gap-3">
-                {darkMode ? <Moon className="text-blue-600" /> : <Sun className="text-orange-500" />}
-                <div>
-                  <p className="font-medium text-gray-900">Dark mode</p>
-                  <p className="text-xs text-gray-500">Applies across the app</p>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setDarkMode((value) => !value)}
-                className={`relative w-14 h-8 rounded-full transition-colors ${darkMode ? "bg-blue-600" : "bg-gray-300"}`}
-              >
-                <span className={`absolute top-1 h-6 w-6 rounded-full bg-white shadow-sm transition-all ${darkMode ? "left-7" : "left-1"}`} />
-              </button>
-            </div>
-          </section>
-
-          <section className="saas-card p-6 flex flex-col justify-between">
-            <div>
-              <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-700 flex items-center justify-center mb-4">
-                <KeyRound />
-              </div>
-              <h2 className="text-xl font-semibold">Security</h2>
-              <p className="text-gray-500 text-sm mt-1">Update your account password to stay secure.</p>
-            </div>
+            <h2 className="text-3xl font-black text-white tracking-tight">Security & Privacy</h2>
+            <p className="text-gray-400 mt-4 leading-relaxed">
+              Update your account password to ensure your job hunt data remains secure and private.
+            </p>
             
             <button 
               onClick={() => setPasswordModalOpen(true)}
-              className="mt-6 w-full py-3 bg-gray-900 text-white rounded-xl font-medium hover:bg-gray-800 transition-colors shadow-sm"
+              className="mt-10 w-full py-5 bg-[#FF6044] text-[#121313] rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-[#ff4d2e] hover:shadow-2xl hover:shadow-[#FF6044]/40 transition-all active:scale-95 shadow-lg"
             >
               Change Password
             </button>
@@ -116,53 +86,53 @@ export default function SettingsPage() {
 
       {/* PASSWORD MODAL */}
       {passwordModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/40 backdrop-blur-sm p-4 animate-fade-in" onClick={() => setPasswordModalOpen(false)}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in" onClick={() => setPasswordModalOpen(false)}>
           <div 
-            className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-fade-in-up"
+            className="bg-[#1a1b1b] rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/10 w-full max-w-md overflow-hidden animate-fade-in-up"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-              <h3 className="text-xl font-bold text-gray-900">Change Password</h3>
+            <div className="flex items-center justify-between px-6 py-5 border-b border-white/5 bg-white/5">
+              <h3 className="text-xl font-black text-white tracking-tight">Change Password</h3>
               <button 
                 onClick={() => setPasswordModalOpen(false)}
-                className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-2 rounded-full transition-colors"
+                className="text-gray-400 hover:text-white p-2 rounded-xl hover:bg-white/5 transition-all"
               >
                 <X size={20} />
               </button>
             </div>
             
-            <div className="p-6">
-              {message && <div className="mb-4 rounded-xl bg-green-50 text-green-700 px-4 py-3 text-sm">{message}</div>}
-              {error && <div className="mb-4 rounded-xl bg-red-50 text-red-600 px-4 py-3 text-sm">{error}</div>}
+            <div className="p-8">
+              {message && <div className="mb-6 rounded-xl border border-emerald-500/20 bg-emerald-500/5 text-emerald-400 px-4 py-3 text-sm font-bold animate-pulse">✓ {message}</div>}
+              {error && <div className="mb-6 rounded-xl border border-red-500/20 bg-red-500/5 text-red-400 px-4 py-3 text-sm font-bold">⚠️ {error}</div>}
 
-              <form onSubmit={changePassword} className="grid gap-4">
+              <form onSubmit={changePassword} className="grid gap-5">
                 <PasswordInput
-                  label="Current password"
+                  label="Current Password"
                   value={form.current_password}
                   onChange={(value) => setForm({ ...form, current_password: value })}
                 />
                 <PasswordInput
-                  label="New password"
+                  label="New Password"
                   value={form.new_password}
                   onChange={(value) => setForm({ ...form, new_password: value })}
                 />
                 <PasswordInput
-                  label="Confirm new password"
+                  label="Confirm Password"
                   value={form.confirm_password}
                   onChange={(value) => setForm({ ...form, confirm_password: value })}
                 />
 
-                <div className="mt-4 flex gap-3">
+                <div className="mt-6 flex gap-3">
                   <button
                     type="button"
                     onClick={() => setPasswordModalOpen(false)}
-                    className="flex-1 py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-colors"
+                    className="flex-1 py-4 bg-white/5 text-white rounded-xl font-bold hover:bg-white/10 transition-all border border-white/10 text-sm"
                   >
                     Cancel
                   </button>
                   <button
                     disabled={saving}
-                    className="flex-1 inline-flex justify-center items-center gap-2 bg-gray-900 text-white py-3 rounded-xl shadow-sm hover:bg-gray-800 transition-colors disabled:opacity-60"
+                    className="flex-1 inline-flex justify-center items-center gap-2 bg-[#FF6044] text-[#121313] py-4 rounded-xl shadow-lg shadow-[#FF6044]/10 font-black text-sm uppercase tracking-widest hover:bg-[#ff4d2e] transition-all disabled:opacity-50 active:scale-95"
                   >
                     {saving ? "Saving..." : <><Save size={18} /> Update</>}
                   </button>
@@ -179,13 +149,14 @@ export default function SettingsPage() {
 function PasswordInput({ label, value, onChange }) {
   return (
     <label className="block">
-      <span className="text-sm font-medium text-gray-600">{label}</span>
+      <span className="text-xs font-black text-gray-500 uppercase tracking-widest block mb-2">{label}</span>
       <input
         type="password"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="form-input mt-1"
+        className="form-input"
         required
+        placeholder="••••••••"
       />
     </label>
   );
