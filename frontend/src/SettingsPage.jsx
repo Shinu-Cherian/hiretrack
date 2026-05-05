@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { KeyRound, Moon, ShieldCheck, Sun, ArrowLeft, X, Save } from "lucide-react";
+import { ShieldCheck, ArrowLeft, X, Save, Moon } from "lucide-react";
 import Header from "./Header";
 import { apiUrl } from "./api";
+import BackButton from "./components/BackButton";
 
 export default function SettingsPage() {
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
@@ -49,34 +50,28 @@ export default function SettingsPage() {
       <Header />
 
       <main className="max-w-[1600px] mx-auto p-6 animate-fade-in-up">
+        <BackButton className="mb-8" isMenu={true} />
+
         {/* Navigation */}
-        <div className="mb-10 flex items-center justify-between">
-          <div>
-            <h1 className="text-4xl font-black text-white tracking-tight">Settings</h1>
-            <p className="text-gray-400 mt-1">Manage your account security and platform preferences.</p>
-          </div>
-          <button 
-            onClick={() => window.dispatchEvent(new Event("open-sidebar"))}
-            className="flex items-center gap-2 rounded-xl bg-white/5 border border-white/10 px-6 py-3 text-sm font-black text-white hover:bg-white/10 transition-all shadow-lg active:scale-95"
-          >
-            <ArrowLeft size={18} strokeWidth={3} /> Menu
-          </button>
+        <div className="mb-10">
+          <h1 className="text-4xl font-black text-white tracking-tight">Settings</h1>
+          <p className="text-gray-400 mt-1">Manage your account security and platform preferences.</p>
         </div>
 
-        <div className="max-w-2xl">
+        <div className="max-w-md">
           {/* Security Card */}
-          <section className="saas-card p-10 flex flex-col items-center text-center">
-            <div className="w-20 h-20 rounded-3xl bg-[#FF6044] text-[#121313] flex items-center justify-center mb-6 shadow-2xl shadow-[#FF6044]/30">
-              <ShieldCheck size={40} strokeWidth={2.5} />
+          <section className="saas-card p-8 flex flex-col items-center text-center">
+            <div className="w-16 h-16 rounded-2xl bg-[#FF6044] text-[#121313] flex items-center justify-center mb-6 shadow-xl shadow-[#FF6044]/20">
+              <ShieldCheck size={32} strokeWidth={2.5} />
             </div>
-            <h2 className="text-3xl font-black text-white tracking-tight">Security & Privacy</h2>
-            <p className="text-gray-400 mt-4 leading-relaxed">
-              Update your account password to ensure your job hunt data remains secure and private.
+            <h2 className="text-2xl font-black text-white tracking-tight">Security & Privacy</h2>
+            <p className="text-gray-400 mt-3 text-sm leading-relaxed">
+              Update your password regularly to keep your data private.
             </p>
             
             <button 
               onClick={() => setPasswordModalOpen(true)}
-              className="mt-10 w-full py-5 bg-[#FF6044] text-[#121313] rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-[#ff4d2e] hover:shadow-2xl hover:shadow-[#FF6044]/40 transition-all active:scale-95 shadow-lg"
+              className="mt-8 w-full py-4 bg-[#FF6044] text-[#121313] rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[#ff4d2e] hover:shadow-lg hover:shadow-[#FF6044]/20 transition-all active:scale-95 shadow-md"
             >
               Change Password
             </button>

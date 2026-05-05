@@ -82,61 +82,61 @@ export default function Home() {
     <div className="min-h-screen overflow-x-hidden bg-background font-sans text-foreground">
       <Header />
 
-      {/* HERO SECTION */}
-      <section className="relative min-h-screen flex items-center pt-20 pb-32 px-6 lg:px-12 bg-dot-pattern overflow-hidden">
-        {/* Neon Glow Blobs */}
-        <div className="absolute top-1/4 -left-20 w-[600px] h-[600px] bg-[#FF6044]/10 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-1/4 -right-20 w-[400px] h-[400px] bg-[#FF6044]/5 rounded-full blur-[100px] pointer-events-none" />
+      {/* HERO SECTION - Option 3: The Dark Nebula */}
+      <section className="relative min-h-screen flex items-center pt-20 pb-32 px-6 lg:px-12 bg-[#121313] overflow-hidden">
+        {/* Nebula Mesh Gradients */}
+        <div className="absolute top-1/4 -left-20 w-[800px] h-[800px] bg-[#FF6044]/10 rounded-full blur-[140px] pointer-events-none animate-mesh" />
+        <div className="absolute bottom-1/4 -right-20 w-[600px] h-[600px] bg-indigo-500/5 rounded-full blur-[120px] pointer-events-none animate-mesh" style={{ animationDelay: '-5s' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[#121313] mix-blend-overlay opacity-50 pointer-events-none" />
         
         <FloatingParticles />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#121313]/0 via-[#121313]/40 to-[#121313] pointer-events-none" />
         
         <div className="relative max-w-[1600px] mx-auto w-full grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
           
           {/* Left Content */}
           <div className="text-center lg:text-left z-10">
             <div className="animate-fade-in-up">
-              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm text-[#FF6044] text-sm font-medium shadow-sm mb-6 shimmer-container">
-                <Sparkles size={16} className="text-[#FF6044]" />
+              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-white/5 bg-white/5 backdrop-blur-md text-[#FF6044] text-xs font-black uppercase tracking-widest mb-6 shadow-xl">
+                <Sparkles size={14} className="text-[#FF6044]" />
                 <span>The modern way to track applications</span>
               </span>
             </div>
 
-            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight leading-tight">
+            <h1 className="text-5xl md:text-8xl font-black tracking-tight leading-[0.9] text-white">
               {["Manage", "your", "career"].map((word, i) => (
-                <span key={i} className="inline-block animate-fade-in-up text-white" style={{ animationDelay: `${i * 100}ms` }}>
+                <span key={i} className="inline-block animate-fade-in-up" style={{ animationDelay: `${i * 100}ms` }}>
                   {word}&nbsp;
                 </span>
               ))}
               <br />
-              <span className="text-[#FF6044] animate-fade-in-up" style={{ animationDelay: "400ms" }}>with precision.</span>
+              <span className="text-[#FF6044] animate-fade-in-up drop-shadow-[0_0_30px_rgba(255,96,68,0.3)]" style={{ animationDelay: "400ms" }}>with precision.</span>
             </h1>
 
-            <p className="mt-6 text-xl text-gray-400 max-w-xl mx-auto lg:mx-0 animate-fade-in-up delay-500 font-light">
+            <p className="mt-8 text-xl text-gray-400 max-w-xl mx-auto lg:mx-0 animate-fade-in-up delay-500 font-medium leading-relaxed">
               Elevate your job search. HireTrack organizes your pipeline, referrals, and insights into a beautifully minimalist workspace.
             </p>
 
-            <div className="mt-10 flex flex-wrap gap-4 justify-center lg:justify-start animate-fade-in-up delay-700">
+            <div className="mt-12 flex flex-wrap gap-5 justify-center lg:justify-start animate-fade-in-up delay-700">
               {isLoggedIn ? (
                 <Link to="/dashboard">
-                  <button className="group relative inline-flex items-center gap-2 px-8 py-4 bg-[#FF6044] text-white rounded-2xl font-bold overflow-hidden transition-all hover:bg-[#ff4d2e] hover:shadow-2xl hover:shadow-[#FF6044]/30 hover:-translate-y-1">
+                  <button className="group relative inline-flex items-center gap-3 px-10 py-5 bg-[#FF6044] text-[#121313] rounded-2xl font-black text-sm uppercase tracking-widest overflow-hidden transition-all hover:bg-[#ff4d2e] hover:shadow-[0_0_40px_rgba(255,96,68,0.4)] hover:-translate-y-1 active:scale-95">
                     <span className="relative z-10 flex items-center gap-2">
-                      Go to Workspace <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                      Go to Workspace <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                     </span>
                   </button>
                 </Link>
               ) : (
                 <>
                   <Link to="/signup">
-                    <button className="group relative inline-flex items-center gap-2 px-8 py-4 bg-[#FF6044] text-white rounded-2xl font-bold overflow-hidden transition-all hover:bg-[#ff4d2e] hover:shadow-2xl hover:shadow-[#FF6044]/30 hover:-translate-y-1">
+                    <button className="group relative inline-flex items-center gap-3 px-10 py-5 bg-[#FF6044] text-[#121313] rounded-2xl font-black text-sm uppercase tracking-widest overflow-hidden transition-all hover:bg-[#ff4d2e] hover:shadow-[0_0_40px_rgba(255,96,68,0.4)] hover:-translate-y-1 active:scale-95">
                       <span className="relative z-10 flex items-center gap-2">
-                        Start for free <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                        Start for free <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                       </span>
                     </button>
                   </Link>
 
                   <Link to="/login">
-                    <button className="px-8 py-4 bg-white/5 text-white border border-white/10 rounded-2xl font-bold shadow-sm hover:shadow-md hover:bg-white/10 transition-all hover:-translate-y-1">
+                    <button className="px-10 py-5 bg-white/5 text-white border border-white/10 rounded-2xl font-black text-sm uppercase tracking-widest shadow-sm hover:bg-white/10 transition-all hover:-translate-y-1 active:scale-95">
                       Sign In
                     </button>
                   </Link>
@@ -145,9 +145,9 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Right 3D Visual - Restored and Enhanced */}
-          <div className="relative w-full h-full min-h-[500px] flex items-center justify-center perspective-1000 animate-fade-in delay-500 hidden md:flex z-10 hover:scale-105 transition-transform duration-700">
-            <div className="absolute inset-0 bg-gradient-to-tr from-gray-100 dark:from-slate-800 to-transparent rounded-full opacity-50 blur-3xl pointer-events-none" />
+          {/* Right 3D Visual - Dark Nebula Mode */}
+          <div className="relative w-full h-full min-h-[500px] flex items-center justify-center perspective-1000 animate-fade-in delay-500 hidden md:flex z-10 group">
+            <div className="absolute inset-0 bg-[#FF6044]/5 rounded-full blur-[100px] pointer-events-none group-hover:bg-[#FF6044]/10 transition-colors duration-700" />
             <Dashboard3DPreview />
           </div>
         </div>
@@ -370,62 +370,67 @@ function FloatingParticles() {
 function Dashboard3DPreview() {
   return (
     <div className="isometric-container w-full max-w-lg origin-center transition-transform duration-500">
-      <div className="bg-transparent rounded-2xl border border-white/10 p-6 isometric-card w-full h-[400px] flex flex-col shadow-xl">
+      {/* Main Dashboard Panel */}
+      <div className="glass border-white/10 p-6 isometric-card w-full h-[400px] flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.5)]">
         <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-[#FF6044]" />
-            <div className="h-2 w-20 bg-white/10 rounded" />
+            <div className="w-8 h-8 rounded-lg bg-[#FF6044] shadow-[0_0_15px_rgba(255,96,68,0.4)]" />
+            <div className="h-2 w-24 bg-white/10 rounded-full" />
           </div>
           <div className="h-6 w-6 rounded-full border-2 border-[#FF6044] border-t-transparent animate-spin" />
         </div>
         
         <div className="grid grid-cols-2 gap-4 mb-6">
-          <div className="bg-[#121313] rounded-xl border border-white/5 p-4 flex flex-col justify-end">
-            <div className="text-xs text-gray-400 font-medium mb-1">Active Jobs</div>
-            <div className="text-3xl font-bold text-white">24</div>
+          <div className="bg-white/5 rounded-2xl border border-white/5 p-5 flex flex-col justify-end backdrop-blur-md">
+            <div className="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">Active Jobs</div>
+            <div className="text-4xl font-black text-white">24</div>
           </div>
-          <div className="bg-[#121313] rounded-xl border border-white/5 p-4 flex flex-col justify-end">
-            <div className="text-xs text-gray-400 font-medium mb-1">Interviews</div>
-            <div className="text-3xl font-bold text-white">3</div>
+          <div className="bg-white/5 rounded-2xl border border-white/5 p-5 flex flex-col justify-end backdrop-blur-md">
+            <div className="text-[10px] text-[#FF6044] font-black uppercase tracking-widest mb-1">Interviews</div>
+            <div className="text-4xl font-black text-white">3</div>
           </div>
         </div>
 
         {/* Mock Chart Area */}
-        <div className="flex-1 bg-[#121313] rounded-xl border border-white/5 flex flex-col justify-end p-4 gap-2 relative overflow-hidden">
-           <div className="text-xs font-semibold text-gray-400 absolute top-3 left-4">Applications Sent</div>
-           <div className="flex items-end gap-3 h-full pt-6">
+        <div className="flex-1 bg-white/5 rounded-2xl border border-white/5 flex flex-col justify-end p-5 gap-2 relative overflow-hidden backdrop-blur-md">
+           <div className="text-[10px] font-black text-gray-500 uppercase tracking-widest absolute top-4 left-5">Applications Sent</div>
+           <div className="flex items-end gap-3 h-full pt-8">
              {[40, 70, 45, 90, 65, 80].map((h, i) => (
-               <div key={i} className="flex-1 bg-blue-500 rounded-t-md hover:bg-blue-600 transition-colors" style={{ height: `${h}%` }} />
+               <div 
+                 key={i} 
+                 className={`flex-1 rounded-t-lg transition-all duration-500 ${i === 3 ? 'bg-[#FF6044] shadow-[0_0_20px_rgba(255,96,68,0.4)]' : 'bg-white/10'}`} 
+                 style={{ height: `${h}%` }} 
+               />
              ))}
            </div>
         </div>
       </div>
 
-      {/* Floating Layer 1 (Card) - Specific Data */}
-      <div className="absolute -right-12 top-20 w-64 bg-transparent/95 backdrop-blur-md rounded-2xl border border-white/10 p-5 isometric-card-layer-1 shadow-2xl">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
-             <Briefcase size={18} className="text-gray-700"/>
+      {/* Floating Layer 1 (Job Card) */}
+      <div className="absolute -right-12 top-20 w-64 bg-[#1a1b1b]/90 backdrop-blur-2xl rounded-2xl border border-white/10 p-5 isometric-card-layer-1 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+        <div className="flex items-center gap-4 mb-5">
+          <div className="w-12 h-12 rounded-2xl bg-[#FF6044] flex items-center justify-center shadow-[0_0_20px_rgba(255,96,68,0.3)]">
+             <Briefcase size={20} className="text-[#121313]"/>
           </div>
           <div>
-            <div className="text-xs text-gray-400 font-medium mb-1">Google</div>
-            <div className="text-sm font-bold text-white">Software Engineer</div>
+            <div className="text-[10px] text-[#FF6044] font-black uppercase tracking-widest mb-0.5">Google</div>
+            <div className="text-sm font-black text-white leading-tight">Software Engineer</div>
           </div>
         </div>
-        <div className="flex justify-between items-center border-t border-gray-50 pt-3 mt-1">
-           <span className="text-xs text-gray-400 font-medium tracking-wide uppercase">Status</span>
-           <span className="px-3 py-1 bg-blue-50 text-blue-700 border border-blue-100 text-xs rounded-full font-bold">Interviewing</span>
+        <div className="flex justify-between items-center border-t border-white/5 pt-4">
+           <span className="text-[10px] text-gray-500 font-black uppercase tracking-widest">Status</span>
+           <span className="px-3 py-1 bg-[#FF6044]/10 text-[#FF6044] border border-[#FF6044]/20 text-[10px] rounded-lg font-black uppercase tracking-tighter">Interviewing</span>
         </div>
       </div>
 
-      {/* Floating Layer 2 (Notification) - AI Generated Cover letter */}
-      <div className="absolute -left-16 bottom-24 w-64 bg-[#121313]/95 backdrop-blur-xl rounded-2xl border border-[#FF6044]/30 p-4 isometric-card-layer-2 shadow-[0_0_30px_rgba(255,96,68,0.15)] flex gap-4 items-center">
-         <div className="w-10 h-10 rounded-full bg-[#FF6044] flex items-center justify-center shadow-sm flex-shrink-0">
-           <Sparkles size={18} className="text-white" />
+      {/* Floating Layer 2 (AI Notification) */}
+      <div className="absolute -left-16 bottom-24 w-64 bg-[#121313]/95 backdrop-blur-2xl rounded-2xl border border-[#FF6044]/30 p-5 isometric-card-layer-2 shadow-[0_0_40px_rgba(255,96,68,0.15)] flex gap-4 items-center group/item">
+         <div className="w-12 h-12 rounded-2xl bg-[#FF6044]/10 border border-[#FF6044]/20 flex items-center justify-center flex-shrink-0 transition-all group-hover/item:bg-[#FF6044] group-hover/item:text-[#121313]">
+           <Sparkles size={22} className="text-[#FF6044] group-hover/item:text-[#121313] transition-colors" />
          </div>
          <div>
-           <div className="text-xs font-bold text-white mb-0.5">Cover Letter Ready</div>
-           <div className="text-xs text-gray-400 font-medium">AI generated for Stripe</div>
+           <div className="text-xs font-black text-white mb-0.5">AI Insights</div>
+           <div className="text-[10px] text-gray-500 font-medium leading-tight">Cover Letter ready for <span className="text-white">Stripe</span></div>
          </div>
       </div>
     </div>

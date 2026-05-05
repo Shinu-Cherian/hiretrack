@@ -82,9 +82,9 @@ export default function Sidebar({ isOpen, onClose, profile }) {
                 navigate("/starred");
                 onClose();
               }}
-              className="group flex items-center gap-4 p-4 rounded-2xl cursor-pointer hover:bg-white/5 text-gray-400 hover:text-white transition-all font-bold"
+              className="group flex items-center gap-4 p-4 rounded-2xl cursor-pointer text-gray-400 hover:bg-[#FF6044] hover:text-[#121313] transition-all font-black shadow-lg hover:shadow-[#FF6044]/20"
             >
-              <Star size={20} className="group-hover:text-[#FF6044] transition-colors" /> Starred
+              <Star size={20} /> Starred
             </div>
 
             {/* 🔔 NOTIFICATIONS */}
@@ -93,12 +93,12 @@ export default function Sidebar({ isOpen, onClose, profile }) {
                 navigate("/notifications", { state: { fromSidebar: true } });
                 onClose();
               }}
-              className="group relative flex items-center gap-4 p-4 rounded-2xl cursor-pointer hover:bg-white/5 text-gray-400 hover:text-white transition-all font-bold"
+              className="group relative flex items-center gap-4 p-4 rounded-2xl cursor-pointer text-gray-400 hover:bg-[#FF6044] hover:text-[#121313] transition-all font-black shadow-lg hover:shadow-[#FF6044]/20"
             >
-              <Bell size={20} className="group-hover:text-[#FF6044] transition-colors" /> Notifications
+              <Bell size={20} /> Notifications
 
               {hasUnread && (
-                <span className="absolute right-4 top-1/2 -translate-y-1/2 w-2 h-2 bg-[#FF6044] rounded-full animate-pulse shadow-[0_0_10px_#FF6044]"></span>
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 w-2 h-2 bg-[#FF6044] rounded-full animate-pulse shadow-[0_0_10px_#FF6044] group-hover:bg-[#121313] group-hover:shadow-none"></span>
               )}
             </div>
 
@@ -108,9 +108,9 @@ export default function Sidebar({ isOpen, onClose, profile }) {
                 navigate("/settings");
                 onClose();
               }}
-              className="group flex items-center gap-4 p-4 rounded-2xl cursor-pointer hover:bg-white/5 text-gray-400 hover:text-white transition-all font-bold"
+              className="group flex items-center gap-4 p-4 rounded-2xl cursor-pointer text-gray-400 hover:bg-[#FF6044] hover:text-[#121313] transition-all font-black shadow-lg hover:shadow-[#FF6044]/20"
             >
-              <Settings size={20} className="group-hover:text-[#FF6044] transition-colors" /> Settings
+              <Settings size={20} /> Settings
             </div>
 
             {/* 📦 VAULT */}
@@ -119,9 +119,9 @@ export default function Sidebar({ isOpen, onClose, profile }) {
                 navigate("/career-vault");
                 onClose();
               }}
-              className="group flex items-center gap-4 p-4 rounded-2xl cursor-pointer hover:bg-white/5 text-gray-400 hover:text-white transition-all font-bold"
+              className="group flex items-center gap-4 p-4 rounded-2xl cursor-pointer text-gray-400 hover:bg-[#FF6044] hover:text-[#121313] transition-all font-black shadow-lg hover:shadow-[#FF6044]/20"
             >
-              <Archive size={20} className="group-hover:text-[#FF6044] transition-colors" /> Career Vault
+              <Archive size={20} /> Career Vault
             </div>
 
           </div>
@@ -131,7 +131,7 @@ export default function Sidebar({ isOpen, onClose, profile }) {
           {/* LOGOUT */}
           <button
             onClick={handleLogout}
-            className="group flex items-center gap-4 p-4 w-full rounded-2xl hover:bg-red-500/10 text-red-500 font-bold transition-all"
+            className="group flex items-center gap-4 p-4 w-full rounded-2xl text-red-500 hover:bg-red-500 hover:text-white font-black transition-all shadow-lg hover:shadow-red-500/20"
           >
             <LogOut size={20} className="group-hover:translate-x-1 transition-transform" /> Logout
           </button>
