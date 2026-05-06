@@ -5,6 +5,8 @@ from .career_roadmap_view import career_roadmap_api
 urlpatterns = [
     path('', views.home, name='home'),
     path('api/add-job/', views.add_job_api),
+    path('api/auth/status/', views.auth_status_api),
+    path('api/auth/logout/', views.logout_api),
     path('jobs/', views.job_list, name='job_list'),
     path('api/add-referral/', views.add_referral_api),
     path('referrals/', views.referral_list, name='referral_list'),

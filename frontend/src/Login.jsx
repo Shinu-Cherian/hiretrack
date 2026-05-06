@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Briefcase, Key, User, ArrowRight, ShieldCheck, Zap, Sparkles, X } from "lucide-react";
-import { apiUrl } from "./api";
+import { apiUrl, syncAuthStorage } from "./api";
 
 function getCSRFToken() {
   return document.cookie
@@ -12,6 +12,7 @@ function getCSRFToken() {
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -34,12 +35,9 @@ export default function Login() {
 
     if (res.ok) {
       const data = await res.json();
-      localStorage.setItem("isLoggedIn", "true");
-      localStorage.setItem("username", data.username || username);
-      if (data.profile_pic) localStorage.setItem("profile_pic", data.profile_pic);
-      else localStorage.removeItem("profile_pic");
-      
-      navigate("/");
+      syncAuthStorage({ authenticated: true, username: data.username || username, profile_pic: data.profile_pic });
+      const nextPath = typeof location.state?.from === "string" ? location.state.from : "/";
+      navigate(nextPath);
       window.location.reload();
     } else {
       alert("Login failed");

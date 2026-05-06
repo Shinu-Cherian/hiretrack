@@ -13,6 +13,9 @@ def career_roadmap_api(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required"}, status=405)
 
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Login required"}, status=401)
+
     try:
         body = _json.loads(request.body)
     except Exception:
@@ -34,15 +37,14 @@ def career_roadmap_api(request):
     user_edu = []
     user_exp = []
     
-    if request.user.is_authenticated:
-        profile = Profile.objects.filter(user=request.user).first()
-        if profile: user_skills = profile.skills or "Not Provided"
-        
-        for e in Education.objects.filter(user=request.user):
-            user_edu.append(f"{e.course} from {e.college} ({e.start_year}-{e.end_year})")
-        
-        for ex in Experience.objects.filter(user=request.user):
-            user_exp.append(f"Role: {ex.role} at {ex.company}. Description: {ex.description}")
+    profile = Profile.objects.filter(user=request.user).first()
+    if profile: user_skills = profile.skills or "Not Provided"
+
+    for e in Education.objects.filter(user=request.user):
+        user_edu.append(f"{e.course} from {e.college} ({e.start_year}-{e.end_year})")
+
+    for ex in Experience.objects.filter(user=request.user):
+        user_exp.append(f"Role: {ex.role} at {ex.company}. Description: {ex.description}")
 
     # 3. THE "PERFECT IN-DEPTH" PROMPT
     system_msg = (

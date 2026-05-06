@@ -15,7 +15,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .utils_pdf import render_to_pdf
 
 
-from django.contrib.auth import authenticate, login, update_session_auth_hash
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from datetime import date, timedelta
 from django.http import FileResponse, Http404, JsonResponse, HttpResponse
 import re
@@ -36,6 +36,26 @@ def login_required_json(user):
     if user is None:
         return JsonResponse({"error": "Login required"}, status=401)
     return None
+
+
+def auth_status_api(request):
+    user = api_user(request)
+    if user is None:
+        return JsonResponse({"authenticated": False}, status=401)
+
+    profile, _ = Profile.objects.get_or_create(user=user)
+    return JsonResponse({
+        "authenticated": True,
+        "username": user.username,
+        "email": user.email,
+        "profile_pic": profile.profile_pic.url if profile.profile_pic else None,
+    })
+
+
+@csrf_exempt
+def logout_api(request):
+    logout(request)
+    return JsonResponse({"message": "Logout success"})
 
 
 STOP_WORDS = {
@@ -479,15 +499,16 @@ def add_job_api(request):
         import json
         from datetime import datetime, timedelta
 
+        user = api_user(request)
+        auth_error = login_required_json(user)
+        if auth_error:
+            return auth_error
+
         data = request.POST if request.content_type and request.content_type.startswith("multipart/form-data") else json.loads(request.body)
         
         date_applied = data.get("dateApplied")
         date_obj = datetime.strptime(date_applied, "%Y-%m-%d").date()
         follow_up_date = date_obj + timedelta(days=7)
-        user = api_user(request)
-        auth_error = login_required_json(user)
-        if auth_error:
-            return auth_error
 
         Job.objects.create(
             user=user,
@@ -691,13 +712,13 @@ def dashboard(request):
 
 @login_required
 def delete_job(request, id):
-    job = Job.objects.get(id=id)
+    job = get_object_or_404(Job, id=id, user=request.user)
     job.delete()
     return redirect('job_list')
 
 @login_required
 def edit_job(request, id):
-    job = Job.objects.get(id=id)
+    job = get_object_or_404(Job, id=id, user=request.user)
 
     if request.method == 'POST':
         job.company = request.POST.get('company')
@@ -715,13 +736,13 @@ def edit_job(request, id):
 
 @login_required
 def delete_referral(request, id):
-    referral = Referral.objects.get(id=id)
+    referral = get_object_or_404(Referral, id=id, user=request.user)
     referral.delete()
     return redirect('referral_list')
 
 @login_required
 def edit_referral(request, id):
-    referral = Referral.objects.get(id=id)
+    referral = get_object_or_404(Referral, id=id, user=request.user)
 
     if request.method == 'POST':
         referral.person_name = request.POST.get('person_name')
@@ -931,7 +952,7 @@ def notifications_page(request):
 
 @login_required
 def toggle_star_job(request, id):
-    job = Job.objects.get(id=id)
+    job = get_object_or_404(Job, id=id, user=request.user)
 
     # toggle
     job.is_starred = not job.is_starred
@@ -941,7 +962,7 @@ def toggle_star_job(request, id):
 
 @login_required
 def toggle_star_referral(request, id):
-    referral = Referral.objects.get(id=id)
+    referral = get_object_or_404(Referral, id=id, user=request.user)
 
     # toggle star
     referral.is_starred = not referral.is_starred
@@ -960,19 +981,16 @@ def signup(request):
 
         # 🔐 Password match check
         if password != confirm_password:
-            messages.error(request, "Passwords do not match")
-            return redirect('signup')
+            return JsonResponse({"error": "Passwords do not match"}, status=400)
 
         # 🔐 Username already exists check
         if User.objects.filter(username=username).exists():
-            messages.error(request, "Username already taken")
-            return redirect('signup')
+            return JsonResponse({"error": "Username already taken"}, status=400)
 
         # ✅ Create user
         User.objects.create_user(username=username, password=password)
 
-        messages.success(request, "Account created successfully! Please login.")
-        return JsonResponse({"message": "Signup success"})
+        return JsonResponse({"message": "Signup success. Please login."})
 
     return render(request, 'signup.html')
 
@@ -1523,6 +1541,11 @@ def resume_analyze_api(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required"}, status=405)
 
+    user = api_user(request)
+    auth_error = login_required_json(user)
+    if auth_error:
+        return auth_error
+
     uploaded_text, warnings = read_uploaded_text(request.FILES.get("resume_file"))
     resume_text = request.POST.get("resume", "") + "\n" + uploaded_text
     jd_text = request.POST.get("job_description", "")
@@ -1678,59 +1701,62 @@ def generate_cover_letter_api(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required"}, status=405)
 
+    user = api_user(request)
+    auth_error = login_required_json(user)
+    if auth_error:
+        return auth_error
+
     uploaded_text, warnings = read_uploaded_text(request.FILES.get("resume_file"))
     resume_text = request.POST.get("resume", "") + "\n" + uploaded_text
     jd_text = request.POST.get("job_description", "")
     # Get user profile for frontend preview
-    user = api_user(request)
     profile_data = {}
-    if user:
-        p, _ = Profile.objects.get_or_create(user=user)
-        profile_data = {
-            "name": user.username,
-            "email": user.email,
-            "phone": p.phone or "",
-            "address": "",
-            "linkedin": "",
-            "github": ""
-        }
-        # --- Name extraction from resume ---
-        name_from_resume = ""
-        for line in resume_text.strip().split("\n"):
-            line = line.strip()
-            if line and len(line) < 50 and "@" not in line and ".com" not in line and not any(c.isdigit() for c in line[:5]):
-                name_from_resume = line
-                break
-        if name_from_resume:
-            profile_data["name"] = name_from_resume.strip().title()
+    p, _ = Profile.objects.get_or_create(user=user)
+    profile_data = {
+        "name": user.username,
+        "email": user.email,
+        "phone": p.phone or "",
+        "address": "",
+        "linkedin": "",
+        "github": ""
+    }
+    # --- Name extraction from resume ---
+    name_from_resume = ""
+    for line in resume_text.strip().split("\n"):
+        line = line.strip()
+        if line and len(line) < 50 and "@" not in line and ".com" not in line and not any(c.isdigit() for c in line[:5]):
+            name_from_resume = line
+            break
+    if name_from_resume:
+        profile_data["name"] = name_from_resume.strip().title()
 
-        # --- Email: PREFER user.email from DB (already clean), only fallback to PDF if missing ---
-        if not profile_data["email"]:
-            e_match = re.search(r"\b[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}\b", resume_text)
-            if e_match:
-                profile_data["email"] = e_match.group(0).strip()
+    # --- Email: PREFER user.email from DB (already clean), only fallback to PDF if missing ---
+    if not profile_data["email"]:
+        e_match = re.search(r"\b[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}\b", resume_text)
+        if e_match:
+            profile_data["email"] = e_match.group(0).strip()
 
-        # --- Phone: from profile first, then PDF ---
-        if not profile_data["phone"]:
-            p_match = re.search(r"\+?\d[\d\s\-().]{7,15}\d", resume_text)
-            if p_match:
-                profile_data["phone"] = p_match.group(0).strip()
+    # --- Phone: from profile first, then PDF ---
+    if not profile_data["phone"]:
+        p_match = re.search(r"\+?\d[\d\s\-().]{7,15}\d", resume_text)
+        if p_match:
+            profile_data["phone"] = p_match.group(0).strip()
 
-        # --- LinkedIn and GitHub ---
-        l_match = re.search(r"linkedin\.com/in/[a-zA-Z0-9_-]+", resume_text, re.IGNORECASE)
-        g_match = re.search(r"github\.com/[a-zA-Z0-9_-]+", resume_text, re.IGNORECASE)
-        if l_match:
-            profile_data["linkedin"] = l_match.group(0)
-        if g_match:
-            profile_data["github"] = g_match.group(0)
+    # --- LinkedIn and GitHub ---
+    l_match = re.search(r"linkedin\.com/in/[a-zA-Z0-9_-]+", resume_text, re.IGNORECASE)
+    g_match = re.search(r"github\.com/[a-zA-Z0-9_-]+", resume_text, re.IGNORECASE)
+    if l_match:
+        profile_data["linkedin"] = l_match.group(0)
+    if g_match:
+        profile_data["github"] = g_match.group(0)
 
-        # --- Location from resume (City, State, Country pattern) ---
-        loc_match = re.search(
-            r"[A-Z][a-z]+(?:[\s,]+[A-Z][a-z]+){1,3},?\s*India",
-            resume_text
-        )
-        if loc_match:
-            profile_data["location"] = loc_match.group(0).strip()
+    # --- Location from resume (City, State, Country pattern) ---
+    loc_match = re.search(
+        r"[A-Z][a-z]+(?:[\s,]+[A-Z][a-z]+){1,3},?\s*India",
+        resume_text
+    )
+    if loc_match:
+        profile_data["location"] = loc_match.group(0).strip()
 
     return JsonResponse({
         "cover_letter": build_cover_letter(resume_text, jd_text, profile=profile_data),
@@ -1745,6 +1771,11 @@ def generate_cover_letter_pdf_api(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required"}, status=405)
 
+    user = api_user(request)
+    auth_error = login_required_json(user)
+    if auth_error:
+        return auth_error
+
     import json
     try:
         data = json.loads(request.body)
@@ -1754,7 +1785,6 @@ def generate_cover_letter_pdf_api(request):
     text = data.get("text", "")
     template_id = data.get("template_id", "1")
     
-    user = api_user(request)
     user_name = "[Your Name]"
     user_email = ""
     user_phone = ""

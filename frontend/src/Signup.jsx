@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Briefcase, Sparkles, Zap, Star, ShieldCheck, ArrowRight, UserPlus, Lock } from 'lucide-react';
 import { apiUrl } from "./api";
 
@@ -12,6 +12,7 @@ function getCSRFToken() {
 
 export default function Signup() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -40,10 +41,11 @@ export default function Signup() {
     setSubmitting(false);
 
     if (res.ok) {
-      localStorage.setItem("isLoggedIn", "true"); 
-      navigate("/login");
+      const nextPath = typeof location.state?.from === "string" ? location.state.from : "/";
+      navigate("/login", { state: { from: nextPath } });
     } else {
-      alert("Signup failed");
+      const data = await res.json().catch(() => ({}));
+      alert(data.error || "Signup failed");
     }
   };
 

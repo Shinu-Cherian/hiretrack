@@ -2,38 +2,33 @@ import { Link, useNavigate } from "react-router-dom";
 import { Bell, Briefcase, Flame } from "lucide-react";
 import { useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
-import { apiUrl } from "./api";
+import { apiUrl, getAuthStatus } from "./api";
 import Avatar from "./components/Avatar";
 
 export default function Header() {
 
-  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
   const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profile, setProfile] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [readVersion, setReadVersion] = useState(0);
 
   useEffect(() => {
-    if (!isLoggedIn) return;
-
-    fetch(apiUrl("/api/profile/"), {
-      credentials: "include",
-    })
-      .then((res) => (res.ok ? res.json() : null))
+    getAuthStatus()
       .then((data) => {
-        if (data) {
+        setIsLoggedIn(Boolean(data.authenticated));
+        if (data.authenticated) {
           setProfile(data);
-          localStorage.setItem("username", data.username || "User");
-          if (data.profile_pic) {
-            localStorage.setItem("profile_pic", data.profile_pic);
-          } else {
-            localStorage.removeItem("profile_pic");
-          }
+        } else {
+          setProfile(null);
         }
       })
-      .catch(() => {});
-  }, [isLoggedIn]);
+      .catch(() => {
+        setIsLoggedIn(false);
+        setProfile(null);
+      });
+  }, []);
 
   useEffect(() => {
     if (!isLoggedIn) return;

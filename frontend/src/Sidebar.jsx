@@ -1,7 +1,7 @@
 import { Star, Bell, Settings, LogOut, Archive } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { apiUrl } from "./api";
+import { apiUrl, logoutSession } from "./api";
 import Avatar from "./components/Avatar";
 
 export default function Sidebar({ isOpen, onClose, profile }) {
@@ -14,8 +14,8 @@ export default function Sidebar({ isOpen, onClose, profile }) {
     fetch(apiUrl("/api/notifications/"), {
       credentials: "include",
     })
-      .then(res => res.json())
-      .then(data => setNotifications(data));
+      .then(res => (res.ok ? res.json() : []))
+      .then(data => setNotifications(Array.isArray(data) ? data : []));
   }, []);
 
   useEffect(() => {
@@ -24,8 +24,8 @@ export default function Sidebar({ isOpen, onClose, profile }) {
     return () => window.removeEventListener("notifications-read", refresh);
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("isLoggedIn");
+  const handleLogout = async () => {
+    await logoutSession();
     onClose();
     navigate("/");
     window.location.reload();

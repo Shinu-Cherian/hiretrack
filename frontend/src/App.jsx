@@ -18,13 +18,18 @@ import ResumeAnalyzerPage from "./ResumeAnalyzerPage";
 import CoverLetterPage from "./CoverLetterPage";
 import ExtensionFormPage from "./ExtensionFormPage";
 import CareerRoadmapPage from "./CareerRoadmapPage";
+import AuthGate from "./components/AuthGate";
+
+function Private({ children }) {
+  return <AuthGate>{children}</AuthGate>;
+}
 
 
 function App() {
   return (
     <Routes>
 
-      <Route path="/extension/:type" element={<ExtensionFormPage />} />
+      <Route path="/extension/:type" element={<Private><ExtensionFormPage /></Private>} />
 
       <Route path="/" element={<Home />} />
 
@@ -32,35 +37,35 @@ function App() {
 
       <Route path="/signup" element={<Signup />} />
 
-      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/dashboard" element={<Private><Dashboard /></Private>} />
 
-      <Route path="/jobs" element={<JobsPage />} />
+      <Route path="/jobs" element={<Private><JobsPage /></Private>} />
 
-      <Route path="/add-job" element={<AddJobPage />} />
+      <Route path="/add-job" element={<Private><AddJobPage /></Private>} />
 
-      <Route path="/referrals" element={<ViewReferrals />} />
+      <Route path="/referrals" element={<Private><ViewReferrals /></Private>} />
 
-      <Route path="/add-referral" element={<AddReferralPage />} />
+      <Route path="/add-referral" element={<Private><AddReferralPage /></Private>} />
 
-      <Route path="/starred" element={<StarredPage />} />
+      <Route path="/starred" element={<Private><StarredPage /></Private>} />
 
-      <Route path="/notifications" element={<NotificationsPage />} />
+      <Route path="/notifications" element={<Private><NotificationsPage /></Private>} />
 
-      <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/profile" element={<Private><ProfilePage /></Private>} />
 
-      <Route path="/profile/edit" element={<EditProfilePage />} />
+      <Route path="/profile/edit" element={<Private><EditProfilePage /></Private>} />
 
-      <Route path="/settings" element={<SettingsPage />} />
+      <Route path="/settings" element={<Private><SettingsPage /></Private>} />
 
-      <Route path="/career-vault" element={<CareerVault />} />
+      <Route path="/career-vault" element={<Private><CareerVault /></Private>} />
 
-      <Route path="/streaks" element={<StreakPage />} />
+      <Route path="/streaks" element={<Private><StreakPage /></Private>} />
 
-      <Route path="/resume-analyzer" element={<ResumeAnalyzerPage />} />
+      <Route path="/resume-analyzer" element={<Private><ResumeAnalyzerPage /></Private>} />
 
-      <Route path="/cover-letter" element={<CoverLetterPage />} />
+      <Route path="/cover-letter" element={<Private><CoverLetterPage /></Private>} />
 
-      <Route path="/career-roadmap" element={<CareerRoadmapPage />} />
+      <Route path="/career-roadmap" element={<Private><CareerRoadmapPage /></Private>} />
 
     </Routes>
   );

@@ -17,7 +17,6 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.urls import include
-from django.contrib.auth import views as auth_views
 from tracker import views
 from django.conf import settings
 from django.conf.urls.static import static
@@ -25,7 +24,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('tracker.urls')),
-    path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
+    path('logout/', views.logout_api, name='logout'),
     path('signup/', views.signup, name='signup'),
     path('get-csrf/', views.get_csrf),
     path('login/', views.login_api),
