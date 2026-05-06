@@ -223,6 +223,19 @@
   background: #121313;
 }
 
+/* Override browser autofill white/blue background */
+.form-input:-webkit-autofill,
+.form-input:-webkit-autofill:hover,
+.form-input:-webkit-autofill:focus,
+.form-input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #1a1b1b inset !important;
+  box-shadow: 0 0 0 1000px #1a1b1b inset !important;
+  -webkit-text-fill-color: #ffffff !important;
+  caret-color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
 /* MODERN GRADIENT TEXT */
 .text-gradient-modern {
   background: linear-gradient(135deg, #111827 0%, #6b7280 100%);
@@ -304,4 +317,54 @@ html.dark body {
 .dark .isometric-card, .dark .isometric-card-layer-1, .dark .isometric-card-layer-2 {
   background: rgba(30, 41, 59, 0.95) !important;
   border-color: rgba(51, 65, 85, 0.8) !important;
+}
+
+/* 🚨 NOTIFICATION BORDER BEAM ANIMATION */
+@keyframes rotate-beam {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.border-beam-active {
+  position: relative;
+}
+
+.border-beam-active::after {
+  content: "";
+  position: absolute;
+  inset: -1.5px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0%,
+    transparent 70%,
+    #FF6044 90%,
+    #FF6044 100%
+  );
+  animation: rotate-beam 2.5s linear infinite;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* 3D AUTH ANIMATIONS */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spin-slow-reverse {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 10s linear infinite;
+}
+
+.animate-spin-slow-reverse {
+  animation: spin-slow-reverse 10s linear infinite;
 }

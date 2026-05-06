@@ -65,11 +65,11 @@ export default function ReferralForm({ initialValues = emptyReferral, submitLabe
 
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
         {onCancel && (
-          <button type="button" onClick={onCancel} className="rounded-lg border border-gray-200 px-5 py-3 font-semibold text-gray-700 hover:bg-gray-50">
+          <button type="button" onClick={onCancel} className="rounded-xl border border-white/10 bg-white/5 px-6 py-3 font-bold text-white hover:bg-white/10 transition-all">
             Cancel
           </button>
         )}
-        <button disabled={saving} className="rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white shadow-sm hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-70">
+        <button disabled={saving} className="rounded-xl bg-[#FF6044] px-8 py-3 font-black text-[#121313] shadow-lg shadow-[#FF6044]/20 hover:bg-[#ff4d2e] hover:-translate-y-1 transition-all disabled:cursor-not-allowed disabled:opacity-70">
           {saving ? "Saving..." : submitLabel}
         </button>
       </div>

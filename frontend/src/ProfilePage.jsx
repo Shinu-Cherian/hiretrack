@@ -66,7 +66,7 @@ export default function ProfilePage() {
                 <Avatar src={data.profile_pic} username={data.username} size="lg" className="border-4 border-white shadow-lg" />
 
                 <div className="pb-2">
-                  <h1 className="text-3xl font-bold">{data.username}</h1>
+                  <h1 className="text-3xl font-black text-white">{data.username}</h1>
                   <p className="text-gray-400 flex items-center gap-2 mt-1">
                     <Mail size={16} /> {data.email || "No email added"}
                   </p>
@@ -74,7 +74,7 @@ export default function ProfilePage() {
               </div>
 
               <Link to="/profile/edit">
-                <button className="inline-flex items-center gap-2 bg-[#FF6044] text-white px-5 py-3 rounded-xl font-bold shadow-lg shadow-[#FF6044]/20 hover:bg-[#ff4d2e] transition-all">
+                <button className="inline-flex items-center gap-2 bg-[#FF6044] text-[#121313] px-5 py-3 rounded-xl font-bold shadow-lg shadow-[#FF6044]/20 hover:bg-[#ff4d2e] transition-all">
                   <Pencil size={18} /> Edit Profile
                 </button>
               </Link>
@@ -84,17 +84,17 @@ export default function ProfilePage() {
 
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
           <div className="saas-card p-6">
-            <h2 className="font-semibold text-lg mb-4 flex items-center gap-2">
-              <UserRound size={20} /> Basic Info
+            <h2 className="font-black text-white text-base mb-4 flex items-center gap-2">
+              <UserRound size={18} className="text-[#FF6044]" /> Basic Info
             </h2>
-            <Info label="Phone" value={data.phone} icon={<Phone size={16} />} />
-            <Info label="Age" value={data.age} />
-            <Info label="Gender" value={data.gender} />
+            <Info label="Phone" value={data.phone} icon={<Phone size={16} className="text-[#FF6044]" />} />
+            <Info label="Age" value={data.age} icon={<Sparkles size={16} className="text-[#FF6044]" />} />
+            <Info label="Gender" value={data.gender} icon={<UserRound size={16} className="text-[#FF6044]" />} />
           </div>
 
           <div className="lg:col-span-2 saas-card p-6">
-            <h2 className="font-semibold text-lg mb-4 flex items-center gap-2">
-              <Sparkles size={20} /> Skills
+            <h2 className="font-black text-white text-base mb-4 flex items-center gap-2">
+              <Sparkles size={18} className="text-[#FF6044]" /> Skills
             </h2>
             {data.skills ? (
               <div className="flex flex-wrap gap-2">
@@ -108,7 +108,7 @@ export default function ProfilePage() {
               <p className="text-gray-400">No skills added</p>
             )}
 
-            <h2 className="font-semibold text-lg mt-8 mb-4">Resume</h2>
+            <h2 className="font-black text-white text-base mt-8 mb-4">Resume</h2>
             {data.resume ? (
               <a href={`${API_BASE}${data.resume}`} target="_blank" rel="noreferrer">
                 <button className="px-4 py-2 bg-gray-900 text-white rounded-xl">View Resume</button>
@@ -139,9 +139,9 @@ export default function ProfilePage() {
 
 function Info({ label, value, icon }) {
   return (
-    <div className="flex justify-between gap-4 border-b py-3 last:border-b-0">
+    <div className="flex justify-between gap-4 border-b border-white/5 py-3 last:border-b-0">
       <span className="text-gray-400 flex items-center gap-2">{icon}{label}</span>
-      <strong className="text-right">{value || "-"}</strong>
+      <strong className="text-white font-semibold text-right">{value || "-"}</strong>
     </div>
   );
 }
@@ -151,7 +151,7 @@ function Timeline({ title, icon, empty, children }) {
 
   return (
     <div className="saas-card p-6">
-      <h2 className="font-semibold text-lg mb-4 flex items-center gap-2">{icon}{title}</h2>
+      <h2 className="font-black text-white text-base mb-4 flex items-center gap-2 text-[#FF6044]">{icon}{title}</h2>
       {items && items.length > 0 ? <div className="space-y-4">{items}</div> : <p className="text-gray-400">{empty}</p>}
     </div>
   );
@@ -160,7 +160,7 @@ function Timeline({ title, icon, empty, children }) {
 function TimelineItem({ title, subtitle, meta, note }) {
   return (
     <div className="border-l-4 border-[#FF6044] pl-4 py-1">
-      <h3 className="font-semibold">{title || "-"}</h3>
+      <h3 className="font-black text-white">{title || "-"}</h3>
       <p className="text-gray-400">{subtitle || "-"}</p>
       <p className="text-sm text-gray-400">{meta}</p>
       {note && <p className="text-sm text-gray-400 mt-2">{note}</p>}

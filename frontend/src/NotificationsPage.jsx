@@ -8,23 +8,34 @@ import Card from "./components/Card";
 
 export default function NotificationsPage() {
   const [data, setData] = useState([]);
+  const [clickedKeys, setClickedKeys] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
   const fromSidebar = location.state?.fromSidebar || false;
 
   useEffect(() => {
+    // Load clicked notifications from localStorage
+    const saved = localStorage.getItem("clicked_notifications");
+    if (saved) setClickedKeys(JSON.parse(saved));
+
     fetch(apiUrl("/api/notifications/"), { credentials: "include" })
       .then((res) => res.json())
       .then((items) => {
-        const list = Array.isArray(items) ? items : [];
-        setData(list);
-        const keys = list.map(notificationKey);
-        localStorage.setItem("read_notifications", JSON.stringify(keys));
-        window.dispatchEvent(new Event("notifications-read"));
+        setData(Array.isArray(items) ? items : []);
       });
   }, []);
 
   const openNotification = (notification) => {
+    const key = notificationKey(notification);
+    
+    // Mark as clicked locally
+    const newClicked = [...new Set([...clickedKeys, key])];
+    setClickedKeys(newClicked);
+    localStorage.setItem("clicked_notifications", JSON.stringify(newClicked));
+    
+    // Optional: dispatch event if other components need to know
+    window.dispatchEvent(new Event("notifications-read"));
+
     const path = notification.type === "referral" ? "/referrals" : "/jobs";
     navigate(`${path}?highlight=${notification.id}`);
   };
@@ -47,22 +58,36 @@ export default function NotificationsPage() {
           {data.length === 0 ? (
             <div className="p-10 text-center text-gray-400">No notifications</div>
           ) : (
-            data.map((notification) => (
-              <button
-                key={`${notification.type}-${notification.id}`}
-                type="button"
-                onClick={() => openNotification(notification)}
-                className="flex w-full items-center gap-4 border-b border-white/5 p-4 text-left transition hover:bg-white/5 last:border-b-0"
-              >
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#FF6044] text-[#121313]">
-                  {notification.type === "referral" ? <Handshake size={19} /> : <Briefcase size={19} />}
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block font-bold text-white">{notification.message}</span>
-                  <span className="block text-sm text-gray-400">{notification.date}</span>
-                </span>
-              </button>
-            ))
+            data.map((notification) => {
+              const key = notificationKey(notification);
+              const isUnread = !clickedKeys.includes(key);
+
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => openNotification(notification)}
+                  className="flex w-full items-center gap-4 border-b border-white/5 p-4 text-left transition hover:bg-white/5 last:border-b-0"
+                >
+                  <span 
+                    className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#FF6044] text-[#121313] shadow-lg transition-all ${
+                      isUnread ? "border-beam-active shadow-[#FF6044]/20" : "opacity-80"
+                    }`}
+                  >
+                    {notification.type === "referral" ? <Handshake size={20} /> : <Briefcase size={20} />}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className={`block font-bold transition-colors ${isUnread ? "text-white" : "text-gray-400"}`}>
+                      {notification.message}
+                    </span>
+                    <span className="block text-xs text-gray-500 mt-1">{notification.date}</span>
+                  </span>
+                  {isUnread && (
+                    <span className="h-2 w-2 rounded-full bg-[#FF6044] shadow-[0_0_10px_#FF6044]" />
+                  )}
+                </button>
+              );
+            })
           )}
         </div>
       </main>

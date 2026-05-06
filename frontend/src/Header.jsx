@@ -102,7 +102,7 @@ export default function Header() {
                 </Link>
 
                 <Link to="/signup">
-                  <button className="px-5 py-2 bg-[#FF6044] text-white text-sm font-bold rounded-xl shadow-sm hover:bg-[#ff4d2e] hover:shadow-lg transition-all hover:-translate-y-0.5">
+                  <button className="px-5 py-2.5 bg-[#FF6044] text-[#121313] text-sm font-black uppercase tracking-wider rounded-xl shadow-lg shadow-[#FF6044]/20 hover:bg-[#ff4d2e] hover:shadow-[#FF6044]/40 transition-all hover:-translate-y-0.5 active:scale-95">
                     Start for free
                   </button>
                 </Link>
@@ -129,7 +129,7 @@ function notificationKey(item) {
 
 function readNotificationKeys() {
   try {
-    return new Set(JSON.parse(localStorage.getItem("read_notifications") || "[]"));
+    return new Set(JSON.parse(localStorage.getItem("clicked_notifications") || "[]"));
   } catch {
     return new Set();
   }

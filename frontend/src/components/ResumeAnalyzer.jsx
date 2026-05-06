@@ -62,7 +62,7 @@ function LoadingScreen() {
               key={step}
               className={`px-3 py-1 rounded-full text-xs font-bold transition-all duration-500 ${
                 i < stepIdx
-                  ? "bg-[#FF6044] text-white"
+                  ? "bg-[#FF6044] text-[#121313]"
                   : i === stepIdx
                   ? "bg-[#FF6044]/10 text-[#FF6044] border border-[#FF6044]/30"
                   : "bg-white/5 text-gray-500 border border-white/5"
@@ -273,7 +273,7 @@ export default function ResumeAnalyzer() {
         </label>
         <button
           disabled={loading}
-          className="inline-flex w-fit items-center gap-2 rounded-xl bg-[#FF6044] px-6 py-3.5 font-black text-white shadow-lg shadow-[#FF6044]/20 hover:bg-[#ff4d2e] hover:shadow-[#FF6044]/40 transition-all hover:-translate-y-0.5 active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
+          className="inline-flex w-fit items-center gap-2 rounded-xl bg-[#FF6044] px-8 py-3.5 font-black text-[#121313] shadow-lg shadow-[#FF6044]/20 hover:bg-[#ff4d2e] hover:shadow-[#FF6044]/40 transition-all hover:-translate-y-1 active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
         >
           {loading ? (
             <span className="flex items-center gap-2">

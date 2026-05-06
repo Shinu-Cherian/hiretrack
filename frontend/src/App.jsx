@@ -17,6 +17,7 @@ import StreakPage from "./StreakPage";
 import ResumeAnalyzerPage from "./ResumeAnalyzerPage";
 import CoverLetterPage from "./CoverLetterPage";
 import ExtensionFormPage from "./ExtensionFormPage";
+import CareerRoadmapPage from "./CareerRoadmapPage";
 
 
 function App() {
@@ -58,6 +59,8 @@ function App() {
       <Route path="/resume-analyzer" element={<ResumeAnalyzerPage />} />
 
       <Route path="/cover-letter" element={<CoverLetterPage />} />
+
+      <Route path="/career-roadmap" element={<CareerRoadmapPage />} />
 
     </Routes>
   );

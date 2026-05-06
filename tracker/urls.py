@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .career_roadmap_view import career_roadmap_api
 
 urlpatterns = [
     path('', views.home, name='home'),
@@ -42,5 +43,6 @@ urlpatterns = [
     path('api/job/document/<int:id>/<str:kind>/', views.job_document_download_api),
     path('api/generate-cover-letter-pdf/', views.generate_cover_letter_pdf_api),
     path('api/streaks/', views.streak_api),
+    path('api/career-roadmap/', career_roadmap_api),
     
 ]

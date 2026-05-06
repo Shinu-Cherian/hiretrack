@@ -7,6 +7,7 @@ import {
   Briefcase,
   LayoutDashboard,
   ListChecks,
+  Map,
   Plus,
   ShieldCheck,
   Sparkles,
@@ -27,6 +28,7 @@ const modules = [
   { icon: LayoutDashboard, title: "Dashboard", to: "/dashboard", desc: "Visualize progress with clean charts and useful insights." },
   { icon: FileSearch, title: "ATS Resume Analyzer", to: "/resume-analyzer", desc: "Compare your resume to a JD and see missing keywords." },
   { icon: PenLine, title: "Cover Letter", to: "/cover-letter", desc: "Create a structured cover letter draft from your resume and JD." },
+  { icon: Map, title: "Career Roadmap", to: "/career-roadmap", desc: "AI-powered personalised career plan based on your degree, target role, and country." },
 ];
 
 const features = [
@@ -43,18 +45,18 @@ const modalContent = {
   faq: {
     title: "Frequently Asked Questions",
     body: (
-      <div className="space-y-4">
-        <div>
-          <h4 className="font-semibold text-gray-900">How does the AI Cover Letter Generator work?</h4>
-          <p className="text-gray-600 mt-1">Our intelligent AI engine reads your specific resume and the target job description, bridging the gap between your real past experiences and the core requirements of the role.</p>
+      <div className="space-y-5">
+        <div className="p-4 rounded-xl bg-white/5 border border-white/5">
+          <h4 className="font-black text-white text-sm mb-2">How does the AI Cover Letter Generator work?</h4>
+          <p className="text-gray-400 text-sm leading-relaxed">Our intelligent AI engine reads your specific resume and the target job description, bridging the gap between your real past experiences and the core requirements of the role.</p>
         </div>
-        <div>
-          <h4 className="font-semibold text-gray-900">Is HireTrack completely free?</h4>
-          <p className="text-gray-600 mt-1">Yes, the core tracking features and AI generation tools are currently free for all registered users.</p>
+        <div className="p-4 rounded-xl bg-white/5 border border-white/5">
+          <h4 className="font-black text-white text-sm mb-2">Is HireTrack completely free?</h4>
+          <p className="text-gray-400 text-sm leading-relaxed">Yes, the core tracking features and AI generation tools are currently free for all registered users.</p>
         </div>
-        <div>
-          <h4 className="font-semibold text-gray-900">How secure is my data?</h4>
-          <p className="text-gray-600 mt-1">We take data privacy very seriously. We use enterprise-grade security and do not sell your personal data or application history to third-party data brokers.</p>
+        <div className="p-4 rounded-xl bg-white/5 border border-white/5">
+          <h4 className="font-black text-white text-sm mb-2">How secure is my data?</h4>
+          <p className="text-gray-400 text-sm leading-relaxed">We take data privacy very seriously. We use enterprise-grade security and do not sell your personal data or application history to third-party data brokers.</p>
         </div>
       </div>
     )
@@ -256,7 +258,7 @@ export default function Home() {
         <div className="max-w-[1600px] mx-auto px-6 lg:px-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
             <div className="col-span-1 md:col-span-1">
-              <h4 className="text-xl font-bold text-white mb-4 flex items-center gap-2"><Briefcase className="text-white" size={24}/> HireTrack</h4>
+              <h4 className="text-xl font-bold text-[#FF6044] mb-4 flex items-center gap-2"><Briefcase className="text-[#FF6044]" size={24}/> HireTrack</h4>
               <p className="text-sm mb-4">Your modern workspace for serious job seeking and career management.</p>
               <address className="not-italic text-sm space-y-2">
                 <p>123 Career Avenue</p>
@@ -267,7 +269,7 @@ export default function Home() {
             </div>
 
             <div>
-              <h4 className="text-sm font-bold text-white uppercase tracking-wider mb-4">Company</h4>
+              <h4 className="text-sm font-bold text-[#FF6044] uppercase tracking-wider mb-4">Company</h4>
               <ul className="space-y-3 text-sm">
                 <li><a href="#" onClick={(e) => openModal(e, 'about')} className="hover:text-white transition-colors">About Us</a></li>
                 <li><a href="#" onClick={(e) => openModal(e, 'faq')} className="hover:text-white transition-colors">FAQ</a></li>
@@ -275,7 +277,7 @@ export default function Home() {
             </div>
 
             <div>
-              <h4 className="text-sm font-bold text-white uppercase tracking-wider mb-4">Legal Links</h4>
+              <h4 className="text-sm font-bold text-[#FF6044] uppercase tracking-wider mb-4">Legal Links</h4>
               <ul className="space-y-3 text-sm">
                 <li><a href="#" onClick={(e) => openModal(e, 'privacy')} className="hover:text-white transition-colors">Privacy Policy</a></li>
                 <li><a href="#" onClick={(e) => openModal(e, 'terms')} className="hover:text-white transition-colors">Terms of Use</a></li>
@@ -283,7 +285,7 @@ export default function Home() {
             </div>
 
             <div>
-              <h4 className="text-sm font-bold text-white uppercase tracking-wider mb-4">Follow Us</h4>
+              <h4 className="text-sm font-bold text-[#FF6044] uppercase tracking-wider mb-4">Follow Us</h4>
               <div className="flex gap-4">
                 <a href="#" className="w-10 h-10 rounded-full bg-transparent border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:border-gray-300 transition-all shadow-sm">
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clipRule="evenodd" /></svg>
@@ -304,29 +306,40 @@ export default function Home() {
 
       {/* MODAL OVERLAY */}
       {activeModal && modalContent[activeModal] && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/40 backdrop-blur-sm p-4 animate-fade-in" onClick={() => setActiveModal(null)}>
-          <div 
-            className="bg-transparent rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-fade-in-up"
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4 animate-fade-in"
+          onClick={() => setActiveModal(null)}
+        >
+          <div
+            className="bg-[#1a1b1b] border border-white/10 rounded-2xl shadow-[0_0_60px_rgba(0,0,0,0.6)] w-full max-w-lg overflow-hidden animate-fade-in-up"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between px-6 py-4 border-b border-white/5">
-              <h3 className="text-xl font-bold text-white">{modalContent[activeModal].title}</h3>
-              <button 
+            {/* Modal Header */}
+            <div className="flex items-center justify-between px-6 py-5 border-b border-white/5 bg-white/3">
+              <div className="flex items-center gap-3">
+                <div className="w-1 h-6 bg-[#FF6044] rounded-full" />
+                <h3 className="text-lg font-black text-white tracking-tight">{modalContent[activeModal].title}</h3>
+              </div>
+              <button
                 onClick={() => setActiveModal(null)}
-                className="text-gray-400 hover:text-white p-2 rounded-full transition-colors"
+                className="w-8 h-8 flex items-center justify-center rounded-xl bg-white/5 border border-white/5 text-gray-400 hover:text-white hover:bg-[#FF6044]/10 hover:border-[#FF6044]/20 transition-all"
               >
-                <X size={20} />
+                <X size={16} />
               </button>
             </div>
-            <div className="p-6 text-gray-400 font-light leading-relaxed max-h-[70vh] overflow-y-auto">
+
+            {/* Modal Body */}
+            <div className="p-6 text-gray-400 text-sm leading-relaxed max-h-[65vh] overflow-y-auto">
               {modalContent[activeModal].body}
             </div>
-            <div className="px-6 py-4 bg-[#121313] border-t border-white/5 flex justify-end">
-              <button 
+
+            {/* Modal Footer */}
+            <div className="px-6 py-4 bg-[#121313] border-t border-white/5 flex justify-end gap-3">
+              <button
                 onClick={() => setActiveModal(null)}
-                className="px-5 py-2 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-colors"
+                className="px-6 py-2.5 bg-[#FF6044] text-[#121313] rounded-xl font-black text-sm uppercase tracking-wider hover:bg-[#ff4d2e] hover:shadow-[0_0_20px_rgba(255,96,68,0.3)] transition-all active:scale-95"
               >
-                Close
+                Got it
               </button>
             </div>
           </div>
