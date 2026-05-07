@@ -74,8 +74,8 @@ const BrandLogos = {
     </svg>
   ),
   GitHub: () => (
-    <svg viewBox="0 0 24 24" className="brand-logo brand-logo-mono" aria-hidden="true">
-      <path d="M12 .3a12.1 12.1 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.4-4-1.4-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.9 1.2 1.9 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.3-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.3 1.9 1.3 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12.1 12.1 0 0 0 12 .3" />
+    <svg viewBox="0 0 24 24" className="brand-logo" aria-hidden="true">
+      <path fill="#e0e0e0" d="M12 .3a12.1 12.1 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.4-4-1.4-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.9 1.2 1.9 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.3-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.3 1.9 1.3 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12.1 12.1 0 0 0 12 .3" />
     </svg>
   ),
   Microsoft: () => (
@@ -284,38 +284,31 @@ export default function Home() {
     return () => { alive = false; };
   }, []);
 
-  /* ── Scroll reveal ── */
-  React.useEffect(() => {
-    const els = document.querySelectorAll('[data-reveal]');
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('sr-visible');
-            io.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.1, rootMargin: '0px 0px -60px 0px' }
-    );
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
-  }, []);
-
   const openModal = (e, type) => {
     e.preventDefault();
     setActiveModal(type);
   };
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-[#121313] font-sans text-white">
+    <div className="min-h-screen overflow-x-hidden bg-[#080909] font-sans text-white">
       <Header />
 
       {/* HERO SECTION */}
-      <section className="home-hero-v2 relative min-h-screen flex items-center pt-20 pb-24 px-6 lg:px-12 overflow-hidden">
+      <section className="home-hero-v2 relative min-h-screen flex items-center pt-20 pb-16 px-6 lg:px-12 overflow-hidden">
         <div className="hero-ambient" />
         <div className="hero-grid-floor" />
         <div className="hero-scanline" />
+
+        <div className="hero-universe-bg">
+          <div className="hub-item hub-item-1"><BrandLogos.Google /></div>
+          <div className="hub-item hub-item-2"><span>Applied</span></div>
+          <div className="hub-item hub-item-3"><BrandLogos.Meta /></div>
+          <div className="hub-item hub-item-4"><span>Interview</span></div>
+          <div className="hub-item hub-item-5"><span>Offer</span></div>
+          <div className="hub-item hub-item-6"><BrandLogos.Apple /></div>
+          <div className="hub-item hub-item-7"><span>Referral</span></div>
+          <div className="hub-item hub-item-8"><span>Resume</span></div>
+        </div>
 
         <div className="relative max-w-[1600px] mx-auto w-full grid lg:grid-cols-[0.92fr_1.08fr] gap-12 xl:gap-20 items-center">
           <div className="hero-copy text-center lg:text-left z-10">
@@ -351,58 +344,46 @@ export default function Home() {
         </div>
       </section>
 
-      {/* LOGO RAIL */}
-      <section className="logo-showcase relative overflow-hidden border-y border-white/5">
-        <div className="logo-showcase-glow" />
-        <div className="relative max-w-[1600px] mx-auto px-6 lg:px-12">
-          <div className="logo-showcase-heading">
-            <span></span>
+      {/* FEATURES SECTION */}
+      <section className="relative bg-[#0a0b0b] border-t border-white/5 overflow-hidden">
+        <div className="relative py-20 px-6 lg:px-12">
+          <div className="absolute top-0 right-0 w-1/2 h-full bg-grid-pattern opacity-30 pointer-events-none" />
+          <div className="relative max-w-[1600px] mx-auto w-full z-10">
+            <div className="text-center mb-12" data-reveal>
+              <h2 className="text-5xl md:text-7xl font-black tracking-tight text-white mb-4">LESS CHAOS. <span className="text-[#FF6044]">MORE OFFERS.</span></h2>
+              <p className="text-xl text-gray-400 font-medium max-w-2xl mx-auto">Every tool a serious job seeker needs — and nothing they don't.</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+              {modules.map((module, i) => (
+                <Link
+                  key={module.title}
+                  to={module.to}
+                  className="group saas-card p-5 border-white/5 hover:border-[#FF6044]/50 transition-all duration-500"
+                  data-reveal
+                  style={{ '--reveal-delay': `${i * 80}ms` }}
+                >
+                  <div className="w-10 h-10 rounded-xl bg-[#FF6044]/10 border border-[#FF6044]/20 text-[#FF6044] flex items-center justify-center mb-4">
+                    <module.icon size={20} />
+                  </div>
+                  <h3 className="text-base font-bold text-white mb-2 uppercase">{module.title}</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">{module.desc}</p>
+                </Link>
+              ))}
+            </div>
           </div>
-          <LogoRail companies={companiesRow1} />
         </div>
-      </section>
 
-      {/* MODULES SECTION - RESTORED TO SCREENSHOT 2 */}
-      <section className="relative py-24 px-6 lg:px-12 border-t border-white/5 overflow-hidden">
-        <div className="absolute top-0 right-0 w-1/2 h-full bg-grid-pattern opacity-30 pointer-events-none" />
-        <div className="relative max-w-[1600px] mx-auto w-full z-10">
-          <div className="text-center mb-16" data-reveal>
-            <h2 className="sr-fade-up text-6xl md:text-8xl font-black tracking-tight text-white mb-4">LESS CHAOS. <span className="text-[#FF6044]">MORE OFFERS.</span></h2>
-            <p className="sr-fade-up text-2xl text-gray-400 font-medium max-w-2xl mx-auto" style={{transitionDelay:'120ms'}}>Every tool a serious job seeker needs — and nothing they don't.</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {modules.map((module, i) => (
-              <Link
-                key={module.title}
-                to={module.to}
-                className="group saas-card p-6 border-white/5 hover:border-[#FF6044]/50 transition-all duration-500 sr-fade-up"
-                data-reveal
-                style={{ transitionDelay: `${i * 80}ms` }}
-              >
-                <div className="w-12 h-12 rounded-xl bg-[#FF6044]/10 border border-[#FF6044]/20 text-[#FF6044] flex items-center justify-center mb-5">
-                  <module.icon size={24} />
-                </div>
-                <h3 className="text-lg font-bold text-white mb-2 uppercase">{module.title}</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">{module.desc}</p>
-              </Link>
-            ))}
+        {/* Logo Rail at bottom of features */}
+        <div className="logo-showcase border-t border-white/5">
+          <div className="relative max-w-[1600px] mx-auto px-6 lg:px-12">
+            <LogoRail companies={companiesRow2} reverse />
           </div>
         </div>
       </section>
 
-      {/* LOGO RAIL */}
-      <section className="logo-showcase logo-showcase-compact relative overflow-hidden border-y border-white/5">
-        <div className="logo-showcase-glow logo-showcase-glow-right" />
-        <div className="relative max-w-[1600px] mx-auto px-6 lg:px-12">
-          <LogoRail companies={companiesRow2} reverse />
-        </div>
-      </section>
-
-      {/* ── GLOBE SECTION ── */}
+      {/* GLOBE SECTION */}
       <section className="globe-section">
         <div className="globe-section-inner">
-
-          {/* LEFT — copy */}
           <div className="globe-copy sr-slide-left" data-reveal>
             <span className="globe-kicker">The complete job-search OS</span>
             <h2 className="globe-heading">
@@ -416,141 +397,155 @@ export default function Home() {
               know exactly where you stand.
             </p>
             <div className="globe-stats-row">
-              <div className="globe-stat">
-                <strong>8</strong>
-                <span>Integrated Tools</span>
-              </div>
+              <div className="globe-stat"><strong>8</strong><span>Integrated Tools</span></div>
               <div className="globe-stat-divider" />
-              <div className="globe-stat">
-                <strong>100%</strong>
-                <span>Private Workspace</span>
-              </div>
+              <div className="globe-stat"><strong>100%</strong><span>Private Workspace</span></div>
               <div className="globe-stat-divider" />
-              <div className="globe-stat">
-                <strong>Live</strong>
-                <span>Dashboard Analytics</span>
-              </div>
+              <div className="globe-stat"><strong>Live</strong><span>Dashboard Analytics</span></div>
             </div>
           </div>
-
-          {/* RIGHT — rotating globe */}
           <div className="globe-right sr-slide-right" data-reveal>
             <GlobeScene />
           </div>
-
         </div>
       </section>
 
-      
-      {/* ── FOOTER ── */}
-      <footer className="ht-footer sr-fade-up" data-reveal>
-        {/* Coral glow rule at top */}
-        <div className="ht-footer-topline" />
+      {/* COMBINED: HOW IT WORKS + FOOTER */}
+      <section className="hiw-footer-section">
 
-        <div className="ht-footer-inner">
-          {/* ── ROW 1: brand + columns + cta ── */}
-          <div className="ht-footer-grid">
+        {/* ── TOP: HOW IT WORKS ── */}
+        <div className="hiw-top-wrap">
+          <div className="relative max-w-[1600px] mx-auto w-full z-10">
+            <div className="text-center mb-12" data-reveal>
+              <span className="inline-block text-[#FF6044] text-xs font-black uppercase tracking-[0.2em] mb-4">How It Works</span>
+              <h2 className="text-4xl md:text-6xl font-black tracking-tight text-white mb-3">
+                FROM CHAOS TO <span className="text-[#FF6044]">CLARITY.</span>
+              </h2>
+              <p className="text-gray-400 text-lg max-w-xl mx-auto">Three steps. One workspace. Zero missed opportunities.</p>
+            </div>
 
-            {/* Brand block */}
-            <div className="ht-footer-brand">
-              <span className="ht-footer-logo">HireTrack</span>
-              <p className="ht-footer-tagline">
-                A private workspace to track jobs, referrals, resumes, and career progress.
-              </p>
-              <div className="ht-footer-trust">
-                <ShieldCheck size={13} />
-                <span>Your career data stays in your workspace.</span>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="hiw-card" data-reveal>
+                <div className="hiw-step-num">01</div>
+                <div className="hiw-icon-wrap"><Plus size={28} className="text-[#FF6044]" /></div>
+                <h3 className="hiw-title">Log Your Applications</h3>
+                <p className="hiw-desc">Add jobs, companies, roles, notes, and deadlines in seconds. Never lose track of an opportunity again.</p>
+                <div className="hiw-connector" />
+              </div>
+              <div className="hiw-card" data-reveal style={{'--reveal-delay': '120ms'}}>
+                <div className="hiw-step-num">02</div>
+                <div className="hiw-icon-wrap"><LayoutDashboard size={28} className="text-[#FF6044]" /></div>
+                <h3 className="hiw-title">Track Everything Live</h3>
+                <p className="hiw-desc">Your dashboard shows pipeline stats, referral status, follow-up alerts, and streak progress — all in one view.</p>
+                <div className="hiw-connector" />
+              </div>
+              <div className="hiw-card" data-reveal style={{'--reveal-delay': '240ms'}}>
+                <div className="hiw-step-num">03</div>
+                <div className="hiw-icon-wrap"><Zap size={28} className="text-[#FF6044]" /></div>
+                <h3 className="hiw-title">Get Hired Faster</h3>
+                <p className="hiw-desc">Follow up on time, analyze your resume against job descriptions, and build a career roadmap — all from one place.</p>
               </div>
             </div>
 
-            {/* Product links */}
-            <div className="ht-footer-col">
-              <h5 className="ht-footer-col-heading">Product</h5>
-              <ul className="ht-footer-links">
-                {footerProductLinks.map(({ label, to }) => (
-                  <li key={label}>
-                    <Link to={to} className="ht-footer-link">{label}</Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Resources links */}
-            <div className="ht-footer-col">
-              <h5 className="ht-footer-col-heading">Resources</h5>
-              <ul className="ht-footer-links">
-                {footerResourceLinks.map(({ label, modal }) => (
-                  <li key={label}>
-                    <a href="#" onClick={(e) => openModal(e, modal)} className="ht-footer-link">{label}</a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Legal links */}
-            <div className="ht-footer-col">
-              <h5 className="ht-footer-col-heading">Legal</h5>
-              <ul className="ht-footer-links">
-                {footerLegalLinks.map(({ label, modal }) => (
-                  <li key={label}>
-                    <a href="#" onClick={(e) => openModal(e, modal)} className="ht-footer-link">{label}</a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* CTA card */}
-            <div className="ht-footer-cta-card">
-              <p className="ht-footer-cta-headline">Ready to organize your job&nbsp;search?</p>
-              <p className="ht-footer-cta-sub">Free to start. No card required.</p>
-              <Link
-                to={isLoggedIn ? "/dashboard" : "/signup"}
-                className="ht-footer-cta-btn"
-              >
-                {isLoggedIn ? "Go to workspace" : "Start for free"}
-                <ArrowRight size={15} />
-              </Link>
-              {!isLoggedIn && (
-                <Link to="/login" className="ht-footer-signin-link">Already have an account? Sign in</Link>
-              )}
-            </div>
-
-          </div>{/* /ht-footer-grid */}
-
-          {/* ── BOTTOM BAR ── */}
-          <div className="ht-footer-bottom">
-            <span>© {new Date().getFullYear()} HireTrack. All rights reserved.</span>
-            <span className="ht-footer-bottom-badge">Made for serious job seekers.</span>
           </div>
         </div>
-      </footer>
 
-      {/* ── MODAL ── */}
+        {/* ── DIVIDER ── */}
+        <div className="hiw-footer-divider" />
+
+        {/* ── BOTTOM: RICH FOOTER ── */}
+        <footer className="ht-footer-embedded">
+          <div className="ht-footer-inner">
+            <div className="ht-footer-grid">
+
+              {/* Brand */}
+              <div className="ht-footer-brand">
+                <Link to="/" className="ht-footer-logo-link">
+                  <Briefcase className="text-[#FF6044]" size={20} />
+                  <span>Hire<span className="text-gray-400 font-light">Track</span></span>
+                </Link>
+                <p className="ht-footer-tagline">
+                  A private workspace to track jobs, referrals, resumes, and career progress.
+                </p>
+                <div className="ht-footer-trust">
+                  <ShieldCheck size={13} />
+                  <span>Your career data stays in your workspace.</span>
+                </div>
+              </div>
+
+              {/* Product */}
+              <div className="ht-footer-col">
+                <h5 className="ht-footer-col-heading ht-footer-col-heading-coral">Product</h5>
+                <ul className="ht-footer-links">
+                  {footerProductLinks.map(({ label, to }) => (
+                    <li key={label}><Link to={to} className="ht-footer-link">{label}</Link></li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Resources */}
+              <div className="ht-footer-col">
+                <h5 className="ht-footer-col-heading ht-footer-col-heading-coral">Resources</h5>
+                <ul className="ht-footer-links">
+                  {footerResourceLinks.map(({ label, modal }) => (
+                    <li key={label}><a href="#" onClick={(e) => openModal(e, modal)} className="ht-footer-link">{label}</a></li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Legal */}
+              <div className="ht-footer-col">
+                <h5 className="ht-footer-col-heading ht-footer-col-heading-coral">Legal</h5>
+                <ul className="ht-footer-links">
+                  {footerLegalLinks.map(({ label, modal }) => (
+                    <li key={label}><a href="#" onClick={(e) => openModal(e, modal)} className="ht-footer-link">{label}</a></li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* CTA Card */}
+              <div className="ht-footer-cta-card">
+                <p className="ht-footer-cta-headline">Ready to organize your job&nbsp;search?</p>
+                <p className="ht-footer-cta-sub">Free to start. No card required.</p>
+                <Link to={isLoggedIn ? "/dashboard" : "/signup"} className="ht-footer-cta-btn">
+                  {isLoggedIn ? "Go to workspace" : "Start for free"}
+                  <ArrowRight size={15} />
+                </Link>
+                {!isLoggedIn && (
+                  <Link to="/login" className="ht-footer-signin-link">Already have an account? Sign in</Link>
+                )}
+              </div>
+
+            </div>
+
+            {/* Pre-copyright taglines */}
+            <div className="ht-footer-pre-copy">
+              <p>Track smarter. Apply faster. Get hired.</p>
+              <p>Your career, organized.</p>
+            </div>
+
+            {/* Bottom bar */}
+            <div className="ht-footer-bottom">
+              <span>© {new Date().getFullYear()} HireTrack. All rights reserved.</span>
+              <span className="ht-footer-bottom-badge">Made for serious job seekers.</span>
+            </div>
+          </div>
+        </footer>
+
+      </section>
+
+
+      {/* MODAL */}
       {activeModal && (
-        <div
-          className="ht-modal-backdrop"
-          onClick={() => setActiveModal(null)}
-        >
-          <div
-            className="ht-modal"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Header */}
+        <div className="ht-modal-backdrop" onClick={() => setActiveModal(null)}>
+          <div className="ht-modal" onClick={(e) => e.stopPropagation()}>
             <div className="ht-modal-header">
               <div>
                 <span className="ht-modal-kicker">{modalContent[activeModal].kicker}</span>
                 <h3 className="ht-modal-title">{modalContent[activeModal].title}</h3>
               </div>
-              <button
-                className="ht-modal-close"
-                onClick={() => setActiveModal(null)}
-                aria-label="Close modal"
-              >
-                ✕
-              </button>
+              <button className="ht-modal-close" onClick={() => setActiveModal(null)} aria-label="Close modal">✕</button>
             </div>
-
-            {/* Body */}
             <div className="ht-modal-body">
               <p className="ht-modal-intro">{modalContent[activeModal].intro}</p>
               <div className="ht-modal-sections">
@@ -562,15 +557,8 @@ export default function Home() {
                 ))}
               </div>
             </div>
-
-            {/* Footer */}
             <div className="ht-modal-footer">
-              <button
-                onClick={() => setActiveModal(null)}
-                className="ht-modal-close-btn"
-              >
-                Got it
-              </button>
+              <button onClick={() => setActiveModal(null)} className="ht-modal-close-btn">Got it</button>
             </div>
           </div>
         </div>
@@ -582,9 +570,10 @@ export default function Home() {
 function LogoRail({ companies, reverse = false }) {
   return (
     <div className="logo-rail" aria-label="Company logos">
+
       <div className={`logo-rail-track ${reverse ? "logo-rail-track-reverse" : ""}`}>
-        {[0, 1].map((groupIndex) => (
-          <div className="logo-rail-group" key={groupIndex} aria-hidden={groupIndex === 1}>
+        {[0, 1, 2].map((groupIndex) => (
+          <div className="logo-rail-group" key={groupIndex} aria-hidden={groupIndex > 0}>
             {companies.map((company) => (
               <LogoTile company={company} key={`${groupIndex}-${company.name}`} />
             ))}
@@ -599,12 +588,13 @@ function LogoTile({ company }) {
   const Logo = company.Logo;
 
   return (
-    <div className="logo-tile" role="img" aria-label={company.name}>
+    <div className="logo-tile">
       <Logo />
       <span>{company.name}</span>
     </div>
   );
 }
+
 
 const pipelineCards = [
   { icon: Briefcase, label: "Applications", value: "24", meta: "+6 this week", tone: "coral" },
