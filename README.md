@@ -509,7 +509,7 @@ python manage.py test tracker
 
 ## 🤝 Contributing
 
-This is a personal portfolio project. Feel free to fork it and build your own version.
+This is a personal project. Feel free to fork it and build your own version.
 
 1. Fork the repo
 2. Create a feature branch: `git checkout -b feature/your-feature`
