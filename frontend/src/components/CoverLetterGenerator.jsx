@@ -95,7 +95,7 @@ export default function CoverLetterGenerator() {
         </label>
         <button
           disabled={loading}
-          className="inline-flex w-fit items-center gap-2 rounded-xl bg-[#FF6044] px-6 py-3.5 font-black text-white shadow-lg shadow-[#FF6044]/20 hover:bg-[#ff4d2e] hover:shadow-[#FF6044]/40 transition-all hover:-translate-y-0.5 active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
+          className="inline-flex w-fit items-center gap-2 rounded-xl bg-[#FF6044] px-6 py-3.5 font-black text-[#121313] shadow-lg shadow-[#FF6044]/20 hover:bg-[#ff4d2e] hover:shadow-[#FF6044]/40 transition-all hover:-translate-y-0.5 active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
         >
           {loading ? <Loader2 className="animate-spin" size={18} /> : <PenLine size={18} />}
           {loading ? "Analysing resume & JD..." : "Generate Cover Letter"}

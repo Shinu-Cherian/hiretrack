@@ -382,109 +382,148 @@ def ats_analysis(resume_text, jd_text):
     }
 
 
-def build_cover_letter(resume_text, jd_text, profile=None):
-    import requests, json as _json
-
-    if profile is None:
-        profile = {}
-    candidate_name     = profile.get("name", "")
-    candidate_email    = profile.get("email", "")
-    candidate_phone    = profile.get("phone", "")
-    candidate_linkedin = profile.get("linkedin", "")
-    candidate_location = profile.get("location", "")
-
-    # --- Build header block (reference format) ---
-    # Line 1: Name
-    # Line 2: email | phone
-    # Line 3: linkedin | location
-    header_line2_parts = [p for p in [candidate_email, candidate_phone] if p]
-    header_line3_parts = [p for p in [candidate_linkedin, candidate_location] if p]
-    header_block = candidate_name
-    if header_line2_parts:
-        header_block += "\n" + " | ".join(header_line2_parts)
-    if header_line3_parts:
-        header_block += "\n" + " | ".join(header_line3_parts)
-
-    # --- Sanitize resume_text: remove 'Envelope' prefix from email ---
+def clean_resume_text(text):
+    """
+    Normalizes whitespace, removes unicode artifacts and repeated breaks.
+    """
     import re as _re
-    clean_resume = _re.sub(r'Envelope\s*', '', resume_text, flags=_re.IGNORECASE)
+    if not text: return ""
+    # Remove weird unicode / non-ascii
+    text = text.encode("ascii", "ignore").decode("ascii")
+    # Normalize whitespace
+    text = _re.sub(r'\s+', ' ', text)
+    # Remove repeated line breaks (though already handled by \s+)
+    text = _re.sub(r'\n+', '\n', text)
+    return text.strip()
 
-    system_msg = (
-        "You are a professional cover letter writer. "
-        "Output ONLY the cover letter text — no reasoning, no commentary, no JSON, no markdown. "
-        "Plain text only."
+
+def parse_resume_to_json(clean_text, client):
+    """
+    Extracts structured JSON from raw resume text using Groq.
+    """
+    import json as _json
+    
+    extract_system_msg = (
+        "You are an advanced resume parsing engine. Extract structured information from resumes accurately. "
+        "RULES: - Return ONLY valid JSON. - Do not include explanations. - Do not hallucinate missing data. "
+        "- If a field is missing, return an empty string or empty array. - Extract information exactly as written."
     )
-
-    user_msg = (
-        "Write a complete, professional cover letter using this EXACT structure.\n\n"
-        "--- HEADER (copy exactly) ---\n"
-        + header_block + "\n\n"
-        "Hiring Manager\n"
-        "[Company Name from JD] \u2014 [Team or Division from JD]\n\n"
-        "Re: [Exact Job Title from JD] \u2014 [Company Name from JD]\n\n"
-        "Dear Hiring Manager,\n\n"
-        "[Para 1: State the role, your degree, and 3 matching technical skills from your resume. "
-        "End with one sentence on the domain intersection this role sits at.]\n\n"
-        "[Para 2: What specifically draws you to THIS company and role. "
-        "Reference something concrete from the JD (mission, framing, technical challenge). "
-        "Link it to a real architectural decision or discipline from one of your projects.]\n\n"
-        "[Para 3: Weave 2 real projects from the resume into natural flowing prose. "
-        "For each project: name it, state the technical problem, what you built, and the result. "
-        "Do NOT use bold headers or labels.]\n\n"
-        "[Para 4: Express genuine domain curiosity. "
-        "State that you understand the depth required for this role. "
-        "End with one sentence on your location and availability.]\n\n"
-        "Yours sincerely,\n"
-        + candidate_name + "\n\n"
-        "RULES:\n"
-        "- Candidate email is " + candidate_email + " \u2014 use EXACTLY this, ignore what appears in the resume.\n"
-        "- Plain text only. No bold, no asterisks, no markdown.\n"
-        "- No labels like 'CAR', 'Context', 'Action', 'Result', 'Recipient Block'.\n"
-        "- Use REAL project names from the resume.\n"
-        "- Use REAL percentages/numbers from the resume.\n"
-        "- Complete all 4 paragraphs. Under 350 words.\n\n"
-        "JD:\n" + jd_text[:1200] + "\n\n"
-        "RESUME:\n" + clean_resume[:2000]
+    
+    extract_user_msg = (
+        f"Extract the following information from this resume.\n\n"
+        f"RESUME:\n{clean_text[:7000]}\n\n"
+        "Return this exact JSON structure:\n"
+        "{\n"
+        '  "name": "", "email": "", "phone": "", "linkedin": "", "github": "", "portfolio": "",\n'
+        '  "location": "", "summary": "", "years_of_experience": "",\n'
+        '  "skills": [], "education": [], "certifications": [],\n'
+        '  "experience": [{"company": "", "role": "", "duration": "", "description": ""}],\n'
+        '  "projects": [{"name": "", "description": "", "technologies": [], "impact": ""}]\n'
+        "}\n"
+        "Return ONLY valid JSON."
     )
 
     try:
-        data = {
-            "messages": [
-                {"role": "system", "content": system_msg},
-                {"role": "user",   "content": user_msg}
+        completion = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[
+                {"role": "system", "content": extract_system_msg},
+                {"role": "user", "content": extract_user_msg}
             ],
-            "model": "openai"
-        }
-        res = requests.post("https://text.pollinations.ai/", json=data, timeout=60)
-        if res.status_code == 200:
-            raw = res.text.strip()
-
-            # --- Fix: API sometimes returns JSON with reasoning instead of plain text ---
-            # Try parsing as JSON and extracting the actual letter content
-            if raw.startswith("{") or raw.startswith("["):
-                try:
-                    parsed = _json.loads(raw)
-                    # OpenAI-compatible: choices[0].message.content
-                    if isinstance(parsed, dict):
-                        content = (
-                            parsed.get("choices", [{}])[0].get("message", {}).get("content")
-                            or parsed.get("content")
-                            or parsed.get("message")
-                            or parsed.get("text")
-                        )
-                        if content and len(content) > 100:
-                            return content.strip()
-                    # If we couldn't extract content from JSON, fall through
-                except _json.JSONDecodeError:
-                    pass
-            else:
-                # Plain text response — use directly
-                if len(raw) > 100:
-                    return raw
+            response_format={"type": "json_object"},
+            temperature=0.1,
+        )
+        return _json.loads(completion.choices[0].message.content)
     except Exception as e:
-        print(f"DEBUG: AI Call Failed: {e}")
+        print(f"DEBUG: Resume Parsing Failed: {e}")
+        return {}
 
-    return "ERROR: The AI took too long or encountered a network error. Please check your internet and try again."
+
+def build_cover_letter(resume_text, jd_text, profile=None):
+    """
+    Production-ready Cover Letter Generation Pipeline.
+    """
+    from groq import Groq
+    from django.conf import settings
+    import json as _json
+
+    if not settings.GROQ_API_KEY:
+        return "ERROR: GROQ_API_KEY is not configured in the backend."
+
+    client = Groq(api_key=settings.GROQ_API_KEY)
+
+    # STEP 1: Clean Text
+    cleaned_resume = clean_resume_text(resume_text)
+    
+    # STEP 2: Extract Structured JSON
+    structured_json = parse_resume_to_json(cleaned_resume, client)
+    
+    # Fallback/Merge with DB profile if AI extraction missed basic contact info
+    if profile:
+        structured_json["name"] = structured_json.get("name") or profile.get("name", "")
+        structured_json["email"] = structured_json.get("email") or profile.get("email", "")
+
+    # STEP 3: Generate Professional Cover Letter
+    from datetime import date
+    today_str = date.today().strftime("%B %d, %Y")
+
+    system_msg = (
+        "You are a senior executive recruiter and professional business writer. "
+        "Write complete professional cover letters using proper real-world cover letter formatting. "
+        "The cover letter MUST include: "
+        "1. Candidate contact information at the top: - Full name - Email - Phone - LinkedIn (if available) - GitHub or Portfolio (if available) "
+        "2. Current date "
+        "3. Professional greeting: Examples: - Dear Hiring Manager, - Dear [Company Name] Hiring Team, "
+        "4. Professional cover letter body "
+        "5. Professional closing: Examples: - Sincerely, - Best regards, "
+        "6. Candidate full name at the bottom "
+        "IMPORTANT RULES: - Only use information available in the candidate profile. - Do not hallucinate missing contact details. "
+        "- If LinkedIn/GitHub/phone is unavailable, omit them naturally. - Keep formatting clean and professional. "
+        "- Do not use markdown. - Do not use bullet points. - Avoid robotic AI language. - Avoid repetitive wording. "
+        "- Keep tone modern and professional. - Keep paragraphs readable and concise. "
+        "The final output should look like a real professionally written cover letter ready for submission."
+    )
+
+    user_msg = (
+        f"Write a complete professional cover letter.\n\n"
+        f"CANDIDATE PROFILE:\n{_json.dumps(structured_json, indent=2)}\n\n"
+        f"JOB DESCRIPTION:\n{jd_text[:3500]}\n\n"
+        f"TODAY'S DATE: {today_str}\n\n"
+        "REQUIREMENTS:\n"
+        "- Include candidate contact details at the top using available information only.\n"
+        "- Include today's date.\n"
+        "- Add a professional greeting.\n"
+        "- Write 3–4 professional paragraphs.\n"
+        "- Mention the role title naturally.\n"
+        "- Connect the candidate's experience and projects to the job requirements.\n"
+        "- Reference relevant technologies and achievements naturally.\n"
+        "- Keep the writing concise, modern, and recruiter-friendly.\n"
+        "- Avoid generic AI-generated phrases.\n"
+        "- Avoid excessive enthusiasm.\n"
+        "- Keep the letter between 250–400 words.\n"
+        "- End with a professional closing and the candidate's full name.\n\n"
+        "IMPORTANT:\n"
+        "- If some contact fields are missing, skip them gracefully.\n"
+        "- Never invent information.\n"
+        "- Do not use markdown.\n"
+        "- Do not use placeholders.\n"
+        "- Make the final output look like a real submission-ready cover letter.\n\n"
+        "Return ONLY the final cover letter."
+    )
+
+    try:
+        completion = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[
+                {"role": "system", "content": system_msg},
+                {"role": "user", "content": user_msg}
+            ],
+            temperature=0.5,
+        )
+        return completion.choices[0].message.content.strip()
+    except Exception as e:
+        print(f"DEBUG: Groq Generation Failed: {e}")
+        return "ERROR: The AI service encountered an issue. Please try again later."
 
 
 
@@ -1562,137 +1601,109 @@ def resume_analyze_api(request):
 
 def ai_ats_analysis(resume_text, jd_text):
     """
-    HYBRID ATS engine:
-    - Old regex engine: reliable sub-scores (50/30/10/10), section detection, keyword match
-    - AI engine: qualitative insights — broad skill detection, experience match, suggestions
-    Best of both worlds, like Jobscan.
+    Pure AI Deep Sectional Analysis Engine.
+    No manual lists, no hardcoded keywords. 100% Dynamic Intelligence.
     """
-    import requests as _req
+    from groq import Groq
     import json as _json
     import re as _re
+    from django.conf import settings
 
-    # Step 1: Run reliable regex engine first (always works, no network needed)
-    base = ats_analysis(resume_text, jd_text)
+    if not settings.GROQ_API_KEY:
+        # Emergency fallback if key is missing
+        return ats_analysis(resume_text, jd_text)
 
-    # Step 2: Clean resume text
+    client = Groq(api_key=settings.GROQ_API_KEY)
+    
+    # 1. Clean Inputs
     clean_resume = _re.sub(r'Envelope\s*', '', resume_text, flags=_re.IGNORECASE)
-
-    # Step 3: Ask AI for qualitative insights only (skills + experience + suggestions)
+    
+    # 2. The "Dynamic Discovery" Prompt
     system_msg = (
-        "You are a senior technical recruiter and ATS expert. "
-        "Analyze the resume against the job description. "
-        "Return ONLY a raw JSON object — no markdown, no code blocks, no extra text."
+        "You are a Senior Technical Recruiter. Your task is to perform a Dynamic Content Audit. \n\n"
+        "STRICT RULES:\n"
+        "1. SECTION DISCOVERY: Identify every logical section in the resume based on its unique structure (e.g., Career History, Tech Stack, Academics, etc.). Use the user's original section names.\n"
+        "2. GAP ANALYSIS: Evaluate each discovered section against the Job Description.\n"
+        "3. FORMAT: Return ONLY a raw JSON object."
     )
 
     user_msg = (
-        "Analyze this resume vs job description. Return exactly this JSON structure:\n\n"
+        "### TASK:\n"
+        "Perform a deep audit. Return ONLY a raw JSON object.\n\n"
+        "### DATA:\n"
+        f"JD CONTENT:\n{jd_text[:1500]}\n\n"
+        f"RESUME CONTENT:\n{clean_resume[:3000]}\n\n"
+        "### REQUIRED JSON STRUCTURE:\n"
         "{\n"
-        '  "matched_skills": [list of specific technical skills/tools found in BOTH resume and JD],\n'
-        '  "missing_skills": [list of specific technical skills/tools in JD but missing from resume],\n'
-        '  "matched_keywords": [list of role-specific domain keywords matched - NO stop words],\n'
-        '  "missing_keywords": [list of meaningful JD keywords missing - NO stop words like "them", "not", "into"],\n'
-        '  "experience_match": "1-2 sentence honest assessment of experience level alignment",\n'
-        '  "title_match": "1 sentence on how well candidate role history matches JD title",\n'
-        '  "suggestions": [4-6 specific actionable improvements mentioning real skill names]\n'
-        "}\n\n"
-        "RULES:\n"
-        "- matched_skills and missing_skills must be specific tech names (Python, FastAPI, Redis, not 'coding' or 'tools')\n"
-        "- matched_keywords and missing_keywords must be meaningful domain terms (microservices, KYC, CI/CD — not 'them', 'not', 'build', 'use')\n"
-        "- suggestions must name actual technologies or sections\n\n"
-        "JD:\n" + jd_text[:1200] + "\n\n"
-        "RESUME:\n" + clean_resume[:2000]
+        '  "overall_score": (int 0-100),\n'
+        '  "breakdown": {\n'
+        '    "keyword_match": (int 0-50),\n'
+        '    "skill_alignment": (int 0-30),\n'
+        '    "format_quality": (int 0-10),\n'
+        '    "impact_metrics": (int 0-10)\n'
+        '  },\n'
+        '  "matched_skills": [list of tech skills matched],\n'
+        '  "missing_skills": [list of tech skills missing],\n'
+        '  "matched_keywords": [list of domain terms matched],\n'
+        '  "missing_keywords": [list of domain terms missing],\n'
+        '  "detected_sections": [\n'
+        '    {\n'
+        '      "name": "Exact Section Name from Resume",\n'
+        '      "type": "Summary/Experience/Skills/Projects/Education/Other",\n'
+        '      "status": "Strong/Weak/Average",\n'
+        '      "feedback": "1 sentence quality assessment relative to JD"\n'
+        '    }\n'
+        '  ],\n'
+        '  "experience_match": "Overall assessment of seniority match",\n'
+        '  "title_match": "Overall assessment of role history match",\n'
+        '  "suggestions": [5-7 actionable improvements]\n'
+        "}"
     )
 
     try:
-        resp = _req.post(
-            "https://text.pollinations.ai/",
-            json={
-                "messages": [
-                    {"role": "system", "content": system_msg},
-                    {"role": "user",   "content": user_msg}
-                ],
-                "model": "openai"
-            },
-            timeout=60
+        completion = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[
+                {"role": "system", "content": system_msg},
+                {"role": "user", "content": user_msg}
+            ],
+            response_format={"type": "json_object"},
+            temperature=0.1,
         )
-        if resp.status_code == 200:
-            raw = resp.text.strip()
-            ai_data = None
+        ai_data = _json.loads(completion.choices[0].message.content)
 
-            # Extract JSON from various response formats
-            for candidate in [raw]:
-                # If it's a JSON object check for direct or wrapped response
-                if candidate.startswith("{"):
-                    try:
-                        parsed = _json.loads(candidate)
-                        if "matched_skills" in parsed or "suggestions" in parsed:
-                            ai_data = parsed
-                        elif "choices" in parsed:
-                            content = parsed["choices"][0]["message"]["content"]
-                            m = _re.search(r'\{[\s\S]+\}', content)
-                            if m:
-                                ai_data = _json.loads(m.group(0))
-                        elif "content" in parsed:
-                            m = _re.search(r'\{[\s\S]+\}', parsed["content"])
-                            if m:
-                                ai_data = _json.loads(m.group(0))
-                    except Exception:
-                        pass
-                else:
-                    # Plain text — find JSON block inside
-                    m = _re.search(r'\{[\s\S]+\}', candidate)
-                    if m:
-                        try:
-                            ai_data = _json.loads(m.group(0))
-                        except Exception:
-                            pass
-
-            if ai_data:
-                # Filter stop words from keyword lists
-                def clean_keywords(lst):
-                    if not isinstance(lst, list):
-                        return []
-                    return [
-                        k for k in lst
-                        if isinstance(k, str)
-                        and k.lower().strip() not in KEYWORD_STOP_WORDS
-                        and len(k.strip()) > 2
-                    ]
-
-                safe_list = lambda v: v if isinstance(v, list) else []
-                safe_str  = lambda v: str(v) if v else ""
-
-                # Merge: base engine scores + section detection + AI qualitative insights
-                return {
-                    "ai_powered":          True,
-                    # Scores from reliable regex engine
-                    "score":               base["score"],
-                    "keyword_match_score": base["keyword_match_score"],
-                    "skill_match_score":   base["skill_match_score"],
-                    "format_score":        base["format_score"],
-                    "impact_score":        base["impact_score"],
-                    # Section analysis from reliable regex
-                    "section_analysis":    base["section_analysis"],
-                    "section_hits":        base["section_hits"],
-                    # Skills and keywords: prefer AI (broader), fallback to regex
-                    "matched_skills":   clean_keywords(safe_list(ai_data.get("matched_skills"))) or base["matched_skills"],
-                    "missing_skills":   clean_keywords(safe_list(ai_data.get("missing_skills"))) or base["missing_skills"],
-                    "matched_keywords": clean_keywords(safe_list(ai_data.get("matched_keywords"))) or base["matched"],
-                    "missing_keywords": clean_keywords(safe_list(ai_data.get("missing_keywords"))) or base["missing"],
-                    "matched":          clean_keywords(safe_list(ai_data.get("matched_keywords"))) or base["matched"],
-                    "missing":          clean_keywords(safe_list(ai_data.get("missing_keywords"))) or base["missing"],
-                    # Qualitative insights from AI
-                    "experience_match": safe_str(ai_data.get("experience_match")),
-                    "title_match":      safe_str(ai_data.get("title_match")),
-                    "suggestions":      safe_list(ai_data.get("suggestions")) or base["suggestions"],
-                }
-
+        if ai_data:
+            safe_l = lambda v: v if isinstance(v, list) else []
+            safe_s = lambda v: str(v).strip() if v else ""
+            
+            detected = safe_l(ai_data.get("detected_sections"))
+            
+            return {
+                "ai_powered":          True,
+                "score":               ai_data.get("overall_score", 0),
+                "keyword_match_score": ai_data.get("breakdown", {}).get("keyword_match", 0),
+                "skill_match_score":   ai_data.get("breakdown", {}).get("skill_alignment", 0),
+                "format_score":        ai_data.get("breakdown", {}).get("format_quality", 0),
+                "impact_score":        ai_data.get("breakdown", {}).get("impact_metrics", 0),
+                
+                "detected_sections":   detected,
+                
+                "matched_skills":   safe_l(ai_data.get("matched_skills")),
+                "missing_skills":   safe_l(ai_data.get("missing_skills")),
+                "matched_keywords": safe_l(ai_data.get("matched_keywords")),
+                "missing_keywords": safe_l(ai_data.get("missing_keywords")),
+                "matched":          safe_l(ai_data.get("matched_keywords")),
+                "missing":          safe_l(ai_data.get("missing_keywords")),
+                
+                "experience_match": safe_s(ai_data.get("experience_match")),
+                "title_match":      safe_s(ai_data.get("title_match")),
+                "suggestions":      safe_l(ai_data.get("suggestions")),
+            }
     except Exception as e:
-        print(f"DEBUG: AI ATS qualitative call failed: {e}")
+        print(f"DEBUG: Deep AI Audit failed: {e}")
 
-    # Full fallback: regex engine only
-    print("DEBUG: Using regex-only ATS engine")
-    return base
+    # Final fallback to base regex if AI is down
+    return ats_analysis(resume_text, jd_text)
 
 
 

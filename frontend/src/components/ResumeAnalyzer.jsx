@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { FileSearch, CheckCircle2, XCircle, Lightbulb, Cpu, AlertCircle } from "lucide-react";
+import { FileSearch, CheckCircle2, XCircle, Lightbulb, Cpu, AlertCircle, Loader2 } from "lucide-react";
 import { apiUrl } from "../api";
 
 // ─── Animated Loading Screen ───────────────────────────────────────────────
@@ -139,31 +139,65 @@ function SubScoreBar({ label, value, max, color }) {
 }
 
 // ─── Section Checklist ─────────────────────────────────────────────────────
-function SectionChecklist({ sectionAnalysis }) {
-  const SECTIONS = [
-    { key: "has_summary",       label: "Professional Summary" },
-    { key: "has_skills",        label: "Skills Section" },
-    { key: "has_experience",    label: "Work Experience" },
-    { key: "has_projects",      label: "Projects" },
-    { key: "has_education",     label: "Education" },
-    { key: "has_certifications",label: "Certifications" },
-  ];
+function SectionChecklist({ sections }) {
+  if (!sections || sections.length === 0) {
+    return (
+      <div className="rounded-2xl border border-white/5 bg-[#1a1b1b] p-5">
+        <h3 className="font-black text-white uppercase tracking-wider text-sm mb-4">Structure Analysis</h3>
+        <p className="text-xs text-gray-500 italic">No clear sections detected.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="rounded-2xl border border-white/5 bg-[#1a1b1b] p-5">
-      <h3 className="font-black text-white uppercase tracking-wider text-sm mb-4">Resume Sections</h3>
+      <h3 className="font-black text-white uppercase tracking-wider text-sm mb-4">Detected Sections</h3>
       <ul className="space-y-2.5">
-        {SECTIONS.map(({ key, label }) => {
-          const found = sectionAnalysis?.[key];
-          return (
-            <li key={key} className="flex items-center gap-2 text-sm">
-              {found
-                ? <CheckCircle2 size={16} className="text-emerald-500 flex-shrink-0" />
-                : <XCircle     size={16} className="text-red-500/50 flex-shrink-0" />}
-              <span className={found ? "text-gray-300 font-medium" : "text-gray-600 line-through font-light"}>{label}</span>
-            </li>
-          );
-        })}
+        {sections.map((s, i) => (
+          <li key={i} className="flex items-center gap-2 text-sm">
+            {s.status === "Strong" ? (
+              <CheckCircle2 size={16} className="text-emerald-500 flex-shrink-0" />
+            ) : s.status === "Average" ? (
+              <div className="w-4 h-4 rounded-full border-2 border-amber-500/50 flex-shrink-0" />
+            ) : (
+              <XCircle size={16} className="text-red-500/50 flex-shrink-0" />
+            )}
+            <span className={s.status === "Strong" ? "text-gray-300 font-medium" : "text-gray-500 font-light"}>
+              {s.name}
+            </span>
+          </li>
+        ))}
       </ul>
+    </div>
+  );
+}
+
+// ─── Section Audit Panel ─────────────────────────────────────────────────────
+function SectionAudit({ feedback }) {
+  if (!feedback || feedback.length === 0) return null;
+  return (
+    <div className="rounded-2xl border border-white/5 bg-[#1a1b1b] p-6">
+      <div className="flex items-center gap-2 mb-6">
+        <FileSearch size={20} className="text-[#FF6044]" />
+        <h3 className="font-black text-white uppercase tracking-wider text-sm">Deep Sectional Audit</h3>
+      </div>
+      <div className="grid gap-4 md:grid-cols-2">
+        {feedback.map((item, i) => (
+          <div key={i} className="group p-4 rounded-xl bg-white/3 border border-white/5 hover:bg-white/5 transition-all">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-black text-white uppercase tracking-widest">{item.name || item.section}</span>
+              <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md ${
+                item.status === 'Strong' ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 
+                item.status === 'Weak' || item.status === 'Average' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' : 
+                'bg-red-500/10 text-red-500 border border-red-500/20'
+              }`}>
+                {item.status}
+              </span>
+            </div>
+            <p className="text-sm text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors">{item.feedback}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -333,7 +367,7 @@ export default function ResumeAnalyzer() {
             </div>
 
             {/* Section checklist */}
-            <SectionChecklist sectionAnalysis={result.section_analysis} />
+            <SectionChecklist sections={result.detected_sections} />
           </div>
 
           {/* Experience + Title insights */}
@@ -353,6 +387,8 @@ export default function ResumeAnalyzer() {
               )}
             </div>
           )}
+
+          <SectionAudit feedback={result.detected_sections} />
 
           {/* Keywords grid */}
           <div className="grid gap-4 md:grid-cols-2">

@@ -8,3 +8,4 @@ whitenoise==6.9.0
 python-dotenv==1.0.1
 requests==2.32.3
 dj-database-url==2.3.0
+groq==1.2.0
