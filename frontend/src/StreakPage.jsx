@@ -183,7 +183,7 @@ function StreakSection({ title, label, count, heatmapTitle, heatmap, badges, onE
       </div>
 
       <div className="saas-card overflow-hidden">
-        <Heatmap title={heatmapTitle} data={heatmap} noun="submissions" />
+        <Heatmap title={heatmapTitle} data={heatmap} noun="submissions" color={color} />
       </div>
     </section>
   );

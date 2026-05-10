@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { FileSearch, CheckCircle2, XCircle, Lightbulb, Cpu, AlertCircle, Loader2 } from "lucide-react";
+import { FileSearch, CheckCircle2, XCircle, Lightbulb, Cpu, AlertCircle, Loader2, Activity, AlertTriangle, Zap, Target, Database, BarChart3, Search, Upload, FileCheck } from "lucide-react";
 import { apiUrl } from "../api";
 
 // ─── Animated Loading Screen ───────────────────────────────────────────────
@@ -138,36 +138,103 @@ function SubScoreBar({ label, value, max, color }) {
   );
 }
 
+// ─── Score Summary Card ─────────────────────────────────────────────────────
+function ScoreSummary({ summary, assessment }) {
+  return (
+    <div className="rounded-2xl border border-white/5 bg-[#1a1b1b] p-6 mb-6">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-10 h-10 rounded-full bg-[#FF6044]/10 flex items-center justify-center border border-[#FF6044]/20">
+          <Activity size={20} className="text-[#FF6044]" />
+        </div>
+        <div>
+          <h3 className="font-black text-white uppercase tracking-wider text-sm">ATS Market Readiness</h3>
+          <p className="text-xs text-gray-500">Recruiter & Machine Analysis</p>
+        </div>
+      </div>
+      <p className="text-lg text-gray-200 font-medium leading-relaxed mb-4">{summary}</p>
+      <div className="p-4 rounded-xl bg-white/5 border border-white/5 italic text-sm text-gray-400">
+        "{assessment}"
+      </div>
+    </div>
+  );
+}
+
+// ─── ATS Risk Factors ─────────────────────────────────────────────────────
+function ATSRiskRadar({ risks }) {
+  if (!risks || risks.length === 0) return null;
+  return (
+    <div className="rounded-2xl border border-white/5 bg-[#1a1b1b] p-6">
+      <div className="flex items-center gap-2 mb-6">
+        <AlertTriangle size={20} className="text-amber-500" />
+        <h3 className="font-black text-white uppercase tracking-wider text-sm">ATS Risk Radar</h3>
+      </div>
+      <div className="space-y-4">
+        {risks.map((risk, i) => (
+          <div key={i} className="flex gap-4 p-4 rounded-xl bg-white/3 border border-white/5">
+            <div className={`mt-1 w-2 h-2 rounded-full flex-shrink-0 ${
+              risk.severity === 'high' ? 'bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]' : 
+              risk.severity === 'medium' ? 'bg-amber-500' : 'bg-blue-500'
+            }`} />
+            <div>
+              <p className="text-sm font-black text-white uppercase tracking-wide mb-1">{risk.issue}</p>
+              <p className="text-xs text-gray-400 leading-relaxed">{risk.explanation}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── Improvement Roadmap ─────────────────────────────────────────────────────
+function ImprovementRoadmap({ plan }) {
+  if (!plan || plan.length === 0) return null;
+  return (
+    <div className="rounded-2xl border border-white/5 bg-[#1a1b1b] p-6">
+      <div className="flex items-center gap-2 mb-6">
+        <Zap size={20} className="text-[#7C3AED]" />
+        <h3 className="font-black text-white uppercase tracking-wider text-sm">Strategic Improvement Plan</h3>
+      </div>
+      <div className="relative space-y-6 before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[1px] before:bg-white/10">
+        {plan.map((item, i) => (
+          <div key={i} className="relative pl-8">
+            <div className={`absolute left-0 top-1 w-6 h-6 rounded-full flex items-center justify-center border text-[10px] font-black ${
+              item.priority === 'high' ? 'bg-red-500/10 border-red-500/30 text-red-500' : 
+              'bg-white/10 border-white/20 text-white'
+            }`}>
+              {i + 1}
+            </div>
+            <div className="p-4 rounded-xl bg-white/3 border border-white/5 hover:border-white/10 transition-all">
+              <p className="text-xs font-black text-white uppercase tracking-widest mb-1">{item.problem}</p>
+              <p className="text-sm text-gray-400 mb-3">{item.recommendation}</p>
+              <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-emerald-500">
+                <Target size={12} /> Expected Impact: {item.expected_impact}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ─── Section Checklist ─────────────────────────────────────────────────────
 function SectionChecklist({ sections }) {
-  if (!sections || sections.length === 0) {
-    return (
-      <div className="rounded-2xl border border-white/5 bg-[#1a1b1b] p-5">
-        <h3 className="font-black text-white uppercase tracking-wider text-sm mb-4">Structure Analysis</h3>
-        <p className="text-xs text-gray-500 italic">No clear sections detected.</p>
-      </div>
-    );
-  }
-
+  if (!sections || sections.length === 0) return null;
   return (
-    <div className="rounded-2xl border border-white/5 bg-[#1a1b1b] p-5">
-      <h3 className="font-black text-white uppercase tracking-wider text-sm mb-4">Detected Sections</h3>
-      <ul className="space-y-2.5">
+    <div className="rounded-2xl border border-white/5 bg-[#1a1b1b] p-6">
+      <h3 className="font-black text-white uppercase tracking-wider text-sm mb-6">Structural Integrity</h3>
+      <div className="grid gap-3">
         {sections.map((s, i) => (
-          <li key={i} className="flex items-center gap-2 text-sm">
-            {s.status === "Strong" ? (
-              <CheckCircle2 size={16} className="text-emerald-500 flex-shrink-0" />
-            ) : s.status === "Average" ? (
-              <div className="w-4 h-4 rounded-full border-2 border-amber-500/50 flex-shrink-0" />
-            ) : (
-              <XCircle size={16} className="text-red-500/50 flex-shrink-0" />
-            )}
-            <span className={s.status === "Strong" ? "text-gray-300 font-medium" : "text-gray-500 font-light"}>
-              {s.name}
-            </span>
-          </li>
+          <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-white/3 border border-white/5">
+            <div className="flex items-center gap-3">
+              {s.status === "strong" ? <CheckCircle2 size={16} className="text-emerald-500" /> : <XCircle size={16} className="text-red-500/50" />}
+              <span className="text-xs font-bold text-gray-300 uppercase tracking-wide">{s.name}</span>
+            </div>
+            <span className="text-[10px] font-black text-gray-500 uppercase">{s.score}/10</span>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
@@ -179,7 +246,7 @@ function SectionAudit({ feedback }) {
     <div className="rounded-2xl border border-white/5 bg-[#1a1b1b] p-6">
       <div className="flex items-center gap-2 mb-6">
         <FileSearch size={20} className="text-[#FF6044]" />
-        <h3 className="font-black text-white uppercase tracking-wider text-sm">Deep Sectional Audit</h3>
+        <h3 className="font-black text-white uppercase tracking-wider text-sm">Deep Content Audit</h3>
       </div>
       <div className="grid gap-4 md:grid-cols-2">
         {feedback.map((item, i) => (
@@ -187,9 +254,8 @@ function SectionAudit({ feedback }) {
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-black text-white uppercase tracking-widest">{item.name || item.section}</span>
               <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md ${
-                item.status === 'Strong' ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 
-                item.status === 'Weak' || item.status === 'Average' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' : 
-                'bg-red-500/10 text-red-500 border border-red-500/20'
+                item.status === 'strong' ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 
+                'bg-amber-500/10 text-amber-500 border border-amber-500/20'
               }`}>
                 {item.status}
               </span>
@@ -223,7 +289,6 @@ function KeywordPanel({ title, words, tone }) {
   );
 }
 
-// ─── Main Component ────────────────────────────────────────────────────────
 export default function ResumeAnalyzer() {
   const [resume, setResume]               = useState("");
   const [file, setFile]                   = useState(null);
@@ -323,100 +388,121 @@ export default function ResumeAnalyzer() {
       {/* Animated loading */}
       {loading && <LoadingScreen />}
 
-      {/* Error */}
+      {/* Error Feedback */}
       {error && (
-        <div className="mt-5 rounded-xl border border-red-200 bg-red-50 p-4 flex items-center gap-3 text-sm text-red-700">
-          <AlertCircle size={18} className="flex-shrink-0" />
+        <div className="mb-12 p-6 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-500 text-sm font-black text-center uppercase tracking-widest animate-shake">
           {error}
         </div>
       )}
 
-      {/* Results */}
+      {/* Results Section */}
       {result && !loading && (
-        <div className="mt-8 space-y-6 animate-fade-in-up">
-
-          {/* Warnings */}
-          {(result.warnings || []).length > 0 && (
-            <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
-              {result.warnings.map((w) => <p key={w}>{w}</p>)}
-            </div>
-          )}
-
-          {/* AI badge */}
-          {result.ai_powered && (
-            <div className="flex items-center gap-2 text-xs font-semibold text-indigo-600 bg-indigo-50 border border-indigo-100 rounded-full px-3 py-1 w-fit">
-              <Cpu size={12} /> AI-Powered Analysis
-            </div>
-          )}
-
-          {/* Score + sub-scores */}
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {/* Score ring */}
-            <div className="rounded-2xl bg-gray-950 p-6 text-white flex flex-col items-center gap-4">
-              <ScoreRing score={result.score} />
-              <p className="text-xs text-gray-400 text-center">{result.resume_chars || 0} characters analysed</p>
-            </div>
-
-            {/* Sub-score breakdown */}
-            <div className="rounded-2xl border border-white/5 bg-[#1a1b1b] p-6 space-y-5">
-              <h3 className="font-black text-white uppercase tracking-wider text-sm mb-2">Score Breakdown</h3>
-              <SubScoreBar label="Keyword Match"  value={result.keyword_match_score ?? 0} max={50}  color="#FF6044" />
-              <SubScoreBar label="Skill Alignment" value={result.skill_match_score   ?? 0} max={30}  color="#7C3AED" />
-              <SubScoreBar label="Format Quality"  value={result.format_score        ?? 0} max={10}  color="#10b981" />
-              <SubScoreBar label="Impact & Verbs"  value={result.impact_score        ?? 0} max={10}  color="#f59e0b" />
-            </div>
-
-            {/* Section checklist */}
-            <SectionChecklist sections={result.detected_sections} />
-          </div>
-
-          {/* Experience + Title insights */}
-          {(result.experience_match || result.title_match) && (
-            <div className="grid gap-4 md:grid-cols-2">
-              {result.experience_match && (
-                <div className="rounded-xl border border-blue-500/20 bg-blue-950/40 p-4">
-                  <p className="text-xs font-bold uppercase tracking-wide text-blue-400 mb-1">Experience Alignment</p>
-                  <p className="text-sm text-slate-300">{result.experience_match}</p>
+        <div className="space-y-12 animate-fade-in-up pb-24">
+          
+          <div className="grid gap-8 lg:grid-cols-3">
+            {/* Primary Analysis Module */}
+            <div className="lg:col-span-2 space-y-8">
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="rounded-3xl bg-gray-950 p-10 text-white flex flex-col items-center justify-center border border-white/5 shadow-2xl">
+                  <ScoreRing score={result.score} />
+                  <p className="mt-8 text-[10px] font-black text-gray-600 uppercase tracking-[0.4em]">{result.resume_chars || 0} characters scanned</p>
                 </div>
-              )}
-              {result.title_match && (
-                <div className="rounded-xl border border-violet-500/20 bg-violet-950/40 p-4">
-                  <p className="text-xs font-bold uppercase tracking-wide text-violet-400 mb-1">Role Title Match</p>
-                  <p className="text-sm text-slate-300">{result.title_match}</p>
+                <div className="rounded-3xl border border-white/5 bg-[#1a1b1b] p-10 shadow-xl">
+                  <h3 className="font-black text-white uppercase tracking-wider text-xs mb-10 opacity-50">Match Matrix</h3>
+                  <div className="space-y-8">
+                    <SubScoreBar label="Keywords" value={result.keyword_match_score} max={50} color="#FF6044" />
+                    <SubScoreBar label="Skills"   value={result.skill_match_score}   max={30} color="#7C3AED" />
+                    <SubScoreBar label="Format"   value={result.format_score}        max={10} color="#10b981" />
+                    <SubScoreBar label="Impact"   value={result.impact_score}        max={10} color="#f59e0b" />
+                  </div>
                 </div>
-              )}
-            </div>
-          )}
-
-          <SectionAudit feedback={result.detected_sections} />
-
-          {/* Keywords grid */}
-          <div className="grid gap-4 md:grid-cols-2">
-            <KeywordPanel title="✅ Matched Skills"    words={result.matched_skills   || []} tone="green" />
-            <KeywordPanel title="❌ Missing Skills"    words={result.missing_skills   || []} tone="red"   />
-            <KeywordPanel title="✅ Matched Keywords"  words={result.matched_keywords || result.matched || []} tone="green" />
-            <KeywordPanel title="❌ Missing Keywords"  words={result.missing_keywords || result.missing || []} tone="red"   />
-          </div>
-
-          {/* Suggestions */}
-          {(result.suggestions || []).length > 0 && (
-            <div className="rounded-2xl border border-white/5 bg-[#1a1b1b] p-6">
-              <div className="flex items-center gap-2 mb-5">
-                <Lightbulb size={20} className="text-amber-400" />
-                <h3 className="font-black text-white uppercase tracking-wider text-sm">AI Recommendations</h3>
               </div>
-              <ul className="grid gap-3 md:grid-cols-2">
-                {result.suggestions.map((s, i) => (
-                  <li key={i} className="flex items-start gap-3 rounded-xl bg-white/5 border border-white/5 p-4 text-sm text-gray-300 leading-relaxed">
-                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-amber-400/10 text-amber-400 text-xs font-black flex items-center justify-center mt-0.5 border border-amber-400/20">
-                      {i + 1}
-                    </span>
-                    {s}
-                  </li>
-                ))}
-              </ul>
+
+              <ScoreSummary summary={result.score_summary} assessment={result.final_assessment} />
             </div>
-          )}
+
+            {/* Sidebar Modules */}
+            <div className="space-y-8">
+              <SectionChecklist sections={result.detected_sections} />
+              <ATSRiskRadar risks={result.ats_risk_factors} />
+            </div>
+          </div>
+
+          {/* Alignment Intelligence Grid */}
+          <div className="grid gap-8 md:grid-cols-2">
+             <div className="rounded-3xl border border-white/5 bg-[#1a1b1b] p-8 shadow-xl">
+                <div className="flex items-center gap-3 mb-8">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
+                    <Database size={20} className="text-emerald-500" />
+                  </div>
+                  <h3 className="font-black text-white uppercase tracking-wider text-sm">Technical Stack Alignment</h3>
+                </div>
+                <div className="space-y-8">
+                  <KeywordPanel title="✅ Matched Stack" words={result.matched_skills} tone="green" />
+                  <KeywordPanel title="❌ Critical Gaps" words={result.critical_missing_skills} tone="red" />
+                  <KeywordPanel title="⚠️ Secondary Skills" words={result.missing_skills} tone="amber" />
+                </div>
+             </div>
+
+             <div className="rounded-3xl border border-white/5 bg-[#1a1b1b] p-8 shadow-xl">
+                <div className="flex items-center gap-3 mb-8">
+                  <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20">
+                    <BarChart3 size={20} className="text-indigo-500" />
+                  </div>
+                  <h3 className="font-black text-white uppercase tracking-wider text-sm">Hiring Context</h3>
+                </div>
+                <div className="space-y-6">
+                  <div className="p-5 rounded-2xl bg-white/3 border border-white/5 hover:bg-white/5 transition-all">
+                    <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-2">Seniority Alignment</p>
+                    <p className="text-sm text-gray-300 leading-relaxed font-medium">{result.experience_analysis?.seniority_match}</p>
+                  </div>
+                  <div className="p-5 rounded-2xl bg-white/3 border border-white/5 hover:bg-white/5 transition-all">
+                    <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-2">Role Title Fit</p>
+                    <p className="text-sm text-gray-300 leading-relaxed font-medium">{result.experience_analysis?.title_alignment}</p>
+                  </div>
+                  <div className="p-5 rounded-2xl bg-white/3 border border-white/5 hover:bg-white/5 transition-all">
+                    <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-2">Technical Depth</p>
+                    <p className="text-sm text-gray-300 leading-relaxed font-medium">{result.experience_analysis?.technical_depth}</p>
+                  </div>
+                </div>
+             </div>
+          </div>
+
+          {/* Expert Audit Module */}
+          <SectionAudit feedback={result.detected_sections} />
+          
+          {/* Actionable Strategy Section */}
+          <div className="grid gap-8 md:grid-cols-2">
+            <ImprovementRoadmap plan={result.improvement_plan} />
+            <div className="space-y-8">
+              <div className="rounded-3xl border border-white/5 bg-[#1a1b1b] p-8 h-fit shadow-xl">
+                <div className="flex items-center gap-3 mb-8">
+                  <Search size={20} className="text-[#FF6044]" />
+                  <h3 className="font-black text-white uppercase tracking-wider text-sm">Keyword Optimization Tips</h3>
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  {result.keyword_optimization?.map((tip, i) => (
+                    <span key={i} className="text-[11px] font-bold text-gray-400 bg-white/5 border border-white/5 px-4 py-2 rounded-xl hover:bg-white/10 transition-all cursor-default">{tip}</span>
+                  ))}
+                </div>
+              </div>
+              <div className="rounded-3xl border border-white/5 bg-[#1a1b1b] p-8 h-fit shadow-xl border-l-4 border-l-emerald-500/50">
+                <div className="flex items-center gap-3 mb-8">
+                  <CheckCircle2 size={20} className="text-emerald-500" />
+                  <h3 className="font-black text-white uppercase tracking-wider text-sm">Hiring Strengths</h3>
+                </div>
+                <div className="space-y-3">
+                  {result.top_strengths?.map((s, i) => (
+                    <div key={i} className="flex items-center gap-4 text-sm text-gray-300 p-4 rounded-2xl bg-emerald-500/5 border border-emerald-500/10 transition-all hover:bg-emerald-500/10">
+                      <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+                      {s}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       )}
     </section>

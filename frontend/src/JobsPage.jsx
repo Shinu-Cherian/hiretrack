@@ -106,10 +106,10 @@ export default function JobsPage() {
         {/* Search & Filters */}
         <div className="mb-6 flex justify-end">
           <div className="relative w-full max-w-md">
-            <Search className="absolute left-4 top-3.5 text-gray-400" size={18} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
             <input
               placeholder="Search by role, company, or platform..."
-              className="form-input pl-11 shadow-sm"
+              className="form-input !pl-12 shadow-sm"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
             />

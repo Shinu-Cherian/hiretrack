@@ -1,11 +1,13 @@
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-export default function Heatmap({ title, data = [], noun = "submissions" }) {
+export default function Heatmap({ title, data = [], noun = "submissions", color = "orange" }) {
   const counts = new Map(data.map((item) => [item.date, item.count]));
   const days = buildDays(365);
   const total = data.reduce((sum, item) => sum + item.count, 0);
   const activeDays = data.filter((item) => item.count > 0).length;
   const maxStreak = calculateMaxStreak(new Set(data.filter((item) => item.count > 0).map((item) => item.date)));
+  
+  const scrollbarClass = color === "orange" ? "scrollbar-orange" : "scrollbar-blue";
   
   // Group days by month
   const months = [];
@@ -42,7 +44,13 @@ export default function Heatmap({ title, data = [], noun = "submissions" }) {
         </div>
       </div>
 
-      <div className="overflow-x-auto pb-2 custom-scrollbar">
+      <div 
+        className={`overflow-x-auto pb-2 custom-scrollbar ${scrollbarClass}`}
+        style={{ 
+          "--sb-thumb": color === "orange" ? "#f97316" : "#3b82f6",
+          "--sb-thumb-hover": color === "orange" ? "#ea580c" : "#2563eb"
+        }}
+      >
         <div className="flex gap-3 min-w-max">
           {months.map((month) => {
             // Calculate day of the week for the first day of this month block

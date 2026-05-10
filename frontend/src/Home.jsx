@@ -1,5 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Link } from "react-router-dom";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
   ArrowRight,
   Briefcase,
@@ -18,6 +21,9 @@ import {
 } from "lucide-react";
 import Header from "./Header";
 import { getAuthStatus } from "./api";
+
+// Register GSAP plugins
+gsap.registerPlugin(ScrollTrigger);
 
 const modules = [
   { icon: Plus, title: "Add Job", to: "/add-job", desc: "Log company, role, JD, status, notes, and follow-up date." },
@@ -271,6 +277,7 @@ const footerLegalLinks = [
 export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activeModal, setActiveModal] = useState(null);
+  const containerRef = useRef(null);
 
   React.useEffect(() => {
     let alive = true;
@@ -284,17 +291,66 @@ export default function Home() {
     return () => { alive = false; };
   }, []);
 
+  useGSAP(() => {
+    const tl = gsap.timeline();
+
+    // 0. Safety Set - hide elements instantly
+    gsap.set([".hero-badge", ".hero-title-line", ".hero-subtitle", ".hero-actions", "[data-reveal]"], { 
+      opacity: 0, 
+      y: 20 
+    });
+
+    // 1. Hero Reveal Sequence
+    tl.to(".hero-badge", { opacity: 1, y: 0, duration: 1, ease: "power4.out" })
+      .to(".hero-title-line", { 
+        opacity: 1, 
+        y: 0, 
+        stagger: 0.15, 
+        duration: 1.2, 
+        ease: "power4.out" 
+      }, "-=0.7")
+      .to(".hero-subtitle", { opacity: 1, y: 0, duration: 1, ease: "power4.out" }, "-=0.8")
+      .to(".hero-actions", { opacity: 1, y: 0, duration: 1, ease: "power4.out" }, "-=0.8");
+
+    // 2. Scroll-Triggered Reveals
+    const revealElements = gsap.utils.toArray('[data-reveal]');
+    revealElements.forEach((el) => {
+      gsap.to(el, {
+        scrollTrigger: {
+          trigger: el,
+          start: "top 85%",
+          toggleActions: "play none none none"
+        },
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: "power3.out"
+      });
+    });
+
+    // 3. Floating background elements
+    gsap.to(".hub-item", {
+      y: "random(-20, 20)",
+      x: "random(-20, 20)",
+      duration: "random(3, 5)",
+      repeat: -1,
+      yoyo: true,
+      ease: "sine.inOut"
+    });
+
+  }, { scope: containerRef, dependencies: [isLoggedIn] });
+
   const openModal = (e, type) => {
     e.preventDefault();
     setActiveModal(type);
   };
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-[#080909] font-sans text-white">
+    <div ref={containerRef} className="min-h-screen overflow-x-hidden bg-[#080909] font-sans text-white">
       <Header />
 
       {/* HERO SECTION */}
-      <section className="home-hero-v2 relative min-h-screen flex items-center pt-20 pb-16 px-6 lg:px-12 overflow-hidden">
+      <section className="home-hero-v2 relative min-h-screen flex items-center pt-8 pb-16 px-6 lg:px-12 overflow-hidden">
         <div className="hero-ambient" />
         <div className="hero-grid-floor" />
         <div className="hero-scanline" />
@@ -317,8 +373,8 @@ export default function Home() {
               <span>The modern way to track applications</span>
             </span>
             <h1 className="hero-title text-5xl md:text-7xl xl:text-8xl font-black tracking-tighter leading-[0.9] text-white mb-8">
-              Manage your <br/> career <br/>
-              <span className="hero-title-coral text-[#FF6044]">with precision.</span>
+              <span className="hero-title-line block">Manage your career</span>
+              <span className="hero-title-line block text-[#FF6044]">with precision.</span>
             </h1>
             <p className="hero-subtitle text-xl text-gray-400 max-w-xl mx-auto lg:mx-0 font-medium leading-relaxed mb-12">
               Elevate your job search. HireTrack organizes your pipeline, referrals, and insights into a beautifully minimalist workspace.
@@ -338,7 +394,7 @@ export default function Home() {
               )}
             </div>
           </div>
-          <div className="relative w-full min-h-[520px] lg:min-h-[620px] flex items-center justify-center z-10">
+          <div className="hero-pipeline-scene-wrapper relative w-full min-h-[520px] lg:min-h-[620px] flex items-center justify-center z-10">
              <HeroPipelineScene />
           </div>
         </div>

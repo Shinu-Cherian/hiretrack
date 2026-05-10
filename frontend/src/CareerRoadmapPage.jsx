@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Map, Sparkles, Loader2, GraduationCap, Briefcase, Globe, DollarSign, BookOpen, Star } from "lucide-react";
+import { useEffect, useState, useRef } from "react";
+import { Map, Sparkles, Loader2, GraduationCap, Briefcase, Globe, DollarSign, BookOpen, Star, ChevronRight } from "lucide-react";
 import Header from "./Header";
 import BackButton from "./components/BackButton";
 import { apiUrl } from "./api";
@@ -80,6 +80,63 @@ function LoadingScreen() {
   );
 }
 
+// ── Custom Dropdown for Career Stage ──────────────────────────────────────────
+function CareerStageSelect({ value, onChange }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  
+  const options = [
+    "Student", "Fresher", "Working Professional", "Career Switcher", "Experienced Professional"
+  ];
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className={`form-input flex items-center justify-between text-left ${isOpen ? "border-[#FF6044] ring-4 ring-[#FF6044]/15" : ""}`}
+      >
+        <span className={value ? "text-white" : "text-gray-500"}>
+          {value || "Select your stage..."}
+        </span>
+        <ChevronRight size={16} className={`text-gray-500 transition-transform duration-300 ${isOpen ? "rotate-90 text-[#FF6044]" : ""}`} />
+      </button>
+
+      {isOpen && (
+        <div className="absolute top-full left-0 right-0 mt-2 p-1.5 rounded-xl bg-[#1a1b1b] border border-white/10 shadow-2xl z-50 animate-fade-in origin-top">
+          {options.map((opt) => (
+            <button
+              key={opt}
+              type="button"
+              onClick={() => {
+                onChange(opt);
+                setIsOpen(false);
+              }}
+              className={`w-full text-left px-4 py-2.5 rounded-lg text-sm font-bold transition-all ${
+                value === opt 
+                  ? "bg-[#FF6044] text-[#121313]" 
+                  : "text-gray-400 hover:bg-[#FF6044]/10 hover:text-[#FF6044]"
+              }`}
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Form Field Component ──────────────────────────────────────────────────────
 function FormField({ label, icon: Icon, children }) {
   return (
@@ -99,9 +156,11 @@ export default function CareerRoadmapPage() {
     field: "",
     degree: "",
     cgpa: "",
+    career_stage: "",
     target_role: "",
     country: "",
     salary: "",
+    additional_info: "",
   });
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
@@ -111,6 +170,10 @@ export default function CareerRoadmapPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!form.career_stage) {
+      setError("Please select your current Career Stage.");
+      return;
+    }
     setLoading(true);
     setResult(null);
     setError("");
@@ -159,16 +222,23 @@ export default function CareerRoadmapPage() {
           <div className="saas-card p-8">
             <div className="flex items-center gap-3 mb-8 pb-6 border-b border-white/5">
               <Sparkles size={18} className="text-[#FF6044]" />
-              <h2 className="font-black text-white text-lg">Tell us about yourself</h2>
-              <span className="ml-auto text-xs text-gray-500 font-medium">All fields required</span>
+              <h2 className="font-black text-white text-lg">Personalize Your Roadmap</h2>
+              <span className="ml-auto text-xs text-gray-500 font-medium">Please fill the details</span>
             </div>
 
             <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
+              <FormField label="Current Career Stage" icon={Star}>
+                <CareerStageSelect
+                  value={form.career_stage}
+                  onChange={(val) => update("career_stage", val)}
+                />
+              </FormField>
+
               <FormField label="Field / Domain" icon={BookOpen}>
                 <input
                   className="form-input"
-                  placeholder="e.g. Computer Science, Nursing, MBA, Hotel Management..."
+                  placeholder="e.g. CS, Nursing, MBA..."
                   value={form.field}
                   onChange={(e) => update("field", e.target.value)}
                   required
@@ -178,7 +248,7 @@ export default function CareerRoadmapPage() {
               <FormField label="Degree Studied" icon={GraduationCap}>
                 <input
                   className="form-input"
-                  placeholder="e.g. B.Tech, BCA, B.Sc Nursing, MBA, Diploma..."
+                  placeholder="e.g. B.Tech, BCA, MBA..."
                   value={form.degree}
                   onChange={(e) => update("degree", e.target.value)}
                   required
@@ -198,7 +268,7 @@ export default function CareerRoadmapPage() {
               <FormField label="Preferred Job Position" icon={Briefcase}>
                 <input
                   className="form-input"
-                  placeholder="e.g. Data Analyst, Software Engineer, Staff Nurse..."
+                  placeholder="e.g. Data Analyst, Software Engineer..."
                   value={form.target_role}
                   onChange={(e) => update("target_role", e.target.value)}
                   required
@@ -208,7 +278,7 @@ export default function CareerRoadmapPage() {
               <FormField label="Preferred Country / City" icon={Globe}>
                 <input
                   className="form-input"
-                  placeholder="e.g. India - Bangalore, Germany, Canada, UAE..."
+                  placeholder="e.g. India, Germany, Canada..."
                   value={form.country}
                   onChange={(e) => update("country", e.target.value)}
                   required
@@ -218,10 +288,19 @@ export default function CareerRoadmapPage() {
               <FormField label="Expected Salary" icon={DollarSign}>
                 <input
                   className="form-input"
-                  placeholder="e.g. ₹8 LPA, €45,000/year, $70,000/year..."
+                  placeholder="e.g. ₹8 LPA, $70k/year..."
                   value={form.salary}
                   onChange={(e) => update("salary", e.target.value)}
                   required
+                />
+              </FormField>
+
+              <FormField label="Additional Context (Optional)" icon={Sparkles}>
+                <input
+                  className="form-input"
+                  placeholder="e.g. Skills, gaps, or unique goals..."
+                  value={form.additional_info}
+                  onChange={(e) => update("additional_info", e.target.value)}
                 />
               </FormField>
 

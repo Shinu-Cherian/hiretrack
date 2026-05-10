@@ -448,9 +448,9 @@ def build_cover_letter(resume_text, jd_text, profile=None):
     import json as _json
 
     if not settings.GROQ_API_KEY:
-        return "ERROR: GROQ_API_KEY is not configured in the backend."
+        return {"error": "GROQ_API_KEY not found in settings"}
 
-    client = Groq(api_key=settings.GROQ_API_KEY)
+    client = Groq(api_key=settings.GROQ_API_KEY.strip())
 
     # STEP 1: Clean Text
     cleaned_resume = clean_resume_text(resume_text)
@@ -523,7 +523,7 @@ def build_cover_letter(resume_text, jd_text, profile=None):
         return completion.choices[0].message.content.strip()
     except Exception as e:
         print(f"DEBUG: Groq Generation Failed: {e}")
-        return "ERROR: The AI service encountered an issue. Please try again later."
+        return f"ERROR: {str(e)}"
 
 
 
@@ -1613,51 +1613,104 @@ def ai_ats_analysis(resume_text, jd_text):
         # Emergency fallback if key is missing
         return ats_analysis(resume_text, jd_text)
 
-    client = Groq(api_key=settings.GROQ_API_KEY)
+    client = Groq(api_key=settings.GROQ_API_KEY.strip())
     
     # 1. Clean Inputs
     clean_resume = _re.sub(r'Envelope\s*', '', resume_text, flags=_re.IGNORECASE)
     
-    # 2. The "Dynamic Discovery" Prompt
+    # 2. The "Elite ATS Evaluator" Prompt
     system_msg = (
-        "You are a Senior Technical Recruiter. Your task is to perform a Dynamic Content Audit. \n\n"
-        "STRICT RULES:\n"
-        "1. SECTION DISCOVERY: Identify every logical section in the resume based on its unique structure (e.g., Career History, Tech Stack, Academics, etc.). Use the user's original section names.\n"
-        "2. GAP ANALYSIS: Evaluate each discovered section against the Job Description.\n"
-        "3. FORMAT: Return ONLY a raw JSON object."
+        "You are an elite ATS resume evaluator, senior technical recruiter, and hiring strategist. "
+        "Your task is to perform a deep ATS-style resume analysis against a provided job description. "
+        "You must think like: - an Applicant Tracking System, - a technical recruiter, - and a hiring manager simultaneously. "
+        "ANALYSIS GOALS: - Evaluate resume relevance against the JD. - Simulate ATS keyword matching. - Analyze technical skill alignment. "
+        "- Evaluate resume quality and recruiter readability. - Detect missing critical requirements. - Assess seniority alignment. "
+        "- Assess project impact and business value. - Generate actionable improvements. "
+        "SCORING METHODOLOGY: "
+        "1. Keyword Match (0-50): Evaluate exact technical keyword matches, role terminology, frameworks, platforms, tooling, domain language, ATS relevance. "
+        "2. Skill Alignment (0-30): Evaluate technical stack overlap, backend/frontend/cloud/database alignment, architecture relevance, engineering depth, tooling relevance. "
+        "3. Format & Readability (0-10): Evaluate section clarity, organization, ATS readability, formatting consistency, professional structure, clarity of experience descriptions. "
+        "4. Impact & Metrics (0-10): Evaluate quantified achievements, measurable outcomes, business impact, scalability mentions, optimization improvements, ownership indicators. "
+        "IMPORTANT ANALYSIS RULES: - Never hallucinate resume content. - Never invent missing skills or experience. "
+        "- Distinguish between: critical missing requirements, optional missing requirements. - Prioritize skills mentioned multiple times in the JD. "
+        "- Prioritize required technologies over preferred technologies. - Evaluate project quality, not just keyword presence. "
+        "- Penalize keyword stuffing without contextual usage. - Evaluate whether the candidate demonstrates practical application of skills. "
+        "- Consider modern ATS expectations and recruiter standards. "
+        "SECTION DISCOVERY: Dynamically detect all logical resume sections using the candidate’s original section names whenever possible. "
+        "OUTPUT RULES: - Return ONLY valid raw JSON. - No markdown. - No explanations outside JSON. - No trailing commas. - No comments. "
+        "- Ensure all scores are integers. - Ensure arrays are always returned even if empty. "
+        "QUALITY STANDARD: The analysis should feel like it came from a premium AI recruiting platform used by serious recruiters and hiring teams."
     )
 
     user_msg = (
-        "### TASK:\n"
-        "Perform a deep audit. Return ONLY a raw JSON object.\n\n"
-        "### DATA:\n"
-        f"JD CONTENT:\n{jd_text[:1500]}\n\n"
-        f"RESUME CONTENT:\n{clean_resume[:3000]}\n\n"
-        "### REQUIRED JSON STRUCTURE:\n"
+        f"Perform a deep ATS resume audit against the provided job description.\n\n"
+        f"JOB DESCRIPTION:\n{jd_text[:5000]}\n\n"
+        f"RESUME:\n{clean_resume[:7000]}\n\n"
+        "TASKS:\n"
+        "1. Analyze ATS keyword compatibility.\n"
+        "2. Evaluate technical skill alignment.\n"
+        "3. Detect missing critical technologies or qualifications.\n"
+        "4. Evaluate recruiter readability and formatting quality.\n"
+        "5. Assess project quality and measurable impact.\n"
+        "6. Analyze seniority and role alignment.\n"
+        "7. Detect weak resume sections.\n"
+        "8. Generate realistic ATS scoring.\n"
+        "9. Generate actionable improvement recommendations.\n\n"
+        "RETURN THIS EXACT JSON STRUCTURE:\n"
         "{\n"
-        '  "overall_score": (int 0-100),\n'
+        '  "overall_score": 0,\n'
+        '  "score_summary": "Short professional summary of overall ATS strength",\n'
         '  "breakdown": {\n'
-        '    "keyword_match": (int 0-50),\n'
-        '    "skill_alignment": (int 0-30),\n'
-        '    "format_quality": (int 0-10),\n'
-        '    "impact_metrics": (int 0-10)\n'
+        '    "keyword_match": 0,\n'
+        '    "skill_alignment": 0,\n'
+        '    "format_quality": 0,\n'
+        '    "impact_metrics": 0\n'
         '  },\n'
-        '  "matched_skills": [list of tech skills matched],\n'
-        '  "missing_skills": [list of tech skills missing],\n'
-        '  "matched_keywords": [list of domain terms matched],\n'
-        '  "missing_keywords": [list of domain terms missing],\n'
-        '  "detected_sections": [\n'
+        '  "matched_skills": [],\n'
+        '  "missing_skills": [],\n'
+        '  "critical_missing_skills": [],\n'
+        '  "matched_keywords": [],\n'
+        '  "missing_keywords": [],\n'
+        '  "experience_analysis": {\n'
+        '    "seniority_match": "",\n'
+        '    "title_alignment": "",\n'
+        '    "industry_relevance": "",\n'
+        '    "technical_depth": ""\n'
+        '  },\n'
+        '  "ats_risk_factors": [\n'
         '    {\n'
-        '      "name": "Exact Section Name from Resume",\n'
-        '      "type": "Summary/Experience/Skills/Projects/Education/Other",\n'
-        '      "status": "Strong/Weak/Average",\n'
-        '      "feedback": "1 sentence quality assessment relative to JD"\n'
+        '      "issue": "",\n'
+        '      "severity": "high/medium/low",\n'
+        '      "explanation": ""\n'
         '    }\n'
         '  ],\n'
-        '  "experience_match": "Overall assessment of seniority match",\n'
-        '  "title_match": "Overall assessment of role history match",\n'
-        '  "suggestions": [5-7 actionable improvements]\n'
-        "}"
+        '  "detected_sections": [\n'
+        '    {\n'
+        '      "name": "",\n'
+        '      "type": "",\n'
+        '      "status": "strong/average/weak",\n'
+        '      "score": 0,\n'
+        '      "feedback": ""\n'
+        '    }\n'
+        '  ],\n'
+        '  "project_analysis": {\n'
+        '    "strengths": [],\n'
+        '    "weaknesses": [],\n'
+        '    "impact_assessment": ""\n'
+        '  },\n'
+        '  "keyword_optimization_tips": [],\n'
+        '  "top_strengths": [],\n'
+        '  "improvement_plan": [\n'
+        '    {\n'
+        '      "priority": "high/medium/low",\n'
+        '      "problem": "",\n'
+        '      "recommendation": "",\n'
+        '      "expected_impact": ""\n'
+        '    }\n'
+        '  ],\n'
+        '  "final_recruiter_assessment": ""\n'
+        "}\n"
+        "Return ONLY valid raw JSON."
     )
 
     try:
@@ -1668,7 +1721,7 @@ def ai_ats_analysis(resume_text, jd_text):
                 {"role": "user", "content": user_msg}
             ],
             response_format={"type": "json_object"},
-            temperature=0.1,
+            temperature=0.2,
         )
         ai_data = _json.loads(completion.choices[0].message.content)
 
@@ -1676,28 +1729,31 @@ def ai_ats_analysis(resume_text, jd_text):
             safe_l = lambda v: v if isinstance(v, list) else []
             safe_s = lambda v: str(v).strip() if v else ""
             
-            detected = safe_l(ai_data.get("detected_sections"))
-            
             return {
                 "ai_powered":          True,
                 "score":               ai_data.get("overall_score", 0),
+                "score_summary":       ai_data.get("score_summary", ""),
                 "keyword_match_score": ai_data.get("breakdown", {}).get("keyword_match", 0),
                 "skill_match_score":   ai_data.get("breakdown", {}).get("skill_alignment", 0),
                 "format_score":        ai_data.get("breakdown", {}).get("format_quality", 0),
                 "impact_score":        ai_data.get("breakdown", {}).get("impact_metrics", 0),
                 
-                "detected_sections":   detected,
+                "detected_sections":   safe_l(ai_data.get("detected_sections")),
+                "ats_risk_factors":    safe_l(ai_data.get("ats_risk_factors")),
+                "improvement_plan":    safe_l(ai_data.get("improvement_plan")),
+                "project_analysis":    ai_data.get("project_analysis", {}),
+                "experience_analysis": ai_data.get("experience_analysis", {}),
                 
-                "matched_skills":   safe_l(ai_data.get("matched_skills")),
-                "missing_skills":   safe_l(ai_data.get("missing_skills")),
-                "matched_keywords": safe_l(ai_data.get("matched_keywords")),
-                "missing_keywords": safe_l(ai_data.get("missing_keywords")),
-                "matched":          safe_l(ai_data.get("matched_keywords")),
-                "missing":          safe_l(ai_data.get("missing_keywords")),
+                "matched_skills":          safe_l(ai_data.get("matched_skills")),
+                "missing_skills":          safe_l(ai_data.get("missing_skills")),
+                "critical_missing_skills": safe_l(ai_data.get("critical_missing_skills")),
+                "matched_keywords":        safe_l(ai_data.get("matched_keywords")),
+                "missing_keywords":        safe_l(ai_data.get("missing_keywords")),
+                "keyword_optimization":    safe_l(ai_data.get("keyword_optimization_tips")),
+                "top_strengths":           safe_l(ai_data.get("top_strengths")),
                 
-                "experience_match": safe_s(ai_data.get("experience_match")),
-                "title_match":      safe_s(ai_data.get("title_match")),
-                "suggestions":      safe_l(ai_data.get("suggestions")),
+                "final_assessment": safe_s(ai_data.get("final_recruiter_assessment")),
+                "suggestions":      [f"{p.get('problem')}: {p.get('recommendation')}" for p in safe_l(ai_data.get("improvement_plan"))],
             }
     except Exception as e:
         print(f"DEBUG: Deep AI Audit failed: {e}")

@@ -58,12 +58,22 @@ export default function Header() {
   return (
     <>
       {/* HEADER */}
-      <header className="sticky top-0 z-40 glass border-b border-white/5 shadow-sm backdrop-blur-xl">
+      <header className="fixed top-0 left-0 w-full z-50 bg-[#080909]/80 backdrop-blur-xl border-b border-white/5 shadow-2xl">
         <div className="flex justify-between items-center px-6 py-4 max-w-[1600px] mx-auto">
 
           {/* LEFT */}
-          <Link to="/" className="flex items-center gap-2 font-extrabold text-xl tracking-tight text-white">
-            <Briefcase className="text-[#FF6044]" size={24} /> Hire<span className="text-gray-400 font-light">Track</span>
+          <Link 
+            to="/" 
+            onClick={(e) => {
+              if (window.location.pathname === "/") {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }
+            }}
+            className="flex items-center gap-2 font-extrabold text-xl tracking-tight text-white group"
+          >
+            <Briefcase className="text-[#FF6044] transition-transform group-hover:scale-110 group-hover:rotate-3" size={24} /> 
+            <span>Hire<span className="text-gray-400 font-light">Track</span></span>
           </Link>
 
           {/* RIGHT */}
@@ -107,6 +117,9 @@ export default function Header() {
 
         </div>
       </header>
+      
+      {/* SPACER: Pushes content down so it's not hidden under the fixed header */}
+      <div className="h-[72px] md:h-[80px]" />
 
       {/* 🔥 SIDEBAR MUST BE HERE */}
       <Sidebar

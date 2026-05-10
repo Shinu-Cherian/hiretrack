@@ -175,41 +175,32 @@
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ── WATER REVEAL SYSTEM ── */
-@keyframes waterReveal {
-  from {
-    opacity: 0;
-    filter: blur(8px);
-    transform: translateY(28px) scale(0.96);
-  }
-  to {
-    opacity: 1;
-    filter: blur(0);
-    transform: translateY(0) scale(1);
-  }
+.hero-ambient {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 70% 50%, rgba(255, 96, 68, 0.08), transparent 60%);
+  z-index: 0;
 }
 
-@keyframes slideRevealLeft {
-  from { opacity: 0; filter: blur(6px); transform: translateX(-40px) scale(0.96); }
-  to   { opacity: 1; filter: blur(0);   transform: translateX(0) scale(1); }
+.hero-scanline {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.02), transparent);
+  height: 24%;
+  opacity: 0.28;
+  animation: heroScan 9s linear infinite;
+  pointer-events: none;
+  z-index: 2;
 }
 
-@keyframes slideRevealRight {
-  from { opacity: 0; filter: blur(6px); transform: translateX(40px) scale(0.96); }
-  to   { opacity: 1; filter: blur(0);   transform: translateX(0) scale(1); }
+.hero-title-line {
+  display: block;
 }
 
-[data-reveal] {
-  animation: waterReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
-  animation-delay: var(--reveal-delay, 0ms);
-}
-
-.sr-slide-left[data-reveal] {
-  animation-name: slideRevealLeft;
-}
-
-.sr-slide-right[data-reveal] {
-  animation-name: slideRevealRight;
+.hero-title {
+  font-family: 'Outfit', 'Inter', sans-serif;
+  letter-spacing: -0.04em;
+  font-weight: 900;
 }
 
 /* Staggered delays */
@@ -252,7 +243,10 @@
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: #1a1b1b;
-  padding: 14px 16px;
+  padding-top: 14px;
+  padding-bottom: 14px;
+  padding-left: 16px;
+  padding-right: 16px;
   font-size: 15px;
   color: #ffffff;
   outline: none;
@@ -2107,6 +2101,9 @@ html.dark body {
 /* ═══════════════════════════════════════════
    COMBINED HIW + FOOTER SECTION
 ═══════════════════════════════════════════ */
+/* -------------------------------------------
+   COMBINED HIW + FOOTER SECTION
+------------------------------------------- */
 .hiw-footer-section {
   background: #080909;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
@@ -2131,7 +2128,7 @@ html.dark body {
   .hiw-footer-divider { margin: 0 24px; }
 }
 
-/* ── Embedded Footer ── */
+/* -- Embedded Footer -- */
 .ht-footer-embedded {
   background: transparent;
 }
@@ -2349,3 +2346,33 @@ html.dark body {
   font-weight: 500;
 }
 
+/* CUSTOM SCROLLBAR - Elite Minimalist Dynamic */
+.custom-scrollbar {
+  --sb-thumb: rgba(255, 255, 255, 0.15);
+  --sb-thumb-hover: rgba(255, 255, 255, 0.3);
+  scrollbar-width: thin;
+  scrollbar-color: var(--sb-thumb) rgba(255, 255, 255, 0.02);
+}
+
+.scrollbar-orange { --sb-thumb: #f97316; --sb-thumb-hover: #ea580c; }
+.scrollbar-blue { --sb-thumb: #3b82f6; --sb-thumb-hover: #2563eb; }
+
+.custom-scrollbar::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--sb-thumb) !important;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--sb-thumb-hover) !important;
+}
