@@ -7,6 +7,18 @@ export default {
   ],
   theme: {
     extend: {
+      colors: {
+        primary: "#ff6044",
+        surface: "#121414",
+        "surface-container": "#1e2020",
+        "surface-bright": "#37393a",
+        "on-surface": "#e2e2e2",
+        "on-surface-variant": "#e2beb8",
+      },
+      fontFamily: {
+        sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+        display: ["Barlow Condensed", "Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+      },
       maxWidth: {
         '4xl': '1000px',
         '5xl': '1200px',

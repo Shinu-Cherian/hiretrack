@@ -25,13 +25,13 @@ export default function Avatar({ src, username = "User", size = "md", className 
   };
 
   const resolvedSrc = src ? `${API_BASE}${src}` : "";
-  const baseClass = `${sizes[size] || sizes.md} rounded-full border border-white/80 object-cover shadow-sm`;
+  const baseClass = `${sizes[size] || sizes.md} rounded-full border border-white/20 object-cover shadow-sm transition-all`;
 
   if (resolvedSrc) {
     return (
       <img
         src={resolvedSrc}
-        className={`${baseClass} ${onClick ? "cursor-pointer" : ""} ${className}`}
+        className={`${baseClass} ${onClick ? "cursor-pointer hover:ring-2 hover:ring-primary/50" : ""} ${className}`}
         alt={`${username} profile`}
         onClick={onClick}
       />
@@ -40,7 +40,12 @@ export default function Avatar({ src, username = "User", size = "md", className 
 
   return (
     <div
-      className={`${baseClass} ${colorFrom(username)} flex items-center justify-center font-bold text-white ${onClick ? "cursor-pointer" : ""} ${className}`}
+      className={`${baseClass} flex items-center justify-center font-black ${onClick ? "cursor-pointer hover:ring-2 hover:ring-primary/50" : ""} ${className}`}
+      style={{ 
+        backgroundColor: "#FF6044", 
+        color: "#121313",
+        textShadow: "none" 
+      }}
       onClick={onClick}
       aria-label={`${username} profile`}
       role={onClick ? "button" : undefined}

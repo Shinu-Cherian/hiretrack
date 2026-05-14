@@ -1,6 +1,6 @@
 import { X } from "lucide-react";
 
-export default function Modal({ title, children, onClose, maxWidth = "max-w-3xl" }) {
+export default function Modal({ title, children, onClose, maxWidth = "max-w-4xl" }) {
   return (
     <div
       className="modal-overlay fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/80 backdrop-blur-sm p-4"

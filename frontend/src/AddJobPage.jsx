@@ -42,10 +42,10 @@ export default function AddJobPage() {
         <Home />
       </div>
 
-      <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/60 backdrop-blur-sm p-5 md:p-8" onClick={closePage}>
+      <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/60 backdrop-blur-sm p-5 md:p-8" onClick={closePage}>
         <section
           onClick={(event) => event.stopPropagation()}
-          className="saas-card w-full max-w-3xl rounded-2xl border border-white/10 bg-[#1a1b1b]/95 p-6 shadow-2xl md:p-8"
+          className="saas-card w-full max-w-5xl rounded-2xl border border-white/10 bg-[#1a1b1b]/95 p-6 shadow-2xl md:p-8"
         >
           <div className="mb-7 flex items-center justify-between gap-4 border-b border-white/5 pb-6">
             <div>

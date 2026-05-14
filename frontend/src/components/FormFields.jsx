@@ -1,13 +1,19 @@
+import CustomDatePicker from "./CustomDatePicker";
+
 export function Field({ label, wide = false, children }) {
   return (
-    <label className={wide ? "md:col-span-2" : ""}>
+    <div className={wide ? "md:col-span-2" : "flex flex-col"}>
       <span className="mb-2 block text-sm font-bold text-gray-400">{label}</span>
       {children}
-    </label>
+    </div>
   );
 }
 
 export function TextInput({ value, onChange, type = "text", required = false, autoFocus = false, placeholder = "" }) {
+  if (type === "date") {
+    return <CustomDatePicker value={value} onChange={onChange} placeholder={placeholder} />;
+  }
+
   return (
     <input
       type={type}

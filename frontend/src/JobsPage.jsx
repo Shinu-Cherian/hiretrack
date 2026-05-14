@@ -184,14 +184,14 @@ export default function JobsPage() {
       </main>
 
       {editing && (
-        <Modal title="Edit Job" onClose={() => setEditing(null)}>
+        <Modal title="Edit Job" onClose={() => setEditing(null)} maxWidth="max-w-5xl">
           <BackButton className="mb-6" />
           <JobForm key={editing.id} initialValues={editing} submitLabel="Save Changes" onSubmit={saveEdit} onCancel={() => setEditing(null)} />
         </Modal>
       )}
 
       {viewingJd && (
-        <Modal title={`${viewingJd.jobTitle} JD`} onClose={() => setViewingJd(null)}>
+        <Modal title={`${viewingJd.jobTitle} JD`} onClose={() => setViewingJd(null)} maxWidth="max-w-4xl">
           <div className="max-h-[60vh] overflow-y-auto rounded-lg border border-white/10 bg-[#121313] p-4 text-sm leading-6 text-gray-700 whitespace-pre-wrap">
             {viewingJd.jd || "No job description added."}
           </div>

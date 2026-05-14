@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Briefcase, Sparkles, Zap, Star, ShieldCheck, ArrowRight, UserPlus, Lock } from 'lucide-react';
 import { apiUrl } from "./api";
+import Header from "./Header";
 
 function getCSRFToken() {
   return document.cookie
@@ -50,19 +51,10 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#121313] bg-dot-pattern p-4 relative overflow-hidden">
-      {/* Background Decorative Elements */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#FF6044]/10 rounded-full blur-[120px] -mr-48 -mt-48 animate-pulse" />
-      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[100px] -ml-32 -mb-32" />
-
-      <div className="w-full max-w-5xl z-10 animate-fade-in-up">
-        
-        <Link to="/" className="flex items-center justify-center gap-3 font-black text-3xl mb-12 group">
-          <div className="w-12 h-12 rounded-2xl bg-[#FF6044] flex items-center justify-center shadow-[0_0_20px_rgba(255,96,68,0.4)] group-hover:scale-110 transition-transform">
-            <Briefcase className="h-7 w-7 text-[#121313]" />
-          </div>
-          <span className="text-white tracking-tighter">Hire<span className="text-[#FF6044]">Track</span></span>
-        </Link>
+    <div className="min-h-screen bg-[#121313] bg-dot-pattern relative overflow-hidden flex flex-col">
+      <Header />
+      <div className="flex-1 flex items-center justify-center p-4">
+        <div className="w-full max-w-5xl z-10 animate-fade-in-up">
 
         <div className="saas-card overflow-hidden flex flex-col md:flex-row-reverse border-white/10 shadow-[0_30px_100px_rgba(0,0,0,0.5)]">
           
@@ -178,5 +170,6 @@ export default function Signup() {
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 }

@@ -404,7 +404,7 @@ export default function EditProfilePage() {
               </button>
             </Panel>
 
-            <Panel title="Experience & Projects" icon={<BriefcaseBusiness size={20} />}>
+            <Panel title="Experience" icon={<BriefcaseBusiness size={20} />}>
               <div className="space-y-6">
                 {form.experiences.map((exp, i) => (
                   <div key={i} className="relative p-4 rounded-xl bg-white/5 border border-white/5 group">

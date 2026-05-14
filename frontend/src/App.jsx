@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import Home from "./Home";
+import ManifestoPage from "./ManifestoPage";
 import Login from "./Login";  
 import Signup from "./Signup";
 import Dashboard from "./Dashboard";
@@ -18,6 +19,10 @@ import ResumeAnalyzerPage from "./ResumeAnalyzerPage";
 import CoverLetterPage from "./CoverLetterPage";
 import ExtensionFormPage from "./ExtensionFormPage";
 import CareerRoadmapPage from "./CareerRoadmapPage";
+import RoadmapPage from "./RoadmapPage";
+import SecurityPage from "./SecurityPage";
+import LegalPage from "./LegalPage";
+import BlogPage from "./BlogPage";
 import AuthGate from "./components/AuthGate";
 
 function Private({ children }) {
@@ -30,6 +35,7 @@ function App() {
     <Routes>
       <Route path="/extension/:type" element={<Private><ExtensionFormPage /></Private>} />
       <Route path="/" element={<Home />} />
+      <Route path="/manifesto" element={<ManifestoPage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/dashboard" element={<Private><Dashboard /></Private>} />
@@ -47,6 +53,11 @@ function App() {
       <Route path="/resume-analyzer" element={<Private><ResumeAnalyzerPage /></Private>} />
       <Route path="/cover-letter" element={<Private><CoverLetterPage /></Private>} />
       <Route path="/career-roadmap" element={<Private><CareerRoadmapPage /></Private>} />
+      <Route path="/roadmap" element={<RoadmapPage />} />
+      <Route path="/security" element={<SecurityPage />} />
+      <Route path="/privacy" element={<LegalPage />} />
+      <Route path="/terms" element={<LegalPage />} />
+      <Route path="/blog" element={<BlogPage />} />
     </Routes>
   );
 }

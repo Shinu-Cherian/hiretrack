@@ -175,7 +175,7 @@ export default function ViewReferrals() {
       </main>
 
       {editing && (
-        <Modal title="Edit Referral" onClose={() => setEditing(null)}>
+        <Modal title="Edit Referral" onClose={() => setEditing(null)} maxWidth="max-w-5xl">
           <BackButton className="mb-6" />
           <ReferralForm key={editing.id} initialValues={editing} submitLabel="Save Changes" onSubmit={saveEdit} onCancel={() => setEditing(null)} />
         </Modal>
