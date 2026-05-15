@@ -6,19 +6,29 @@ import JobDashboard from "./components/JobDashboard";
 import ReferralDashboard from "./components/ReferralDashboard";
 import StatsCard from "./components/StatsCard";
 import { Briefcase, Users } from "lucide-react";
+import AuthActionModal from "./components/AuthActionModal";
 
 export default function Dashboard() {
   const [data, setData] = useState(null);
   const [error, setError] = useState("");
+  const [isDemo, setIsDemo] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   useEffect(() => {
     fetch(apiUrl("/api/dashboard/"), { credentials: "include" })
       .then((res) => {
+        if (res.status === 401 || res.status === 403) {
+          setIsDemo(true);
+          return null;
+        }
         if (!res.ok) throw new Error("Could not load dashboard analytics.");
         return res.json();
       })
       .then((payload) => setData(payload))
-      .catch((err) => setError(err.message));
+      .catch((err) => {
+        setIsDemo(true);
+        setData(null);
+      });
   }, []);
 
   return (
@@ -43,7 +53,10 @@ export default function Dashboard() {
               <p className="text-[10px] font-bold uppercase tracking-widest text-[#FF6044] mb-2 drop-shadow-[0_0_10px_rgba(255,96,68,0.5)]">HireTrack Intelligence</p>
               <h1 className="text-3xl font-extrabold text-white tracking-tight">Your Dashboard</h1>
               <p className="mt-2 text-base font-light text-gray-400 max-w-lg leading-relaxed">
-                A unified view of your application pipeline and networking momentum.
+                {isDemo 
+                  ? "A unified preview of the application pipeline. Sign in to sync your personal metrics and networking momentum."
+                  : "A unified view of your application pipeline and networking momentum."
+                }
               </p>
 
               {data && (
@@ -68,10 +81,28 @@ export default function Dashboard() {
           </div>
         )}
 
-        {!data && !error && (
+        {!data && !error && !isDemo && (
           <div className="rounded-2xl border border-white/5 bg-[#121313] p-12 text-center text-gray-400 flex flex-col items-center gap-4">
             <div className="w-8 h-8 border-4 border-white/5 border-t-[#FF6044] rounded-full animate-spin"></div>
             <p>Aggregating analytics data...</p>
+          </div>
+        )}
+
+        {isDemo && !data && (
+          <div className="rounded-2xl border border-white/5 bg-[#121313] p-16 text-center shadow-2xl flex flex-col items-center max-w-2xl mx-auto">
+            <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center mb-6 border border-white/10">
+              <Briefcase className="text-[#FF6044]" size={32} />
+            </div>
+            <h2 className="text-2xl font-black text-white mb-3">Connect Your Workspace</h2>
+            <p className="text-gray-400 text-sm leading-relaxed mb-8 max-w-md">
+              Real-time analytics, interview tracking, and referral momentum stats are private to each account. Sign in to start your journey.
+            </p>
+            <button 
+              onClick={() => setShowAuthModal(true)}
+              className="px-10 py-4 bg-[#FF6044] text-[#121313] rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-[#ff4d2e] transition-all hover:-translate-y-1"
+            >
+              Start Your Analytics
+            </button>
           </div>
         )}
 
@@ -102,6 +133,13 @@ export default function Dashboard() {
           </div>
         )}
       </main>
+
+      <AuthActionModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)} 
+        title="Secure Data Only"
+        message="Analytics syncing and historical tracking are locked to secure accounts. Sign in to start your journey."
+      />
     </div>
   );
 }

@@ -5,6 +5,7 @@ import Header from "./Header";
 import { apiUrl } from "./api";
 import BackButton from "./components/BackButton";
 import Card from "./components/Card";
+import AuthActionModal from "./components/AuthActionModal";
 
 export default function NotificationsPage() {
   const [data, setData] = useState([]);
@@ -12,17 +13,27 @@ export default function NotificationsPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const fromSidebar = location.state?.fromSidebar || false;
+  const [isDemo, setIsDemo] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   useEffect(() => {
     // Load clicked notifications from localStorage
     const saved = localStorage.getItem("clicked_notifications");
     if (saved) setClickedKeys(JSON.parse(saved));
 
+    // Check auth
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    if (!isLoggedIn) {
+      setIsDemo(true);
+      return;
+    }
+
     fetch(apiUrl("/api/notifications/"), { credentials: "include" })
       .then((res) => res.json())
       .then((items) => {
         setData(Array.isArray(items) ? items : []);
-      });
+      })
+      .catch(() => setIsDemo(true));
   }, []);
 
   const openNotification = (notification) => {
@@ -55,7 +66,23 @@ export default function NotificationsPage() {
         </div>
 
         <div className="saas-card overflow-hidden">
-          {data.length === 0 ? (
+          {isDemo ? (
+            <div className="p-16 text-center flex flex-col items-center max-w-xl mx-auto">
+              <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center mb-6 border border-white/10">
+                <Bell className="text-[#FF6044]" size={32} />
+              </div>
+              <h2 className="text-2xl font-black text-white mb-3">Stay Alerted</h2>
+              <p className="text-gray-400 text-sm leading-relaxed mb-8">
+                Notifications keep you on top of application follow-ups, interview reminders, and referral updates. Sign in to start receiving your alerts.
+              </p>
+              <button 
+                onClick={() => setShowAuthModal(true)}
+                className="px-10 py-4 bg-[#FF6044] text-[#121313] rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-[#ff4d2e] transition-all hover:-translate-y-1"
+              >
+                Enable Notifications
+              </button>
+            </div>
+          ) : data.length === 0 ? (
             <div className="p-10 text-center text-gray-400">No notifications</div>
           ) : (
             data.map((notification) => {
@@ -90,6 +117,13 @@ export default function NotificationsPage() {
             })
           )}
         </div>
+
+        <AuthActionModal 
+          isOpen={showAuthModal} 
+          onClose={() => setShowAuthModal(false)} 
+          title="Notification Sync Locked"
+          message="Real-time alerts for your applications and network are private to each account. Sign in to sync your notifications."
+        />
       </main>
     </div>
   );

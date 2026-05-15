@@ -8,6 +8,7 @@ import Card from "./components/Card";
 import HighlightableItem from "./components/HighlightableItem";
 import JobForm from "./components/JobForm";
 import Modal from "./components/Modal";
+import AuthActionModal from "./components/AuthActionModal";
 
 export default function JobsPage() {
   const [jobs, setJobs] = useState([]);
@@ -16,11 +17,23 @@ export default function JobsPage() {
   const [viewingJd, setViewingJd] = useState(null);
   const [activeHighlight, setActiveHighlight] = useState(null);
   const [searchParams] = useSearchParams();
+  const [isDemo, setIsDemo] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   useEffect(() => {
     fetch(apiUrl("/api/jobs/"), { credentials: "include" })
-      .then((res) => res.json())
-      .then((data) => setJobs(Array.isArray(data) ? data : []));
+      .then((res) => {
+        if (res.status === 401 || res.status === 403) {
+          setIsDemo(true);
+          return [];
+        }
+        return res.json();
+      })
+      .then((data) => setJobs(Array.isArray(data) ? data : []))
+      .catch(() => {
+        setIsDemo(true);
+        setJobs([]);
+      });
   }, []);
 
   useEffect(() => {
@@ -67,6 +80,10 @@ export default function JobsPage() {
   };
 
   const toggleStar = async (job) => {
+    if (isDemo) {
+      setShowAuthModal(true);
+      return;
+    }
     const res = await fetch(apiUrl(`/api/job/star/${job.id}/`), { credentials: "include" });
     if (res.ok) {
       setJobs((current) => current.map((item) => (item.id === job.id ? { ...item, is_starred: !item.is_starred } : item)));
@@ -74,6 +91,10 @@ export default function JobsPage() {
   };
 
   const deleteJob = async (job) => {
+    if (isDemo) {
+      setShowAuthModal(true);
+      return;
+    }
     const res = await fetch(apiUrl(`/api/job/delete/${job.id}/`), { credentials: "include" });
     if (res.ok) {
       setJobs((current) => current.filter((item) => item.id !== job.id));
@@ -94,7 +115,10 @@ export default function JobsPage() {
           <div className="relative z-10 flex-1">
             <h1 className="text-4xl font-extrabold tracking-tight text-white mb-2">Job Pipeline</h1>
             <p className="text-lg text-gray-400 font-light max-w-xl">
-              You are currently tracking <strong className="font-semibold text-white">{jobs.length}</strong> applications. Search, edit, or update statuses below.
+              {isDemo 
+                ? "Sign in to sync and track your career applications in this pipeline."
+                : <>You are currently tracking <strong className="font-semibold text-white">{jobs.length}</strong> applications. Search, edit, or update statuses below.</>
+              }
             </p>
           </div>
           
@@ -156,7 +180,10 @@ export default function JobsPage() {
                   <IconButton label="Toggle star" onClick={() => toggleStar(job)}>
                     <Star size={18} className={job.is_starred ? "fill-yellow-400 text-yellow-400" : ""} />
                   </IconButton>
-                  <IconButton label="Edit job" onClick={() => setEditing({ ...job })}>
+                  <IconButton label="Edit job" onClick={() => {
+                    if (isDemo) setShowAuthModal(true);
+                    else setEditing({ ...job });
+                  }}>
                     <Edit3 size={18} />
                   </IconButton>
                   <IconButton label="Delete job" danger onClick={() => deleteJob(job)}>
@@ -197,6 +224,13 @@ export default function JobsPage() {
           </div>
         </Modal>
       )}
+
+      <AuthActionModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)} 
+        title="Pipeline Locked"
+        message="Active tracking, salary analytics, and status updates are reserved for secure workspaces. Log in to claim yours."
+      />
     </div>
   );
 }

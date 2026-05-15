@@ -56,7 +56,7 @@ export default function ManifestoPage() {
       <main className="max-w-5xl mx-auto px-6 py-24 md:py-40">
         {/* HERO SECTION */}
         <section className="mb-32">
-          <h1 className="text-6xl md:text-9xl font-display font-black leading-[0.8] uppercase tracking-tighter mb-12 manifesto-title">
+          <h1 className="text-5xl sm:text-7xl md:text-9xl font-display font-black leading-[0.8] uppercase tracking-tighter mb-12 manifesto-title">
             The<br />
             <span className="text-primary">Manifesto</span>
           </h1>

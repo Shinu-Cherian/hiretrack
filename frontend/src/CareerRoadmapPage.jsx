@@ -4,6 +4,7 @@ import Header from "./Header";
 import BackButton from "./components/BackButton";
 import { apiUrl } from "./api";
 import RoadmapResult from "./components/RoadmapResult";
+import AuthActionModal from "./components/AuthActionModal";
 
 // ── Loading Screen (same style as ATS Analyzer) ──────────────────────────────
 const STEPS = [
@@ -20,7 +21,7 @@ function LoadingScreen() {
   const [stepIdx, setStepIdx] = useState(0);
   const [progress, setProgress] = useState(0);
 
-  useState(() => {
+  useEffect(() => {
     const interval = setInterval(() => {
       setStepIdx((i) => (i < STEPS.length - 1 ? i + 1 : i));
       setProgress((p) => Math.min(p + 100 / STEPS.length, 94));
@@ -165,11 +166,20 @@ export default function CareerRoadmapPage() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const update = (key, val) => setForm((f) => ({ ...f, [key]: val }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Check auth
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    if (!isLoggedIn) {
+      setShowAuthModal(true);
+      return;
+    }
+
     if (!form.career_stage) {
       setError("Please select your current Career Stage.");
       return;
@@ -344,6 +354,13 @@ export default function CareerRoadmapPage() {
           <RoadmapResult data={result} form={form} onReset={() => setResult(null)} />
         )}
       </main>
+
+      <AuthActionModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)} 
+        title="Roadmap Logic Locked"
+        message="Generating a multi-year AI career path requires processing your professional profile. Log in to build your roadmap."
+      />
     </div>
   );
 }

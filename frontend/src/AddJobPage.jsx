@@ -4,13 +4,22 @@ import Home from "./Home";
 import { apiUrl } from "./api";
 import BackButton from "./components/BackButton";
 import JobForm from "./components/JobForm";
+import AuthActionModal from "./components/AuthActionModal";
+import { useState } from "react";
 
 export default function AddJobPage() {
   const navigate = useNavigate();
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const closePage = () => navigate(-1);
 
   const handleSave = async (form) => {
+    // Check auth
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    if (!isLoggedIn) {
+      setShowAuthModal(true);
+      return;
+    }
     const body = new FormData();
     Object.entries(form).forEach(([key, value]) => {
       if (value !== null && value !== undefined) body.append(key, value);
@@ -60,6 +69,13 @@ export default function AddJobPage() {
           <JobForm submitLabel="Add Job" onSubmit={handleSave} onCancel={closePage} />
         </section>
       </div>
+
+      <AuthActionModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)} 
+        title="Syncing Restricted"
+        message="Creating a persistent career entry requires a secure workspace. Sign in to save your job application to the pipeline."
+      />
     </div>
   );
 }

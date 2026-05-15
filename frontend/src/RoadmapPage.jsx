@@ -69,7 +69,7 @@ export default function RoadmapPage() {
       <main className="max-w-5xl mx-auto px-6 py-24 md:py-40">
         {/* HERO SECTION */}
         <section className="mb-32">
-          <h1 className="text-6xl md:text-9xl font-display font-black leading-[0.8] uppercase tracking-tighter mb-12 roadmap-title">
+          <h1 className="text-5xl sm:text-7xl md:text-9xl font-display font-black leading-[0.8] uppercase tracking-tighter mb-12 roadmap-title">
             The<br />
             <span className="text-primary">Roadmap</span>
           </h1>
@@ -88,7 +88,6 @@ export default function RoadmapPage() {
             <TimelineEntry 
               side="left"
               phase="Phase Alpha"
-              period="Q3 - Q4 2024"
               title="Operational Core"
               icon={<Database size={24} />}
               features={[
@@ -103,7 +102,6 @@ export default function RoadmapPage() {
             <TimelineEntry 
               side="right"
               phase="Phase Beta"
-              period="Q1 - Q2 2025"
               title="Intelligence Layer"
               icon={<Cpu size={24} />}
               features={[
@@ -112,37 +110,35 @@ export default function RoadmapPage() {
                 "Chrome Command Extension (v1.0)",
                 "Unified Search & Indexing"
               ]}
-              status="Active Deployment"
+              status="Completed"
             />
 
             <TimelineEntry 
               side="left"
               phase="Phase Gamma"
-              period="Q3 - Q4 2025"
               title="Neural Expansion"
               icon={<Layers size={24} />}
               features={[
-                "Predictive Interview Simulation",
                 "Advanced Trajectory Roadmap (v2.0)",
                 "Automated Network Follow-ups",
+                "Predictive Interview Simulation",
                 "Multi-Resume Version Syncing"
               ]}
-              status="In Engineering"
+              status="Under Architectural Review"
             />
 
             <TimelineEntry 
               side="right"
               phase="Phase Delta"
-              period="2026 & Beyond"
               title="The Global Ecosystem"
               icon={<Globe size={24} />}
               features={[
                 "P2P Verified Referral Marketplace",
                 "Autonomous Job Hunt Agents",
-                "Verified Career Achievement NFTs",
-                "Global Talent Indexing"
+                "Global Talent Indexing [REDACTED]",
+                "Encrypted Achievement Protocols"
               ]}
-              status="Strategic Vision"
+              status="Classified Protocol"
             />
           </div>
         </div>
@@ -182,7 +178,7 @@ export default function RoadmapPage() {
   );
 }
 
-function TimelineEntry({ side, phase, period, title, icon, features, status }) {
+function TimelineEntry({ side, phase, title, icon, features, status }) {
   const isLeft = side === 'left';
   
   return (
@@ -198,8 +194,6 @@ function TimelineEntry({ side, phase, period, title, icon, features, status }) {
         <div className="space-y-4">
           <div className={`flex items-center gap-3 ${isLeft ? 'md:flex-row-reverse' : ''}`}>
             <span className="text-primary font-mono text-xs tracking-widest uppercase">{phase}</span>
-            <span className="h-px w-8 bg-white/20" />
-            <span className="text-gray-500 font-mono text-[10px] uppercase">{period}</span>
           </div>
           
           <div className={`flex items-center gap-4 ${isLeft ? 'md:flex-row-reverse' : ''}`}>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Clipboard, Loader2, PenLine, FileText, ExternalLink, Check } from "lucide-react";
 import { apiUrl } from "../api";
+import AuthActionModal from "./AuthActionModal";
 
 export default function CoverLetterGenerator() {
   const [resume, setResume] = useState("");
@@ -10,9 +11,18 @@ export default function CoverLetterGenerator() {
   const [warnings, setWarnings] = useState([]);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const generate = async (event) => {
     event.preventDefault();
+    
+    // Check auth
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    if (!isLoggedIn) {
+      setShowAuthModal(true);
+      return;
+    }
+
     setLoading(true);
     setCoverLetter("");
     setWarnings([]);
@@ -179,6 +189,13 @@ export default function CoverLetterGenerator() {
           </div>
         </div>
       )}
+
+      <AuthActionModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)} 
+        title="AI Draftsman Locked"
+        message="Tailoring high-conversion cover letters requires an active Career Engine session. Sign in to generate your letter."
+      />
     </section>
   );
 }

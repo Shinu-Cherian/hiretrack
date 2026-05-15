@@ -4,13 +4,22 @@ import Home from "./Home";
 import { apiUrl } from "./api";
 import BackButton from "./components/BackButton";
 import ReferralForm from "./components/ReferralForm";
+import AuthActionModal from "./components/AuthActionModal";
+import { useState } from "react";
 
 export default function AddReferralPage() {
   const navigate = useNavigate();
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const closePage = () => navigate(-1);
 
   const handleSave = async (form) => {
+    // Check auth
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    if (!isLoggedIn) {
+      setShowAuthModal(true);
+      return;
+    }
     const res = await fetch(apiUrl("/api/add-referral/"), {
       method: "POST",
       credentials: "include",
@@ -56,6 +65,13 @@ export default function AddReferralPage() {
           <ReferralForm submitLabel="Add Referral" onSubmit={handleSave} onCancel={closePage} />
         </section>
       </div>
+
+      <AuthActionModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)} 
+        title="Syncing Restricted"
+        message="Saving professional connections requires a secure workspace. Sign in to add this referral to your network."
+      />
     </div>
   );
 }

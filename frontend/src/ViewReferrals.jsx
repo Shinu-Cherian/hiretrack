@@ -8,6 +8,7 @@ import Card from "./components/Card";
 import HighlightableItem from "./components/HighlightableItem";
 import Modal from "./components/Modal";
 import ReferralForm from "./components/ReferralForm";
+import AuthActionModal from "./components/AuthActionModal";
 
 export default function ViewReferrals() {
   const [search, setSearch] = useState("");
@@ -15,11 +16,23 @@ export default function ViewReferrals() {
   const [editing, setEditing] = useState(null);
   const [activeHighlight, setActiveHighlight] = useState(null);
   const [searchParams] = useSearchParams();
+  const [isDemo, setIsDemo] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   useEffect(() => {
     fetch(apiUrl("/api/referrals/"), { credentials: "include" })
-      .then((res) => res.json())
-      .then((data) => setReferrals(Array.isArray(data) ? data : []));
+      .then((res) => {
+        if (res.status === 401 || res.status === 403) {
+          setIsDemo(true);
+          return [];
+        }
+        return res.json();
+      })
+      .then((data) => setReferrals(Array.isArray(data) ? data : []))
+      .catch(() => {
+        setIsDemo(true);
+        setReferrals([]);
+      });
   }, []);
 
   useEffect(() => {
@@ -61,6 +74,10 @@ export default function ViewReferrals() {
   };
 
   const toggleStar = async (referral) => {
+    if (isDemo) {
+      setShowAuthModal(true);
+      return;
+    }
     const res = await fetch(apiUrl(`/api/referral/star/${referral.id}/`), { credentials: "include" });
     if (res.ok) {
       setReferrals((current) => current.map((item) => (item.id === referral.id ? { ...item, is_starred: !item.is_starred } : item)));
@@ -68,6 +85,10 @@ export default function ViewReferrals() {
   };
 
   const deleteReferral = async (referral) => {
+    if (isDemo) {
+      setShowAuthModal(true);
+      return;
+    }
     const res = await fetch(apiUrl(`/api/referral/delete/${referral.id}/`), { credentials: "include" });
     if (res.ok) {
       setReferrals((current) => current.filter((item) => item.id !== referral.id));
@@ -88,7 +109,10 @@ export default function ViewReferrals() {
           <div className="relative z-10 flex-1">
             <h1 className="text-4xl font-extrabold tracking-tight text-white mb-2">Referrals</h1>
             <p className="text-lg text-gray-400 font-light max-w-xl">
-              You are currently tracking <strong className="font-semibold text-white">{referrals.length}</strong> referrals. Build and manage your network here.
+              {isDemo 
+                ? "Sign in to build and manage your professional referral network."
+                : <>You are currently tracking <strong className="font-semibold text-white">{referrals.length}</strong> referrals. Build and manage your network here.</>
+              }
             </p>
           </div>
 
@@ -156,7 +180,10 @@ export default function ViewReferrals() {
                   <IconButton label="Toggle star" onClick={() => toggleStar(referral)}>
                     <Star size={18} className={referral.is_starred ? "fill-yellow-400 text-yellow-400" : ""} />
                   </IconButton>
-                  <IconButton label="Edit referral" onClick={() => setEditing({ ...referral })}>
+                  <IconButton label="Edit referral" onClick={() => {
+                    if (isDemo) setShowAuthModal(true);
+                    else setEditing({ ...referral });
+                  }}>
                     <Edit3 size={18} />
                   </IconButton>
                   <IconButton label="Delete referral" danger onClick={() => deleteReferral(referral)}>
@@ -180,6 +207,13 @@ export default function ViewReferrals() {
           <ReferralForm key={editing.id} initialValues={editing} submitLabel="Save Changes" onSubmit={saveEdit} onCancel={() => setEditing(null)} />
         </Modal>
       )}
+
+      <AuthActionModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)} 
+        title="Network Locked"
+        message="Referral tracking and LinkedIn syncing are reserved for secure workspaces. Log in to claim yours."
+      />
     </div>
   );
 }

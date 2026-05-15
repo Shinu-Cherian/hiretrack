@@ -7,6 +7,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import Header from './Header';
 import { getAuthStatus } from './api';
+import HireTrackLogo from './components/HireTrackLogo';
 
 // Component for the animated match score with fluctuating state
 const MatchScore = ({ target, isAnalyzing }) => {
@@ -601,7 +602,7 @@ export default function Home() {
       <Header />
 
       {/* Hero Section */}
-      <section className="min-h-[calc(100vh-76px)] mt-[76px] py-20 px-6 flex flex-col items-center justify-center text-center relative overflow-hidden">
+      <section className="min-h-[calc(100vh-76px)] py-12 px-6 flex flex-col items-center justify-center text-center relative overflow-hidden">
         <div className="absolute inset-0 z-0 scale-125 md:scale-100">
           <Canvas>
             <Suspense fallback={null}>
@@ -616,9 +617,9 @@ export default function Home() {
           <div className="inline-block px-4 py-1 border border-primary/30 rounded-none text-xs font-display tracking-[0.4em] mb-8 hero-subtitle bg-primary/5 text-primary">
             SYSTEM ENGINE v2.0.4.ACTIVE
           </div>
-          <h1 className="text-6xl md:text-[10rem] font-display font-black leading-[0.8] hero-title uppercase mb-10 tracking-normal text-white/80 flex flex-col items-center">
+          <h1 className="text-4xl sm:text-6xl md:text-[10rem] font-display font-black leading-[0.8] hero-title uppercase mb-10 tracking-normal text-white/80 flex flex-col items-center">
             <span>The end of</span>
-            <span className="text-white/50 italic whitespace-nowrap mt-4">Searching chaos</span>
+            <span className="text-white/50 italic whitespace-nowrap mt-4 text-3xl sm:text-5xl md:text-[8rem]">Searching chaos</span>
           </h1>
           <p className="max-w-2xl mx-auto text-on-surface-variant text-lg md:text-2xl font-light leading-relaxed mb-12 hero-subtitle lowercase tracking-tight">
             Stop guessing. Start tracking. The high-performance command center for the modern job hunt.
@@ -731,7 +732,7 @@ export default function Home() {
               Precision Tools
             </span>
 
-            <h2 className="mt-8 font-display text-[clamp(4.6rem,6.25vw,7.35rem)] font-black uppercase leading-[0.88] tracking-normal">
+            <h2 className="mt-8 font-display text-[clamp(2.5rem,6.25vw,7.35rem)] font-black uppercase leading-[0.88] tracking-normal">
               <span className="block whitespace-nowrap text-primary">Stand out with</span>
               <span className="block">
                 <span className="text-primary">the</span>{" "}
@@ -934,11 +935,11 @@ export default function Home() {
             {/* Brand Column */}
             <div className="space-y-8">
               <Link to="/" onClick={() => window.scrollTo(0,0)} className="flex items-center gap-2 font-extrabold text-3xl tracking-tight text-white group mb-8">
-                <Briefcase 
+                <HireTrackLogo 
                   className="text-[#FF6044] transition-transform group-hover:scale-110 group-hover:rotate-3" 
                   size={32} 
                 /> 
-                <span>
+                <span className="font-display">
                   Hire
                   <span className="text-white/60 font-light ml-0.5">Track</span>
                 </span>

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import gsap from 'gsap';
 import { 
   FileText, ShieldCheck, Scale, Globe, 
@@ -9,7 +9,16 @@ import Header from './Header';
 
 export default function LegalPage() {
   const containerRef = useRef(null);
-  const [activeTab, setActiveTab] = useState('privacy'); // 'privacy' or 'terms'
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState(location.pathname === '/terms' ? 'terms' : 'privacy');
+
+  useEffect(() => {
+    if (location.pathname === '/terms') {
+      setActiveTab('terms');
+    } else if (location.pathname === '/privacy') {
+      setActiveTab('privacy');
+    }
+  }, [location]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -38,6 +47,20 @@ export default function LegalPage() {
 
     return () => ctx.revert();
   }, [activeTab]);
+
+  const scrollToSection = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      const headerOffset = 100;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      });
+    }
+  };
 
   return (
     <div ref={containerRef} className="min-h-screen bg-surface text-white selection:bg-primary selection:text-surface overflow-x-hidden">
@@ -72,26 +95,28 @@ export default function LegalPage() {
         <div className="flex flex-col lg:flex-row gap-20">
           {/* SIDEBAR NAVIGATION */}
           <aside className="lg:w-64 flex-shrink-0 space-y-8 legal-sidebar">
-            <div className="space-y-4">
+            <div className="space-y-4 lg:sticky lg:top-32">
               <h4 className="text-primary font-mono text-[10px] tracking-widest uppercase mb-6">Quick Jump</h4>
               <nav className="space-y-2">
-                <JumpLink text="Data Collection" />
-                <JumpLink text="User Rights" />
-                <JumpLink text="Security Measures" />
-                <JumpLink text="Third Parties" />
-                <JumpLink text="Cookies" />
-                <JumpLink text="Contact Legal" />
+                {activeTab === 'privacy' ? (
+                  <>
+                    <JumpLink onClick={() => scrollToSection('data-collection')} text="Data Collection" />
+                    <JumpLink onClick={() => scrollToSection('user-rights')} text="User Rights" />
+                    <JumpLink onClick={() => scrollToSection('security-measures')} text="Security Measures" />
+                    <JumpLink onClick={() => scrollToSection('third-parties')} text="Third Parties" />
+                    <JumpLink onClick={() => scrollToSection('cookies')} text="Cookies" />
+                  </>
+                ) : (
+                  <>
+                    <JumpLink onClick={() => scrollToSection('acceptance')} text="Acceptance" />
+                    <JumpLink onClick={() => scrollToSection('user-conduct')} text="User Conduct" />
+                    <JumpLink onClick={() => scrollToSection('ip-rights')} text="IP Rights" />
+                    <JumpLink onClick={() => scrollToSection('liability')} text="Liability" />
+                    <JumpLink onClick={() => scrollToSection('termination')} text="Termination" />
+                  </>
+                )}
+                <JumpLink onClick={() => scrollToSection('contact-legal')} text="Contact Legal" />
               </nav>
-            </div>
-
-            <div className="p-6 bg-white/5 border border-white/10 space-y-4">
-              <div className="flex items-center gap-2 text-primary">
-                <Download size={16} />
-                <span className="font-mono text-[10px] uppercase font-bold">Download PDF</span>
-              </div>
-              <p className="text-[10px] text-gray-500 uppercase leading-relaxed font-light">
-                Archive version v4.0.2 Last Updated: May 14, 2026
-              </p>
             </div>
           </aside>
 
@@ -103,16 +128,19 @@ export default function LegalPage() {
               <TermsContent />
             )}
 
-            {/* FINAL CLAUSE */}
-            <div className="pt-20 border-t border-white/10">
-              <div className="p-8 bg-primary/5 border border-primary/20 rounded-none flex gap-6 items-start">
-                <Info size={24} className="text-primary flex-shrink-0 mt-1" />
-                <div className="space-y-2">
-                  <h4 className="text-white font-bold uppercase text-sm">Need Clarification?</h4>
-                  <p className="text-sm text-gray-400 leading-relaxed font-light">
-                    Our legal department is available for any specific inquiries regarding data handling or operational terms. Contact <span className="text-white font-medium">legal@hiretrack.com</span>
-                  </p>
+            {/* CONTACT BOX */}
+            <div id="contact-legal" className="mt-32 p-12 bg-white/5 border border-white/10 relative overflow-hidden group">
+              <div className="absolute right-0 top-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                <Info size={120} />
+              </div>
+              <div className="relative z-10">
+                <div className="flex items-center gap-4 text-primary font-mono text-xs tracking-widest uppercase mb-6">
+                  <Info size={16} /> Legal Node Status
                 </div>
+                <h3 className="text-2xl md:text-4xl font-display font-black uppercase mb-4">Communication Node:<br /><span className="text-primary italic">Coming Soon</span></h3>
+                <p className="text-lg text-gray-500 font-light max-w-2xl">
+                  Our dedicated legal and compliance communication channels are currently being established. For urgent matters, please check back soon or use our internal dashboard support once active.
+                </p>
               </div>
             </div>
           </article>
@@ -130,23 +158,29 @@ export default function LegalPage() {
   );
 }
 
-function JumpLink({ text }) {
+function JumpLink({ text, onClick }) {
   return (
-    <a href="#" className="flex items-center justify-between group py-2 border-b border-white/5 hover:border-primary/30 transition-all">
+    <button 
+      onClick={(e) => {
+        e.preventDefault();
+        onClick();
+      }}
+      className="w-full flex items-center justify-between group py-2 border-b border-white/5 hover:border-primary/30 transition-all text-left"
+    >
       <span className="text-xs uppercase tracking-widest text-gray-500 group-hover:text-white transition-colors">{text}</span>
       <ChevronRight size={14} className="text-gray-700 group-hover:text-primary transition-colors" />
-    </a>
+    </button>
   );
 }
 
 function PrivacyContent() {
   return (
     <div className="space-y-12">
-      <Section title="01 / Introduction">
+      <Section id="introduction" title="01 / Introduction">
         <p>This Privacy Protocol describes how HireTrack ("we", "us", or "our") collects, weaponizes, and protects your career data when you deploy our services.</p>
         <p>By engaging with the platform, you acknowledge the terms of this operational document.</p>
       </Section>
-      <Section title="02 / Data Collection">
+      <Section id="data-collection" title="02 / Data Collection">
         <p>We collect high-fidelity professional data including but not limited to:</p>
         <ul className="list-disc pl-5 space-y-2 text-gray-400 font-light">
           <li>Resumes and Professional Documents (Encrypted)</li>
@@ -155,8 +189,17 @@ function PrivacyContent() {
           <li>Operational Metrics (Streaks, Activity Logs)</li>
         </ul>
       </Section>
-      <Section title="03 / Security Infrastructure">
-        <p>Data security is our primary directive. We implement AES-256 encryption at rest and TLS 1.3 in transit. For detailed technical specifications, please refer to our <Link to="/security" className="text-primary hover:underline">Security Protocol</Link>.</p>
+      <Section id="user-rights" title="03 / User Rights">
+        <p>Users maintain absolute sovereignty over their data. You have the right to access, rectify, or purge your data from our neural archives at any time via the Command Center settings.</p>
+      </Section>
+      <Section id="security-measures" title="04 / Security Infrastructure">
+        <p>Data security is our primary directive. We implement AES-256 encryption at rest and TLS 1.3 in transit. Our zero-knowledge architecture ensures that even our engineers cannot decrypt your raw documents.</p>
+      </Section>
+      <Section id="third-parties" title="05 / Third Parties">
+        <p>HireTrack does not sell user data to recruiters, marketers, or external entities. We only share data with essential infrastructure providers (e.g., cloud storage) required to maintain platform operations.</p>
+      </Section>
+      <Section id="cookies" title="06 / Cookies & Tracking">
+        <p>We use minimal operational cookies to maintain your session state and security clearance. We do not use cross-site tracking or invasive behavioral analytics.</p>
       </Section>
     </div>
   );
@@ -165,22 +208,28 @@ function PrivacyContent() {
 function TermsContent() {
   return (
     <div className="space-y-12">
-      <Section title="01 / Acceptance of Terms">
+      <Section id="acceptance" title="01 / Acceptance of Terms">
         <p>By registering for a HireTrack clearance level, you agree to abide by the structural guidelines of our platform.</p>
       </Section>
-      <Section title="02 / User Conduct">
-        <p>HireTrack is a tool for professional excellence. We expect users to maintain high-integrity data and professional conduct within the ecosystem.</p>
+      <Section id="user-conduct" title="02 / User Conduct">
+        <p>HireTrack is a tool for professional excellence. We expect users to maintain high-integrity data and professional conduct within the ecosystem. Unauthorized access to system nodes is strictly prohibited.</p>
       </Section>
-      <Section title="03 / Intellectual Property">
-        <p>The HireTrack brand, architecture, and "Cyberpunk/Brutalist" design language are the exclusive intellectual property of HireTrack.</p>
+      <Section id="ip-rights" title="03 / Intellectual Property">
+        <p>The HireTrack brand, architecture, and "Cyberpunk/Brutalist" design language are the exclusive intellectual property of HireTrack. Reverse engineering is restricted.</p>
+      </Section>
+      <Section id="liability" title="04 / Limitation of Liability">
+        <p>HireTrack provides tools for career optimization but does not guarantee employment. We are not liable for any direct or indirect career outcomes resulting from the use of our intelligence protocols.</p>
+      </Section>
+      <Section id="termination" title="05 / Termination">
+        <p>We reserve the right to revoke system access for users who violate operational protocols or engage in high-risk activities that compromise platform integrity.</p>
       </Section>
     </div>
   );
 }
 
-function Section({ title, children }) {
+function Section({ title, children, id }) {
   return (
-    <div className="space-y-6">
+    <div id={id} className="space-y-6 scroll-mt-32">
       <h3 className="text-primary font-mono text-xs tracking-widest uppercase border-l-2 border-primary pl-4">{title}</h3>
       <div className="text-lg text-gray-400 font-light leading-relaxed space-y-4">
         {children}

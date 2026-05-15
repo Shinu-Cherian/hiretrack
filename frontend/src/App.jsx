@@ -38,21 +38,21 @@ function App() {
       <Route path="/manifesto" element={<ManifestoPage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
-      <Route path="/dashboard" element={<Private><Dashboard /></Private>} />
-      <Route path="/jobs" element={<Private><JobsPage /></Private>} />
-      <Route path="/add-job" element={<Private><AddJobPage /></Private>} />
-      <Route path="/referrals" element={<Private><ViewReferrals /></Private>} />
-      <Route path="/add-referral" element={<Private><AddReferralPage /></Private>} />
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/jobs" element={<JobsPage />} />
+      <Route path="/add-job" element={<AddJobPage />} />
+      <Route path="/referrals" element={<ViewReferrals />} />
+      <Route path="/add-referral" element={<AddReferralPage />} />
       <Route path="/starred" element={<Private><StarredPage /></Private>} />
-      <Route path="/notifications" element={<Private><NotificationsPage /></Private>} />
+      <Route path="/notifications" element={<NotificationsPage />} />
       <Route path="/profile" element={<Private><ProfilePage /></Private>} />
       <Route path="/profile/edit" element={<Private><EditProfilePage /></Private>} />
       <Route path="/settings" element={<Private><SettingsPage /></Private>} />
       <Route path="/career-vault" element={<Private><CareerVault /></Private>} />
-      <Route path="/streaks" element={<Private><StreakPage /></Private>} />
-      <Route path="/resume-analyzer" element={<Private><ResumeAnalyzerPage /></Private>} />
-      <Route path="/cover-letter" element={<Private><CoverLetterPage /></Private>} />
-      <Route path="/career-roadmap" element={<Private><CareerRoadmapPage /></Private>} />
+      <Route path="/streaks" element={<StreakPage />} />
+      <Route path="/resume-analyzer" element={<ResumeAnalyzerPage />} />
+      <Route path="/cover-letter" element={<CoverLetterPage />} />
+      <Route path="/career-roadmap" element={<CareerRoadmapPage />} />
       <Route path="/roadmap" element={<RoadmapPage />} />
       <Route path="/security" element={<SecurityPage />} />
       <Route path="/privacy" element={<LegalPage />} />

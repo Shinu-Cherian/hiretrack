@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import gsap from 'gsap';
 import { 
   BookOpen, Calendar, Clock, ArrowRight, 
-  Search, Hash, ChevronRight, Share2 
+  Search, Hash, ChevronRight, Share2, Check 
 } from 'lucide-react';
 import Header from './Header';
 import { getAuthStatus } from './api';
@@ -11,6 +11,11 @@ import { getAuthStatus } from './api';
 export default function BlogPage() {
   const containerRef = useRef(null);
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("isLoggedIn") === "true");
+  const [selectedPost, setSelectedPost] = useState(null);
+  const [email, setEmail] = useState("");
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isSubscribing, setIsSubscribing] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -44,6 +49,66 @@ export default function BlogPage() {
     return () => ctx.revert();
   }, []);
 
+  const blogContent = {
+    "AI_FUTURE": {
+      title: "The Future of AI in Talent Acquisition",
+      category: "Intelligence",
+      content: "Large Language Models (LLMs) have fundamentally shifted the recruitment paradigm. Standard keyword matching is dead; semantic understanding is the new frontier. To survive, your resume must be 'Vector-Ready'—it needs to communicate complex narratives that AI can map to team culture, not just technical skills. We recommend focusing on high-impact verbs and quantifiable outcomes that demonstrate problem-solving depth."
+    },
+    "ATS_HACK": {
+      title: "How to Hack the Modern ATS",
+      category: "Engineering",
+      content: "Modern ATS parsers like Workday and Greenhouse are highly sensitive to structural hierarchy. Avoid complex multi-column layouts or image-based text. Use standard headers (Experience, Education, Skills) and ensure your verb tenses align with the job description. The goal isn't to trick the system, but to ensure the system doesn't lose your data. Clean, structured Markdown-compatible layouts are your greatest weapon."
+    },
+    "INTROVERT_NETWORK": {
+      title: "Networking for Introverts",
+      category: "Strategy",
+      content: "Networking isn't about 'small talk'; it's about information exchange. For introverts, we recommend the 'Advice-First' approach. Instead of asking for a job, ask for 15 minutes of insight into their team's specific challenges. This shifts the dynamic from a seeker to a collaborator. Map these interactions in your Referral Network in HireTrack to ensure you never miss a follow-up."
+    },
+    "REFERRAL_LOOP": {
+      title: "The Referral Loop Protocol",
+      category: "Growth",
+      content: "The most successful seekers treat every rejection as a node expansion. If you don't get the role, ask the interviewer: 'Is there anyone else in your network who would value my specific skill set?' This single question turns a dead-end into a multi-path opportunity. It creates a flywheel effect where your network grows exponentially even when your pipeline is dry."
+    },
+    "STREAK_MOMENTUM": {
+      title: "Optimizing Your Streak",
+      category: "Culture",
+      content: "Momentum is a psychological shield. The HireTrack Streak Protocol isn't just about 'logging in'—it's about daily operational discipline. Even 10 minutes of research or one outreach per day keeps the 'search fatigue' at bay. Studies show that candidates with consistent daily activity find roles 40% faster than those who apply in 'bursts'."
+    },
+    "DESIGN_IMPACT": {
+      title: "Designing for Impact",
+      category: "Design",
+      content: "Visual hierarchy is your resume's 'user experience.' Use white space as a structural element to guide the eye to your most impressive metrics. We recommend a high-contrast Brutalist approach: bold section headers, clean sans-serif typography, and zero fluff. Your resume should be readable in under 6 seconds while still providing deep-dive data for the second-pass review."
+    },
+    "VERSION_CONTROL": {
+      title: "Version Control for Your Career",
+      category: "Engineering",
+      content: "Sending the same resume to 50 companies is a high-risk strategy. Every job description has a different 'frequency.' Use the Career Vault to maintain atomic versions of your resume, each tuned to a specific industry or role type. By mapping these versions directly to your job applications in HireTrack, you maintain absolute narrative clarity during the interview stage."
+    }
+  };
+
+  const handleSubscribe = (e) => {
+    e.preventDefault();
+    if (!email) return;
+    setError("");
+    
+    // Mock check for duplicate
+    const existing = JSON.parse(localStorage.getItem("subscribed_emails") || "[]");
+    if (existing.includes(email.toLowerCase())) {
+      setError("Protocol Conflict: This email is already linked.");
+      return;
+    }
+
+    setIsSubscribing(true);
+    // Mock loading delay
+    setTimeout(() => {
+      existing.push(email.toLowerCase());
+      localStorage.setItem("subscribed_emails", JSON.stringify(existing));
+      setIsSubscribing(false);
+      setIsSubscribed(true);
+    }, 1500);
+  };
+
   return (
     <div ref={containerRef} className="min-h-screen bg-surface text-white selection:bg-primary selection:text-surface overflow-x-hidden">
       <Header />
@@ -54,7 +119,7 @@ export default function BlogPage() {
           <div className="flex items-center gap-3 text-primary font-mono text-xs tracking-widest uppercase mb-6">
             <BookOpen size={16} /> Intelligence Logs
           </div>
-          <h1 className="text-6xl md:text-9xl font-display font-black uppercase tracking-tighter mb-12 blog-title leading-none">
+          <h1 className="text-5xl sm:text-7xl md:text-9xl font-display font-black uppercase tracking-tighter mb-12 blog-title leading-none">
             The<br />
             <span className="text-primary italic">Blog</span>
           </h1>
@@ -64,7 +129,7 @@ export default function BlogPage() {
         </section>
 
         {/* FEATURED POST */}
-        <section className="mb-32 blog-post group cursor-pointer">
+        <section className="mb-32 blog-post group cursor-pointer" onClick={() => setSelectedPost(blogContent.AI_FUTURE)}>
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="aspect-[16/9] bg-white/5 border border-white/10 relative overflow-hidden">
               <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -77,11 +142,9 @@ export default function BlogPage() {
             <div className="space-y-6">
               <div className="flex items-center gap-4 text-xs font-mono text-gray-500 uppercase tracking-widest">
                 <span>Featured Log</span>
-                <span className="w-1 h-1 bg-primary" />
-                <span>May 12, 2026</span>
               </div>
               <h2 className="text-4xl md:text-6xl font-display font-bold uppercase leading-none group-hover:text-primary transition-colors">
-                The Future of AI in Talent Acquisition
+                {blogContent.AI_FUTURE.title}
               </h2>
               <p className="text-xl text-gray-400 font-light leading-relaxed">
                 How large language models are fundamentally changing how engineers are discovered, vetted, and hired in the high-stakes tech ecosystem.
@@ -96,38 +159,38 @@ export default function BlogPage() {
         {/* POST GRID */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-12 mb-48">
           <BlogPost 
-            date="May 08, 2026"
-            title="How to Hack the Modern ATS"
+            onClick={() => setSelectedPost(blogContent.ATS_HACK)}
+            title={blogContent.ATS_HACK.title}
             desc="A technical breakdown of parser algorithms and how to structure your resume for maximum neural compatibility."
             category="Engineering"
           />
           <BlogPost 
-            date="May 05, 2026"
-            title="Networking for Introverts"
+            onClick={() => setSelectedPost(blogContent.INTROVERT_NETWORK)}
+            title={blogContent.INTROVERT_NETWORK.title}
             desc="Building a high-value referral network without the performance anxiety. Using systems over social skills."
             category="Strategy"
           />
           <BlogPost 
-            date="Apr 28, 2026"
-            title="The Referral Loop Protocol"
+            onClick={() => setSelectedPost(blogContent.REFERRAL_LOOP)}
+            title={blogContent.REFERRAL_LOOP.title}
             desc="How to turn every interview into three new connections. The secret math of the professional flywheel."
             category="Growth"
           />
           <BlogPost 
-            date="Apr 22, 2026"
-            title="Optimizing Your Streak"
+            onClick={() => setSelectedPost(blogContent.STREAK_MOMENTUM)}
+            title={blogContent.STREAK_MOMENTUM.title}
             desc="Why consistency in the job hunt leads to exponential outcomes. The science of operational momentum."
             category="Culture"
           />
           <BlogPost 
-            date="Apr 15, 2026"
-            title="Designing for Impact"
+            onClick={() => setSelectedPost(blogContent.DESIGN_IMPACT)}
+            title={blogContent.DESIGN_IMPACT.title}
             desc="A guide to brutalist resume design that stands out in a sea of generic templates. Minimalism as a weapon."
             category="Design"
           />
           <BlogPost 
-            date="Apr 02, 2026"
-            title="Version Control for Your Career"
+            onClick={() => setSelectedPost(blogContent.VERSION_CONTROL)}
+            title={blogContent.VERSION_CONTROL.title}
             desc="Why tracking every resume iteration is the only way to maintain narrative clarity in a long hunt."
             category="Engineering"
           />
@@ -140,21 +203,88 @@ export default function BlogPage() {
           </div>
           <div className="relative z-10 max-w-2xl">
             <h2 className="text-4xl md:text-7xl font-display font-black uppercase text-surface leading-none mb-8 italic">Stay<br />Cracked</h2>
-            <p className="text-xl text-surface/80 mb-12 leading-relaxed">
-              Get the latest strategy logs delivered directly to your command center. No spam, just pure intelligence.
-            </p>
-            <div className="flex flex-col md:flex-row gap-4">
-              <input 
-                type="email" 
-                placeholder="EMAIL_ADDRESS" 
-                className="flex-1 bg-surface/10 border border-surface/20 px-8 py-6 text-surface font-mono placeholder:text-surface/40 focus:outline-none focus:border-surface"
-              />
-              <button className="bg-surface text-white px-12 py-6 font-display font-black uppercase tracking-tight hover:bg-white hover:text-surface transition-all">
-                Subscribe
-              </button>
-            </div>
+            
+            {isSubscribed ? (
+              <div className="bg-surface/10 border border-surface/20 p-8 space-y-4 animate-in fade-in zoom-in duration-500">
+                <div className="flex items-center gap-4 text-surface">
+                  <div className="w-12 h-12 rounded-full border-2 border-surface flex items-center justify-center">
+                    <Check size={24} />
+                  </div>
+                  <h3 className="text-2xl md:text-4xl font-display font-black uppercase tracking-tight">Link Established</h3>
+                </div>
+                <p className="text-surface font-mono text-xs tracking-widest">
+                  INTELLIGENCE LOGS WILL BE DELIVERED TO: <span className="underline normal-case">{email}</span>
+                </p>
+              </div>
+            ) : (
+              <>
+                <p className="text-xl text-surface/80 mb-12 leading-relaxed">
+                  Get the latest strategy logs delivered directly to your command center. No spam, just pure intelligence.
+                </p>
+                <form onSubmit={handleSubscribe} className="flex flex-col gap-4">
+                  <div className="flex flex-col md:flex-row gap-4">
+                    <input 
+                      type="email" 
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="EMAIL_ADDRESS" 
+                      required
+                      className="flex-1 bg-surface/10 border border-surface/20 px-8 py-6 text-surface font-mono placeholder:text-surface/40 focus:outline-none focus:border-surface"
+                    />
+                    <button 
+                      disabled={isSubscribing}
+                      className="bg-surface text-white px-12 py-6 font-display font-black uppercase tracking-tight hover:bg-white hover:text-surface transition-all flex items-center justify-center gap-3"
+                    >
+                      {isSubscribing ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                          Syncing...
+                        </>
+                      ) : (
+                        "Subscribe"
+                      )}
+                    </button>
+                  </div>
+                  {error && (
+                    <div className="text-surface font-mono text-[10px] uppercase tracking-widest bg-white/10 px-4 py-2 border-l-2 border-white">
+                      {error}
+                    </div>
+                  )}
+                </form>
+              </>
+            )}
           </div>
         </section>
+
+        {/* MODAL */}
+        {selectedPost && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center px-6">
+            <div className="absolute inset-0 bg-surface/90 backdrop-blur-md" onClick={() => setSelectedPost(null)} />
+            <div className="relative bg-surface border border-white/10 w-full max-w-3xl max-h-[80vh] overflow-y-auto brutalist-shadow">
+              <div className="sticky top-0 bg-surface/80 backdrop-blur-md p-6 border-b border-white/5 flex justify-between items-center z-10">
+                <span className="text-primary font-mono text-xs tracking-widest uppercase">{selectedPost.category}</span>
+                <button 
+                  onClick={() => setSelectedPost(null)}
+                  className="text-white hover:text-primary transition-colors font-display font-bold uppercase text-xs"
+                >
+                  [ Close_Log ]
+                </button>
+              </div>
+              <div className="p-8 md:p-12 space-y-8">
+                <h2 className="text-4xl md:text-6xl font-display font-black uppercase leading-[0.85]">{selectedPost.title}</h2>
+                <div className="h-1 w-20 bg-primary" />
+                <p className="text-xl md:text-2xl text-gray-400 font-light leading-relaxed">
+                  {selectedPost.content}
+                </p>
+                <div className="pt-12 border-t border-white/5">
+                  <p className="text-xs text-gray-600 font-mono uppercase tracking-widest">
+                    Operational Document Generated By HireTrack Intelligence System
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* FOOTER DECORATION */}
         <div className="mt-40 pt-20 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 text-gray-600 font-mono text-[10px] tracking-widest uppercase">
@@ -168,12 +298,14 @@ export default function BlogPage() {
   );
 }
 
-function BlogPost({ date, title, desc, category }) {
+function BlogPost({ title, desc, category, onClick }) {
   return (
-    <div className="blog-post group cursor-pointer border border-white/5 p-8 hover:border-primary/50 transition-all flex flex-col">
+    <div 
+      className="blog-post group cursor-pointer border border-white/5 p-8 hover:border-primary/50 transition-all flex flex-col"
+      onClick={onClick}
+    >
       <div className="flex justify-between items-center mb-8">
         <span className="text-[10px] font-mono text-primary uppercase tracking-[0.2em]">{category}</span>
-        <span className="text-[10px] font-mono text-gray-600 uppercase">{date}</span>
       </div>
       <h3 className="text-2xl font-bold uppercase mb-4 tracking-tight group-hover:text-primary transition-colors leading-tight">
         {title}

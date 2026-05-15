@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { FileSearch, CheckCircle2, XCircle, Lightbulb, Cpu, AlertCircle, Loader2, Activity, AlertTriangle, Zap, Target, Database, BarChart3, Search, Upload, FileCheck } from "lucide-react";
-import { apiUrl } from "../api";
+import { apiUrl, getAuthStatus } from "../api";
+import AuthActionModal from "./AuthActionModal";
 
 // ─── Animated Loading Screen ───────────────────────────────────────────────
 const STEPS = [
@@ -296,9 +297,18 @@ export default function ResumeAnalyzer() {
   const [result, setResult]               = useState(null);
   const [loading, setLoading]             = useState(false);
   const [error, setError]                 = useState(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const scanResume = async (event) => {
     event.preventDefault();
+
+    // Check auth
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    if (!isLoggedIn) {
+      setShowAuthModal(true);
+      return;
+    }
+
     setLoading(true);
     setResult(null);
     setError(null);
@@ -505,6 +515,13 @@ export default function ResumeAnalyzer() {
 
         </div>
       )}
+
+      <AuthActionModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)} 
+        title="AI Engine Restricted"
+        message="Running the deep ATS scan requires a secure workspace to protect your career data. Log in to run your scan."
+      />
     </section>
   );
 }

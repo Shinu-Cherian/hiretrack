@@ -55,7 +55,7 @@ export default function SecurityPage() {
           <div className="flex items-center gap-4 text-primary font-mono text-sm tracking-[0.3em] uppercase mb-8">
             <Shield size={20} /> Protocol Status: Active
           </div>
-          <h1 className="text-6xl md:text-9xl font-display font-black leading-[0.8] uppercase tracking-tighter mb-12 security-title">
+          <h1 className="text-5xl sm:text-7xl md:text-9xl font-display font-black leading-[0.8] uppercase tracking-tighter mb-12 security-title">
             The<br />
             <span className="text-primary">Security</span>
           </h1>
@@ -69,23 +69,23 @@ export default function SecurityPage() {
         <div className="grid md:grid-cols-2 gap-px bg-white/5 border border-white/5 mb-32">
           <SecurityCard 
             icon={<Lock size={32} />}
-            title="Military-Grade Encryption"
-            desc="All resumes, cover letters, and personal identifiers are encrypted at rest using AES-256-GCM. Your data is unreadable to anyone without the authorized clearance."
+            title="Secure Data Transmission"
+            desc="All data moving between your device and our servers is encrypted using industry-standard TLS 1.3 protocols, ensuring that your career assets are never exposed in transit."
           />
           <SecurityCard 
             icon={<Terminal size={32} />}
-            title="Zero-Knowledge Architecture"
-            desc="Our systems are architected to ensure that your specific career narrative remains private. We index metadata for functionality, but the core content is yours alone."
+            title="Privacy-First Architecture"
+            desc="Our systems are designed to ensure that your specific career narrative remains private. Your personal vault is logically isolated from other users in our database."
           />
           <SecurityCard 
             icon={<Key size={32} />}
-            title="Secure JWT Protocol"
-            desc="High-performance authentication layers using industry-standard JSON Web Tokens with automated rotation and multi-layered CSRF protection."
+            title="Identity Clearance (JWT)"
+            desc="We use secure JSON Web Tokens for authentication. This ensures that only you can access your command center, with automated session protection and secure storage."
           />
           <SecurityCard 
             icon={<Server size={32} />}
-            title="Isolated Infrastructure"
-            desc="Data is stored in isolated, redundant buckets with point-in-time recovery. Even in the event of a system-wide failure, your career trajectory remains intact."
+            title="Encrypted At Rest"
+            desc="Our production databases utilize volume-level encryption to ensure that even in the physical storage layer, your career intelligence remains unreadable to unauthorized entities."
           />
         </div>
 
@@ -94,24 +94,24 @@ export default function SecurityPage() {
           <div className="grid md:grid-cols-2 gap-12 items-start border-t border-white/10 pt-20">
             <div>
               <span className="text-primary font-mono text-xs tracking-widest uppercase mb-4 block underline underline-offset-8 decoration-primary/30">Protocol 01 / Data Handling</span>
-              <h2 className="text-4xl md:text-6xl font-display font-black uppercase mb-8 leading-none">The Vault<br />Mechanism</h2>
+              <h2 className="text-4xl md:text-6xl font-display font-black uppercase mb-8 leading-none">Security<br />Strategy</h2>
             </div>
             <div className="space-y-6 text-lg text-gray-400 font-light leading-relaxed">
               <p>
-                Every asset uploaded to the <span className="text-white">Career Vault</span> undergoes a multi-stage sanitization and encryption process.
+                HireTrack is built on a foundation of transparency and structural integrity. Our current security model focuses on <span className="text-white">Active Protection</span>.
               </p>
               <ul className="space-y-4">
                 <li className="flex items-start gap-4">
                   <div className="w-1.5 h-1.5 bg-primary mt-2 flex-shrink-0" />
-                  <p><strong className="text-white font-medium uppercase text-sm">Ingestion:</strong> Files are scanned for malware and stripped of malicious metadata.</p>
+                  <p><strong className="text-white font-medium uppercase text-sm">Active:</strong> Secure authentication via JWT and session isolation.</p>
                 </li>
                 <li className="flex items-start gap-4">
                   <div className="w-1.5 h-1.5 bg-primary mt-2 flex-shrink-0" />
-                  <p><strong className="text-white font-medium uppercase text-sm">Encryption:</strong> Unique per-user salts and master keys ensure cryptographic isolation.</p>
+                  <p><strong className="text-white font-medium uppercase text-sm">Active:</strong> SSL/TLS encryption for all data transmissions.</p>
                 </li>
-                <li className="flex items-start gap-4">
-                  <div className="w-1.5 h-1.5 bg-primary mt-2 flex-shrink-0" />
-                  <p><strong className="text-white font-medium uppercase text-sm">Storage:</strong> Sharded storage across multiple availability zones for 99.999% durability.</p>
+                <li className="flex items-start gap-4 opacity-50">
+                  <div className="w-1.5 h-1.5 bg-gray-500 mt-2 flex-shrink-0" />
+                  <p><strong className="text-gray-300 font-medium uppercase text-sm">Planned:</strong> Automated malware sanitization and sharded storage architectures.</p>
                 </li>
               </ul>
             </div>
@@ -120,20 +120,20 @@ export default function SecurityPage() {
           <div className="grid md:grid-cols-2 gap-12 items-start border-t border-white/10 pt-20">
             <div>
               <span className="text-primary font-mono text-xs tracking-widest uppercase mb-4 block underline underline-offset-8 decoration-primary/30">Protocol 02 / Privacy</span>
-              <h2 className="text-4xl md:text-6xl font-display font-black uppercase mb-8 leading-none">Compliance<br />Standards</h2>
+              <h2 className="text-4xl md:text-6xl font-display font-black uppercase mb-8 leading-none">Privacy<br />Integrity</h2>
             </div>
             <div className="space-y-6 text-lg text-gray-400 font-light leading-relaxed">
               <p>
-                We adhere to the highest international standards for data privacy and professional integrity.
+                We adhere to fundamental privacy standards to ensure your professional data is never weaponized against you.
               </p>
               <div className="grid grid-cols-2 gap-4 pt-4">
                 <div className="p-6 bg-white/5 border border-white/5">
-                  <h4 className="text-white font-bold uppercase text-xs mb-2">GDPR</h4>
-                  <p className="text-[10px] uppercase tracking-wider text-gray-500">Fully Compliant</p>
+                  <h4 className="text-white font-bold uppercase text-xs mb-2">Privacy</h4>
+                  <p className="text-[10px] uppercase tracking-wider text-gray-500">Zero Data Selling</p>
                 </div>
                 <div className="p-6 bg-white/5 border border-white/5">
-                  <h4 className="text-white font-bold uppercase text-xs mb-2">SOC2 TYPE II</h4>
-                  <p className="text-[10px] uppercase tracking-wider text-primary font-bold">In Progress</p>
+                  <h4 className="text-white font-bold uppercase text-xs mb-2">Security</h4>
+                  <p className="text-[10px] uppercase tracking-wider text-primary font-bold">Standard Compliant</p>
                 </div>
               </div>
             </div>
