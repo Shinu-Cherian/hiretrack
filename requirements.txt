@@ -47,6 +47,7 @@ pandas==2.3.3
 pillow==12.2.0
 primp==1.2.3
 propcache==0.4.1
+psycopg2-binary==2.9.12
 pycairo==1.29.0
 pycparser==3.0
 pycryptodome==3.23.0
