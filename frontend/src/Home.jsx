@@ -936,13 +936,9 @@ export default function Home() {
             <div className="space-y-8">
               <Link to="/" onClick={() => window.scrollTo(0,0)} className="flex items-center gap-2 font-extrabold text-3xl tracking-tight text-white group mb-8">
                 <HireTrackLogo 
-                  className="text-[#FF6044] transition-transform group-hover:scale-110 group-hover:rotate-3" 
-                  size={32} 
+                  className="transition-transform group-hover:scale-105" 
+                  size={36} 
                 /> 
-                <span className="font-display">
-                  Hire
-                  <span className="text-white/60 font-light ml-0.5">Track</span>
-                </span>
               </Link>
               <p className="text-gray-500 text-sm leading-relaxed font-light max-w-xs">
                 HireTrack helps professionals organize applications, referrals, resumes, and career growth using data-driven intelligence.

@@ -115,16 +115,12 @@ export default function Header() {
         <Link
           to="/"
           onClick={scrollHomeToTop}
-          className="flex items-center gap-2 font-extrabold text-xl tracking-tight text-white group shrink-0"
+          className="flex items-center group shrink-0"
         >
           <HireTrackLogo 
-            className="text-[#FF6044] transition-transform group-hover:scale-110 group-hover:rotate-3" 
-            size={24} 
+            className="transition-transform group-hover:scale-105" 
+            size={28} 
           /> 
-          <span className="hidden sm:inline text-white font-display">
-            Hire
-            <span className="text-white/60 font-light ml-0.5">Track</span>
-          </span>
         </Link>
         
         {/* Feature Icons Dock */}
