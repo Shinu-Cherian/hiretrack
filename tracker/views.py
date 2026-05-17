@@ -529,7 +529,7 @@ def build_cover_letter(resume_text, jd_text, profile=None):
 
 
 def home(request):
-    return render(request, 'home.html')
+    return render(request, 'index.html')
 
 @csrf_exempt
 
