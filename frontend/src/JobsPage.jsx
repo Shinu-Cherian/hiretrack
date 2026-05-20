@@ -183,106 +183,113 @@ export default function JobsPage() {
           </div>
         </div>
 
-        <div className="saas-card overflow-hidden">
-          <div className="hidden grid-cols-8 gap-3 border-b border-white/10 p-4 text-sm font-bold text-[#FF6044] lg:grid">
-            <span className="col-span-2">Role</span>
-            <span>Company</span>
-            <span>Platform</span>
-            <span>Salary</span>
-            <span>Date</span>
-            <span>Status</span>
-            <span>Actions</span>
-          </div>
+        {Object.keys(groupedJobs).length === 0 ? (
+          <div className="saas-card p-10 text-center text-gray-400">No jobs found</div>
+        ) : (
+          <div className="space-y-10">
+            {/* The Grid Header row displayed right at the very top, before any cards */}
+            <div className="hidden grid-cols-8 gap-3 px-4 py-2 border border-transparent text-sm font-bold text-[#FF6044] lg:grid">
+              <span className="col-span-2">Role</span>
+              <span>Company</span>
+              <span>Platform</span>
+              <span>Salary</span>
+              <span>Date</span>
+              <span>Status</span>
+              <span>Actions</span>
+            </div>
 
-          {Object.keys(groupedJobs).length === 0 ? (
-            <div className="p-10 text-center text-gray-400">No jobs found</div>
-          ) : (
-            Object.entries(groupedJobs).map(([date, items]) => (
-              <div key={date} className="border-t border-white/5 first:border-t-0">
-                {/* Sleek Date Header */}
-                <div className="bg-[#18191a] px-4 py-2 text-xs font-bold text-gray-400 flex items-center gap-2 border-b border-white/5">
-                  <Calendar size={14} className="text-[#FF6044]" />
-                  <span>{formatDateString(date)}</span>
-                  <span className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] text-gray-500 font-semibold">
-                    {items.length} {items.length === 1 ? "job" : "jobs"}
+            {Object.entries(groupedJobs).map(([date, items]) => (
+              <div key={date} className="space-y-4">
+                {/* Premium Centered Date Divider */}
+                <div className="flex items-center justify-center gap-4">
+                  <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-white/10"></div>
+                  <span className="flex items-center gap-2 rounded-full border border-white/10 bg-[#1e2020] px-4 py-1.5 text-xs font-bold text-gray-300 shadow-sm">
+                    <Calendar size={14} className="text-[#FF6044]" />
+                    <span>{formatDateString(date)}</span>
+                    <span className="rounded-full bg-[#FF6044]/10 px-2 py-0.5 text-[10px] text-[#FF6044] font-semibold">
+                      {items.length} {items.length === 1 ? "job" : "jobs"}
+                    </span>
                   </span>
+                  <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-white/10"></div>
                 </div>
-                
-                {/* Items in this date group */}
-                <div className="divide-y divide-white/5">
-                  {items.map((job) => (
-                    <HighlightableItem
-                      key={job.id}
-                      id={`job-${job.id}`}
-                      highlighted={String(job.id) === String(activeHighlight)}
-                      className={`grid grid-cols-1 gap-3 p-4 lg:grid-cols-8 lg:items-center ${
-                        job.status === "selected" ? "border-emerald-500/20 bg-emerald-500/5 shadow-[0_0_20px_rgba(16,185,129,0.05)]" : ""
-                      }`}
-                    >
-                      <div className="lg:col-span-2">
-                        <p className="font-semibold text-white">{job.jobTitle}</p>
-                        <p className="mt-1 flex items-center gap-1 text-sm text-gray-400">
-                          <FileText size={14} /> {job.jobId || "No job ID"}
-                        </p>
-                      </div>
-                      <Meta icon={<Briefcase size={15} />} value={job.company} />
-                      <Meta icon={<Monitor size={15} />} value={job.platform} />
-                      <Meta icon={<DollarSign size={15} />} value={job.salaryRange} />
-                      <Meta icon={<Calendar size={15} />} value={job.dateApplied} />
-                      <span>
-                        <span className={getStatusBadgeClass(job.status)}>{job.status}</span>
-                      </span>
-                      <span className="flex gap-2">
-                        <IconButton label="Toggle star" onClick={() => toggleStar(job)}>
-                          <Star size={18} className={job.is_starred ? "fill-yellow-400 text-yellow-400" : ""} />
-                        </IconButton>
-                        <IconButton label="Edit job" onClick={() => {
-                          if (isDemo) setShowAuthModal(true);
-                          else setEditing({ ...job });
-                        }}>
-                          <Edit3 size={18} />
-                        </IconButton>
-                        <IconButton label="Delete job" danger onClick={() => {
-                          if (isDemo) setShowAuthModal(true);
-                          else setDeletingJob(job);
-                        }}>
-                          <Trash2 size={18} />
-                        </IconButton>
-                      </span>
-                      {(job.jd || job.notes) && (
-                        <div className="flex flex-wrap gap-2.5 rounded-lg bg-[#121313] border border-white/5 p-3 text-sm text-gray-400 lg:col-span-8">
-                          <span className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 uppercase tracking-wider mr-2">
-                            Attachments:
-                          </span>
-                          {job.notes && (
-                            <button
-                              type="button"
-                              onClick={() => setViewingNotes(job)}
-                              className="inline-flex items-center gap-1.5 rounded-lg border border-white/5 bg-white/5 px-3 py-1.5 text-xs font-medium text-gray-300 transition hover:bg-white/10 hover:text-white"
-                            >
-                              <FileText size={14} className="text-[#FF6044]" />
-                              Show Notes
-                            </button>
-                          )}
-                          {job.jd && (
-                            <button
-                              type="button"
-                              onClick={() => setViewingJd(job)}
-                              className="inline-flex items-center gap-1.5 rounded-lg border border-white/5 bg-white/5 px-3 py-1.5 text-xs font-medium text-gray-300 transition hover:bg-white/10 hover:text-white"
-                            >
-                              <FileText size={14} className="text-[#FF6044]" />
-                              Show JD
-                            </button>
-                          )}
+
+                {/* Separate saas-card for this date's items */}
+                <div className="saas-card overflow-hidden">
+                  <div className="divide-y divide-white/5">
+                    {items.map((job) => (
+                      <HighlightableItem
+                        key={job.id}
+                        id={`job-${job.id}`}
+                        highlighted={String(job.id) === String(activeHighlight)}
+                        className={`grid grid-cols-1 gap-3 p-4 lg:grid-cols-8 lg:items-center ${
+                          job.status === "selected" ? "border-emerald-500/20 bg-emerald-500/5 shadow-[0_0_20px_rgba(16,185,129,0.05)]" : ""
+                        }`}
+                      >
+                        <div className="lg:col-span-2">
+                          <p className="font-semibold text-white">{job.jobTitle}</p>
+                          <p className="mt-1 flex items-center gap-1 text-sm text-gray-400">
+                            <FileText size={14} /> {job.jobId || "No job ID"}
+                          </p>
                         </div>
-                      )}
-                    </HighlightableItem>
-                  ))}
+                        <Meta icon={<Briefcase size={15} />} value={job.company} />
+                        <Meta icon={<Monitor size={15} />} value={job.platform} />
+                        <Meta icon={<DollarSign size={15} />} value={job.salaryRange} />
+                        <Meta icon={<Calendar size={15} />} value={job.dateApplied} />
+                        <span>
+                          <span className={getStatusBadgeClass(job.status)}>{job.status}</span>
+                        </span>
+                        <span className="flex gap-2">
+                          <IconButton label="Toggle star" onClick={() => toggleStar(job)}>
+                            <Star size={18} className={job.is_starred ? "fill-yellow-400 text-yellow-400" : ""} />
+                          </IconButton>
+                          <IconButton label="Edit job" onClick={() => {
+                            if (isDemo) setShowAuthModal(true);
+                            else setEditing({ ...job });
+                          }}>
+                            <Edit3 size={18} />
+                          </IconButton>
+                          <IconButton label="Delete job" danger onClick={() => {
+                            if (isDemo) setShowAuthModal(true);
+                            else setDeletingJob(job);
+                          }}>
+                            <Trash2 size={18} />
+                          </IconButton>
+                        </span>
+                        {(job.jd || job.notes) && (
+                          <div className="flex flex-wrap gap-2.5 rounded-lg bg-[#121313] border border-white/5 p-3 text-sm text-gray-400 lg:col-span-8">
+                            <span className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 uppercase tracking-wider mr-2">
+                              Attachments:
+                            </span>
+                            {job.notes && (
+                              <button
+                                type="button"
+                                onClick={() => setViewingNotes(job)}
+                                className="inline-flex items-center gap-1.5 rounded-lg border border-white/5 bg-white/5 px-3 py-1.5 text-xs font-medium text-gray-300 transition hover:bg-white/10 hover:text-white"
+                              >
+                                <FileText size={14} className="text-[#FF6044]" />
+                                Show Notes
+                              </button>
+                            )}
+                            {job.jd && (
+                              <button
+                                type="button"
+                                onClick={() => setViewingJd(job)}
+                                className="inline-flex items-center gap-1.5 rounded-lg border border-white/5 bg-white/5 px-3 py-1.5 text-xs font-medium text-gray-300 transition hover:bg-white/10 hover:text-white"
+                              >
+                                <FileText size={14} className="text-[#FF6044]" />
+                                Show JD
+                              </button>
+                            )}
+                          </div>
+                        )}
+                      </HighlightableItem>
+                    ))}
+                  </div>
                 </div>
               </div>
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </main>
 
       {editing && (
@@ -309,19 +316,32 @@ export default function JobsPage() {
       )}
 
       {deletingJob && (
-        <Modal title="Confirm Deletion" onClose={() => setDeletingJob(null)} maxWidth="max-w-md">
-          <div className="p-4 text-center">
-            <p className="text-gray-200 text-lg mb-6 leading-relaxed">
-              Are you sure you want to delete this job? <br />
-              <span className="text-red-400/90 font-medium text-sm block mt-2 bg-red-500/10 border border-red-500/20 rounded-lg py-2 px-3">
-                Ee action revert cheyyaan kazhiyilla!
-              </span>
+        <div 
+          className="fixed inset-0 z-[500] flex items-center justify-center p-6 bg-surface/80 backdrop-blur-md animate-fade-in"
+          onClick={() => setDeletingJob(null)}
+        >
+          <div 
+            className="bg-[#121313] border border-white/10 p-12 max-w-md w-full text-center space-y-6 brutalist-shadow relative overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Decorative skewed background */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-[#FF6044]/5 -skew-x-12 translate-x-16 -translate-y-16 pointer-events-none"></div>
+            
+            <div className="w-16 h-16 bg-[#FF6044]/10 text-[#FF6044] rounded-none mx-auto flex items-center justify-center border border-[#FF6044]/20">
+              <Trash2 size={32} />
+            </div>
+
+            <h3 className="text-2xl font-display font-black uppercase tracking-tight text-white">Confirm Deletion</h3>
+
+            <p className="text-gray-400 font-light lowercase tracking-tight italic text-lg leading-relaxed">
+              "are you sure you want to delete this job application? this action is permanent. ⚠️"
             </p>
-            <div className="flex justify-center gap-4">
+
+            <div className="flex gap-4 pt-4">
               <button
                 type="button"
                 onClick={() => setDeletingJob(null)}
-                className="px-5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10 hover:text-white font-bold transition-all"
+                className="flex-1 py-3.5 border border-white/20 hover:bg-white/10 transition-all font-display uppercase tracking-widest text-sm font-bold text-gray-300"
               >
                 Cancel
               </button>
@@ -331,13 +351,13 @@ export default function JobsPage() {
                   deleteJob(deletingJob);
                   setDeletingJob(null);
                 }}
-                className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-black shadow-lg shadow-red-600/20 transition-all hover:-translate-y-0.5 active:translate-y-0"
+                className="flex-1 py-3.5 bg-[#FF6044] text-[#121313] hover:bg-white hover:text-black transition-all font-display uppercase tracking-widest text-sm font-black"
               >
                 Delete
               </button>
             </div>
           </div>
-        </Modal>
+        </div>
       )}
 
       <AuthActionModal 

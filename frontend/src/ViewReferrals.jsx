@@ -174,90 +174,97 @@ export default function ViewReferrals() {
           </div>
         </div>
 
-        <div className="saas-card overflow-hidden">
-          <div className="hidden grid-cols-8 gap-3 border-b border-white/10 p-4 text-sm font-bold text-[#FF6044] lg:grid">
-            <span className="col-span-2">Contact</span>
-            <span>Company</span>
-            <span className="col-span-2">Email</span>
-            <span>Date</span>
-            <span>Status</span>
-            <span>Actions</span>
-          </div>
+        {Object.keys(groupedReferrals).length === 0 ? (
+          <div className="saas-card p-10 text-center text-gray-400">No referrals found</div>
+        ) : (
+          <div className="space-y-10">
+            {/* The Grid Header row displayed right at the very top, before any cards */}
+            <div className="hidden grid-cols-8 gap-3 px-4 py-2 border border-transparent text-sm font-bold text-[#FF6044] lg:grid">
+              <span className="col-span-2">Contact</span>
+              <span>Company</span>
+              <span className="col-span-2">Email</span>
+              <span>Date</span>
+              <span>Status</span>
+              <span>Actions</span>
+            </div>
 
-          {Object.keys(groupedReferrals).length === 0 ? (
-            <div className="p-10 text-center text-gray-400">No referrals found</div>
-          ) : (
-            Object.entries(groupedReferrals).map(([date, items]) => (
-              <div key={date} className="border-t border-white/5 first:border-t-0">
-                {/* Sleek Date Header */}
-                <div className="bg-[#18191a] px-4 py-2 text-xs font-bold text-gray-400 flex items-center gap-2 border-b border-white/5">
-                  <Calendar size={14} className="text-[#FF6044]" />
-                  <span>{formatDateString(date)}</span>
-                  <span className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] text-gray-500 font-semibold">
-                    {items.length} {items.length === 1 ? "referral" : "referrals"}
+            {Object.entries(groupedReferrals).map(([date, items]) => (
+              <div key={date} className="space-y-4">
+                {/* Premium Centered Date Divider */}
+                <div className="flex items-center justify-center gap-4">
+                  <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-white/10"></div>
+                  <span className="flex items-center gap-2 rounded-full border border-white/10 bg-[#1e2020] px-4 py-1.5 text-xs font-bold text-gray-300 shadow-sm">
+                    <Calendar size={14} className="text-[#FF6044]" />
+                    <span>{formatDateString(date)}</span>
+                    <span className="rounded-full bg-[#FF6044]/10 px-2 py-0.5 text-[10px] text-[#FF6044] font-semibold">
+                      {items.length} {items.length === 1 ? "referral" : "referrals"}
+                    </span>
                   </span>
+                  <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-white/10"></div>
                 </div>
-                
-                {/* Items in this date group */}
-                <div className="divide-y divide-white/5">
-                  {items.map((referral) => (
-                    <HighlightableItem
-                      key={referral.id}
-                      id={`referral-${referral.id}`}
-                      highlighted={String(referral.id) === String(activeHighlight)}
-                      className="grid grid-cols-1 gap-3 p-4 lg:grid-cols-8 lg:items-center"
-                    >
-                      <div className="lg:col-span-2">
-                        <p className="flex items-center gap-2 font-semibold text-white">
-                          <UserRound size={16} /> {referral.person_name}
-                        </p>
-                        {referral.linkedin ? (
-                          <a href={referral.linkedin} target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-1 text-sm text-[#FF6044] hover:underline font-bold">
-                            <Link2 size={14} /> LinkedIn URL
-                          </a>
-                        ) : (
-                          <p className="mt-1 flex items-center gap-1 text-sm text-gray-400">
-                            <Link2 size={14} /> No LinkedIn URL
+
+                {/* Separate saas-card for this date's items */}
+                <div className="saas-card overflow-hidden">
+                  <div className="divide-y divide-white/5">
+                    {items.map((referral) => (
+                      <HighlightableItem
+                        key={referral.id}
+                        id={`referral-${referral.id}`}
+                        highlighted={String(referral.id) === String(activeHighlight)}
+                        className="grid grid-cols-1 gap-3 p-4 lg:grid-cols-8 lg:items-center"
+                      >
+                        <div className="lg:col-span-2">
+                          <p className="flex items-center gap-2 font-semibold text-white">
+                            <UserRound size={16} /> {referral.person_name}
                           </p>
-                        )}
-                      </div>
-                      <Meta icon={<Building2 size={15} />} value={referral.company} />
-                      <div className="lg:col-span-2">
-                        <Meta icon={<Mail size={15} />} value={referral.email} />
-                      </div>
-                      <Meta icon={<Calendar size={15} />} value={referral.date} />
-                      <span>
-                        <span className={getStatusBadgeClass(referral.status)}>{referral.status?.replace("_", " ")}</span>
-                      </span>
-                      <span className="flex gap-2">
-                        <IconButton label="Toggle star" onClick={() => toggleStar(referral)}>
-                          <Star size={18} className={referral.is_starred ? "fill-yellow-400 text-yellow-400" : ""} />
-                        </IconButton>
-                        <IconButton label="Edit referral" onClick={() => {
-                          if (isDemo) setShowAuthModal(true);
-                          else setEditing({ ...referral });
-                        }}>
-                          <Edit3 size={18} />
-                        </IconButton>
-                        <IconButton label="Delete referral" danger onClick={() => {
-                          if (isDemo) setShowAuthModal(true);
-                          else setDeletingReferral(referral);
-                        }}>
-                          <Trash2 size={18} />
-                        </IconButton>
-                      </span>
-                      {referral.notes && (
-                        <div className="rounded-lg bg-[#121313] p-3 text-sm text-gray-400 lg:col-span-8">
-                          <strong>Notes:</strong> {referral.notes}
+                          {referral.linkedin ? (
+                            <a href={referral.linkedin} target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-1 text-sm text-[#FF6044] hover:underline font-bold">
+                              <Link2 size={14} /> LinkedIn URL
+                            </a>
+                          ) : (
+                            <p className="mt-1 flex items-center gap-1 text-sm text-gray-400">
+                              <Link2 size={14} /> No LinkedIn URL
+                            </p>
+                          )}
                         </div>
-                      )}
-                    </HighlightableItem>
-                  ))}
+                        <Meta icon={<Building2 size={15} />} value={referral.company} />
+                        <div className="lg:col-span-2">
+                          <Meta icon={<Mail size={15} />} value={referral.email} />
+                        </div>
+                        <Meta icon={<Calendar size={15} />} value={referral.date} />
+                        <span>
+                          <span className={getStatusBadgeClass(referral.status)}>{referral.status?.replace("_", " ")}</span>
+                        </span>
+                        <span className="flex gap-2">
+                          <IconButton label="Toggle star" onClick={() => toggleStar(referral)}>
+                            <Star size={18} className={referral.is_starred ? "fill-yellow-400 text-yellow-400" : ""} />
+                          </IconButton>
+                          <IconButton label="Edit referral" onClick={() => {
+                            if (isDemo) setShowAuthModal(true);
+                            else setEditing({ ...referral });
+                          }}>
+                            <Edit3 size={18} />
+                          </IconButton>
+                          <IconButton label="Delete referral" danger onClick={() => {
+                            if (isDemo) setShowAuthModal(true);
+                            else setDeletingReferral(referral);
+                          }}>
+                            <Trash2 size={18} />
+                          </IconButton>
+                        </span>
+                        {referral.notes && (
+                          <div className="rounded-lg bg-[#121313] p-3 text-sm text-gray-400 lg:col-span-8">
+                            <strong>Notes:</strong> {referral.notes}
+                          </div>
+                        )}
+                      </HighlightableItem>
+                    ))}
+                  </div>
                 </div>
               </div>
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </main>
 
       {editing && (
@@ -268,19 +275,32 @@ export default function ViewReferrals() {
       )}
 
       {deletingReferral && (
-        <Modal title="Confirm Deletion" onClose={() => setDeletingReferral(null)} maxWidth="max-w-md">
-          <div className="p-4 text-center">
-            <p className="text-gray-200 text-lg mb-6 leading-relaxed">
-              Are you sure you want to delete this referral? <br />
-              <span className="text-red-400/90 font-medium text-sm block mt-2 bg-red-500/10 border border-red-500/20 rounded-lg py-2 px-3">
-                Ee action revert cheyyaan kazhiyilla!
-              </span>
+        <div 
+          className="fixed inset-0 z-[500] flex items-center justify-center p-6 bg-surface/80 backdrop-blur-md animate-fade-in"
+          onClick={() => setDeletingReferral(null)}
+        >
+          <div 
+            className="bg-[#121313] border border-white/10 p-12 max-w-md w-full text-center space-y-6 brutalist-shadow relative overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Decorative skewed background */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-[#FF6044]/5 -skew-x-12 translate-x-16 -translate-y-16 pointer-events-none"></div>
+            
+            <div className="w-16 h-16 bg-[#FF6044]/10 text-[#FF6044] rounded-none mx-auto flex items-center justify-center border border-[#FF6044]/20">
+              <Trash2 size={32} />
+            </div>
+
+            <h3 className="text-2xl font-display font-black uppercase tracking-tight text-white">Confirm Deletion</h3>
+
+            <p className="text-gray-400 font-light lowercase tracking-tight italic text-lg leading-relaxed">
+              "are you sure you want to delete this referral? this action is permanent. ⚠️"
             </p>
-            <div className="flex justify-center gap-4">
+
+            <div className="flex gap-4 pt-4">
               <button
                 type="button"
                 onClick={() => setDeletingReferral(null)}
-                className="px-5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10 hover:text-white font-bold transition-all"
+                className="flex-1 py-3.5 border border-white/20 hover:bg-white/10 transition-all font-display uppercase tracking-widest text-sm font-bold text-gray-300"
               >
                 Cancel
               </button>
@@ -290,13 +310,13 @@ export default function ViewReferrals() {
                   deleteReferral(deletingReferral);
                   setDeletingReferral(null);
                 }}
-                className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-black shadow-lg shadow-red-600/20 transition-all hover:-translate-y-0.5 active:translate-y-0"
+                className="flex-1 py-3.5 bg-[#FF6044] text-[#121313] hover:bg-white hover:text-black transition-all font-display uppercase tracking-widest text-sm font-black"
               >
                 Delete
               </button>
             </div>
           </div>
-        </Modal>
+        </div>
       )}
 
       <AuthActionModal 
