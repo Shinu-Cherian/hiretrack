@@ -8,6 +8,7 @@ const emptyJob = {
   platform: "",
   dateApplied: "",
   status: "applied",
+  location: "",
   salaryRange: "",
   jd: "",
   notes: "",
@@ -67,9 +68,15 @@ export default function JobForm({ initialValues = emptyJob, submitLabel = "Save 
             </Field>
           </div>
 
-          <Field label="Salary Range">
-            <TextInput placeholder="$100k - $150k" value={form.salaryRange} onChange={(value) => update("salaryRange", value)} />
-          </Field>
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+            <Field label="Location">
+              <TextInput placeholder="Bangalore, Remote, Dubai..." value={form.location} onChange={(value) => update("location", value)} />
+            </Field>
+
+            <Field label="Salary Range">
+              <TextInput placeholder="$100k - $150k" value={form.salaryRange} onChange={(value) => update("salaryRange", value)} />
+            </Field>
+          </div>
 
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             <Field label="Resume Used">

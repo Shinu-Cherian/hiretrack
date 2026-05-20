@@ -557,6 +557,7 @@ def add_job_api(request):
             status=data.get("status"),
             job_id=data.get("jobId"),
             platform=data.get("platform"),
+            location=data.get("location"),
             salary_range=data.get("salaryRange"),
             job_description=data.get("jd"),
             notes=data.get("notes"),
@@ -1351,6 +1352,7 @@ def get_jobs_api(request):
     "company": job.company,
     "jobId": job.job_id,
     "platform": job.platform,
+    "location": job.location,
     "salaryRange": job.salary_range,
     "dateApplied": job.date_applied,
     "status": job.status,
@@ -1432,6 +1434,7 @@ def update_job_api(request, id):
     job.company = data.get("company", job.company)
     job.job_id = data.get("jobId", job.job_id)
     job.platform = data.get("platform", job.platform)
+    job.location = data.get("location", job.location)
     job.salary_range = data.get("salaryRange", job.salary_range)
     job.date_applied = data.get("dateApplied") or job.date_applied
     job.status = data.get("status", job.status)

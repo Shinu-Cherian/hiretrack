@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Briefcase, Calendar, DollarSign, Edit3, FileText, Monitor, Search, Star, Trash2 } from "lucide-react";
+import { Briefcase, Calendar, DollarSign, Edit3, FileText, MapPin, Monitor, Search, Star, Trash2 } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import Header from "./Header";
 import { apiUrl } from "./api";
@@ -188,10 +188,11 @@ export default function JobsPage() {
         ) : (
           <div className="space-y-10">
             {/* The Grid Header row displayed right at the very top, before any cards */}
-            <div className="hidden grid-cols-8 gap-3 px-4 py-2 border border-transparent text-sm font-bold text-[#FF6044] lg:grid">
+            <div className="hidden grid-cols-9 gap-3 px-4 py-2 border border-transparent text-sm font-bold text-[#FF6044] lg:grid">
               <span className="col-span-2">Role</span>
               <span>Company</span>
               <span>Platform</span>
+              <span>Location</span>
               <span>Salary</span>
               <span>Date</span>
               <span>Status</span>
@@ -221,7 +222,7 @@ export default function JobsPage() {
                         key={job.id}
                         id={`job-${job.id}`}
                         highlighted={String(job.id) === String(activeHighlight)}
-                        className={`grid grid-cols-1 gap-3 p-4 lg:grid-cols-8 lg:items-center ${
+                        className={`grid grid-cols-1 gap-3 p-4 lg:grid-cols-9 lg:items-center ${
                           job.status === "selected" ? "border-emerald-500/20 bg-emerald-500/5 shadow-[0_0_20px_rgba(16,185,129,0.05)]" : ""
                         }`}
                       >
@@ -233,6 +234,7 @@ export default function JobsPage() {
                         </div>
                         <Meta icon={<Briefcase size={15} />} value={job.company} />
                         <Meta icon={<Monitor size={15} />} value={job.platform} />
+                        <Meta icon={<MapPin size={15} />} value={job.location} />
                         <Meta icon={<DollarSign size={15} />} value={job.salaryRange} />
                         <Meta icon={<Calendar size={15} />} value={job.dateApplied} />
                         <span>
