@@ -143,16 +143,18 @@ export default function CareerVault() {
 
                         {/* Resume */}
                         <DocumentActions
-                          fileUrl={item.resumeFile}
+                          previewUrl={item.resumePreview}
                           downloadUrl={item.resumeDownload}
                           label="Resume"
+                          hasFile={!!item.resumeFile}
                         />
 
                         {/* Cover Letter */}
                         <DocumentActions
-                          fileUrl={item.coverLetterFile}
+                          previewUrl={item.coverLetterPreview}
                           downloadUrl={item.coverLetterDownload}
                           label="Cover Letter"
+                          hasFile={!!item.coverLetterFile}
                         />
                       </div>
                     ))}
@@ -167,8 +169,8 @@ export default function CareerVault() {
   );
 }
 
-function DocumentActions({ fileUrl, downloadUrl, label }) {
-  if (!fileUrl) {
+function DocumentActions({ previewUrl, downloadUrl, label, hasFile }) {
+  if (!hasFile) {
     return (
       <span className="inline-flex items-center gap-1.5 text-sm text-gray-600">
         <FileText size={14} />
@@ -177,10 +179,9 @@ function DocumentActions({ fileUrl, downloadUrl, label }) {
     );
   }
 
-  // Direct media URL for inline preview (opens in browser tab)
-  const previewHref = `${API_BASE}${fileUrl}`;
-  // Download endpoint for forced download
-  const downloadHref = downloadUrl ? `${API_BASE}${downloadUrl}` : previewHref;
+  // Both URLs go to /api/job/document/... — React Router won't intercept them
+  const previewHref = apiUrl(previewUrl);
+  const downloadHref = apiUrl(downloadUrl);
 
   return (
     <div className="flex flex-wrap gap-2">

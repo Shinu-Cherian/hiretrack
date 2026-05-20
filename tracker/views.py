@@ -1921,7 +1921,9 @@ def career_vault_api(request):
             "dateApplied": str(job.date_applied) if job.date_applied else None,
             "resumeFile": job.resume_file.url if has_resume else None,
             "coverLetterFile": job.cover_letter_file.url if has_cover else None,
+            "resumePreview": f"/api/job/document/{job.id}/resume/?inline=true" if has_resume else None,
             "resumeDownload": f"/api/job/document/{job.id}/resume/" if has_resume else None,
+            "coverLetterPreview": f"/api/job/document/{job.id}/cover-letter/?inline=true" if has_cover else None,
             "coverLetterDownload": f"/api/job/document/{job.id}/cover-letter/" if has_cover else None,
         })
 
@@ -1937,9 +1939,19 @@ def job_document_download_api(request, id, kind):
 
     job = get_object_or_404(Job, id=id, user=user)
     document = job.resume_file if kind == "resume" else job.cover_letter_file
-    if not document:
+    if not document or not document.name:
         raise Http404("Document not found")
-    return FileResponse(document.open("rb"), as_attachment=True, filename=document.name.split("/")[-1])
+
+    inline = request.GET.get("inline", "false").lower() == "true"
+    filename = document.name.split("/")[-1]
+
+    response = FileResponse(document.open("rb"), content_type="application/octet-stream")
+    if inline:
+        # Serve inline so the browser opens it in a new tab
+        response["Content-Disposition"] = f'inline; filename="{filename}"'
+    else:
+        response["Content-Disposition"] = f'attachment; filename="{filename}"'
+    return response
 
 
 def streak_api(request):
