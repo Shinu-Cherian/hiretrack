@@ -1903,24 +1903,30 @@ def career_vault_api(request):
     if auth_error:
         return auth_error
 
-    jobs = Job.objects.filter(user=user).filter(
-        Q(resume_file__isnull=False) | Q(cover_letter_file__isnull=False)
-    ).order_by("-date_applied", "-id")
-    return JsonResponse({
-        "items": [
-            {
-                "id": job.id,
-                "jobTitle": job.role,
-                "company": job.company,
-                "dateApplied": job.date_applied,
-                "resumeFile": job.resume_file.url if job.resume_file else None,
-                "coverLetterFile": job.cover_letter_file.url if job.cover_letter_file else None,
-                "resumeDownload": f"/api/job/document/{job.id}/resume/" if job.resume_file else None,
-                "coverLetterDownload": f"/api/job/document/{job.id}/cover-letter/" if job.cover_letter_file else None,
-            }
-            for job in jobs
-        ]
-    })
+    jobs = Job.objects.filter(user=user).order_by("-date_applied", "-id")
+
+    items = []
+    for job in jobs:
+        has_resume = bool(job.resume_file and job.resume_file.name)
+        has_cover = bool(job.cover_letter_file and job.cover_letter_file.name)
+
+        # Only include jobs that have at least one document uploaded
+        if not has_resume and not has_cover:
+            continue
+
+        items.append({
+            "id": job.id,
+            "jobTitle": job.role,
+            "company": job.company,
+            "dateApplied": str(job.date_applied) if job.date_applied else None,
+            "resumeFile": job.resume_file.url if has_resume else None,
+            "coverLetterFile": job.cover_letter_file.url if has_cover else None,
+            "resumeDownload": f"/api/job/document/{job.id}/resume/" if has_resume else None,
+            "coverLetterDownload": f"/api/job/document/{job.id}/cover-letter/" if has_cover else None,
+        })
+
+    return JsonResponse({"items": items})
+
 
 
 def job_document_download_api(request, id, kind):
