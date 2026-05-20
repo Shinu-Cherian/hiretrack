@@ -20,6 +20,22 @@ export default function JobsPage() {
   const [searchParams] = useSearchParams();
   const [isDemo, setIsDemo] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [deletingJob, setDeletingJob] = useState(null);
+
+  const getStatusBadgeClass = (status) => {
+    const baseClass = "rounded-full bg-[#FF6044]/10 border border-[#FF6044]/20 px-3 py-1 text-sm font-bold capitalize transition-colors duration-300";
+    switch (status?.toLowerCase()) {
+      case "applied":
+        return `${baseClass} text-yellow-400`;
+      case "pending":
+        return `${baseClass} text-blue-400`;
+      case "selected":
+        return `${baseClass} text-emerald-400`;
+      case "rejected":
+      default:
+        return `${baseClass} text-[#FF6044]`;
+    }
+  };
 
   useEffect(() => {
     fetch(apiUrl("/api/jobs/"), { credentials: "include" })
@@ -213,8 +229,8 @@ export default function JobsPage() {
                       <Meta icon={<Monitor size={15} />} value={job.platform} />
                       <Meta icon={<DollarSign size={15} />} value={job.salaryRange} />
                       <Meta icon={<Calendar size={15} />} value={job.dateApplied} />
-                      <span className="capitalize">
-                        <span className="rounded-full bg-[#FF6044]/10 px-3 py-1 text-sm font-bold text-[#FF6044]">{job.status}</span>
+                      <span>
+                        <span className={getStatusBadgeClass(job.status)}>{job.status}</span>
                       </span>
                       <span className="flex gap-2">
                         <IconButton label="Toggle star" onClick={() => toggleStar(job)}>
@@ -226,7 +242,10 @@ export default function JobsPage() {
                         }}>
                           <Edit3 size={18} />
                         </IconButton>
-                        <IconButton label="Delete job" danger onClick={() => deleteJob(job)}>
+                        <IconButton label="Delete job" danger onClick={() => {
+                          if (isDemo) setShowAuthModal(true);
+                          else setDeletingJob(job);
+                        }}>
                           <Trash2 size={18} />
                         </IconButton>
                       </span>
@@ -285,6 +304,38 @@ export default function JobsPage() {
         <Modal title={`${viewingNotes.jobTitle} - Notes`} onClose={() => setViewingNotes(null)} maxWidth="max-w-4xl">
           <div className="max-h-[60vh] overflow-y-auto rounded-lg border border-white/10 bg-[#121313] p-5 text-sm leading-7 text-gray-200 whitespace-pre-wrap">
             {viewingNotes.notes || "No notes added."}
+          </div>
+        </Modal>
+      )}
+
+      {deletingJob && (
+        <Modal title="Confirm Deletion" onClose={() => setDeletingJob(null)} maxWidth="max-w-md">
+          <div className="p-4 text-center">
+            <p className="text-gray-200 text-lg mb-6 leading-relaxed">
+              Are you sure you want to delete this job? <br />
+              <span className="text-red-400/90 font-medium text-sm block mt-2 bg-red-500/10 border border-red-500/20 rounded-lg py-2 px-3">
+                Ee action revert cheyyaan kazhiyilla!
+              </span>
+            </p>
+            <div className="flex justify-center gap-4">
+              <button
+                type="button"
+                onClick={() => setDeletingJob(null)}
+                className="px-5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10 hover:text-white font-bold transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  deleteJob(deletingJob);
+                  setDeletingJob(null);
+                }}
+                className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-black shadow-lg shadow-red-600/20 transition-all hover:-translate-y-0.5 active:translate-y-0"
+              >
+                Delete
+              </button>
+            </div>
           </div>
         </Modal>
       )}

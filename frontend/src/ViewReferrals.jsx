@@ -18,6 +18,20 @@ export default function ViewReferrals() {
   const [searchParams] = useSearchParams();
   const [isDemo, setIsDemo] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [deletingReferral, setDeletingReferral] = useState(null);
+
+  const getStatusBadgeClass = (status) => {
+    const baseClass = "rounded-full bg-[#FF6044]/10 border border-[#FF6044]/20 px-3 py-1 text-sm font-bold capitalize transition-colors duration-300";
+    switch (status?.toLowerCase()) {
+      case "pending":
+        return `${baseClass} text-blue-400`;
+      case "replied":
+        return `${baseClass} text-emerald-400`;
+      case "no_response":
+      default:
+        return `${baseClass} text-[#FF6044]`;
+    }
+  };
 
   useEffect(() => {
     fetch(apiUrl("/api/referrals/"), { credentials: "include" })
@@ -212,8 +226,8 @@ export default function ViewReferrals() {
                         <Meta icon={<Mail size={15} />} value={referral.email} />
                       </div>
                       <Meta icon={<Calendar size={15} />} value={referral.date} />
-                      <span className="capitalize">
-                        <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-sm font-bold text-emerald-400 border border-emerald-500/20">{referral.status}</span>
+                      <span>
+                        <span className={getStatusBadgeClass(referral.status)}>{referral.status?.replace("_", " ")}</span>
                       </span>
                       <span className="flex gap-2">
                         <IconButton label="Toggle star" onClick={() => toggleStar(referral)}>
@@ -225,7 +239,10 @@ export default function ViewReferrals() {
                         }}>
                           <Edit3 size={18} />
                         </IconButton>
-                        <IconButton label="Delete referral" danger onClick={() => deleteReferral(referral)}>
+                        <IconButton label="Delete referral" danger onClick={() => {
+                          if (isDemo) setShowAuthModal(true);
+                          else setDeletingReferral(referral);
+                        }}>
                           <Trash2 size={18} />
                         </IconButton>
                       </span>
@@ -247,6 +264,38 @@ export default function ViewReferrals() {
         <Modal title="Edit Referral" onClose={() => setEditing(null)} maxWidth="max-w-5xl">
           <BackButton className="mb-6" />
           <ReferralForm key={editing.id} initialValues={editing} submitLabel="Save Changes" onSubmit={saveEdit} onCancel={() => setEditing(null)} />
+        </Modal>
+      )}
+
+      {deletingReferral && (
+        <Modal title="Confirm Deletion" onClose={() => setDeletingReferral(null)} maxWidth="max-w-md">
+          <div className="p-4 text-center">
+            <p className="text-gray-200 text-lg mb-6 leading-relaxed">
+              Are you sure you want to delete this referral? <br />
+              <span className="text-red-400/90 font-medium text-sm block mt-2 bg-red-500/10 border border-red-500/20 rounded-lg py-2 px-3">
+                Ee action revert cheyyaan kazhiyilla!
+              </span>
+            </p>
+            <div className="flex justify-center gap-4">
+              <button
+                type="button"
+                onClick={() => setDeletingReferral(null)}
+                className="px-5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10 hover:text-white font-bold transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  deleteReferral(deletingReferral);
+                  setDeletingReferral(null);
+                }}
+                className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-black shadow-lg shadow-red-600/20 transition-all hover:-translate-y-0.5 active:translate-y-0"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
         </Modal>
       )}
 
