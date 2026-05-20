@@ -56,6 +56,32 @@ export default function ViewReferrals() {
     [referrals, search]
   );
 
+  const formatDateString = (dateStr) => {
+    if (!dateStr || dateStr === "No Date") return "No Date";
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      return d.toLocaleDateString("en-US", { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+    } catch {
+      return dateStr;
+    }
+  };
+
+  const groupedReferrals = useMemo(() => {
+    const sorted = [...filtered].sort((a, b) => {
+      const dateA = a.date || "";
+      const dateB = b.date || "";
+      return dateB.localeCompare(dateA);
+    });
+    const groups = {};
+    sorted.forEach((ref) => {
+      const date = ref.date || "No Date";
+      if (!groups[date]) groups[date] = [];
+      groups[date].push(ref);
+    });
+    return groups;
+  }, [filtered]);
+
   const saveEdit = async (form) => {
     const res = await fetch(apiUrl(`/api/referral/update/${editing.id}/`), {
       method: "POST",
@@ -144,58 +170,74 @@ export default function ViewReferrals() {
             <span>Actions</span>
           </div>
 
-          {filtered.length === 0 ? (
+          {Object.keys(groupedReferrals).length === 0 ? (
             <div className="p-10 text-center text-gray-400">No referrals found</div>
           ) : (
-            filtered.map((referral) => (
-              <HighlightableItem
-                key={referral.id}
-                id={`referral-${referral.id}`}
-                highlighted={String(referral.id) === String(activeHighlight)}
-                className="grid grid-cols-1 gap-3 border-t border-white/5 p-4 first:border-t-0 lg:grid-cols-8 lg:items-center"
-              >
-                <div className="lg:col-span-2">
-                  <p className="flex items-center gap-2 font-semibold text-white">
-                    <UserRound size={16} /> {referral.person_name}
-                  </p>
-                  {referral.linkedin ? (
-                    <a href={referral.linkedin} target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-1 text-sm text-[#FF6044] hover:underline font-bold">
-                      <Link2 size={14} /> LinkedIn URL
-                    </a>
-                  ) : (
-                    <p className="mt-1 flex items-center gap-1 text-sm text-gray-400">
-                      <Link2 size={14} /> No LinkedIn URL
-                    </p>
-                  )}
+            Object.entries(groupedReferrals).map(([date, items]) => (
+              <div key={date} className="border-t border-white/5 first:border-t-0">
+                {/* Sleek Date Header */}
+                <div className="bg-[#18191a] px-4 py-2 text-xs font-bold text-gray-400 flex items-center gap-2 border-b border-white/5">
+                  <Calendar size={14} className="text-[#FF6044]" />
+                  <span>{formatDateString(date)}</span>
+                  <span className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] text-gray-500 font-semibold">
+                    {items.length} {items.length === 1 ? "referral" : "referrals"}
+                  </span>
                 </div>
-                <Meta icon={<Building2 size={15} />} value={referral.company} />
-                <div className="lg:col-span-2">
-                  <Meta icon={<Mail size={15} />} value={referral.email} />
+                
+                {/* Items in this date group */}
+                <div className="divide-y divide-white/5">
+                  {items.map((referral) => (
+                    <HighlightableItem
+                      key={referral.id}
+                      id={`referral-${referral.id}`}
+                      highlighted={String(referral.id) === String(activeHighlight)}
+                      className="grid grid-cols-1 gap-3 p-4 lg:grid-cols-8 lg:items-center"
+                    >
+                      <div className="lg:col-span-2">
+                        <p className="flex items-center gap-2 font-semibold text-white">
+                          <UserRound size={16} /> {referral.person_name}
+                        </p>
+                        {referral.linkedin ? (
+                          <a href={referral.linkedin} target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-1 text-sm text-[#FF6044] hover:underline font-bold">
+                            <Link2 size={14} /> LinkedIn URL
+                          </a>
+                        ) : (
+                          <p className="mt-1 flex items-center gap-1 text-sm text-gray-400">
+                            <Link2 size={14} /> No LinkedIn URL
+                          </p>
+                        )}
+                      </div>
+                      <Meta icon={<Building2 size={15} />} value={referral.company} />
+                      <div className="lg:col-span-2">
+                        <Meta icon={<Mail size={15} />} value={referral.email} />
+                      </div>
+                      <Meta icon={<Calendar size={15} />} value={referral.date} />
+                      <span className="capitalize">
+                        <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-sm font-bold text-emerald-400 border border-emerald-500/20">{referral.status}</span>
+                      </span>
+                      <span className="flex gap-2">
+                        <IconButton label="Toggle star" onClick={() => toggleStar(referral)}>
+                          <Star size={18} className={referral.is_starred ? "fill-yellow-400 text-yellow-400" : ""} />
+                        </IconButton>
+                        <IconButton label="Edit referral" onClick={() => {
+                          if (isDemo) setShowAuthModal(true);
+                          else setEditing({ ...referral });
+                        }}>
+                          <Edit3 size={18} />
+                        </IconButton>
+                        <IconButton label="Delete referral" danger onClick={() => deleteReferral(referral)}>
+                          <Trash2 size={18} />
+                        </IconButton>
+                      </span>
+                      {referral.notes && (
+                        <div className="rounded-lg bg-[#121313] p-3 text-sm text-gray-400 lg:col-span-8">
+                          <strong>Notes:</strong> {referral.notes}
+                        </div>
+                      )}
+                    </HighlightableItem>
+                  ))}
                 </div>
-                <Meta icon={<Calendar size={15} />} value={referral.date} />
-                <span className="capitalize">
-                  <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-sm font-bold text-emerald-400 border border-emerald-500/20">{referral.status}</span>
-                </span>
-                <span className="flex gap-2">
-                  <IconButton label="Toggle star" onClick={() => toggleStar(referral)}>
-                    <Star size={18} className={referral.is_starred ? "fill-yellow-400 text-yellow-400" : ""} />
-                  </IconButton>
-                  <IconButton label="Edit referral" onClick={() => {
-                    if (isDemo) setShowAuthModal(true);
-                    else setEditing({ ...referral });
-                  }}>
-                    <Edit3 size={18} />
-                  </IconButton>
-                  <IconButton label="Delete referral" danger onClick={() => deleteReferral(referral)}>
-                    <Trash2 size={18} />
-                  </IconButton>
-                </span>
-                {referral.notes && (
-                  <div className="rounded-lg bg-[#121313] p-3 text-sm text-gray-400 lg:col-span-8">
-                    <strong>Notes:</strong> {referral.notes}
-                  </div>
-                )}
-              </HighlightableItem>
+              </div>
             ))
           )}
         </div>
@@ -264,7 +306,7 @@ function IconButton({ children, onClick, danger = false, label }) {
       type="button"
       aria-label={label}
       onClick={onClick}
-      className={`rounded-lg p-2 transition hover:-translate-y-0.5 ${danger ? "text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10" : "text-gray-400 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-800 hover:text-white dark:hover:text-white"}`}
+      className={`rounded-lg p-2 transition hover:-translate-y-0.5 ${danger ? "text-red-500 hover:bg-red-500/10 hover:text-red-400" : "text-gray-400 hover:bg-white/10 hover:text-white"}`}
     >
       {children}
     </button>

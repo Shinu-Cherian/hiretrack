@@ -15,6 +15,7 @@ export default function JobsPage() {
   const [search, setSearch] = useState("");
   const [editing, setEditing] = useState(null);
   const [viewingJd, setViewingJd] = useState(null);
+  const [viewingNotes, setViewingNotes] = useState(null);
   const [activeHighlight, setActiveHighlight] = useState(null);
   const [searchParams] = useSearchParams();
   const [isDemo, setIsDemo] = useState(false);
@@ -56,6 +57,32 @@ export default function JobsPage() {
     () => jobs.filter((job) => `${job.jobTitle} ${job.company} ${job.platform || ""}`.toLowerCase().includes(search.toLowerCase())),
     [jobs, search]
   );
+
+  const formatDateString = (dateStr) => {
+    if (!dateStr || dateStr === "No Date") return "No Date";
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      return d.toLocaleDateString("en-US", { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+    } catch {
+      return dateStr;
+    }
+  };
+
+  const groupedJobs = useMemo(() => {
+    const sorted = [...filtered].sort((a, b) => {
+      const dateA = a.dateApplied || "";
+      const dateB = b.dateApplied || "";
+      return dateB.localeCompare(dateA);
+    });
+    const groups = {};
+    sorted.forEach((job) => {
+      const date = job.dateApplied || "No Date";
+      if (!groups[date]) groups[date] = [];
+      groups[date].push(job);
+    });
+    return groups;
+  }, [filtered]);
 
   const saveEdit = async (form) => {
     const body = new FormData();
@@ -151,60 +178,89 @@ export default function JobsPage() {
             <span>Actions</span>
           </div>
 
-          {filtered.length === 0 ? (
+          {Object.keys(groupedJobs).length === 0 ? (
             <div className="p-10 text-center text-gray-400">No jobs found</div>
           ) : (
-            filtered.map((job) => (
-              <HighlightableItem
-                key={job.id}
-                id={`job-${job.id}`}
-                highlighted={String(job.id) === String(activeHighlight)}
-                className={`grid grid-cols-1 gap-3 border-t border-white/5 p-4 first:border-t-0 lg:grid-cols-8 lg:items-center ${
-                  job.status === "selected" ? "border-emerald-500/20 bg-emerald-500/5 shadow-[0_0_20px_rgba(16,185,129,0.05)]" : ""
-                }`}
-              >
-                <div className="lg:col-span-2">
-                  <p className="font-semibold text-white">{job.jobTitle}</p>
-                  <p className="mt-1 flex items-center gap-1 text-sm text-gray-400">
-                    <FileText size={14} /> {job.jobId || "No job ID"}
-                  </p>
+            Object.entries(groupedJobs).map(([date, items]) => (
+              <div key={date} className="border-t border-white/5 first:border-t-0">
+                {/* Sleek Date Header */}
+                <div className="bg-[#18191a] px-4 py-2 text-xs font-bold text-gray-400 flex items-center gap-2 border-b border-white/5">
+                  <Calendar size={14} className="text-[#FF6044]" />
+                  <span>{formatDateString(date)}</span>
+                  <span className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] text-gray-500 font-semibold">
+                    {items.length} {items.length === 1 ? "job" : "jobs"}
+                  </span>
                 </div>
-                <Meta icon={<Briefcase size={15} />} value={job.company} />
-                <Meta icon={<Monitor size={15} />} value={job.platform} />
-                <Meta icon={<DollarSign size={15} />} value={job.salaryRange} />
-                <Meta icon={<Calendar size={15} />} value={job.dateApplied} />
-                <span className="capitalize">
-                  <span className="rounded-full bg-[#FF6044]/10 px-3 py-1 text-sm font-bold text-[#FF6044]">{job.status}</span>
-                </span>
-                <span className="flex gap-2">
-                  <IconButton label="Toggle star" onClick={() => toggleStar(job)}>
-                    <Star size={18} className={job.is_starred ? "fill-yellow-400 text-yellow-400" : ""} />
-                  </IconButton>
-                  <IconButton label="Edit job" onClick={() => {
-                    if (isDemo) setShowAuthModal(true);
-                    else setEditing({ ...job });
-                  }}>
-                    <Edit3 size={18} />
-                  </IconButton>
-                  <IconButton label="Delete job" danger onClick={() => deleteJob(job)}>
-                    <Trash2 size={18} />
-                  </IconButton>
-                </span>
-                {(job.jd || job.notes) && (
-                  <div className="flex flex-col gap-2 rounded-lg bg-[#121313] p-3 text-sm text-gray-400 lg:col-span-8 md:flex-row md:items-center md:justify-between">
-                    <p><strong>Notes:</strong> {job.notes || "-"}</p>
-                    {job.jd && (
-                      <button
-                        type="button"
-                        onClick={() => setViewingJd(job)}
-                        className="inline-flex w-fit items-center gap-1 rounded-lg bg-transparent px-3 py-2 font-semibold text-blue-700 shadow-sm hover:bg-blue-50"
-                      >
-                        <strong>JD:</strong> Show JD
-                      </button>
-                    )}
-                  </div>
-                )}
-              </HighlightableItem>
+                
+                {/* Items in this date group */}
+                <div className="divide-y divide-white/5">
+                  {items.map((job) => (
+                    <HighlightableItem
+                      key={job.id}
+                      id={`job-${job.id}`}
+                      highlighted={String(job.id) === String(activeHighlight)}
+                      className={`grid grid-cols-1 gap-3 p-4 lg:grid-cols-8 lg:items-center ${
+                        job.status === "selected" ? "border-emerald-500/20 bg-emerald-500/5 shadow-[0_0_20px_rgba(16,185,129,0.05)]" : ""
+                      }`}
+                    >
+                      <div className="lg:col-span-2">
+                        <p className="font-semibold text-white">{job.jobTitle}</p>
+                        <p className="mt-1 flex items-center gap-1 text-sm text-gray-400">
+                          <FileText size={14} /> {job.jobId || "No job ID"}
+                        </p>
+                      </div>
+                      <Meta icon={<Briefcase size={15} />} value={job.company} />
+                      <Meta icon={<Monitor size={15} />} value={job.platform} />
+                      <Meta icon={<DollarSign size={15} />} value={job.salaryRange} />
+                      <Meta icon={<Calendar size={15} />} value={job.dateApplied} />
+                      <span className="capitalize">
+                        <span className="rounded-full bg-[#FF6044]/10 px-3 py-1 text-sm font-bold text-[#FF6044]">{job.status}</span>
+                      </span>
+                      <span className="flex gap-2">
+                        <IconButton label="Toggle star" onClick={() => toggleStar(job)}>
+                          <Star size={18} className={job.is_starred ? "fill-yellow-400 text-yellow-400" : ""} />
+                        </IconButton>
+                        <IconButton label="Edit job" onClick={() => {
+                          if (isDemo) setShowAuthModal(true);
+                          else setEditing({ ...job });
+                        }}>
+                          <Edit3 size={18} />
+                        </IconButton>
+                        <IconButton label="Delete job" danger onClick={() => deleteJob(job)}>
+                          <Trash2 size={18} />
+                        </IconButton>
+                      </span>
+                      {(job.jd || job.notes) && (
+                        <div className="flex flex-wrap gap-2.5 rounded-lg bg-[#121313] border border-white/5 p-3 text-sm text-gray-400 lg:col-span-8">
+                          <span className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 uppercase tracking-wider mr-2">
+                            Attachments:
+                          </span>
+                          {job.notes && (
+                            <button
+                              type="button"
+                              onClick={() => setViewingNotes(job)}
+                              className="inline-flex items-center gap-1.5 rounded-lg border border-white/5 bg-white/5 px-3 py-1.5 text-xs font-medium text-gray-300 transition hover:bg-white/10 hover:text-white"
+                            >
+                              <FileText size={14} className="text-[#FF6044]" />
+                              Show Notes
+                            </button>
+                          )}
+                          {job.jd && (
+                            <button
+                              type="button"
+                              onClick={() => setViewingJd(job)}
+                              className="inline-flex items-center gap-1.5 rounded-lg border border-white/5 bg-white/5 px-3 py-1.5 text-xs font-medium text-gray-300 transition hover:bg-white/10 hover:text-white"
+                            >
+                              <FileText size={14} className="text-[#FF6044]" />
+                              Show JD
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </HighlightableItem>
+                  ))}
+                </div>
+              </div>
             ))
           )}
         </div>
@@ -218,9 +274,17 @@ export default function JobsPage() {
       )}
 
       {viewingJd && (
-        <Modal title={`${viewingJd.jobTitle} JD`} onClose={() => setViewingJd(null)} maxWidth="max-w-4xl">
-          <div className="max-h-[60vh] overflow-y-auto rounded-lg border border-white/10 bg-[#121313] p-4 text-sm leading-6 text-gray-700 whitespace-pre-wrap">
+        <Modal title={`${viewingJd.jobTitle} - Job Description`} onClose={() => setViewingJd(null)} maxWidth="max-w-4xl">
+          <div className="max-h-[60vh] overflow-y-auto rounded-lg border border-white/10 bg-[#121313] p-5 text-sm leading-7 text-gray-200 whitespace-pre-wrap">
             {viewingJd.jd || "No job description added."}
+          </div>
+        </Modal>
+      )}
+
+      {viewingNotes && (
+        <Modal title={`${viewingNotes.jobTitle} - Notes`} onClose={() => setViewingNotes(null)} maxWidth="max-w-4xl">
+          <div className="max-h-[60vh] overflow-y-auto rounded-lg border border-white/10 bg-[#121313] p-5 text-sm leading-7 text-gray-200 whitespace-pre-wrap">
+            {viewingNotes.notes || "No notes added."}
           </div>
         </Modal>
       )}
@@ -286,7 +350,7 @@ function IconButton({ children, onClick, danger = false, label }) {
       type="button"
       aria-label={label}
       onClick={onClick}
-      className={`rounded-lg p-2 transition hover:-translate-y-0.5 ${danger ? "text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10" : "text-gray-400 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-800 hover:text-white dark:hover:text-white"}`}
+      className={`rounded-lg p-2 transition hover:-translate-y-0.5 ${danger ? "text-red-500 hover:bg-red-500/10 hover:text-red-400" : "text-gray-400 hover:bg-white/10 hover:text-white"}`}
     >
       {children}
     </button>
