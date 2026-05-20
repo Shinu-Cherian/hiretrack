@@ -111,3 +111,13 @@ class Experience(models.Model):
 
     def __str__(self):
         return self.company
+
+
+class DatabaseFile(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    content = models.BinaryField()
+    size = models.IntegerField()
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name

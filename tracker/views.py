@@ -1930,8 +1930,33 @@ def career_vault_api(request):
     return JsonResponse({"items": items})
 
 
+def serve_db_media(request, path):
+    import mimetypes
+    from django.conf import settings
+    from tracker.models import DatabaseFile
+    try:
+        normalized_name = path.replace("\\", "/")
+        db_file = DatabaseFile.objects.get(name=normalized_name)
+        
+        content_type, _ = mimetypes.guess_type(normalized_name)
+        if not content_type:
+            content_type = 'application/pdf' if normalized_name.lower().endswith('.pdf') else 'application/octet-stream'
+            
+        response = HttpResponse(db_file.content, content_type=content_type)
+        response['Content-Length'] = len(db_file.content)
+        return response
+    except DatabaseFile.DoesNotExist:
+        # Fallback to local files if any exist (e.g. for developer convenience)
+        local_path = os.path.join(settings.MEDIA_ROOT, path)
+        if os.path.exists(local_path):
+            with open(local_path, 'rb') as f:
+                content_type, _ = mimetypes.guess_type(local_path)
+                return HttpResponse(f.read(), content_type=content_type or 'application/octet-stream')
+        raise Http404("File not found")
+
 
 def job_document_download_api(request, id, kind):
+    import mimetypes
     user = api_user(request)
     auth_error = login_required_json(user)
     if auth_error:
@@ -1945,7 +1970,12 @@ def job_document_download_api(request, id, kind):
     inline = request.GET.get("inline", "false").lower() == "true"
     filename = document.name.split("/")[-1]
 
-    response = FileResponse(document.open("rb"), content_type="application/octet-stream")
+    # Guess correct MIME type to allow direct inline preview in browser
+    content_type, _ = mimetypes.guess_type(document.name)
+    if not content_type:
+        content_type = "application/pdf" if filename.lower().endswith(".pdf") else "application/octet-stream"
+
+    response = FileResponse(document.open("rb"), content_type=content_type)
     if inline:
         # Serve inline so the browser opens it in a new tab
         response["Content-Disposition"] = f'inline; filename="{filename}"'

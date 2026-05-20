@@ -16,9 +16,8 @@ urlpatterns = [
     path('get-csrf/', views.get_csrf),
     path('login/', views.login_api),
 
-    # Serve media files in ALL environments (including production on Render)
-    # Must be BEFORE the React SPA catch-all or /media/ will be swallowed by React Router
-    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+    # Serve media files from database or physical disk fallback
+    re_path(r'^media/(?P<path>.*)$', views.serve_db_media),
 
     # React SPA catch-all — must be LAST
     re_path(r'^(?!media/).*$', TemplateView.as_view(template_name='index.html')),
