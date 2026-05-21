@@ -9,7 +9,7 @@ import AuthActionModal from "./components/AuthActionModal";
 
 export default function NotificationsPage() {
   const [data, setData] = useState([]);
-  const [clickedKeys, setClickedKeys] = useState([]);
+  const [initialClickedKeys, setInitialClickedKeys] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
   const fromSidebar = location.state?.fromSidebar || false;
@@ -17,9 +17,17 @@ export default function NotificationsPage() {
   const [showAuthModal, setShowAuthModal] = useState(false);
 
   useEffect(() => {
-    // Load clicked notifications from localStorage
+    // Load clicked notifications from localStorage at the start of the page session
     const saved = localStorage.getItem("clicked_notifications");
-    if (saved) setClickedKeys(JSON.parse(saved));
+    let currentClicked = [];
+    if (saved) {
+      try {
+        currentClicked = JSON.parse(saved);
+      } catch (e) {
+        currentClicked = [];
+      }
+    }
+    setInitialClickedKeys(currentClicked);
 
     // Check auth
     const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
@@ -31,7 +39,16 @@ export default function NotificationsPage() {
     fetch(apiUrl("/api/notifications/"), { credentials: "include" })
       .then((res) => res.json())
       .then((items) => {
-        setData(Array.isArray(items) ? items : []);
+        const notificationsList = Array.isArray(items) ? items : [];
+        setData(notificationsList);
+        
+        // Automatically mark all loaded notifications as clicked/read in localStorage
+        const allKeys = notificationsList.map(item => notificationKey(item));
+        const newClicked = [...new Set([...currentClicked, ...allKeys])];
+        localStorage.setItem("clicked_notifications", JSON.stringify(newClicked));
+        
+        // Dispatch notifications-read event so Header updates immediately
+        window.dispatchEvent(new Event("notifications-read"));
       })
       .catch(() => setIsDemo(true));
   }, []);
@@ -40,11 +57,20 @@ export default function NotificationsPage() {
     const key = notificationKey(notification);
     
     // Mark as clicked locally
-    const newClicked = [...new Set([...clickedKeys, key])];
-    setClickedKeys(newClicked);
+    const saved = localStorage.getItem("clicked_notifications");
+    let clicked = [];
+    try {
+      clicked = JSON.parse(saved || "[]");
+    } catch {
+      clicked = [];
+    }
+    const newClicked = [...new Set([...clicked, key])];
     localStorage.setItem("clicked_notifications", JSON.stringify(newClicked));
     
-    // Optional: dispatch event if other components need to know
+    // Visually turn off its unread state instantly in the UI
+    setInitialClickedKeys((prev) => [...new Set([...prev, key])]);
+    
+    // Dispatch event
     window.dispatchEvent(new Event("notifications-read"));
 
     const path = notification.type === "referral" ? "/referrals" : "/jobs";
@@ -87,7 +113,7 @@ export default function NotificationsPage() {
           ) : (
             data.map((notification) => {
               const key = notificationKey(notification);
-              const isUnread = !clickedKeys.includes(key);
+              const isUnread = !initialClickedKeys.includes(key);
 
               return (
                 <button
@@ -97,8 +123,10 @@ export default function NotificationsPage() {
                   className="flex w-full items-center gap-4 border-b border-white/5 p-4 text-left transition hover:bg-white/5 last:border-b-0"
                 >
                   <span 
-                    className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#FF6044] text-[#121313] shadow-lg transition-all ${
-                      isUnread ? "border-beam-active shadow-[#FF6044]/20" : "opacity-80"
+                    className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl transition-all ${
+                      isUnread 
+                        ? "bg-[#1f1513] text-[#FF6044] border-beam-active shadow-lg shadow-[#FF6044]/15 border border-[#FF6044]/30" 
+                        : "bg-white/5 border border-white/5 text-gray-500 opacity-70"
                     }`}
                   >
                     {notification.type === "referral" ? <Handshake size={20} /> : <Briefcase size={20} />}

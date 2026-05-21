@@ -133,6 +133,9 @@ export default function Header() {
                 className="relative group cursor-pointer p-1 transition-colors shrink-0"
               >
                 {item.icon}
+                {item.title === 'Notifications' && hasUnread && (
+                  <span className="absolute -top-0.5 -right-0.5 block h-2.5 w-2.5 rounded-full bg-[#FF6044] ring-2 ring-[#121313] animate-pulse" />
+                )}
                 {/* Tooltip */}
                 <div className="absolute top-full left-1/2 -translate-x-1/2 mt-5 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 translate-y-[-5px] transition-all duration-200 pointer-events-none bg-[#080909] border border-primary/70 text-primary text-sm px-5 py-2 rounded-xl whitespace-nowrap z-[9999] font-display uppercase tracking-[0.14em] font-bold">
                   {item.title}
@@ -184,15 +187,22 @@ export default function Header() {
                   />
                   <span className="text-primary font-bold group-hover:text-white transition-colors">Workspace</span>
                 </div>
+                {navItems.map((item, idx) => (
                   <Link 
                     key={idx} 
                     to={item.to} 
                     className="flex items-center gap-4 text-white/60 hover:text-primary transition-colors py-1"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <span className="opacity-70 scale-90">{item.icon}</span>
+                    <span className="relative opacity-70 scale-90">
+                      {item.icon}
+                      {item.title === 'Notifications' && hasUnread && (
+                        <span className="absolute -top-1 -right-1 block h-2 w-2 rounded-full bg-[#FF6044] ring-1 ring-[#121313] animate-pulse" />
+                      )}
+                    </span>
                     <span className="text-sm">{item.title}</span>
                   </Link>
+                ))}
               </>
             ) : (
               <>
