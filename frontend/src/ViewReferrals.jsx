@@ -203,12 +203,11 @@ export default function ViewReferrals() {
                   <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-white/10"></div>
                 </div>
 
-                {/* Separate saas-card for this date's items */}
-                <div className="saas-card overflow-hidden">
-                  <div className="divide-y divide-white/5">
-                    {items.map((referral) => (
+                {/* Separate saas-card for each referral item with space-y-3 gap */}
+                <div className="space-y-3">
+                  {items.map((referral) => (
+                    <div key={referral.id} className="saas-card overflow-hidden">
                       <HighlightableItem
-                        key={referral.id}
                         id={`referral-${referral.id}`}
                         highlighted={String(referral.id) === String(activeHighlight)}
                         className="grid grid-cols-1 gap-3 p-4 lg:grid-cols-8 lg:items-center"
@@ -258,8 +257,8 @@ export default function ViewReferrals() {
                           </div>
                         )}
                       </HighlightableItem>
-                    ))}
-                  </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             ))}

@@ -214,12 +214,11 @@ export default function JobsPage() {
                   <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-white/10"></div>
                 </div>
 
-                {/* Separate saas-card for this date's items */}
-                <div className="saas-card overflow-hidden">
-                  <div className="divide-y divide-white/5">
-                    {items.map((job) => (
+                {/* Separate saas-card for each job item with space-y-3 gap */}
+                <div className="space-y-3">
+                  {items.map((job) => (
+                    <div key={job.id} className="saas-card overflow-hidden">
                       <HighlightableItem
-                        key={job.id}
                         id={`job-${job.id}`}
                         highlighted={String(job.id) === String(activeHighlight)}
                         className={`grid grid-cols-1 gap-3 p-4 lg:grid-cols-9 lg:items-center ${
@@ -285,8 +284,8 @@ export default function JobsPage() {
                           </div>
                         )}
                       </HighlightableItem>
-                    ))}
-                  </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             ))}
