@@ -144,7 +144,7 @@ export default function StreakPage() {
 
         return (
           <Modal title={`${typeLabel} Milestones`} onClose={() => setBadgeInfo(null)} maxWidth="max-w-2xl">
-            <div className="space-y-6 max-h-[75vh] overflow-y-auto pr-2">
+            <div className="space-y-6">
               {/* Quick stats banner */}
               <div className="grid grid-cols-2 gap-4 rounded-xl border border-white/10 bg-white/5 p-4 text-center">
                 <div className="space-y-1">
