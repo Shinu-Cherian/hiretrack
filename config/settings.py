@@ -147,7 +147,14 @@ LOGOUT_REDIRECT_URL = '/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-DEFAULT_FILE_STORAGE = 'tracker.storage.DatabaseStorage'
+STORAGES = {
+    "default": {
+        "BACKEND": "tracker.storage.DatabaseStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
 
 CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', 'http://localhost:5173,http://127.0.0.1:5173').split(',')
 CORS_ALLOW_CREDENTIALS = True
