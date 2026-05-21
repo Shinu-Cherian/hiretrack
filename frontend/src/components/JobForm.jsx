@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Field, SelectInput, TextArea, TextInput } from "./FormFields";
+import { apiUrl } from "../api";
 
 const emptyJob = {
   jobTitle: "",
@@ -115,10 +116,23 @@ export default function JobForm({ initialValues = emptyJob, submitLabel = "Save 
                 accept=".pdf,.doc,.docx,.txt"
                 onChange={handleResumeChange}
               />
+              {form.resumeFile && (
+                <p className="text-emerald-400 text-[10px] font-bold uppercase tracking-wider mt-1.5 flex items-center gap-1">
+                  <span>✅ Existing file uploaded:</span>
+                  <a 
+                    href={apiUrl(form.resumeFile)} 
+                    target="_blank" 
+                    rel="noreferrer" 
+                    className="underline text-emerald-400 hover:text-emerald-300 transition-colors"
+                  >
+                    Preview current resume
+                  </a>
+                </p>
+              )}
               {fileErrors.resume ? (
                 <p className="text-[#FF6044] text-[10px] font-bold uppercase tracking-wider mt-1">{fileErrors.resume}</p>
               ) : (
-                <p className="text-gray-500 text-[10px] font-bold uppercase tracking-wider mt-1">supports pdf, docx, txt (max 3mb)</p>
+                !form.resumeFile && <p className="text-gray-500 text-[10px] font-bold uppercase tracking-wider mt-1">supports pdf, docx, txt (max 3mb)</p>
               )}
             </Field>
 
@@ -129,10 +143,23 @@ export default function JobForm({ initialValues = emptyJob, submitLabel = "Save 
                 accept=".pdf,.doc,.docx,.txt"
                 onChange={handleCoverLetterChange}
               />
+              {form.coverLetterFile && (
+                <p className="text-emerald-400 text-[10px] font-bold uppercase tracking-wider mt-1.5 flex items-center gap-1">
+                  <span>✅ Existing file uploaded:</span>
+                  <a 
+                    href={apiUrl(form.coverLetterFile)} 
+                    target="_blank" 
+                    rel="noreferrer" 
+                    className="underline text-emerald-400 hover:text-emerald-300 transition-colors"
+                  >
+                    Preview current cover letter
+                  </a>
+                </p>
+              )}
               {fileErrors.coverLetter ? (
                 <p className="text-[#FF6044] text-[10px] font-bold uppercase tracking-wider mt-1">{fileErrors.coverLetter}</p>
               ) : (
-                <p className="text-gray-500 text-[10px] font-bold uppercase tracking-wider mt-1">supports pdf, docx, txt (max 3mb)</p>
+                !form.coverLetterFile && <p className="text-gray-500 text-[10px] font-bold uppercase tracking-wider mt-1">supports pdf, docx, txt (max 3mb)</p>
               )}
             </Field>
           </div>
