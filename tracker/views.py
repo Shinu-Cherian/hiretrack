@@ -1975,7 +1975,12 @@ def job_document_download_api(request, id, kind):
     if not content_type:
         content_type = "application/pdf" if filename.lower().endswith(".pdf") else "application/octet-stream"
 
-    response = FileResponse(document.open("rb"), content_type=content_type)
+    try:
+        file_obj = document.open("rb")
+    except (FileNotFoundError, OSError):
+        raise Http404("The requested file was not found on the server or database.")
+
+    response = FileResponse(file_obj, content_type=content_type)
     if inline:
         # Serve inline so the browser opens it in a new tab
         response["Content-Disposition"] = f'inline; filename="{filename}"'
