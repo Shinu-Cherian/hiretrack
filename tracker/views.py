@@ -2028,7 +2028,24 @@ def streak_api(request):
 
 
 def calculate_streak(active_days):
-    current = date.today()
+    if not active_days:
+        return 0
+    
+    # Filter out any None values
+    active_days = {d for d in active_days if d is not None}
+    if not active_days:
+        return 0
+
+    last_active_day = max(active_days)
+    days_since_last_activity = (date.today() - last_active_day).days
+    
+    # Snapchat-style: If user goes more than 24 hours (a full calendar day) without an action, streak resets to 0.
+    # Practically, this means if they applied yesterday (1 day ago) or today (0 days ago), the streak is maintained.
+    # If they last applied 2 or more days ago, the streak resets.
+    if days_since_last_activity > 1:
+        return 0
+        
+    current = last_active_day
     streak = 0
     while current in active_days:
         streak += 1
@@ -2037,8 +2054,7 @@ def calculate_streak(active_days):
 
 
 def earned_badges(streak):
-    milestones = [30, 50]
-    milestones.extend(range(100, max(streak, 100) + 1, 50))
+    milestones = [7, 14, 30, 50, 100, 150, 200]
     return [day for day in milestones if streak >= day]
 
 

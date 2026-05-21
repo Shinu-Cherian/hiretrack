@@ -14,6 +14,16 @@ const BADGE_PREVIEW = [
   { days: 100, detail: "Reach a 100-day consistency milestone.", icon: <Crown size={24} /> },
 ];
 
+const MILESTONES = [
+  { days: 7, title: "Bronze Flame", detail: "Apply or refer consistently for 7 days.", icon: "🔥", color: "from-amber-600 to-amber-800" },
+  { days: 14, title: "Silver Spark", detail: "Apply or refer consistently for 14 days.", icon: "✨", color: "from-slate-400 to-slate-600" },
+  { days: 30, title: "Gold Flare", detail: "Apply or refer consistently for 30 days.", icon: "🌟", color: "from-yellow-400 to-amber-500" },
+  { days: 50, title: "Elite Trophy", detail: "Continue your momentum for 50 days.", icon: "🏆", color: "from-emerald-400 to-teal-600" },
+  { days: 100, title: "Legendary Crown", detail: "Reach an incredible 100-day milestone.", icon: "👑", color: "from-violet-500 to-fuchsia-600" },
+  { days: 150, title: "Centurion Shield", detail: "Hit a massive 150-day consistency record.", icon: "🛡️", color: "from-blue-500 to-cyan-600" },
+  { days: 200, title: "Eternal Flame", detail: "Achieve the ultimate 200-day consistency mark.", icon: "♾️", color: "from-rose-500 to-red-600" },
+];
+
 export default function StreakPage() {
   const [data, setData] = useState(null);
   const [popupBadge, setPopupBadge] = useState(null);
@@ -120,11 +130,121 @@ export default function StreakPage() {
         )}
       </main>
 
-      {badgeInfo && (
-        <Modal title="Badge milestones" onClose={() => setBadgeInfo(null)} maxWidth="max-w-xl">
-          {/* ... badge content ... */}
-        </Modal>
-      )}
+      {badgeInfo && (() => {
+        const typeLabel = badgeInfo === "job" ? "Job Applications" : "Network Referrals";
+        const sectionData = badgeInfo === "job" ? data?.jobs : data?.referrals;
+        const streak = sectionData?.streak || 0;
+        const unlocked = sectionData?.badges || [];
+        
+        // Find next milestone
+        const nextMilestone = MILESTONES.find(m => streak < m.days);
+        const prevMilestone = [...MILESTONES].reverse().find(m => streak >= m.days);
+        const prevDays = prevMilestone ? prevMilestone.days : 0;
+        const progressPercent = nextMilestone 
+          ? Math.min(100, Math.max(0, ((streak - prevDays) / (nextMilestone.days - prevDays)) * 100))
+          : 100;
+
+        return (
+          <Modal title={`${typeLabel} Milestones`} onClose={() => setBadgeInfo(null)} maxWidth="max-w-2xl">
+            <div className="space-y-6 max-h-[75vh] overflow-y-auto pr-2">
+              {/* Quick stats banner */}
+              <div className="grid grid-cols-2 gap-4 rounded-xl border border-white/10 bg-white/5 p-4 text-center">
+                <div className="space-y-1">
+                  <p className="text-xs font-bold uppercase tracking-wider text-gray-400">Current Streak</p>
+                  <p className="text-3xl font-black text-white flex items-center justify-center gap-1.5 font-display">
+                    <Flame size={24} className="text-[#FF6044] animate-pulse" />
+                    {streak} Days
+                  </p>
+                </div>
+                <div className="space-y-1 border-l border-white/15">
+                  <p className="text-xs font-bold uppercase tracking-wider text-gray-400">Badges Unlocked</p>
+                  <p className="text-3xl font-black text-white font-display">
+                    {unlocked.length} <span className="text-lg text-gray-400 font-bold font-sans">/ {MILESTONES.length}</span>
+                  </p>
+                </div>
+              </div>
+
+              {/* Progress to next milestone */}
+              {nextMilestone ? (
+                <div className="rounded-xl border border-white/5 bg-[#181919] p-5 space-y-3">
+                  <div className="flex justify-between items-center text-xs font-bold uppercase tracking-wider">
+                    <span className="text-gray-400">Next Milestone: {nextMilestone.title}</span>
+                    <span className="text-[#FF6044]">{nextMilestone.days - streak} Days Left</span>
+                  </div>
+                  <div className="h-3 w-full bg-[#121313] border border-white/5 rounded-full overflow-hidden p-0.5">
+                    <div 
+                      className="h-full bg-gradient-to-r from-[#FF6044] to-yellow-500 rounded-full transition-all duration-700"
+                      style={{ width: `${progressPercent}%` }}
+                    />
+                  </div>
+                  <p className="text-xs text-gray-400 italic lowercase">
+                    "keep applying/referring daily to unlock the {nextMilestone.title} badge! 🚀"
+                  </p>
+                </div>
+              ) : (
+                <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-5 text-center space-y-2">
+                  <p className="text-sm font-bold text-emerald-400">🔥 CONGRATULATIONS! 🔥</p>
+                  <p className="text-xs text-gray-300">You have unlocked every single achievement milestone! You are a legendary job seeker.</p>
+                </div>
+              )}
+
+              {/* Milestones list */}
+              <div className="space-y-3 pt-2">
+                <h3 className="text-sm font-bold uppercase tracking-widest text-[#FF6044] border-b border-white/5 pb-2">Milestone List</h3>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {MILESTONES.map((badge) => {
+                    const isUnlocked = streak >= badge.days;
+                    return (
+                      <div 
+                        key={badge.days}
+                        className={`flex gap-4 rounded-xl p-4 border transition-all relative overflow-hidden ${
+                          isUnlocked 
+                            ? "bg-white/5 border-white/10 shadow-[0_0_15px_rgba(255,96,68,0.03)]" 
+                            : "bg-[#181919]/40 border-white/5 opacity-55 hover:opacity-75"
+                        }`}
+                      >
+                        {/* Glow effect for unlocked */}
+                        {isUnlocked && (
+                          <div className="absolute top-0 right-0 w-16 h-16 bg-[#FF6044]/5 -skew-x-12 translate-x-8 -translate-y-8 pointer-events-none"></div>
+                        )}
+
+                        <div className={`h-12 w-12 shrink-0 rounded-xl flex items-center justify-center text-2xl shadow-inner ${
+                          isUnlocked 
+                            ? `bg-gradient-to-br ${badge.color} border border-white/20 shadow-md` 
+                            : "bg-[#121313] border border-white/5 opacity-50"
+                        }`}>
+                          {badge.icon}
+                        </div>
+
+                        <div className="flex-1 min-w-0 space-y-1">
+                          <div className="flex justify-between items-start gap-1">
+                            <h4 className="font-extrabold text-sm text-white truncate">{badge.title}</h4>
+                            <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded ${
+                              isUnlocked 
+                                ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" 
+                                : "bg-white/5 text-gray-500 border border-white/5"
+                            }`}>
+                              {badge.days} Days
+                            </span>
+                          </div>
+                          <p className="text-xs text-gray-400 line-clamp-2 leading-relaxed">{badge.detail}</p>
+                          <div className="pt-1 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider">
+                            {isUnlocked ? (
+                              <span className="text-emerald-400 font-bold">Unlocked 🚀</span>
+                            ) : (
+                              <span className="text-gray-500 font-bold">Locked 🔒 ({badge.days - streak}d left)</span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </Modal>
+        );
+      })()}
 
       <AuthActionModal 
         isOpen={showAuthModal} 
@@ -173,29 +293,35 @@ function StreakSection({ title, label, count, heatmapTitle, heatmap, badges, onE
                 <Award size={18} className="text-[#FF6044]" /> 
                 Achievements
               </h3>
-              {badges.length > 0 && <span className="text-[10px] font-bold bg-white/5 px-2 py-1 rounded text-gray-400 uppercase border border-white/10">{badges.length} Unlocked</span>}
+              <button 
+                type="button"
+                onClick={onExplore}
+                className="text-xs font-bold text-[#FF6044] hover:underline uppercase tracking-wider transition-all"
+              >
+                Explore milestones
+              </button>
             </div>
             
             {badges.length ? (
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-3 animate-fade-in">
                 {badges.map((badge) => (
-                  <div key={badge} className="group/badge relative flex items-center gap-2 rounded-xl bg-[#FF6044]/10 border border-[#FF6044]/20 px-4 py-2 text-sm font-bold text-[#FF6044] hover:bg-[#FF6044]/20 transition-all">
-                    <Flame size={14} />
+                  <div key={badge} className="group/badge relative flex items-center gap-2 rounded-xl bg-[#FF6044]/10 border border-[#FF6044]/20 px-4 py-2 text-sm font-bold text-[#FF6044] hover:bg-[#FF6044]/20 transition-all duration-300">
+                    <Flame size={14} className="animate-pulse" />
                     {badge} Days
                   </div>
                 ))}
               </div>
             ) : (
-              <button 
+              <div 
                 onClick={onExplore} 
-                className="w-full flex items-center justify-between rounded-xl border border-dashed border-white/10 p-4 text-sm font-bold text-gray-400 hover:bg-white/5 hover:text-white transition-all group/btn"
+                className="cursor-pointer w-full flex items-center justify-between rounded-xl border border-dashed border-white/10 p-4 text-sm font-bold text-gray-400 hover:bg-white/5 hover:text-white transition-all group/btn"
               >
                 <div className="flex items-center gap-3">
                   <Info size={18} className="opacity-50" />
-                  <span>Explore milestones & badges</span>
+                  <span>No badges unlocked yet. Explore milestones!</span>
                 </div>
                 <ArrowRight size={16} className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
-              </button>
+              </div>
             )}
           </div>
         </div>
