@@ -199,6 +199,7 @@ export default function EditProfilePage() {
   const [removeProfilePic, setRemoveProfilePic] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [resumeError, setResumeError] = useState("");
 
   useEffect(() => {
     fetch(apiUrl("/api/profile/"), { credentials: "include" })
@@ -377,9 +378,24 @@ export default function EditProfilePage() {
                 <span className="text-sm font-medium text-gray-400">Resume</span>
                 <input
                   type="file"
-                  className="mt-1 w-full rounded-xl border border-white/10 bg-[#1a1b1b] text-gray-400 p-3 file:mr-4 file:py-1.5 file:px-4 file:rounded-lg file:border-0 file:bg-[#FF6044] file:text-[#121313] file:font-black file:text-xs file:uppercase file:tracking-wider hover:file:bg-[#ff4d2e] transition-all"
-                  onChange={(e) => setResume(e.target.files[0])}
+                  className={`mt-1 w-full rounded-xl border ${resumeError ? 'border-[#FF6044]/50 text-[#FF6044]' : 'border-white/10 text-gray-400'} bg-[#1a1b1b] p-3 file:mr-4 file:py-1.5 file:px-4 file:rounded-lg file:border-0 file:bg-[#FF6044] file:text-[#121313] file:font-black file:text-xs file:uppercase file:tracking-wider hover:file:bg-[#ff4d2e] transition-all`}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] || null;
+                    if (file && file.size > 3 * 1024 * 1024) {
+                      setResumeError("file is too large! maximum size allowed is 3MB. ⚠️");
+                      e.target.value = ""; // Clear file input
+                      setResume(null);
+                    } else {
+                      setResumeError("");
+                      setResume(file);
+                    }
+                  }}
                 />
+                {resumeError ? (
+                  <p className="text-[#FF6044] text-[10px] font-bold uppercase tracking-wider mt-1">{resumeError}</p>
+                ) : (
+                  <p className="text-gray-500 text-[10px] font-bold uppercase tracking-wider mt-1">supports pdf, docx, txt (max 3mb)</p>
+                )}
               </label>
             </Panel>
 

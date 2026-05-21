@@ -18,12 +18,41 @@ const emptyJob = {
 
 export default function JobForm({ initialValues = emptyJob, submitLabel = "Save Job", onSubmit, onCancel }) {
   const [form, setForm] = useState({ ...emptyJob, ...initialValues });
+  const [fileErrors, setFileErrors] = useState({ resume: "", coverLetter: "" });
   const [saving, setSaving] = useState(false);
 
   const update = (field, value) => setForm((current) => ({ ...current, [field]: value }));
 
+  const handleResumeChange = (event) => {
+    const file = event.target.files?.[0] || null;
+    if (file && file.size > 3 * 1024 * 1024) {
+      setFileErrors((prev) => ({ ...prev, resume: "file is too large! maximum size allowed is 3MB. ⚠️" }));
+      event.target.value = ""; // Clear file input
+      update("resume_file", null);
+    } else {
+      setFileErrors((prev) => ({ ...prev, resume: "" }));
+      update("resume_file", file);
+    }
+  };
+
+  const handleCoverLetterChange = (event) => {
+    const file = event.target.files?.[0] || null;
+    if (file && file.size > 3 * 1024 * 1024) {
+      setFileErrors((prev) => ({ ...prev, coverLetter: "file is too large! maximum size allowed is 3MB. ⚠️" }));
+      event.target.value = ""; // Clear file input
+      update("cover_letter_file", null);
+    } else {
+      setFileErrors((prev) => ({ ...prev, coverLetter: "" }));
+      update("cover_letter_file", file);
+    }
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (fileErrors.resume || fileErrors.coverLetter) {
+      alert("Please fix file errors before saving.");
+      return;
+    }
     setSaving(true);
     try {
       await onSubmit(form);
@@ -82,19 +111,29 @@ export default function JobForm({ initialValues = emptyJob, submitLabel = "Save 
             <Field label="Resume Used">
               <input
                 type="file"
-                className="form-input"
+                className={`form-input ${fileErrors.resume ? 'border-[#FF6044]/50 text-[#FF6044]' : ''}`}
                 accept=".pdf,.doc,.docx,.txt"
-                onChange={(event) => update("resume_file", event.target.files?.[0] || null)}
+                onChange={handleResumeChange}
               />
+              {fileErrors.resume ? (
+                <p className="text-[#FF6044] text-[10px] font-bold uppercase tracking-wider mt-1">{fileErrors.resume}</p>
+              ) : (
+                <p className="text-gray-500 text-[10px] font-bold uppercase tracking-wider mt-1">supports pdf, docx, txt (max 3mb)</p>
+              )}
             </Field>
 
             <Field label="Cover Letter Used">
               <input
                 type="file"
-                className="form-input"
+                className={`form-input ${fileErrors.coverLetter ? 'border-[#FF6044]/50 text-[#FF6044]' : ''}`}
                 accept=".pdf,.doc,.docx,.txt"
-                onChange={(event) => update("cover_letter_file", event.target.files?.[0] || null)}
+                onChange={handleCoverLetterChange}
               />
+              {fileErrors.coverLetter ? (
+                <p className="text-[#FF6044] text-[10px] font-bold uppercase tracking-wider mt-1">{fileErrors.coverLetter}</p>
+              ) : (
+                <p className="text-gray-500 text-[10px] font-bold uppercase tracking-wider mt-1">supports pdf, docx, txt (max 3mb)</p>
+              )}
             </Field>
           </div>
         </div>
