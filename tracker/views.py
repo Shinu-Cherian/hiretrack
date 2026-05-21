@@ -2054,7 +2054,7 @@ def calculate_streak(active_days):
 
 
 def earned_badges(streak):
-    milestones = [7, 14, 30, 50, 100, 150, 200]
+    milestones = [25, 50, 100, 150, 200]
     return [day for day in milestones if streak >= day]
 
 

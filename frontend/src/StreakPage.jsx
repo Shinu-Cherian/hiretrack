@@ -9,15 +9,13 @@ import Modal from "./components/Modal";
 import AuthActionModal from "./components/AuthActionModal";
 
 const BADGE_PREVIEW = [
-  { days: 30, detail: "Stay active for 30 continuous days.", icon: <Flame size={24} /> },
+  { days: 25, detail: "Stay active for 25 continuous days.", icon: <Flame size={24} /> },
   { days: 50, detail: "Continue your streak for 50 continuous days.", icon: <Trophy size={24} /> },
   { days: 100, detail: "Reach a 100-day consistency milestone.", icon: <Crown size={24} /> },
 ];
 
 const MILESTONES = [
-  { days: 7, title: "Bronze Flame", detail: "Apply or refer consistently for 7 days.", icon: "🔥", color: "from-amber-600 to-amber-800" },
-  { days: 14, title: "Silver Spark", detail: "Apply or refer consistently for 14 days.", icon: "✨", color: "from-slate-400 to-slate-600" },
-  { days: 30, title: "Gold Flare", detail: "Apply or refer consistently for 30 days.", icon: "🌟", color: "from-yellow-400 to-amber-500" },
+  { days: 25, title: "Bronze Flame", detail: "Apply or refer consistently for 25 days.", icon: "🔥", color: "from-amber-600 to-amber-800" },
   { days: 50, title: "Elite Trophy", detail: "Continue your momentum for 50 days.", icon: "🏆", color: "from-emerald-400 to-teal-600" },
   { days: 100, title: "Legendary Crown", detail: "Reach an incredible 100-day milestone.", icon: "👑", color: "from-violet-500 to-fuchsia-600" },
   { days: 150, title: "Centurion Shield", detail: "Hit a massive 150-day consistency record.", icon: "🛡️", color: "from-blue-500 to-cyan-600" },
