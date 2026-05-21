@@ -122,15 +122,20 @@ export default function NotificationsPage() {
                   onClick={() => openNotification(notification)}
                   className="flex w-full items-center gap-4 border-b border-white/5 p-4 text-left transition hover:bg-white/5 last:border-b-0"
                 >
-                  <span 
-                    className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl transition-all ${
-                      isUnread 
-                        ? "bg-[#1f1513] text-[#FF6044] border-beam-active shadow-lg shadow-[#FF6044]/15 border border-[#FF6044]/30" 
-                        : "bg-white/5 border border-white/5 text-gray-500 opacity-70"
-                    }`}
-                  >
-                    {notification.type === "referral" ? <Handshake size={20} /> : <Briefcase size={20} />}
-                  </span>
+                  {isUnread ? (
+                    <div className="relative h-12 w-12 shrink-0 rounded-xl p-[1.5px] overflow-hidden shadow-lg shadow-[#FF6044]/15 bg-[#FF6044]/20">
+                      {/* Rotating light beam around the edge */}
+                      <div className="absolute inset-[-200%] animate-[spin_3s_linear_infinite] bg-[conic-gradient(from_0deg,transparent_70%,#FF6044_95%,#FF6044_100%)]" />
+                      {/* Inner content box masking the center */}
+                      <div className="relative h-full w-full rounded-[10px] bg-[#18110f] flex items-center justify-center text-[#FF6044]">
+                        {notification.type === "referral" ? <Handshake size={20} /> : <Briefcase size={20} />}
+                      </div>
+                    </div>
+                  ) : (
+                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/5 border border-white/5 text-gray-500 opacity-70">
+                      {notification.type === "referral" ? <Handshake size={20} /> : <Briefcase size={20} />}
+                    </span>
+                  )}
                   <span className="min-w-0 flex-1">
                     <span className={`block font-bold transition-colors ${isUnread ? "text-white" : "text-gray-400"}`}>
                       {notification.message}
