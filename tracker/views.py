@@ -1440,9 +1440,18 @@ def update_job_api(request, id):
     job.status = data.get("status", job.status)
     job.job_description = data.get("jd", job.job_description)
     job.notes = data.get("notes", job.notes)
-    if request.FILES.get("resume_file"):
+    if request.POST.get("remove_resume") == "true":
+        if job.resume_file:
+            job.resume_file.delete(save=False)
+        job.resume_file = None
+    elif request.FILES.get("resume_file"):
         job.resume_file = request.FILES["resume_file"]
-    if request.FILES.get("cover_letter_file"):
+
+    if request.POST.get("remove_cover_letter") == "true":
+        if job.cover_letter_file:
+            job.cover_letter_file.delete(save=False)
+        job.cover_letter_file = None
+    elif request.FILES.get("cover_letter_file"):
         job.cover_letter_file = request.FILES["cover_letter_file"]
     job.save()
 

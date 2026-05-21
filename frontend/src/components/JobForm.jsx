@@ -33,6 +33,7 @@ export default function JobForm({ initialValues = emptyJob, submitLabel = "Save 
     } else {
       setFileErrors((prev) => ({ ...prev, resume: "" }));
       update("resume_file", file);
+      update("remove_resume", "false");
     }
   };
 
@@ -45,6 +46,7 @@ export default function JobForm({ initialValues = emptyJob, submitLabel = "Save 
     } else {
       setFileErrors((prev) => ({ ...prev, coverLetter: "" }));
       update("cover_letter_file", file);
+      update("remove_cover_letter", "false");
     }
   };
 
@@ -110,56 +112,92 @@ export default function JobForm({ initialValues = emptyJob, submitLabel = "Save 
 
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             <Field label="Resume Used">
-              <input
-                type="file"
-                className={`form-input ${fileErrors.resume ? 'border-[#FF6044]/50 text-[#FF6044]' : ''}`}
-                accept=".pdf,.doc,.docx,.txt"
-                onChange={handleResumeChange}
-              />
-              {form.resumeFile && (
-                <p className="text-emerald-400 text-[10px] font-bold uppercase tracking-wider mt-1.5 flex items-center gap-1">
-                  <span>✅ Existing file uploaded:</span>
-                  <a 
-                    href={apiUrl(form.resumeFile)} 
-                    target="_blank" 
-                    rel="noreferrer" 
-                    className="underline text-emerald-400 hover:text-emerald-300 transition-colors"
-                  >
-                    Preview current resume
-                  </a>
-                </p>
-              )}
-              {fileErrors.resume ? (
-                <p className="text-[#FF6044] text-[10px] font-bold uppercase tracking-wider mt-1">{fileErrors.resume}</p>
+              {form.resumeFile ? (
+                <div className="form-input flex items-center justify-between !py-2 shadow-sm min-h-[50px]">
+                  <div className="flex items-center min-w-0">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        update("resumeFile", null);
+                        update("remove_resume", "true");
+                      }}
+                      className="bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 rounded-lg font-black text-[11px] uppercase tracking-widest transition-all duration-200 shadow-md flex-shrink-0"
+                    >
+                      Remove File
+                    </button>
+                    <a
+                      href={apiUrl(form.resumeFile)}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-emerald-400 hover:text-emerald-300 text-xs font-bold uppercase tracking-wider underline truncate ml-4"
+                      title="Preview current resume"
+                    >
+                      Preview resume
+                    </a>
+                  </div>
+                  <span className="text-[10px] font-bold text-emerald-500 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded uppercase tracking-wider hidden sm:inline-block">
+                    Uploaded
+                  </span>
+                </div>
               ) : (
-                !form.resumeFile && <p className="text-gray-500 text-[10px] font-bold uppercase tracking-wider mt-1">supports pdf, docx, txt (max 3mb)</p>
+                <>
+                  <input
+                    type="file"
+                    className={`form-input ${fileErrors.resume ? 'border-[#FF6044]/50 text-[#FF6044]' : ''}`}
+                    accept=".pdf,.doc,.docx,.txt"
+                    onChange={handleResumeChange}
+                  />
+                  {fileErrors.resume ? (
+                    <p className="text-[#FF6044] text-[10px] font-bold uppercase tracking-wider mt-1">{fileErrors.resume}</p>
+                  ) : (
+                    <p className="text-gray-500 text-[10px] font-bold uppercase tracking-wider mt-1">supports pdf, docx, txt (max 3mb)</p>
+                  )}
+                </>
               )}
             </Field>
 
             <Field label="Cover Letter Used">
-              <input
-                type="file"
-                className={`form-input ${fileErrors.coverLetter ? 'border-[#FF6044]/50 text-[#FF6044]' : ''}`}
-                accept=".pdf,.doc,.docx,.txt"
-                onChange={handleCoverLetterChange}
-              />
-              {form.coverLetterFile && (
-                <p className="text-emerald-400 text-[10px] font-bold uppercase tracking-wider mt-1.5 flex items-center gap-1">
-                  <span>✅ Existing file uploaded:</span>
-                  <a 
-                    href={apiUrl(form.coverLetterFile)} 
-                    target="_blank" 
-                    rel="noreferrer" 
-                    className="underline text-emerald-400 hover:text-emerald-300 transition-colors"
-                  >
-                    Preview current cover letter
-                  </a>
-                </p>
-              )}
-              {fileErrors.coverLetter ? (
-                <p className="text-[#FF6044] text-[10px] font-bold uppercase tracking-wider mt-1">{fileErrors.coverLetter}</p>
+              {form.coverLetterFile ? (
+                <div className="form-input flex items-center justify-between !py-2 shadow-sm min-h-[50px]">
+                  <div className="flex items-center min-w-0">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        update("coverLetterFile", null);
+                        update("remove_cover_letter", "true");
+                      }}
+                      className="bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 rounded-lg font-black text-[11px] uppercase tracking-widest transition-all duration-200 shadow-md flex-shrink-0"
+                    >
+                      Remove File
+                    </button>
+                    <a
+                      href={apiUrl(form.coverLetterFile)}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-emerald-400 hover:text-emerald-300 text-xs font-bold uppercase tracking-wider underline truncate ml-4"
+                      title="Preview current cover letter"
+                    >
+                      Preview cover letter
+                    </a>
+                  </div>
+                  <span className="text-[10px] font-bold text-emerald-500 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded uppercase tracking-wider hidden sm:inline-block">
+                    Uploaded
+                  </span>
+                </div>
               ) : (
-                !form.coverLetterFile && <p className="text-gray-500 text-[10px] font-bold uppercase tracking-wider mt-1">supports pdf, docx, txt (max 3mb)</p>
+                <>
+                  <input
+                    type="file"
+                    className={`form-input ${fileErrors.coverLetter ? 'border-[#FF6044]/50 text-[#FF6044]' : ''}`}
+                    accept=".pdf,.doc,.docx,.txt"
+                    onChange={handleCoverLetterChange}
+                  />
+                  {fileErrors.coverLetter ? (
+                    <p className="text-[#FF6044] text-[10px] font-bold uppercase tracking-wider mt-1">{fileErrors.coverLetter}</p>
+                  ) : (
+                    <p className="text-gray-500 text-[10px] font-bold uppercase tracking-wider mt-1">supports pdf, docx, txt (max 3mb)</p>
+                  )}
+                </>
               )}
             </Field>
           </div>
