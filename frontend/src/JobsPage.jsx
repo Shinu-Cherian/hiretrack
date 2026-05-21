@@ -256,7 +256,7 @@ export default function JobsPage() {
                             <Trash2 size={18} />
                           </IconButton>
                         </span>
-                        {(job.jd || job.notes) && (
+                        {(job.jd || job.notes || job.resumeFile || job.coverLetterFile) && (
                           <div className="flex flex-wrap gap-2.5 rounded-lg bg-[#121313] border border-white/5 p-3 text-sm text-gray-400 lg:col-span-8">
                             <span className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 uppercase tracking-wider mr-2">
                               Attachments:
@@ -280,6 +280,28 @@ export default function JobsPage() {
                                 <FileText size={14} className="text-[#FF6044]" />
                                 Show JD
                               </button>
+                            )}
+                            {job.resumeFile && (
+                              <a
+                                href={apiUrl(`/api/job/document/${job.id}/resume/?inline=true`)}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="inline-flex items-center gap-1.5 rounded-lg border border-white/5 bg-white/5 px-3 py-1.5 text-xs font-medium text-gray-300 transition hover:bg-white/10 hover:text-white"
+                              >
+                                <FileText size={14} className="text-[#FF6044]" />
+                                View Resume
+                              </a>
+                            )}
+                            {job.coverLetterFile && (
+                              <a
+                                href={apiUrl(`/api/job/document/${job.id}/cover-letter/?inline=true`)}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="inline-flex items-center gap-1.5 rounded-lg border border-white/5 bg-white/5 px-3 py-1.5 text-xs font-medium text-gray-300 transition hover:bg-white/10 hover:text-white"
+                              >
+                                <FileText size={14} className="text-[#FF6044]" />
+                                View Cover Letter
+                              </a>
                             )}
                           </div>
                         )}
