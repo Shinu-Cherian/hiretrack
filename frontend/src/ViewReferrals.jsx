@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Building2, Calendar, Edit3, Link2, Mail, Search, Star, Trash2, UserRound, Users } from "lucide-react";
+import { Building2, Calendar, Edit3, FileText, Link2, Mail, Search, Star, Trash2, UserRound, Users } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import Header from "./Header";
 import { apiUrl } from "./api";
@@ -14,6 +14,7 @@ export default function ViewReferrals() {
   const [search, setSearch] = useState("");
   const [referrals, setReferrals] = useState([]);
   const [editing, setEditing] = useState(null);
+  const [viewingNotes, setViewingNotes] = useState(null);
   const [activeHighlight, setActiveHighlight] = useState(null);
   const [searchParams] = useSearchParams();
   const [isDemo, setIsDemo] = useState(false);
@@ -179,10 +180,11 @@ export default function ViewReferrals() {
         ) : (
           <div className="space-y-10">
             {/* The Grid Header row displayed right at the very top, before any cards */}
-            <div className="hidden grid-cols-8 gap-3 px-4 py-2 border border-transparent text-sm font-bold text-[#FF6044] lg:grid">
+            <div className="hidden grid-cols-9 gap-3 px-4 py-2 border border-transparent text-sm font-bold text-[#FF6044] lg:grid">
               <span className="col-span-2">Contact</span>
               <span>Company</span>
               <span className="col-span-2">Email</span>
+              <span>Profile</span>
               <span>Date</span>
               <span>Status</span>
               <span>Actions</span>
@@ -210,26 +212,33 @@ export default function ViewReferrals() {
                       <HighlightableItem
                         id={`referral-${referral.id}`}
                         highlighted={String(referral.id) === String(activeHighlight)}
-                        className="grid grid-cols-1 gap-3 p-4 lg:grid-cols-8 lg:items-center"
+                        className="grid grid-cols-1 gap-3 p-4 lg:grid-cols-9 lg:items-center"
                       >
                         <div className="lg:col-span-2">
                           <p className="flex items-center gap-2 font-semibold text-white">
                             <UserRound size={16} /> {referral.person_name}
                           </p>
-                          {referral.linkedin ? (
-                            <a href={referral.linkedin} target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-1 text-sm text-[#FF6044] hover:underline font-bold">
-                              <Link2 size={14} /> LinkedIn URL
-                            </a>
-                          ) : (
-                            <p className="mt-1 flex items-center gap-1 text-sm text-gray-400">
-                              <Link2 size={14} /> No LinkedIn URL
-                            </p>
-                          )}
                         </div>
                         <Meta icon={<Building2 size={15} />} value={referral.company} />
                         <div className="lg:col-span-2">
                           <Meta icon={<Mail size={15} />} value={referral.email} />
                         </div>
+                        <span>
+                          {referral.linkedin ? (
+                            <a 
+                              href={referral.linkedin} 
+                              target="_blank" 
+                              rel="noreferrer" 
+                              className="inline-flex items-center gap-1.5 text-sm text-[#FF6044] hover:underline font-bold transition duration-300"
+                            >
+                              <Link2 size={14} /> Profile
+                            </a>
+                          ) : (
+                            <span className="text-gray-500 text-sm italic inline-flex items-center gap-1.5">
+                              <Link2 size={14} /> No Profile
+                            </span>
+                          )}
+                        </span>
                         <Meta icon={<Calendar size={15} />} value={referral.date} />
                         <span>
                           <span className={getStatusBadgeClass(referral.status)}>{referral.status?.replace("_", " ")}</span>
@@ -252,8 +261,18 @@ export default function ViewReferrals() {
                           </IconButton>
                         </span>
                         {referral.notes && (
-                          <div className="rounded-lg bg-[#121313] p-3 text-sm text-gray-400 lg:col-span-8">
-                            <strong>Notes:</strong> {referral.notes}
+                          <div className="flex flex-wrap gap-2.5 rounded-lg bg-[#121313] border border-white/5 p-3 text-sm text-gray-400 lg:col-span-9">
+                            <span className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 uppercase tracking-wider mr-2">
+                              Attachments:
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => setViewingNotes(referral)}
+                              className="inline-flex items-center gap-1.5 rounded-lg border border-white/5 bg-white/5 px-3 py-1.5 text-xs font-medium text-gray-300 transition hover:bg-white/10 hover:text-white"
+                            >
+                              <FileText size={14} className="text-[#FF6044]" />
+                              Show Notes
+                            </button>
                           </div>
                         )}
                       </HighlightableItem>
@@ -270,6 +289,14 @@ export default function ViewReferrals() {
         <Modal title="Edit Referral" onClose={() => setEditing(null)} maxWidth="max-w-5xl">
           <BackButton className="mb-6" />
           <ReferralForm key={editing.id} initialValues={editing} submitLabel="Save Changes" onSubmit={saveEdit} onCancel={() => setEditing(null)} />
+        </Modal>
+      )}
+
+      {viewingNotes && (
+        <Modal title={`${viewingNotes.person_name} - Notes`} onClose={() => setViewingNotes(null)} maxWidth="max-w-4xl">
+          <div className="max-h-[60vh] overflow-y-auto rounded-lg border border-white/10 bg-[#121313] p-5 text-sm leading-7 text-gray-200 whitespace-pre-wrap">
+            {viewingNotes.notes || "No notes added."}
+          </div>
         </Modal>
       )}
 
