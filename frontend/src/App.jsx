@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import Home from "./Home";
 import ManifestoPage from "./ManifestoPage";
+import DeveloperCard from "./DeveloperCard";
 import Login from "./Login";  
 import Signup from "./Signup";
 import Dashboard from "./Dashboard";
@@ -36,6 +37,7 @@ function App() {
       <Route path="/extension/:type" element={<Private><ExtensionFormPage /></Private>} />
       <Route path="/" element={<Home />} />
       <Route path="/manifesto" element={<ManifestoPage />} />
+      <Route path="/developer-card" element={<DeveloperCard />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/dashboard" element={<Dashboard />} />

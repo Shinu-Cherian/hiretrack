@@ -994,6 +994,7 @@ export default function Home() {
               <FooterLink to="/manifesto">The Manifesto</FooterLink>
               <FooterLink to="/blog">Blog</FooterLink>
               <FooterLink to="/roadmap">Roadmap</FooterLink>
+              <FooterLink to="/developer-card">Developer Card</FooterLink>
             </FooterColumn>
 
             <FooterColumn title="Resources">
