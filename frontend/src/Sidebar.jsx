@@ -148,7 +148,7 @@ function notificationKey(item) {
 
 function readNotificationKeys() {
   try {
-    return new Set(JSON.parse(localStorage.getItem("read_notifications") || "[]"));
+    return new Set(JSON.parse(localStorage.getItem("clicked_notifications") || "[]"));
   } catch {
     return new Set();
   }
