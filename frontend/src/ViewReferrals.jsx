@@ -184,7 +184,7 @@ export default function ViewReferrals() {
               <span className="col-span-2">Contact</span>
               <span>Company</span>
               <span className="col-span-2">Email</span>
-              <span>Profile</span>
+              <span>LinkedIn</span>
               <span>Date</span>
               <span>Status</span>
               <span>Actions</span>
@@ -231,11 +231,11 @@ export default function ViewReferrals() {
                               rel="noreferrer" 
                               className="inline-flex items-center gap-1.5 text-sm text-[#FF6044] hover:underline font-bold transition duration-300"
                             >
-                              <Link2 size={14} /> Profile
+                              <LinkedInIcon size={14} /> LinkedIn
                             </a>
                           ) : (
                             <span className="text-gray-500 text-sm italic inline-flex items-center gap-1.5">
-                              <Link2 size={14} /> No Profile
+                              <LinkedInIcon size={14} className="opacity-40" /> No Link
                             </span>
                           )}
                         </span>
@@ -405,5 +405,26 @@ function IconButton({ children, onClick, danger = false, label }) {
     >
       {children}
     </button>
+  );
+}
+
+function LinkedInIcon({ size = 14, className }) {
+  return (
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      width={size} 
+      height={size} 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth="2" 
+      strokeLinecap="round" 
+      strokeLinejoin="round" 
+      className={className}
+    >
+      <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+      <rect x="2" y="9" width="4" height="12"></rect>
+      <circle cx="4" cy="4" r="2"></circle>
+    </svg>
   );
 }
