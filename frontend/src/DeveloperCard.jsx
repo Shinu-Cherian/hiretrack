@@ -13,66 +13,33 @@ export default function DeveloperCard() {
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("isLoggedIn") === "true");
   const [username, setUsername] = useState(localStorage.getItem("username") || "Seeker");
   const [typedGreeting, setTypedGreeting] = useState("");
-  const [typedName, setTypedName] = useState("");
   const [typedLogoText, setTypedLogoText] = useState("");
 
-  // Sequential typing effect: types first line (greeting) first, then second line (name)
+  // Typing effect for the Greeting - Runs ONLY ONCE per page load
   useEffect(() => {
     const greetingText = isLoggedIn 
       ? `Hi ${username}, welcome to HireTrack` 
       : "Hi user, welcome to HireTrack";
-    const nameText = "Shinu Cherian";
       
-    let gIndex = 0;
-    let nIndex = 0;
-    let isDeleting = false;
-    let timer = null;
-
-    const tick = () => {
-      if (!isDeleting) {
-        // Typing greeting first
-        if (gIndex < greetingText.length) {
-          setTypedGreeting(greetingText.slice(0, gIndex + 1));
-          gIndex++;
-          timer = setTimeout(tick, 80 + Math.random() * 30);
-        } 
-        // Then typing the developer name on line 2
-        else if (nIndex < nameText.length) {
-          setTypedName(nameText.slice(0, nIndex + 1));
-          nIndex++;
-          timer = setTimeout(tick, 100 + Math.random() * 40);
-        } 
-        // Pause 5 seconds at the end of full display
-        else {
-          isDeleting = true;
-          timer = setTimeout(tick, 5000);
+    let index = 0;
+    setTypedGreeting("");
+    
+    const interval = setInterval(() => {
+      setTypedGreeting((prev) => {
+        if (index >= greetingText.length) {
+          clearInterval(interval);
+          return prev;
         }
-      } else {
-        // Deleting name first
-        if (nIndex > 0) {
-          setTypedName(nameText.slice(0, nIndex - 1));
-          nIndex--;
-          timer = setTimeout(tick, 40);
-        } 
-        // Then deleting greeting
-        else if (gIndex > 0) {
-          setTypedGreeting(greetingText.slice(0, gIndex - 1));
-          gIndex--;
-          timer = setTimeout(tick, 20);
-        } 
-        // Pause 1 second before starting loop again
-        else {
-          isDeleting = false;
-          timer = setTimeout(tick, 1000);
-        }
-      }
-    };
-
-    tick();
-    return () => clearTimeout(timer);
+        const next = greetingText.slice(0, index + 1);
+        index++;
+        return next;
+      });
+    }, 60);
+    
+    return () => clearInterval(interval);
   }, [isLoggedIn, username]);
 
-  // Dynamic typing effect inside the circular Logo
+  // Dynamic typing effect inside the circular Logo - Loops continuously
   useEffect(() => {
     const logoWord = "HireTrack";
     let index = 0;
@@ -145,7 +112,48 @@ export default function DeveloperCard() {
     return () => ctx.revert();
   }, []);
 
-  // Correctly split and color the typing HireTrack logo inside the circle
+  // Split and style greeting dynamically as it types to give user custom Neon Coral colors
+  const renderTypedGreeting = () => {
+    if (!isLoggedIn) {
+      return (
+        <>
+          {typedGreeting}
+          {typedGreeting.length < "Hi user, welcome to HireTrack".length && (
+            <span className="text-primary typing-cursor">|</span>
+          )}
+        </>
+      );
+    } else {
+      const fullText = `Hi ${username}, welcome to HireTrack`;
+      if (typedGreeting.startsWith("Hi ")) {
+        const afterHi = typedGreeting.slice(3);
+        if (afterHi.length <= username.length) {
+          return (
+            <>
+              <span>Hi </span>
+              <span className="text-[#FF6044] font-black text-2xl sm:text-3xl md:text-4xl">{afterHi}</span>
+              <span className="text-primary typing-cursor">|</span>
+            </>
+          );
+        } else {
+          const welcomePart = afterHi.slice(username.length);
+          return (
+            <>
+              <span>Hi </span>
+              <span className="text-[#FF6044] font-black text-2xl sm:text-3xl md:text-4xl">{username}</span>
+              <span>{welcomePart}</span>
+              {typedGreeting.length < fullText.length && (
+                <span className="text-primary typing-cursor">|</span>
+              )}
+            </>
+          );
+        }
+      }
+      return typedGreeting;
+    }
+  };
+
+  // Correctly split and color the typing HireTrack logo
   const renderTypedLogo = () => {
     const hirePart = typedLogoText.slice(0, 4);
     const trackPart = typedLogoText.slice(4);
@@ -170,39 +178,17 @@ export default function DeveloperCard() {
         .typing-cursor {
           animation: blinkCursor 0.8s infinite;
         }
-        .logo-circle {
-          border: 4px solid rgba(255, 255, 255, 0.1);
-          border-radius: 50%;
-          width: 18rem; /* 288px */
-          height: 18rem; /* 288px */
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background-color: #121313;
-          transition: border-color 0.5s ease, box-shadow 0.5s ease;
-          position: relative;
-        }
-        @media (min-width: 768px) {
-          .logo-circle {
-            width: 21rem; /* 336px */
-            height: 21rem; /* 336px */
-          }
-        }
-        .logo-circle:hover {
-          border-color: rgba(255, 96, 68, 0.4);
-          box-shadow: 0 0 30px rgba(255, 96, 68, 0.05);
-        }
-        .logo-text {
+        .logo-text-wrapper {
           font-family: var(--font-display, inherit);
           font-weight: 900;
           text-transform: uppercase;
           letter-spacing: -0.05em;
-          transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+          transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
           display: inline-block;
-          white-space: nowrap;
+          cursor: default;
         }
-        .logo-circle:hover .logo-text {
-          transform: scale(1.4);
+        .logo-text-wrapper:hover {
+          transform: scale(1.3);
         }
       `}} />
 
@@ -211,16 +197,9 @@ export default function DeveloperCard() {
         {/* HERO SECTION */}
         <section className="mb-32 grid md:grid-cols-3 gap-12 items-center developer-title-wrapper">
           <div className="md:col-span-2 space-y-8">
-            {/* Dynamic Welcome Heading - Split into perfectly balanced two-line layout */}
-            <h1 className="select-none text-white flex flex-col gap-2 min-h-[140px] md:min-h-[180px]">
-              <span className="text-xl sm:text-2xl md:text-3xl font-display font-medium text-gray-300 tracking-tight block">
-                {typedGreeting}
-                {typedGreeting && !typedName && <span className="text-primary typing-cursor">|</span>}
-              </span>
-              <span className="text-5xl sm:text-7xl md:text-8xl font-display font-black leading-[1.0] uppercase tracking-tighter text-primary block">
-                {typedName}
-                {typedName && <span className="text-primary typing-cursor">|</span>}
-              </span>
+            {/* Dynamic Single-Line Welcome Heading */}
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-display font-medium text-gray-300 tracking-tight min-h-[60px] md:min-h-[80px] select-none text-white block">
+              {renderTypedGreeting()}
             </h1>
             
             {/* Gen-Z styled Tagline */}
@@ -241,12 +220,12 @@ export default function DeveloperCard() {
             </div>
           </div>
 
-          {/* Larger Static Circular Logo with Hover Breakout Effect (Centered Right Side) */}
+          {/* Larger Floating Logo without Circle (Centered Right Side with Pop Animation on Hover) */}
           <div className="flex items-center justify-center md:justify-end w-full md:col-span-1 py-8">
-            <div className="logo-circle">
-              <span className="logo-text select-none text-3xl sm:text-4xl">
+            <div className="logo-text-wrapper select-none text-4xl sm:text-5xl md:text-6xl">
+              <span>
                 {renderTypedLogo()}
-                <span className="text-[#FF6044] typing-cursor text-2xl md:text-3xl ml-0.5">|</span>
+                <span className="text-[#FF6044] typing-cursor ml-0.5">|</span>
               </span>
             </div>
           </div>
@@ -332,7 +311,7 @@ export default function DeveloperCard() {
               </div>
             </div>
 
-            {/* Gen-Z styled warm call to action for all users */}
+            {/* Gen-Z styled warm call to action for all users (Adjusted from command center to inside HireTrack) */}
             <div className="mt-16 p-8 bg-[#0c0d0d]/80 border-2 border-white/10 rounded-3xl shadow-xl relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
               <div className="flex flex-col md:flex-row justify-between items-center gap-6">
@@ -341,7 +320,7 @@ export default function DeveloperCard() {
                     Wait, there is more... ⚡
                   </h3>
                   <p className="text-xs md:text-sm text-gray-400 font-sans font-light max-w-2xl leading-relaxed">
-                    Honestly? This is just the tip of the iceberg. There are so many more secret weapons waiting for you inside the command center. Kindly log in, unlock your session, and feel free to make HireTrack your own. It's all yours now. Let's get it!
+                    Honestly? This is just the tip of the iceberg. There are so many more secret weapons waiting for you inside HireTrack. Kindly log in, unlock your session, and feel free to make HireTrack your own. It's all yours now. Let's get it!
                   </p>
                 </div>
                 {!isLoggedIn && (
@@ -429,7 +408,7 @@ export default function DeveloperCard() {
         {/* FOOTER DECORATION */}
         <div className="mt-40 pt-20 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 text-gray-600 font-mono text-[10px] tracking-widest uppercase">
           <div className="flex items-center gap-2">
-            <ShieldCheck size={14} className="text-primary" /> HireTrack Developer Profile Document v1.5.1
+            <ShieldCheck size={14} className="text-primary" /> HireTrack Developer Profile Document v1.5.2
           </div>
           <div>All Systems Nominal /// © {new Date().getFullYear()}</div>
         </div>
