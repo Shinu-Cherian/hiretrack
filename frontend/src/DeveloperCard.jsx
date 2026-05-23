@@ -18,7 +18,7 @@ export default function DeveloperCard() {
   // Typing effect for the Greeting - Runs ONLY ONCE per page load
   useEffect(() => {
     const greetingText = isLoggedIn 
-      ? `System initialized. Welcome, ${username}` 
+      ? `SYSTEM INITIALIZED. WELCOME, ${username}` 
       : "Hi user, welcome to HireTrack";
       
     let index = 0;
@@ -125,7 +125,7 @@ export default function DeveloperCard() {
         </>
       );
     } else {
-      const prefix = "System initialized. Welcome, ";
+      const prefix = "SYSTEM INITIALIZED. WELCOME, ";
       const fullText = `${prefix}${username}`;
       
       if (typedGreeting.length <= prefix.length) {
