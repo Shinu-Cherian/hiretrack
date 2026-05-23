@@ -12,37 +12,58 @@ export default function DeveloperCard() {
   const containerRef = useRef(null);
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("isLoggedIn") === "true");
   const [username, setUsername] = useState(localStorage.getItem("username") || "Seeker");
+  const [typedGreeting, setTypedGreeting] = useState("");
   const [typedName, setTypedName] = useState("");
   const [typedLogoText, setTypedLogoText] = useState("");
 
-  // Dynamic welcome statement typing effect
+  // Sequential typing effect: types first line (greeting) first, then second line (name)
   useEffect(() => {
-    const welcomeText = isLoggedIn 
-      ? `Hi ${username}, welcome to HireTrack // Shinu Cherian` 
-      : "Hi user, welcome to HireTrack // Shinu Cherian";
+    const greetingText = isLoggedIn 
+      ? `Hi ${username}, welcome to HireTrack` 
+      : "Hi user, welcome to HireTrack";
+    const nameText = "Shinu Cherian";
       
-    let index = 0;
+    let gIndex = 0;
+    let nIndex = 0;
     let isDeleting = false;
     let timer = null;
 
     const tick = () => {
       if (!isDeleting) {
-        setTypedName(welcomeText.slice(0, index + 1));
-        index++;
-        if (index === welcomeText.length) {
+        // Typing greeting first
+        if (gIndex < greetingText.length) {
+          setTypedGreeting(greetingText.slice(0, gIndex + 1));
+          gIndex++;
+          timer = setTimeout(tick, 80 + Math.random() * 30);
+        } 
+        // Then typing the developer name on line 2
+        else if (nIndex < nameText.length) {
+          setTypedName(nameText.slice(0, nIndex + 1));
+          nIndex++;
+          timer = setTimeout(tick, 100 + Math.random() * 40);
+        } 
+        // Pause 5 seconds at the end of full display
+        else {
           isDeleting = true;
-          timer = setTimeout(tick, 5000); // Wait 5 seconds after fully typing
-        } else {
-          timer = setTimeout(tick, 100 + Math.random() * 40); // Typing speed
+          timer = setTimeout(tick, 5000);
         }
       } else {
-        setTypedName(welcomeText.slice(0, index - 1));
-        index--;
-        if (index === 0) {
+        // Deleting name first
+        if (nIndex > 0) {
+          setTypedName(nameText.slice(0, nIndex - 1));
+          nIndex--;
+          timer = setTimeout(tick, 40);
+        } 
+        // Then deleting greeting
+        else if (gIndex > 0) {
+          setTypedGreeting(greetingText.slice(0, gIndex - 1));
+          gIndex--;
+          timer = setTimeout(tick, 20);
+        } 
+        // Pause 1 second before starting loop again
+        else {
           isDeleting = false;
-          timer = setTimeout(tick, 1000); // Pause before re-typing
-        } else {
-          timer = setTimeout(tick, 40); // Deleting speed
+          timer = setTimeout(tick, 1000);
         }
       }
     };
@@ -190,10 +211,16 @@ export default function DeveloperCard() {
         {/* HERO SECTION */}
         <section className="mb-32 grid md:grid-cols-3 gap-12 items-center developer-title-wrapper">
           <div className="md:col-span-2 space-y-8">
-            {/* Dynamic Welcome Heading */}
-            <h1 className="text-4xl sm:text-6xl md:text-7xl font-display font-black leading-[1.1] uppercase tracking-tighter min-h-[140px] md:min-h-[180px] select-none text-white">
-              {typedName}
-              <span className="text-primary typing-cursor">|</span>
+            {/* Dynamic Welcome Heading - Split into perfectly balanced two-line layout */}
+            <h1 className="select-none text-white flex flex-col gap-2 min-h-[140px] md:min-h-[180px]">
+              <span className="text-xl sm:text-2xl md:text-3xl font-display font-medium text-gray-300 tracking-tight block">
+                {typedGreeting}
+                {typedGreeting && !typedName && <span className="text-primary typing-cursor">|</span>}
+              </span>
+              <span className="text-5xl sm:text-7xl md:text-8xl font-display font-black leading-[1.0] uppercase tracking-tighter text-primary block">
+                {typedName}
+                {typedName && <span className="text-primary typing-cursor">|</span>}
+              </span>
             </h1>
             
             {/* Gen-Z styled Tagline */}
@@ -203,9 +230,9 @@ export default function DeveloperCard() {
               </span>
             </div>
             
-            {/* Direct speech introduction to the user */}
+            {/* Direct speech introduction: fully tailored to the architect's Malayalam voice */}
             <p className="text-lg md:text-xl font-light leading-relaxed text-gray-300 font-sans max-w-2xl border-l-2 border-primary pl-6 italic">
-              "Hey human. Yes, I'm talking directly to you. First of all, thank you for stepping into the HireTrack command center. As developers, we build tools to conquer chaos. I designed and engineered this entire platform to serve as your personal workspace. I know how exhausting the job hunt is—the spreadsheets that lose context, the endless follow-up emails, and the black hole of ATS systems. That is why I built HireTrack. It's not just a tracker; it's a structural weapon to bring order to your applications, keep your momentum alive, and help you land your dream role. I hope it serves you well."
+              "Hey human, I'm Shinu Cherian, the developer and founder of HireTrack. I hope you're doing good! I assume you've just started your job hunt journey—either way, you have come to the absolute right place. Everything you need to conquer your job hunt is provided here by me, so you can use it with absolute confidence. This platform is engineered to push you forward significantly, make your application process completely stress-free, and bring order to the chaos. It’s not just a tracker; it's a structural weapon designed to keep your momentum alive and help you land your dream role. I hope it serves you well."
             </p>
             
             <div className="flex items-center gap-3">
@@ -402,7 +429,7 @@ export default function DeveloperCard() {
         {/* FOOTER DECORATION */}
         <div className="mt-40 pt-20 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 text-gray-600 font-mono text-[10px] tracking-widest uppercase">
           <div className="flex items-center gap-2">
-            <ShieldCheck size={14} className="text-primary" /> HireTrack Developer Profile Document v1.5.0
+            <ShieldCheck size={14} className="text-primary" /> HireTrack Developer Profile Document v1.5.1
           </div>
           <div>All Systems Nominal /// © {new Date().getFullYear()}</div>
         </div>
