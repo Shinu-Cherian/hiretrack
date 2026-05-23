@@ -93,14 +93,6 @@ export default function DeveloperCard() {
 
       {/* Dynamic Keyframes for 3D Rotating Logo and Typing Cursor */}
       <style dangerouslySetInnerHTML={{__html: `
-        @keyframes rotate3DLogo {
-          0% {
-            transform: rotateY(0deg) rotateX(12deg);
-          }
-          100% {
-            transform: rotateY(360deg) rotateX(12deg);
-          }
-        }
         @keyframes blinkCursor {
           0%, 100% { opacity: 1; }
           50% { opacity: 0; }
@@ -108,16 +100,16 @@ export default function DeveloperCard() {
         .rotating-3d-logo-container {
           perspective: 1200px;
         }
-        .rotating-3d-logo {
+        .static-3d-logo {
           transform-style: preserve-3d;
-          animation: rotate3DLogo 10s linear infinite;
+          transform: rotateY(-20deg) rotateX(10deg);
+          transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .static-3d-logo:hover {
+          transform: rotateY(-5deg) rotateX(5deg);
         }
         .typing-cursor {
           animation: blinkCursor 0.8s infinite;
-        }
-        .backface-hidden {
-          backface-visibility: hidden;
-          -webkit-backface-visibility: hidden;
         }
       `}} />
 
@@ -145,23 +137,15 @@ export default function DeveloperCard() {
             </div>
           </div>
 
-          {/* 3D Rotating Typography Logo without radiant glow */}
+          {/* 3D Static Typography Logo without radiant glow */}
           <div className="flex items-center justify-center md:col-span-1 py-8">
             <div className="rotating-3d-logo-container w-64 h-64 relative flex items-center justify-center">
-              <div className="rotating-3d-logo w-52 h-52 relative">
-                {/* Front Face */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#121313] border-4 border-white/10 rounded-full shadow-2xl backface-hidden">
-                  <span className="font-display font-black text-2xl tracking-tighter uppercase text-white select-none">
+              <div className="static-3d-logo w-60 h-60 relative flex items-center justify-center bg-[#121313] border-4 border-white/10 rounded-full shadow-2xl">
+                <div className="flex flex-col items-center justify-center">
+                  <span className="font-display font-black text-3xl sm:text-4xl tracking-tighter uppercase text-white select-none">
                     HIRE<span className="text-primary">TRACK</span>
                   </span>
-                  <span className="text-[8px] font-mono text-gray-500 uppercase tracking-widest mt-2">SYSTEM ACTIVE</span>
-                </div>
-                {/* Back Face */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#121313] border-4 border-primary/20 rounded-full shadow-2xl backface-hidden" style={{ transform: 'rotateY(180deg)' }}>
-                  <span className="font-display font-black text-2xl tracking-tighter uppercase text-primary select-none">
-                    HIRE<span className="text-white">TRACK</span>
-                  </span>
-                  <span className="text-[8px] font-mono text-gray-500 uppercase tracking-widest mt-2">CORE ENGINE</span>
+                  <span className="text-[9px] font-mono text-gray-500 uppercase tracking-widest mt-3">CORE SYSTEM</span>
                 </div>
               </div>
             </div>
