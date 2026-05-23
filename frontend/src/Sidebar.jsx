@@ -48,7 +48,7 @@ export default function Sidebar({ isOpen, onClose, profile }) {
       {/* SIDEBAR */}
       <div
         className={`fixed top-0 right-0 h-full w-80 bg-[#121313] border-l border-white/5 z-50 transform transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[-10px_0_30px_rgba(0,0,0,0.5)]
-        \${isOpen ? "translate-x-0" : "translate-x-full"}`}
+        ${isOpen ? "translate-x-0" : "translate-x-full"}`}
       >
         <div className="p-8 h-full flex flex-col justify-between overflow-y-auto">
 
@@ -149,11 +149,11 @@ export default function Sidebar({ isOpen, onClose, profile }) {
                   </div>
 
                   <p className="text-xs font-sans text-gray-400 leading-relaxed font-medium">
-                    Hey <span className="text-[#FF6044] font-extrabold">{username}</span>, Shinu (the developer) left you a personal message.
+                    Hey <span className="text-[#FF6044] font-extrabold">{username}</span>, the developer left you a personal message.
                   </p>
 
                   <div className="flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-wider font-extrabold text-white group-hover:text-[#FF6044] transition-colors duration-300">
-                    Open Transmission 📡
+                    Open Transmission 🛰️
                     <ArrowRight size={12} className="text-[#FF6044] group-hover:translate-x-1 transition-transform duration-300" />
                   </div>
                 </div>
