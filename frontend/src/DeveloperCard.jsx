@@ -210,9 +210,17 @@ export default function DeveloperCard() {
             </div>
             
             {/* Direct speech introduction: fully tailored to the architect's Malayalam voice */}
-            <p className="text-lg md:text-xl font-light leading-relaxed text-gray-300 font-sans max-w-2xl border-l-2 border-primary pl-6 italic">
-              "Hey human, I'm Shinu Cherian, the developer and founder of HireTrack. I hope you're doing good! I assume you've just started your job hunt journey—either way, you have come to the absolute right place. Everything you need to conquer your job hunt is provided here by me, so you can use it with absolute confidence. This platform is engineered to push you forward significantly, make your application process completely stress-free, and bring order to the chaos. It’s not just a tracker; it's a structural weapon designed to keep your momentum alive and help you land your dream role. I hope it serves you well."
-            </p>
+            <div className="text-lg md:text-xl font-light leading-relaxed text-gray-300 font-sans max-w-2xl border-l-2 border-primary pl-6 italic">
+              {isLoggedIn ? (
+                <p>
+                  "Hey <span className="text-[#FF6044] font-black">{username}</span>, I'm Shinu Cherian, the developer and founder of HireTrack. I hope you're doing good! I assume you've just started your job hunt journey—either way, you have come to the absolute right place. Everything you need to conquer your job hunt is provided here by me, so you can use it with absolute confidence. This platform is engineered to push you forward significantly, make your application process completely stress-free, and bring order to the chaos. It’s not just a tracker; it's a structural weapon designed to keep your momentum alive and help you land your dream role. I hope it serves you well."
+                </p>
+              ) : (
+                <p>
+                  "Hey human, I'm Shinu Cherian, the developer and founder of HireTrack. I hope you're doing good! I assume you've just started your job hunt journey—either way, you have come to the absolute right place. Everything you need to conquer your job hunt is provided here by me, so you can use it with absolute confidence. This platform is engineered to push you forward significantly, make your application process completely stress-free, and bring order to the chaos. It’s not just a tracker; it's a structural weapon designed to keep your momentum alive and help you land your dream role. I hope it serves you well."
+                </p>
+              )}
+            </div>
             
             <div className="flex items-center gap-3">
               <div className="h-[1px] w-6 bg-primary"></div>
@@ -311,7 +319,7 @@ export default function DeveloperCard() {
               </div>
             </div>
 
-            {/* Gen-Z styled warm call to action for all users (Adjusted from command center to inside HireTrack) */}
+            {/* Gen-Z styled warm call to action for all users (Adjusted to direct logged-in users to 8 pillars) */}
             <div className="mt-16 p-8 bg-[#0c0d0d]/80 border-2 border-white/10 rounded-3xl shadow-xl relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
               <div className="flex flex-col md:flex-row justify-between items-center gap-6">
@@ -323,7 +331,20 @@ export default function DeveloperCard() {
                     Honestly? This is just the tip of the iceberg. There are so many more secret weapons waiting for you inside HireTrack. Kindly log in, unlock your session, and feel free to make HireTrack your own. It's all yours now. Let's get it!
                   </p>
                 </div>
-                {!isLoggedIn && (
+                {isLoggedIn ? (
+                  <Link 
+                    to="/" 
+                    onClick={() => {
+                      setTimeout(() => {
+                        const el = document.getElementById("features");
+                        if (el) el.scrollIntoView({ behavior: "smooth" });
+                      }, 150);
+                    }}
+                    className="inline-flex items-center gap-3 bg-white text-surface font-display font-black text-sm px-8 py-4 uppercase tracking-wider hover:bg-primary transition-all rounded-xl brutalist-shadow whitespace-nowrap"
+                  >
+                    Launch 8 Pillars 🚀
+                  </Link>
+                ) : (
                   <Link 
                     to="/login" 
                     className="inline-flex items-center gap-3 bg-white text-surface font-display font-black text-sm px-8 py-4 uppercase tracking-wider hover:bg-primary transition-all rounded-xl brutalist-shadow whitespace-nowrap"
@@ -408,7 +429,7 @@ export default function DeveloperCard() {
         {/* FOOTER DECORATION */}
         <div className="mt-40 pt-20 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 text-gray-600 font-mono text-[10px] tracking-widest uppercase">
           <div className="flex items-center gap-2">
-            <ShieldCheck size={14} className="text-primary" /> HireTrack Developer Profile Document v1.5.2
+            <ShieldCheck size={14} className="text-primary" /> HireTrack Developer Profile Document v1.5.3
           </div>
           <div>All Systems Nominal /// © {new Date().getFullYear()}</div>
         </div>
