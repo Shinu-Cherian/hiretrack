@@ -18,7 +18,7 @@ export default function DeveloperCard() {
   // Typing effect for the Greeting - Runs ONLY ONCE per page load
   useEffect(() => {
     const greetingText = isLoggedIn 
-      ? `Hi ${username}, welcome to HireTrack` 
+      ? `System initialized. Welcome, ${username}` 
       : "Hi user, welcome to HireTrack";
       
     let index = 0;
@@ -115,41 +115,42 @@ export default function DeveloperCard() {
   // Split and style greeting dynamically as it types to give user custom Neon Coral colors
   const renderTypedGreeting = () => {
     if (!isLoggedIn) {
+      const defaultText = "Hi user, welcome to HireTrack";
       return (
         <>
           {typedGreeting}
-          {typedGreeting.length < "Hi user, welcome to HireTrack".length && (
+          {typedGreeting.length < defaultText.length && (
             <span className="text-primary typing-cursor">|</span>
           )}
         </>
       );
     } else {
-      const fullText = `Hi ${username}, welcome to HireTrack`;
-      if (typedGreeting.startsWith("Hi ")) {
-        const afterHi = typedGreeting.slice(3);
-        if (afterHi.length <= username.length) {
-          return (
-            <>
-              <span>Hi </span>
-              <span className="text-[#FF6044] font-black text-2xl sm:text-3xl md:text-4xl">{afterHi}</span>
+      const prefix = "System initialized. Welcome, ";
+      const fullText = `${prefix}${username}`;
+      
+      if (typedGreeting.length <= prefix.length) {
+        return (
+          <>
+            {typedGreeting}
+            {typedGreeting.length < fullText.length && (
               <span className="text-primary typing-cursor">|</span>
-            </>
-          );
-        } else {
-          const welcomePart = afterHi.slice(username.length);
-          return (
-            <>
-              <span>Hi </span>
-              <span className="text-[#FF6044] font-black text-2xl sm:text-3xl md:text-4xl">{username}</span>
-              <span>{welcomePart}</span>
-              {typedGreeting.length < fullText.length && (
-                <span className="text-primary typing-cursor">|</span>
-              )}
-            </>
-          );
-        }
+            )}
+          </>
+        );
+      } else {
+        const typedName = typedGreeting.slice(prefix.length);
+        return (
+          <>
+            {prefix}
+            <span className="text-[#FF6044] font-black text-2xl sm:text-3xl md:text-4xl">
+              {typedName}
+            </span>
+            {typedGreeting.length < fullText.length && (
+              <span className="text-primary typing-cursor">|</span>
+            )}
+          </>
+        );
       }
-      return typedGreeting;
     }
   };
 
@@ -201,7 +202,7 @@ export default function DeveloperCard() {
             <div className="text-lg md:text-xl font-light leading-relaxed text-gray-300 font-sans max-w-2xl border-l-2 border-primary pl-6 italic">
               {isLoggedIn ? (
                 <p>
-                  "Hey <span className="text-[#FF6044] font-black">{username}</span>, I'm Shinu Cherian, the developer and founder of HireTrack. I hope you're doing good! I assume you've just started your job hunt journey—either way, you have come to the absolute right place. Everything you need to conquer your job hunt is provided here by me, so you can use it with absolute confidence. This platform is engineered to push you forward significantly, make your application process completely stress-free, and bring order to the chaos. It’s not just a tracker; it's a structural weapon designed to keep your momentum alive and help you land your dream role. I hope it serves you well."
+                  "To <span className="text-[#FF6044] font-black">{username}</span>, from the developer:<br/><br/>I hope you're doing good! I assume you've just started your job hunt journey—either way, you have come to the absolute right place. Everything you need to conquer your job hunt is provided here by me, so you can use it with absolute confidence. This platform is engineered to push you forward significantly, make your application process completely stress-free, and bring order to the chaos. It’s not just a tracker; it's a structural weapon designed to keep your momentum alive and help you land your dream role. I hope it serves you well."
                 </p>
               ) : (
                 <p>
@@ -228,7 +229,7 @@ export default function DeveloperCard() {
                   <div className="space-y-2">
                     <h4 className="text-sm font-mono text-gray-500 uppercase tracking-widest block">Connection Sync</h4>
                     <p className="text-xl md:text-2xl font-light text-white leading-snug">
-                      Hey <span className="text-[#FF6044] font-black">{username}</span>,
+                      Target locked, <span className="text-[#FF6044] font-black">{username}</span>.
                     </p>
                     <p className="text-base md:text-lg font-bold text-gray-200 leading-normal font-sans">
                       Finally, you are at the right place! ⚡

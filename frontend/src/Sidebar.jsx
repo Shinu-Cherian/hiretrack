@@ -149,7 +149,7 @@ export default function Sidebar({ isOpen, onClose, profile }) {
                   </div>
 
                   <p className="text-xs font-sans text-gray-400 leading-relaxed font-medium">
-                    Hey <span className="text-[#FF6044] font-extrabold">{username}</span>, the developer left you a personal message.
+                    Secure connection established. The developer left you a message.
                   </p>
 
                   <div className="flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-wider font-extrabold text-white group-hover:text-[#FF6044] transition-colors duration-300">
