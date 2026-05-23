@@ -228,63 +228,103 @@ export default function DeveloperCard() {
         {/* CONTENT SECTIONS */}
         <div className="space-y-40">
           
-          {/* THE MISSION & Blueprints */}
-          <section className="developer-section grid md:grid-cols-2 gap-12 items-stretch border-t border-white/10 pt-20">
-            
-            {/* The Mission - Shinu speaking directly */}
-            <div className="flex flex-col justify-between h-full gap-8">
-              <div>
-                <span className="text-primary font-mono text-xs tracking-widest uppercase mb-4 block">01 / The Mission</span>
-                <h2 className="text-3xl md:text-5xl font-display font-bold uppercase mb-4">My Vision</h2>
-              </div>
-
-              <div className="relative glass-panel p-8 bg-surface/30 border border-white/5 shadow-2xl rounded-3xl overflow-hidden flex flex-col justify-between gap-6">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
-                
-                <div className="space-y-4 font-sans text-gray-300 font-light leading-relaxed">
-                  <p>
-                    When I started writing the first lines of code for HireTrack, my goal was singular: to engineer a system that stops you from feeling helpless during the job search.
-                  </p>
-                  <p>
-                    Every pipeline step, every contact record, and every streak is designed to keep you moving forward. You're not just applying to jobs; you're running a high-frequency professional campaign. I want HireTrack to be your unfair advantage.
-                  </p>
+          {/* THE MISSION & BLUEPRINTS (Re-structured grid to match box heights perfectly) */}
+          <section className="developer-section border-t border-white/10 pt-20">
+            <div className="grid md:grid-cols-5 gap-12 items-stretch">
+              
+              {/* Column 1: The Mission (Taller, Narrower, Perfect structured vertical match) */}
+              <div className="md:col-span-2 flex flex-col justify-between h-full gap-8">
+                <div>
+                  <span className="text-primary font-mono text-xs tracking-widest uppercase mb-4 block">01 / The Mission</span>
+                  <h2 className="text-3xl md:text-5xl font-display font-bold uppercase mb-4">My Vision</h2>
                 </div>
 
-                <div className="border-t border-white/5 pt-4 flex justify-between items-center text-[9px] font-mono text-gray-500 uppercase tracking-widest">
-                  <span>Signed: Shinu Cherian</span>
-                  <span>Active Framework v1.4</span>
+                <div className="relative glass-panel p-8 bg-surface/30 border border-white/5 shadow-2xl rounded-3xl overflow-hidden flex flex-col justify-between h-full min-h-[500px]">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+                  
+                  <div className="space-y-6 font-sans text-gray-300 font-light leading-relaxed text-sm md:text-base">
+                    <p className="first-letter:text-5xl first-letter:font-black first-letter:text-primary first-letter:mr-2 first-letter:float-left">
+                      When I started writing the first lines of code for HireTrack, my goal was singular: to engineer a system that stops you from feeling helpless during the job search.
+                    </p>
+                    <p>
+                      Every pipeline step, every contact record, and every streak is designed to keep you moving forward. You're not just applying to jobs; you're running a high-frequency professional campaign. I want HireTrack to be your unfair advantage.
+                    </p>
+                    <p>
+                      This platform represents months of refinement and engineering. I hope it brings you absolute clarity and operational momentum as you step into your next career breakthrough.
+                    </p>
+                  </div>
+
+                  <div className="border-t border-white/5 pt-4 mt-8 flex justify-between items-center text-[9px] font-mono text-gray-500 uppercase tracking-widest">
+                    <span>Signed: Shinu Cherian</span>
+                    <span>Active Framework v1.5</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Column 2: The Toolkit (Wider, beautifully stacked cards matching vision height) */}
+              <div className="md:col-span-3 flex flex-col justify-between h-full gap-8">
+                <div>
+                  <span className="text-primary font-mono text-xs tracking-widest uppercase mb-4 block">02 / The Blueprint</span>
+                  <h2 className="text-3xl md:text-5xl font-display font-bold uppercase mb-4">The Toolkit</h2>
+                </div>
+
+                <div className="space-y-6 flex flex-col justify-between h-full">
+                  
+                  {/* Job Pipeline */}
+                  <div className="p-6 bg-surface/20 border border-white/5 rounded-2xl hover:border-primary/20 transition-all duration-300">
+                    <h3 className="text-lg font-bold uppercase text-white mb-2">Why I built the Job Pipeline</h3>
+                    <p className="text-xs text-gray-400 leading-relaxed font-light font-sans">
+                      "I engineered the Job Pipeline so you can manage your chaos. When you apply to dozens of places, you need to know instantly where you applied, which exact resume version you used, what the JD specifications were, and run smart performance analytics on your pipeline."
+                    </p>
+                  </div>
+                  
+                  {/* ATS Scanner */}
+                  <div className="p-6 bg-surface/20 border border-white/5 rounded-2xl hover:border-primary/20 transition-all duration-300">
+                    <h3 className="text-lg font-bold uppercase text-white mb-2">Why I built the ATS Scanner</h3>
+                    <p className="text-xs text-gray-400 leading-relaxed font-light font-sans">
+                      "Because modern hiring is gatekept by algorithms. I wanted to give you the exact same tools that recruiters use to filter resumes, so you can optimize your keywords before you hit submit."
+                    </p>
+                  </div>
+
+                  {/* Referral System */}
+                  <div className="p-6 bg-surface/20 border border-white/5 rounded-2xl hover:border-primary/20 transition-all duration-300">
+                    <h3 className="text-lg font-bold uppercase text-white mb-2">Why I built the Referral System</h3>
+                    <p className="text-xs text-gray-400 leading-relaxed font-light font-sans">
+                      "Because cold applications are slow; jobs are won through real human connections. I built this so you can map your referrers, log exact notes, track follow-ups, and turn networking into a science."
+                    </p>
+                  </div>
+
+                  {/* Career Roadmap */}
+                  <div className="p-6 bg-surface/20 border border-white/5 rounded-2xl hover:border-primary/20 transition-all duration-300">
+                    <h3 className="text-lg font-bold uppercase text-primary mb-2">Why I built the Career Roadmap</h3>
+                    <p className="text-xs text-gray-400 leading-relaxed font-light font-sans">
+                      "An industry-first, personalized career planning engine. I engineered this because no other website gives you a clear visual blueprint of your future. It analyzes your degree and target role to generate a multi-year execution timeline, so you can coordinate your long-term career leaps with absolute conviction."
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* The Blueprint - Why Shinu built it */}
-            <div className="flex flex-col justify-between h-full gap-8">
-              <div>
-                <span className="text-primary font-mono text-xs tracking-widest uppercase mb-4 block">02 / The Blueprint</span>
-                <h2 className="text-3xl md:text-5xl font-display font-bold uppercase mb-4">The Toolkit</h2>
-              </div>
-
-              <div className="space-y-6">
-                <div className="p-6 bg-surface/20 border border-white/5 rounded-2xl hover:border-primary/20 transition-all duration-300">
-                  <h3 className="text-lg font-bold uppercase text-white mb-2">Why I built the Job Pipeline</h3>
-                  <p className="text-xs text-gray-400 leading-relaxed font-light font-sans">
-                    "To give you instant visual clarity. You should never have to guess what stage an application is in. One glance, and you know where your pressure points are."
+            {/* Gen-Z styled warm call to action for all users */}
+            <div className="mt-16 p-8 bg-[#0c0d0d]/80 border-2 border-white/10 rounded-3xl shadow-xl relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+              <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div className="space-y-2">
+                  <h3 className="text-xl md:text-2xl font-display font-black uppercase text-white tracking-tight">
+                    Wait, there is more... ⚡
+                  </h3>
+                  <p className="text-xs md:text-sm text-gray-400 font-sans font-light max-w-2xl leading-relaxed">
+                    Honestly? This is just the tip of the iceberg. There are so many more secret weapons waiting for you inside the command center. Kindly log in, unlock your session, and feel free to make HireTrack your own. It's all yours now. Let's get it!
                   </p>
                 </div>
-                
-                <div className="p-6 bg-surface/20 border border-white/5 rounded-2xl hover:border-primary/20 transition-all duration-300">
-                  <h3 className="text-lg font-bold uppercase text-white mb-2">Why I built the ATS Scanner</h3>
-                  <p className="text-xs text-gray-400 leading-relaxed font-light font-sans">
-                    "Because modern hiring is gatekept by algorithms. I wanted to give you the exact same tools that recruiters use to filter resumes, so you can optimize your keywords before you hit submit."
-                  </p>
-                </div>
-
-                <div className="p-6 bg-surface/20 border border-white/5 rounded-2xl hover:border-primary/20 transition-all duration-300">
-                  <h3 className="text-lg font-bold uppercase text-white mb-2">Why I built the Referral System</h3>
-                  <p className="text-xs text-gray-400 leading-relaxed font-light font-sans">
-                    "Because jobs aren't landed by cold applications; they are landed through people. I built this to keep your networks indexed, mapped, and warm."
-                  </p>
-                </div>
+                {!isLoggedIn && (
+                  <Link 
+                    to="/login" 
+                    className="inline-flex items-center gap-3 bg-white text-surface font-display font-black text-sm px-8 py-4 uppercase tracking-wider hover:bg-primary transition-all rounded-xl brutalist-shadow whitespace-nowrap"
+                  >
+                    Unlock It Now <ArrowRight size={16} />
+                  </Link>
+                )}
               </div>
             </div>
           </section>
@@ -362,7 +402,7 @@ export default function DeveloperCard() {
         {/* FOOTER DECORATION */}
         <div className="mt-40 pt-20 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 text-gray-600 font-mono text-[10px] tracking-widest uppercase">
           <div className="flex items-center gap-2">
-            <ShieldCheck size={14} className="text-primary" /> HireTrack Developer Profile Document v1.4.1
+            <ShieldCheck size={14} className="text-primary" /> HireTrack Developer Profile Document v1.5.0
           </div>
           <div>All Systems Nominal /// © {new Date().getFullYear()}</div>
         </div>
