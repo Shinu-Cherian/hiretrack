@@ -142,7 +142,7 @@ export default function DeveloperCard() {
         return (
           <>
             {prefix}
-            <span className="text-[#FF6044] font-black text-2xl sm:text-3xl md:text-4xl">
+            <span className="text-[#FF6044] font-black text-3xl sm:text-4xl md:text-5xl">
               {typedName}
             </span>
             {typedGreeting.length < fullText.length && (
@@ -187,7 +187,7 @@ export default function DeveloperCard() {
         <section className="mb-32 grid md:grid-cols-3 gap-12 items-center developer-title-wrapper">
           <div className="md:col-span-2 space-y-8">
             {/* Dynamic Single-Line Welcome Heading */}
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-display font-medium text-gray-300 tracking-tight min-h-[60px] md:min-h-[80px] select-none text-white block">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-medium text-gray-300 tracking-tight min-h-[60px] md:min-h-[80px] select-none text-white block">
               {renderTypedGreeting()}
             </h1>
             
