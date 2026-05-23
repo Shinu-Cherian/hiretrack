@@ -13,6 +13,7 @@ export default function DeveloperCard() {
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("isLoggedIn") === "true");
   const [username, setUsername] = useState(localStorage.getItem("username") || "Seeker");
   const [typedName, setTypedName] = useState("");
+  const [typedLogoText, setTypedLogoText] = useState("");
 
   // Dynamic welcome statement typing effect
   useEffect(() => {
@@ -49,6 +50,39 @@ export default function DeveloperCard() {
     tick();
     return () => clearTimeout(timer);
   }, [isLoggedIn, username]);
+
+  // Dynamic typing effect inside the circular Logo
+  useEffect(() => {
+    const logoWord = "HireTrack";
+    let index = 0;
+    let isDeleting = false;
+    let timer = null;
+
+    const tick = () => {
+      if (!isDeleting) {
+        setTypedLogoText(logoWord.slice(0, index + 1));
+        index++;
+        if (index === logoWord.length) {
+          isDeleting = true;
+          timer = setTimeout(tick, 5000); // Hold for 5 seconds when full
+        } else {
+          timer = setTimeout(tick, 140 + Math.random() * 40); // Typing speed
+        }
+      } else {
+        setTypedLogoText(logoWord.slice(0, index - 1));
+        index--;
+        if (index === 0) {
+          isDeleting = false;
+          timer = setTimeout(tick, 1000); // Pause 1 second before re-typing
+        } else {
+          timer = setTimeout(tick, 60); // Deleting speed
+        }
+      }
+    };
+
+    tick();
+    return () => clearTimeout(timer);
+  }, []);
 
   // Fetch authentication status
   useEffect(() => {
@@ -90,11 +124,23 @@ export default function DeveloperCard() {
     return () => ctx.revert();
   }, []);
 
+  // Correctly split and color the typing HireTrack logo inside the circle
+  const renderTypedLogo = () => {
+    const hirePart = typedLogoText.slice(0, 4);
+    const trackPart = typedLogoText.slice(4);
+    return (
+      <>
+        <span className="text-white">{hirePart}</span>
+        <span className="text-[#FF6044]">{trackPart}</span>
+      </>
+    );
+  };
+
   return (
     <div ref={containerRef} className="min-h-screen bg-surface text-white selection:bg-primary selection:text-surface overflow-x-hidden">
       <Header />
 
-      {/* Embedded Styles for cursor animation and hover effects */}
+      {/* Embedded Styles for cursor animation and hover breakout effects */}
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes blinkCursor {
           0%, 100% { opacity: 1; }
@@ -106,14 +152,20 @@ export default function DeveloperCard() {
         .logo-circle {
           border: 4px solid rgba(255, 255, 255, 0.1);
           border-radius: 50%;
-          width: 16rem; /* 256px */
-          height: 16rem; /* 256px */
+          width: 18rem; /* 288px */
+          height: 18rem; /* 288px */
           display: flex;
           align-items: center;
           justify-content: center;
           background-color: #121313;
           transition: border-color 0.5s ease, box-shadow 0.5s ease;
           position: relative;
+        }
+        @media (min-width: 768px) {
+          .logo-circle {
+            width: 21rem; /* 336px */
+            height: 21rem; /* 336px */
+          }
         }
         .logo-circle:hover {
           border-color: rgba(255, 96, 68, 0.4);
@@ -162,11 +214,12 @@ export default function DeveloperCard() {
             </div>
           </div>
 
-          {/* Static Circular Logo with Hover Breakout Effect */}
-          <div className="flex items-center justify-center md:col-span-1 py-8">
+          {/* Larger Static Circular Logo with Hover Breakout Effect (Centered Right Side) */}
+          <div className="flex items-center justify-center md:justify-end w-full md:col-span-1 py-8">
             <div className="logo-circle">
-              <span className="logo-text text-white select-none text-2xl md:text-3xl">
-                Hire<span className="text-[#FF6044]">Track</span>
+              <span className="logo-text select-none text-3xl sm:text-4xl">
+                {renderTypedLogo()}
+                <span className="text-[#FF6044] typing-cursor text-2xl md:text-3xl ml-0.5">|</span>
               </span>
             </div>
           </div>
@@ -199,7 +252,7 @@ export default function DeveloperCard() {
 
                 <div className="border-t border-white/5 pt-4 flex justify-between items-center text-[9px] font-mono text-gray-500 uppercase tracking-widest">
                   <span>Signed: Shinu Cherian</span>
-                  <span>Active Framework v1.3</span>
+                  <span>Active Framework v1.4</span>
                 </div>
               </div>
             </div>
@@ -309,7 +362,7 @@ export default function DeveloperCard() {
         {/* FOOTER DECORATION */}
         <div className="mt-40 pt-20 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 text-gray-600 font-mono text-[10px] tracking-widest uppercase">
           <div className="flex items-center gap-2">
-            <ShieldCheck size={14} className="text-primary" /> HireTrack Developer Profile Document v1.4.0
+            <ShieldCheck size={14} className="text-primary" /> HireTrack Developer Profile Document v1.4.1
           </div>
           <div>All Systems Nominal /// © {new Date().getFullYear()}</div>
         </div>
