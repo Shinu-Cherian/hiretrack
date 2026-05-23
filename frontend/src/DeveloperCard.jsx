@@ -178,18 +178,6 @@ export default function DeveloperCard() {
         .typing-cursor {
           animation: blinkCursor 0.8s infinite;
         }
-        .logo-text-wrapper {
-          font-family: var(--font-display, inherit);
-          font-weight: 900;
-          text-transform: uppercase;
-          letter-spacing: -0.05em;
-          transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-          display: inline-block;
-          cursor: default;
-        }
-        .logo-text-wrapper:hover {
-          transform: scale(1.3);
-        }
       `}} />
 
       <main className="max-w-5xl mx-auto px-6 py-24 md:py-40">
@@ -228,13 +216,44 @@ export default function DeveloperCard() {
             </div>
           </div>
 
-          {/* Larger Floating Logo without Circle (Centered Right Side with Pop Animation on Hover) */}
-          <div className="flex items-center justify-center md:justify-end w-full md:col-span-1 py-8">
-            <div className="logo-text-wrapper select-none text-4xl sm:text-5xl md:text-6xl">
-              <span>
-                {renderTypedLogo()}
-                <span className="text-[#FF6044] typing-cursor ml-0.5">|</span>
-              </span>
+          {/* Designed Greeting Box (Centered Right Side with Pop Animation on Hover) */}
+          <div className="flex justify-center md:justify-end w-full md:col-span-1 py-8">
+            <div className="group p-8 w-full max-w-sm bg-[#121313]/90 border border-white/5 hover:border-primary transition-all duration-500 rounded-3xl relative overflow-hidden brutalist-shadow transform hover:scale-[1.05] ease-[cubic-bezier(0.175,0.885,0.32,1.275)] cursor-default">
+              {/* Ambient corner glow */}
+              <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full blur-2xl pointer-events-none transition-opacity opacity-50 group-hover:opacity-100 duration-500" />
+              
+              <div className="space-y-6">
+                {/* Dynamic Header & Greeting */}
+                {isLoggedIn ? (
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-mono text-gray-500 uppercase tracking-widest block">Connection Sync</h4>
+                    <p className="text-xl md:text-2xl font-light text-white leading-snug">
+                      Hey <span className="text-[#FF6044] font-black">{username}</span>,
+                    </p>
+                    <p className="text-base md:text-lg font-bold text-gray-200 leading-normal font-sans">
+                      Finally, you are at the right place! ⚡
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-mono text-gray-500 uppercase tracking-widest block">Welcome Seeker</h4>
+                    <p className="text-xl md:text-2xl font-light text-white leading-snug">
+                      Hey user,
+                    </p>
+                    <p className="text-base md:text-lg font-bold text-gray-200 leading-normal font-sans">
+                      Finally, you are at the right place! ⚡
+                    </p>
+                  </div>
+                )}
+                
+                {/* Dynamic typing HireTrack name in small at the bottom */}
+                <div className="pt-6 border-t border-white/5 flex justify-between items-center text-[10px] font-mono text-gray-500 uppercase tracking-widest">
+                  <span>Verified Architect</span>
+                  <span className="font-display font-black tracking-tight text-white uppercase text-xs">
+                    {renderTypedLogo()}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -429,7 +448,7 @@ export default function DeveloperCard() {
         {/* FOOTER DECORATION */}
         <div className="mt-40 pt-20 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 text-gray-600 font-mono text-[10px] tracking-widest uppercase">
           <div className="flex items-center gap-2">
-            <ShieldCheck size={14} className="text-primary" /> HireTrack Developer Profile Document v1.5.3
+            <ShieldCheck size={14} className="text-primary" /> HireTrack Developer Profile Document v1.5.4
           </div>
           <div>All Systems Nominal /// © {new Date().getFullYear()}</div>
         </div>
