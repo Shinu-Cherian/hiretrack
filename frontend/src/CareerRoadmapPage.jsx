@@ -211,7 +211,7 @@ export default function CareerRoadmapPage() {
     <div className="min-h-screen bg-[#121313] font-sans text-white">
       <Header />
 
-      <main className="max-w-[1200px] mx-auto px-6 py-8 animate-fade-in-up">
+      <main className="w-full max-w-[1600px] mx-auto px-6 py-8 animate-fade-in-up">
         <BackButton className="mb-6" isMenu={false} />
 
         {/* Page Header */}
