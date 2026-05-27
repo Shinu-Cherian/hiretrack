@@ -46,18 +46,18 @@ function CustomDropdown({ label, value, options, onChange }) {
 
   return (
     <div className="relative flex items-center gap-1.5" ref={dropdownRef}>
-      <span className="text-[9px] font-mono text-gray-500 uppercase tracking-widest">{label}:</span>
+      <span className="text-[10px] font-mono text-gray-500 uppercase tracking-widest font-black">{label}:</span>
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between gap-1.5 px-3 py-1.5 bg-[#121313] hover:bg-[#1a1b1b] border border-white/5 hover:border-white/15 rounded-xl text-[10px] font-mono text-white uppercase font-black tracking-wider transition-all select-none min-w-[100px]"
+        className="flex items-center justify-between gap-2 px-4 py-2 bg-[#0A0B0B] hover:bg-[#121313] border border-white/10 hover:border-[#FF6044]/40 rounded-xl text-xs font-mono text-white uppercase font-black tracking-wider transition-all select-none min-w-[140px] text-left"
       >
         <span className="truncate">{selectedOption.label}</span>
-        <span className="text-gray-500 text-[8px] ml-1">▼</span>
+        <span className="text-gray-500 text-[9px] ml-1">▼</span>
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 z-50 mt-1 min-w-[130px] bg-[#121313] border border-white/10 rounded-xl shadow-2xl overflow-hidden p-1 animate-fade-in">
+        <div className="absolute top-full left-0 z-50 mt-2 min-w-[170px] bg-[#121313] border-2 border-white/10 rounded-xl shadow-[0_15px_40px_rgba(0,0,0,0.85)] overflow-hidden p-1.5 animate-fade-in">
           {options.map((opt) => (
             <button
               key={opt.value}
@@ -66,9 +66,9 @@ function CustomDropdown({ label, value, options, onChange }) {
                 onChange(opt.value);
                 setIsOpen(false);
               }}
-              className={`w-full text-left px-3 py-2 rounded-lg text-[9px] font-mono uppercase tracking-wider transition-all ${
+              className={`w-full text-left px-4 py-2.5 rounded-lg text-xs font-mono uppercase tracking-wider font-extrabold transition-all select-none ${
                 opt.value === value
-                  ? "bg-[#FF6044] text-black font-black"
+                  ? "bg-[#FF6044] text-black"
                   : "text-gray-400 hover:text-white hover:bg-white/5"
               }`}
             >
@@ -353,26 +353,37 @@ export default function Scribbles() {
 
   // Ruled, Dotted grid, Blueprint grid inline styling helpers
   const getCanvasPatternStyle = () => {
+    let base = {};
     switch (canvasPattern) {
       case "ruled":
-        return {
+        base = {
           backgroundImage: "linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px)",
           backgroundSize: "100% 28px",
           lineHeight: "28px"
         };
+        break;
       case "dot":
-        return {
+        base = {
           backgroundImage: "radial-gradient(rgba(255, 255, 255, 0.06) 1.2px, transparent 1.2px)",
           backgroundSize: "20px 20px"
         };
+        break;
       case "mesh":
-        return {
+        base = {
           backgroundImage: "linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px)",
           backgroundSize: "24px 24px"
         };
+        break;
       default:
-        return {};
+        base = {};
     }
+    
+    // Add dynamic border and glow shadow matching selectedScribble's ink color
+    if (selectedScribble) {
+      base.borderColor = `${selectedScribble.color}25`;
+      base.boxShadow = `0 4px 30px -10px ${selectedScribble.color}20`;
+    }
+    return base;
   };
 
   // Word metrics calculator
@@ -398,16 +409,6 @@ export default function Scribbles() {
               <Sparkles size={10} className="animate-pulse" />
               Scribble Workspace v2.0
             </div>
-            {selectedScribble && (
-              <button
-                onClick={() => setIsFocusMode(!isFocusMode)}
-                className="hidden md:inline-flex items-center gap-1.5 px-3 py-1 bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/20 rounded-lg text-[10px] font-mono uppercase tracking-widest text-gray-400 hover:text-white transition-all select-none"
-                title="Toggle Focus Mode"
-              >
-                {isFocusMode ? <Minimize2 size={11} /> : <Maximize2 size={11} />}
-                {isFocusMode ? "Exit Focus" : "Focus Canvas"}
-              </button>
-            )}
           </div>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div className="space-y-1.5">
@@ -650,6 +651,20 @@ export default function Scribbles() {
                       {copiedId === selectedScribble.id ? "Copied" : "Copy Note"}
                     </button>
 
+                    {/* Focus toggle (Placed between Copy and Delete) */}
+                    <button
+                      onClick={() => setIsFocusMode(!isFocusMode)}
+                      className={`inline-flex items-center gap-1.5 px-3 py-2 border rounded-xl text-[10px] font-mono uppercase font-black transition-all select-none ${
+                        isFocusMode
+                          ? "border-[#FF6044]/20 bg-[#FF6044]/10 text-[#FF6044]"
+                          : "border-white/5 bg-white/5 text-gray-400 hover:text-white hover:border-white/20"
+                      }`}
+                      title={isFocusMode ? "Exit Focus Mode" : "Focus Canvas"}
+                    >
+                      {isFocusMode ? <Minimize2 size={11} /> : <Maximize2 size={11} />}
+                      {isFocusMode ? "Exit Focus" : "Focus"}
+                    </button>
+
                     {/* Delete Note */}
                     <button
                       onClick={() => handleDeleteScribble(selectedScribble.id)}
@@ -731,7 +746,7 @@ export default function Scribbles() {
                     {/* WRITING PAD CANVAS */}
                     <div 
                       style={getCanvasPatternStyle()}
-                      className="flex-1 flex flex-col gap-4 p-6 bg-[#121313]/20 border border-white/5 rounded-2xl min-h-[350px] transition-all duration-300"
+                      className="flex-1 flex flex-col gap-4 p-6 bg-[#121313]/20 border rounded-2xl min-h-[350px] transition-all duration-300"
                     >
                       {/* Notebook Title Block */}
                       <input
@@ -745,11 +760,12 @@ export default function Scribbles() {
 
                       <div className="h-[1px] bg-white/5 my-1" />
 
-                      {/* Text Input Pad */}
+                      {/* Text Input Pad (Dynamic Color matching Ink Tone) */}
                       <textarea
                         value={selectedScribble.content}
                         onChange={(e) => handleEditorChange("content", e.target.value)}
                         placeholder="Dump application links, draft job summaries, paste bullet lists, or scribble quick thoughts..."
+                        style={{ color: selectedScribble.color }}
                         className={`w-full bg-transparent flex-1 focus:outline-none placeholder:text-gray-700 resize-none min-h-[300px] ${
                           selectedScribble.font_family
                         } ${getFontSizeClass(selectedScribble.font_size)}`}
