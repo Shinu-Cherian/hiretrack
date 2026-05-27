@@ -27,6 +27,60 @@ import {
 import { apiUrl } from "./api";
 import Header from "./Header";
 
+// Custom Space Brutalist Dropdown Component matching HireTrack UI
+function CustomDropdown({ label, value, options, onChange }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const selectedOption = options.find((o) => o.value === value) || options[0];
+
+  return (
+    <div className="relative flex items-center gap-1.5" ref={dropdownRef}>
+      <span className="text-[9px] font-mono text-gray-500 uppercase tracking-widest">{label}:</span>
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center justify-between gap-1.5 px-3 py-1.5 bg-[#121313] hover:bg-[#1a1b1b] border border-white/5 hover:border-white/15 rounded-xl text-[10px] font-mono text-white uppercase font-black tracking-wider transition-all select-none min-w-[100px]"
+      >
+        <span className="truncate">{selectedOption.label}</span>
+        <span className="text-gray-500 text-[8px] ml-1">▼</span>
+      </button>
+
+      {isOpen && (
+        <div className="absolute top-full left-0 z-50 mt-1 min-w-[130px] bg-[#121313] border border-white/10 rounded-xl shadow-2xl overflow-hidden p-1 animate-fade-in">
+          {options.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => {
+                onChange(opt.value);
+                setIsOpen(false);
+              }}
+              className={`w-full text-left px-3 py-2 rounded-lg text-[9px] font-mono uppercase tracking-wider transition-all ${
+                opt.value === value
+                  ? "bg-[#FF6044] text-black font-black"
+                  : "text-gray-400 hover:text-white hover:bg-white/5"
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Scribbles() {
   const navigate = useNavigate();
   const [scribbles, setScribbles] = useState([]);
@@ -333,10 +387,10 @@ export default function Scribbles() {
   const metrics = selectedScribble ? getScribbleMetrics(selectedScribble.content) : { words: 0, chars: 0, readTime: 1 };
 
   return (
-    <div className="min-h-screen bg-[#0A0B0B] text-white selection:bg-[#FF6044] selection:text-black overflow-x-hidden font-sans">
+    <div className="h-screen bg-[#0A0B0B] text-white selection:bg-[#FF6044] selection:text-black overflow-hidden font-sans flex flex-col">
       <Header />
 
-      <main className="max-w-[1400px] mx-auto px-6 py-24 md:py-28 h-screen flex flex-col">
+      <main className="max-w-[1780px] w-full mx-auto px-4 sm:px-6 pt-20 pb-4 flex-1 flex flex-col min-h-0 overflow-hidden">
         {/* TOP INTRO BANNER */}
         <div className="mb-6 space-y-3 flex-shrink-0 animate-fade-in">
           <div className="flex items-center justify-between">
@@ -550,13 +604,22 @@ export default function Scribbles() {
                     </div>
                   </div>
 
-                  {/* Center Metrics (Always Visible) */}
-                  <div className="hidden md:flex items-center gap-4 font-mono text-[10px] tracking-wider text-gray-500 uppercase">
-                    <span>Words: <strong className="text-white">{metrics.words}</strong></span>
-                    <span className="w-1 h-1 bg-white/10 rounded-full" />
-                    <span>Chars: <strong className="text-white">{metrics.chars}</strong></span>
-                    <span className="w-1 h-1 bg-white/10 rounded-full" />
-                    <span>Read: <strong className="text-[#FF6044]">{metrics.readTime}m</strong></span>
+                  {/* Center Metrics (Always Visible & Prominently Styled) */}
+                  <div className="hidden md:flex items-center gap-5 bg-[#0A0B0B] border border-white/5 px-4 py-2 rounded-2xl select-none font-mono text-[10px] tracking-widest text-gray-400">
+                    <div className="flex items-center gap-2">
+                      <span>WORDS:</span>
+                      <strong className="text-[#FF6044] font-black text-sm">{metrics.words}</strong>
+                    </div>
+                    <span className="w-1.5 h-1.5 bg-white/10 rounded-full" />
+                    <div className="flex items-center gap-2">
+                      <span>CHARS:</span>
+                      <strong className="text-white font-black text-sm">{metrics.chars}</strong>
+                    </div>
+                    <span className="w-1.5 h-1.5 bg-white/10 rounded-full" />
+                    <div className="flex items-center gap-2">
+                      <span>READ:</span>
+                      <strong className="text-emerald-400 font-black text-sm">{metrics.readTime}M</strong>
+                    </div>
                   </div>
 
                   {/* Right side utility bar */}
@@ -604,72 +667,58 @@ export default function Scribbles() {
                   {/* CANVAS CONTENT AREA */}
                   <div className="flex-1 flex flex-col min-h-0 overflow-y-auto p-6 md:p-8 custom-scrollbar">
                     
-                    {/* COMPACT TOP BAR TOOLBAR (Ink Tone, Font, Paper Pattern, Pencil Size) */}
-                    <div className="flex flex-wrap items-center gap-4 p-3 bg-[#121313]/40 border border-white/5 rounded-2xl select-none mb-4 text-[10px] font-mono uppercase tracking-widest text-gray-500">
+                    {/* COMPACT TOP BAR TOOLBAR (Ink Tone Color Cubes & Custom Dropdowns) */}
+                    <div className="flex flex-wrap items-center gap-5 p-3 bg-[#121313]/40 border border-white/5 rounded-2xl select-none mb-4 text-[10px] font-mono uppercase tracking-widest text-gray-500">
                       
-                      {/* Ink Accent Selection Dropdown */}
-                      <div className="flex items-center gap-2">
-                        <span>Ink Tone:</span>
-                        <select
-                          value={selectedScribble.color}
-                          onChange={(e) => handleEditorChange("color", e.target.value)}
-                          style={{ color: selectedScribble.color }}
-                          className="bg-[#0A0B0B] border border-white/5 px-2.5 py-1.5 rounded-xl font-bold tracking-wider focus:outline-none focus:border-[#FF6044]/40 cursor-pointer text-[10px]"
-                        >
+                      {/* Ink Accent Color Cubes (No Text) */}
+                      <div className="flex items-center gap-2.5">
+                        <span>Ink:</span>
+                        <div className="flex items-center gap-1.5 bg-[#0A0B0B] px-2 py-1.5 border border-white/5 rounded-xl">
                           {COLORS.map((c) => (
-                            <option key={c.hex} value={c.hex} style={{ color: c.hex, backgroundColor: "#0A0B0B" }}>
-                              {c.label}
-                            </option>
+                            <button
+                              key={c.hex}
+                              type="button"
+                              onClick={() => handleEditorChange("color", c.hex)}
+                              style={{ backgroundColor: c.hex }}
+                              className={`w-4 h-4 rounded-md border transition-all relative ${
+                                selectedScribble.color === c.hex
+                                  ? "ring-2 ring-white scale-110 shadow-md border-transparent"
+                                  : "opacity-60 hover:opacity-100 border-white/15"
+                              }`}
+                              title={c.label}
+                            />
                           ))}
-                        </select>
+                        </div>
                       </div>
 
-                      {/* Font Family Dropdown */}
-                      <div className="flex items-center gap-2">
-                        <span>Font:</span>
-                        <select
-                          value={selectedScribble.font_family}
-                          onChange={(e) => handleEditorChange("font_family", e.target.value)}
-                          className="bg-[#0A0B0B] border border-white/5 text-white px-2.5 py-1.5 rounded-xl font-bold tracking-wider focus:outline-none focus:border-[#FF6044]/40 cursor-pointer text-[10px]"
-                        >
-                          {FONTS.map((f) => (
-                            <option key={f.value} value={f.value} style={{ backgroundColor: "#0A0B0B" }}>
-                              {f.label}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
+                      {/* Custom Font Family Dropdown */}
+                      <CustomDropdown
+                        label="Font"
+                        value={selectedScribble.font_family}
+                        options={FONTS}
+                        onChange={(val) => handleEditorChange("font_family", val)}
+                      />
 
-                      {/* Paper Texture Dropdown */}
-                      <div className="flex items-center gap-2">
-                        <span>Paper:</span>
-                        <select
-                          value={canvasPattern}
-                          onChange={(e) => setCanvasPattern(e.target.value)}
-                          className="bg-[#0A0B0B] border border-white/5 text-white px-2.5 py-1.5 rounded-xl font-bold tracking-wider focus:outline-none focus:border-[#FF6044]/40 cursor-pointer text-[10px]"
-                        >
-                          <option value="void" style={{ backgroundColor: "#0A0B0B" }}>Void (Dark)</option>
-                          <option value="ruled" style={{ backgroundColor: "#0A0B0B" }}>Rules (Ruled)</option>
-                          <option value="dot" style={{ backgroundColor: "#0A0B0B" }}>Dots (Dotted)</option>
-                          <option value="mesh" style={{ backgroundColor: "#0A0B0B" }}>Grid (Blueprint)</option>
-                        </select>
-                      </div>
+                      {/* Custom Paper Texture Dropdown */}
+                      <CustomDropdown
+                        label="Paper"
+                        value={canvasPattern}
+                        options={[
+                          { value: "void", label: "Void" },
+                          { value: "ruled", label: "Rules" },
+                          { value: "dot", label: "Dots" },
+                          { value: "mesh", label: "Grid" },
+                        ]}
+                        onChange={(val) => setCanvasPattern(val)}
+                      />
 
-                      {/* Pencil Sizing (Font Size) Dropdown */}
-                      <div className="flex items-center gap-2">
-                        <span>Pencil:</span>
-                        <select
-                          value={selectedScribble.font_size}
-                          onChange={(e) => handleEditorChange("font_size", e.target.value)}
-                          className="bg-[#0A0B0B] border border-white/5 text-white px-2.5 py-1.5 rounded-xl font-bold tracking-wider focus:outline-none focus:border-[#FF6044]/40 cursor-pointer text-[10px]"
-                        >
-                          {SIZES.map((sz) => (
-                            <option key={sz.value} value={sz.value} style={{ backgroundColor: "#0A0B0B" }}>
-                              {sz.label}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
+                      {/* Custom Pencil Sizing (Font Size) Dropdown */}
+                      <CustomDropdown
+                        label="Pencil"
+                        value={selectedScribble.font_size}
+                        options={SIZES}
+                        onChange={(val) => handleEditorChange("font_size", val)}
+                      />
 
                       {/* Mobile stats show up in the toolbar */}
                       <div className="flex md:hidden ml-auto items-center gap-2 text-gray-400">
