@@ -550,6 +550,15 @@ export default function Scribbles() {
                     </div>
                   </div>
 
+                  {/* Center Metrics (Always Visible) */}
+                  <div className="hidden md:flex items-center gap-4 font-mono text-[10px] tracking-wider text-gray-500 uppercase">
+                    <span>Words: <strong className="text-white">{metrics.words}</strong></span>
+                    <span className="w-1 h-1 bg-white/10 rounded-full" />
+                    <span>Chars: <strong className="text-white">{metrics.chars}</strong></span>
+                    <span className="w-1 h-1 bg-white/10 rounded-full" />
+                    <span>Read: <strong className="text-[#FF6044]">{metrics.readTime}m</strong></span>
+                  </div>
+
                   {/* Right side utility bar */}
                   <div className="flex items-center gap-2">
                     {/* Pin Status */}
@@ -595,76 +604,77 @@ export default function Scribbles() {
                   {/* CANVAS CONTENT AREA */}
                   <div className="flex-1 flex flex-col min-h-0 overflow-y-auto p-6 md:p-8 custom-scrollbar">
                     
-                    {/* CUSTOMIZABLE FLOATING TOOLBAR SHELF */}
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 bg-[#121313]/60 border border-white/5 rounded-2xl select-none mb-6 text-xs">
+                    {/* COMPACT TOP BAR TOOLBAR (Ink Tone, Font, Paper Pattern, Pencil Size) */}
+                    <div className="flex flex-wrap items-center gap-4 p-3 bg-[#121313]/40 border border-white/5 rounded-2xl select-none mb-4 text-[10px] font-mono uppercase tracking-widest text-gray-500">
                       
-                      {/* Color Accent Picker */}
-                      <div className="space-y-1.5">
-                        <span className="text-[9px] font-mono uppercase tracking-widest text-gray-500 block">Ink Tone</span>
-                        <div className="flex items-center gap-2">
+                      {/* Ink Accent Selection Dropdown */}
+                      <div className="flex items-center gap-2">
+                        <span>Ink Tone:</span>
+                        <select
+                          value={selectedScribble.color}
+                          onChange={(e) => handleEditorChange("color", e.target.value)}
+                          style={{ color: selectedScribble.color }}
+                          className="bg-[#0A0B0B] border border-white/5 px-2.5 py-1.5 rounded-xl font-bold tracking-wider focus:outline-none focus:border-[#FF6044]/40 cursor-pointer text-[10px]"
+                        >
                           {COLORS.map((c) => (
-                            <button
-                              key={c.hex}
-                              onClick={() => handleEditorChange("color", c.hex)}
-                              style={{ backgroundColor: c.hex }}
-                              className={`w-5 h-5 rounded-full border transition-all relative ${
-                                selectedScribble.color === c.hex
-                                  ? "border-white scale-110 shadow-md"
-                                  : "border-transparent opacity-50 hover:opacity-100"
-                              }`}
-                              title={c.label}
-                            >
-                              {selectedScribble.color === c.hex && (
-                                <Check size={9} className="absolute inset-0 m-auto text-black font-black" />
-                              )}
-                            </button>
+                            <option key={c.hex} value={c.hex} style={{ color: c.hex, backgroundColor: "#0A0B0B" }}>
+                              {c.label}
+                            </option>
                           ))}
-                        </div>
+                        </select>
                       </div>
 
-                      {/* Font selector */}
-                      <div className="space-y-1.5">
-                        <span className="text-[9px] font-mono uppercase tracking-widest text-gray-500 block">Font Family</span>
-                        <div className="flex gap-1 bg-[#0A0B0B] p-0.5 border border-white/5 rounded-lg">
+                      {/* Font Family Dropdown */}
+                      <div className="flex items-center gap-2">
+                        <span>Font:</span>
+                        <select
+                          value={selectedScribble.font_family}
+                          onChange={(e) => handleEditorChange("font_family", e.target.value)}
+                          className="bg-[#0A0B0B] border border-white/5 text-white px-2.5 py-1.5 rounded-xl font-bold tracking-wider focus:outline-none focus:border-[#FF6044]/40 cursor-pointer text-[10px]"
+                        >
                           {FONTS.map((f) => (
-                            <button
-                              key={f.value}
-                              onClick={() => handleEditorChange("font_family", f.value)}
-                              className={`flex-1 text-center py-1 rounded text-[9px] font-bold uppercase transition-all ${
-                                selectedScribble.font_family === f.value
-                                  ? "bg-[#FF6044] text-black font-black"
-                                  : "text-gray-500 hover:text-white"
-                              }`}
-                            >
-                              {f.label.split(" ")[0]}
-                            </button>
+                            <option key={f.value} value={f.value} style={{ backgroundColor: "#0A0B0B" }}>
+                              {f.label}
+                            </option>
                           ))}
-                        </div>
+                        </select>
                       </div>
 
-                      {/* Texture selector (Canvas style) */}
-                      <div className="space-y-1.5">
-                        <span className="text-[9px] font-mono uppercase tracking-widest text-gray-500 block">Paper Pattern</span>
-                        <div className="flex gap-1 bg-[#0A0B0B] p-0.5 border border-white/5 rounded-lg">
-                          {[
-                            { id: "void", label: "Void" },
-                            { id: "ruled", label: "Rules" },
-                            { id: "dot", label: "Dots" },
-                            { id: "mesh", label: "Grid" },
-                          ].map((pat) => (
-                            <button
-                              key={pat.id}
-                              onClick={() => setCanvasPattern(pat.id)}
-                              className={`flex-1 text-center py-1 rounded text-[9px] font-bold uppercase transition-all ${
-                                canvasPattern === pat.id
-                                  ? "bg-white text-black font-black"
-                                  : "text-gray-500 hover:text-white"
-                              }`}
-                            >
-                              {pat.label}
-                            </button>
+                      {/* Paper Texture Dropdown */}
+                      <div className="flex items-center gap-2">
+                        <span>Paper:</span>
+                        <select
+                          value={canvasPattern}
+                          onChange={(e) => setCanvasPattern(e.target.value)}
+                          className="bg-[#0A0B0B] border border-white/5 text-white px-2.5 py-1.5 rounded-xl font-bold tracking-wider focus:outline-none focus:border-[#FF6044]/40 cursor-pointer text-[10px]"
+                        >
+                          <option value="void" style={{ backgroundColor: "#0A0B0B" }}>Void (Dark)</option>
+                          <option value="ruled" style={{ backgroundColor: "#0A0B0B" }}>Rules (Ruled)</option>
+                          <option value="dot" style={{ backgroundColor: "#0A0B0B" }}>Dots (Dotted)</option>
+                          <option value="mesh" style={{ backgroundColor: "#0A0B0B" }}>Grid (Blueprint)</option>
+                        </select>
+                      </div>
+
+                      {/* Pencil Sizing (Font Size) Dropdown */}
+                      <div className="flex items-center gap-2">
+                        <span>Pencil:</span>
+                        <select
+                          value={selectedScribble.font_size}
+                          onChange={(e) => handleEditorChange("font_size", e.target.value)}
+                          className="bg-[#0A0B0B] border border-white/5 text-white px-2.5 py-1.5 rounded-xl font-bold tracking-wider focus:outline-none focus:border-[#FF6044]/40 cursor-pointer text-[10px]"
+                        >
+                          {SIZES.map((sz) => (
+                            <option key={sz.value} value={sz.value} style={{ backgroundColor: "#0A0B0B" }}>
+                              {sz.label}
+                            </option>
                           ))}
-                        </div>
+                        </select>
+                      </div>
+
+                      {/* Mobile stats show up in the toolbar */}
+                      <div className="flex md:hidden ml-auto items-center gap-2 text-gray-400">
+                        <span>W: <strong>{metrics.words}</strong></span>
+                        <span>C: <strong>{metrics.chars}</strong></span>
                       </div>
 
                     </div>
@@ -695,33 +705,6 @@ export default function Scribbles() {
                           selectedScribble.font_family
                         } ${getFontSizeClass(selectedScribble.font_size)}`}
                       />
-                    </div>
-
-                    {/* FOOTER METRICS BAR */}
-                    <div className="mt-4 flex flex-wrap justify-between items-center gap-3 font-mono text-[9px] uppercase tracking-widest text-gray-500 select-none bg-[#121313]/10 p-3 border border-white/5 rounded-xl">
-                      <div className="flex gap-4">
-                        <span>Words: <strong className="text-white">{metrics.words}</strong></span>
-                        <span>Chars: <strong className="text-white">{metrics.chars}</strong></span>
-                        <span>Read: <strong className="text-white">{metrics.readTime}m</strong></span>
-                      </div>
-                      <div className="flex gap-2.5 items-center">
-                        <span>Pencil Size:</span>
-                        <div className="flex gap-1">
-                          {SIZES.map((sz) => (
-                            <button
-                              key={sz.value}
-                              onClick={() => handleEditorChange("font_size", sz.value)}
-                              className={`px-1.5 py-0.5 rounded text-[8px] font-bold ${
-                                selectedScribble.font_size === sz.value
-                                  ? "bg-white text-black"
-                                  : "text-gray-500 hover:text-white"
-                              }`}
-                            >
-                              {sz.label}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
                     </div>
                   </div>
 
