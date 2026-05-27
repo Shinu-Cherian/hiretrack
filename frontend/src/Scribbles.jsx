@@ -84,90 +84,6 @@ function CustomDropdown({ label, value, options, onChange }) {
 }
 
 function ScribbleEmptyState({ onAddScribble }) {
-  const [particles, setParticles] = useState([]);
-  const [pencilPos, setPencilPos] = useState({ x: 30, y: 60 });
-  const [pencilRot, setPencilRot] = useState(-30);
-  const [pencilOpacity, setPencilOpacity] = useState(1);
-  const [showContent, setShowContent] = useState(false);
-
-  // Render content elements (text, button) after drawing is done
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowContent(true);
-    }, 3800);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Update pencil position dynamically along a linear reveal sweep with a gentle writing bounce
-  useEffect(() => {
-    let active = true;
-    let start = Date.now();
-    
-    const updatePencil = () => {
-      if (!active) return;
-      const elapsed = (Date.now() - start) % 5500; // 3.5s write + 2.0s delay = 5.5s cycle
-      
-      if (elapsed < 3500) {
-        const pct = elapsed / 3500;
-        // Sweep pencil linearly across the text path matching the new larger width (560px)
-        const x = 40 + pct * (560 - 40);
-        // Gentle up-and-down oscillation to simulate cursive stroke flow
-        const y = 60 + Math.sin(pct * Math.PI * 14) * 8;
-        const angleRot = Math.cos(pct * Math.PI * 14) * 20 - 30; // realistic tilting
-        
-        setPencilPos({ x, y });
-        setPencilRot(angleRot);
-        setPencilOpacity(1);
-        
-        // Spawn particle at the exact writing pencil tip!
-        if (Math.random() < 0.8) {
-          const p = {
-            id: Math.random(),
-            x: x + (Math.random() * 6 - 3),
-            y: y + (Math.random() * 6 - 3),
-            size: Math.random() * 3 + 1,
-            vx: (Math.random() * 2 - 1) * 0.35,
-            vy: -Math.random() * 0.5 - 0.1,
-            alpha: 0.95
-          };
-          setParticles((prev) => [...prev.slice(-35), p]);
-        }
-      } else {
-        setPencilOpacity(0);
-      }
-      requestAnimationFrame(updatePencil);
-    };
-    
-    requestAnimationFrame(updatePencil);
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  // Update active particles (physics drift & fade)
-  useEffect(() => {
-    let active = true;
-    const updateParticles = () => {
-      if (!active) return;
-      setParticles((prev) =>
-        prev
-          .map((p) => ({
-            ...p,
-            x: p.x + p.vx,
-            y: p.y + p.vy,
-            alpha: p.alpha - 0.022,
-            size: p.size * 0.965
-          }))
-          .filter((p) => p.alpha > 0)
-      );
-      requestAnimationFrame(updateParticles);
-    };
-    requestAnimationFrame(updateParticles);
-    return () => {
-      active = false;
-    };
-  }, []);
-
   return (
     <div 
       className="flex-1 flex flex-col items-center justify-center p-12 text-center space-y-7 select-none bg-[#1A1B1B] border border-white/10 rounded-3xl h-full shadow-[0_20px_50px_rgba(0,0,0,0.65)] hover:border-[#FF6044]/15 transition-all duration-300 relative overflow-hidden"
@@ -175,91 +91,11 @@ function ScribbleEmptyState({ onAddScribble }) {
       {/* Decorative ambient blueprint grid */}
       <div className="absolute inset-0 bg-dot-pattern opacity-[0.04] pointer-events-none" />
 
-      {/* DYNAMIC WRITING DOCK (Kurachude big size: max-w-[640px] h-48) */}
-      <div className="relative w-full max-w-[640px] h-48 flex items-center justify-center flex-shrink-0">
-        
-        {/* Real-time Cursive Pencil Follower */}
-        <div
-          style={{
-            left: `${pencilPos.x}px`,
-            top: `${pencilPos.y}px`,
-            transform: `rotate(${pencilRot}deg)`,
-            opacity: pencilOpacity,
-            transition: "opacity 0.2s ease-in-out"
-          }}
-          className="absolute z-20 text-[#FF6044] pointer-events-none transform -translate-x-[2px] -translate-y-[24px]"
-        >
-          <Pencil size={28} className="transform -scale-x-100" />
-        </div>
-
-        {/* Live Chalk Particles */}
-        <div className="absolute inset-0 z-10 pointer-events-none">
-          {particles.map((p) => (
-            <div
-              key={p.id}
-              style={{
-                left: `${p.x}px`,
-                top: `${p.y}px`,
-                width: `${p.size}px`,
-                height: `${p.size}px`,
-                opacity: p.alpha,
-                backgroundColor: "#FF6044",
-                boxShadow: "0 0 5px #FF6044"
-              }}
-              className="absolute rounded-full pointer-events-none"
-            />
-          ))}
-        </div>
-
-        {/* Dynamic English Calligraphy Canvas (Larger viewBox: 600 120) */}
-        <svg viewBox="0 0 600 120" className="w-full h-full relative z-0">
-          <defs>
-            <clipPath id="text-reveal-clip">
-              <motion.rect
-                x="0"
-                y="0"
-                height="120"
-                animate={{ width: [40, 565] }}
-                transition={{
-                  duration: 3.5,
-                  ease: "linear",
-                  repeat: Infinity,
-                  repeatType: "loop",
-                  repeatDelay: 2
-                }}
-              />
-            </clipPath>
-          </defs>
-
-          {/* Premium, perfectly legible cursive English handwriting text stack (Massive size: 64px) */}
-          <text 
-            x="50%" 
-            y="80" 
-            textAnchor="middle" 
-            clipPath="url(#text-reveal-clip)"
-            style={{ 
-              fontFamily: "'Segoe Script', 'Segoe Print', 'Caveat', 'Dancing Script', cursive",
-              fontSize: "64px"
-            }}
-            className="font-extrabold fill-[#FF6044] select-none"
-          >
-            Let's Scribble
-          </text>
-        </svg>
-      </div>
-
-      {/* Floating text + Coral CTA Button */}
-      <div 
-        style={{
-          opacity: showContent ? 1 : 0,
-          transform: showContent ? "translateY(0)" : "translateY(15px)",
-          transition: "opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.25, 1, 0.5, 1)"
-        }}
-        className="space-y-7 max-w-md w-full animate-fade-in"
-      >
+      {/* Static premium text + Coral CTA Button */}
+      <div className="space-y-7 max-w-md w-full">
         <div className="space-y-3">
           <h3 className="text-sm font-mono uppercase font-black tracking-widest text-[#FF6044] flex items-center justify-center gap-2">
-            <span className="w-2 h-2 bg-[#FF6044] rounded-full animate-ping" />
+            <span className="w-2 h-2 bg-[#FF6044] rounded-full" />
             Scribbling Deck Active
           </h3>
           <p className="text-xs text-gray-400 leading-relaxed font-sans font-light">
