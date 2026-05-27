@@ -83,13 +83,9 @@ function CustomDropdown({ label, value, options, onChange }) {
   );
 }
 
-// A beautifully flowing, continuous vector cursive signature path spelling "Let's Scribble"
-const cursivePath = "M 35,70 C 25,30 65,30 55,75 C 50,95 85,90 95,75 C 105,60 95,75 105,75 C 115,75 125,50 120,75 C 115,95 130,90 140,75 C 150,60 145,55 140,55 C 135,55 145,75 155,75 C 165,75 175,60 170,75 C 165,90 185,80 195,75 M 225,80 C 215,60 245,50 240,75 C 235,95 260,90 270,75 C 280,60 270,75 280,75 C 290,75 300,50 295,75 C 290,95 305,90 315,75 C 325,60 330,55 330,75 C 330,95 340,90 350,75 C 355,65 355,50 350,50 C 345,50 350,75 360,75 C 370,75 380,50 375,75 C 370,95 385,90 395,75 C 405,60 400,75 410,75";
-
 function ScribbleEmptyState({ onAddScribble }) {
-  const pathRef = useRef(null);
   const [particles, setParticles] = useState([]);
-  const [pencilPos, setPencilPos] = useState({ x: 35, y: 70 });
+  const [pencilPos, setPencilPos] = useState({ x: 25, y: 60 });
   const [pencilRot, setPencilRot] = useState(-30);
   const [pencilOpacity, setPencilOpacity] = useState(1);
   const [showContent, setShowContent] = useState(false);
@@ -102,49 +98,42 @@ function ScribbleEmptyState({ onAddScribble }) {
     return () => clearTimeout(timer);
   }, []);
 
-  // Update pencil position dynamically along the cursive vector path
+  // Update pencil position dynamically along a linear reveal sweep with a gentle writing bounce
   useEffect(() => {
     let active = true;
     let start = Date.now();
     
     const updatePencil = () => {
       if (!active) return;
-      if (pathRef.current) {
-        const path = pathRef.current;
-        const totalLength = path.getTotalLength();
-        const elapsed = (Date.now() - start) % 5500; // 3.5s write + 2.0s delay = 5.5s cycle
+      const elapsed = (Date.now() - start) % 5500; // 3.5s write + 2.0s delay = 5.5s cycle
+      
+      if (elapsed < 3500) {
+        const pct = elapsed / 3500;
+        // Sweep pencil linearly across the text path
+        const x = 30 + pct * (410 - 30);
+        // Gentle up-and-down oscillation to simulate cursive stroke flow
+        const y = 60 + Math.sin(pct * Math.PI * 14) * 8;
+        const angleRot = Math.cos(pct * Math.PI * 14) * 20 - 30; // realistic tilting
         
-        if (elapsed < 3500) {
-          const pct = elapsed / 3500;
-          const currentLength = pct * totalLength;
-          const point = path.getPointAtLength(currentLength);
-          
-          // Calculate realistic tangent pencil rotation!
-          const nextLength = Math.min(currentLength + 2, totalLength);
-          const nextPoint = path.getPointAtLength(nextLength);
-          const angleRad = Math.atan2(nextPoint.y - point.y, nextPoint.x - point.x);
-          const angleDeg = (angleRad * 180) / Math.PI;
-          
-          setPencilPos({ x: point.x, y: point.y });
-          setPencilRot(angleDeg - 45); // offset to tilt pencil realistically
-          setPencilOpacity(1);
-          
-          // Spawn particle at the exact writing pencil tip!
-          if (Math.random() < 0.8) {
-            const p = {
-              id: Math.random(),
-              x: point.x + (Math.random() * 6 - 3),
-              y: point.y + (Math.random() * 6 - 3),
-              size: Math.random() * 3 + 1,
-              vx: (Math.random() * 2 - 1) * 0.35,
-              vy: -Math.random() * 0.5 - 0.1,
-              alpha: 0.95
-            };
-            setParticles((prev) => [...prev.slice(-35), p]);
-          }
-        } else {
-          setPencilOpacity(0);
+        setPencilPos({ x, y });
+        setPencilRot(angleRot);
+        setPencilOpacity(1);
+        
+        // Spawn particle at the exact writing pencil tip!
+        if (Math.random() < 0.8) {
+          const p = {
+            id: Math.random(),
+            x: x + (Math.random() * 6 - 3),
+            y: y + (Math.random() * 6 - 3),
+            size: Math.random() * 3 + 1,
+            vx: (Math.random() * 2 - 1) * 0.35,
+            vy: -Math.random() * 0.5 - 0.1,
+            alpha: 0.95
+          };
+          setParticles((prev) => [...prev.slice(-35), p]);
         }
+      } else {
+        setPencilOpacity(0);
       }
       requestAnimationFrame(updatePencil);
     };
@@ -222,26 +211,37 @@ function ScribbleEmptyState({ onAddScribble }) {
           ))}
         </div>
 
-        {/* Dynamic Vector Calligraphy Canvas */}
+        {/* Dynamic English Calligraphy Canvas */}
         <svg viewBox="0 0 450 120" className="w-full h-full relative z-0">
-          {/* Cursive path representing "Let's Scribble" in running letter calligraphy */}
-          <motion.path
-            ref={pathRef}
-            d={cursivePath}
-            fill="none"
-            stroke="#FF6044"
-            strokeWidth="5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            animate={{ pathLength: [0, 1] }}
-            transition={{
-              duration: 3.5,
-              ease: "easeInOut",
-              repeat: Infinity,
-              repeatType: "loop",
-              repeatDelay: 2
-            }}
-          />
+          <defs>
+            <clipPath id="text-reveal-clip">
+              <motion.rect
+                x="0"
+                y="0"
+                height="120"
+                animate={{ width: [30, 420] }}
+                transition={{
+                  duration: 3.5,
+                  ease: "linear",
+                  repeat: Infinity,
+                  repeatType: "loop",
+                  repeatDelay: 2
+                }}
+              />
+            </clipPath>
+          </defs>
+
+          {/* Premium, perfectly legible cursive English handwriting text stack */}
+          <text 
+            x="50%" 
+            y="70" 
+            textAnchor="middle" 
+            clipPath="url(#text-reveal-clip)"
+            style={{ fontFamily: "'Segoe Script', 'Segoe Print', 'Caveat', 'Dancing Script', cursive" }}
+            className="text-4xl font-extrabold fill-[#FF6044] select-none"
+          >
+            Let's Scribble
+          </text>
         </svg>
       </div>
 
