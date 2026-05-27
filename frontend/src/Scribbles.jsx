@@ -269,7 +269,8 @@ function ScribbleEmptyState({ onAddScribble }) {
 
         <button
           onClick={onAddScribble}
-          className="inline-flex items-center gap-2 px-6 py-3.5 bg-[#FF6044] hover:bg-white text-black font-black uppercase text-xs font-display tracking-[0.16em] rounded-xl transition-all duration-300 shadow-lg shadow-[#FF6044]/15 hover:shadow-white/10 hover:translate-y-[-2px] select-none cursor-pointer"
+          className="inline-flex items-center gap-2 px-6 py-3.5 bg-[#FF6044] hover:bg-white text-black font-extrabold uppercase text-[11px] font-display rounded-xl transition-all duration-300 shadow-lg shadow-[#FF6044]/15 hover:shadow-white/10 hover:translate-y-[-2px] select-none cursor-pointer"
+          style={{ letterSpacing: "0.18em" }}
         >
           <Plus size={14} strokeWidth={3} /> Initialize New Scribble
         </button>
