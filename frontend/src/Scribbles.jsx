@@ -85,7 +85,7 @@ function CustomDropdown({ label, value, options, onChange }) {
 
 function ScribbleEmptyState({ onAddScribble }) {
   const [particles, setParticles] = useState([]);
-  const [pencilPos, setPencilPos] = useState({ x: 25, y: 60 });
+  const [pencilPos, setPencilPos] = useState({ x: 30, y: 60 });
   const [pencilRot, setPencilRot] = useState(-30);
   const [pencilOpacity, setPencilOpacity] = useState(1);
   const [showContent, setShowContent] = useState(false);
@@ -109,8 +109,8 @@ function ScribbleEmptyState({ onAddScribble }) {
       
       if (elapsed < 3500) {
         const pct = elapsed / 3500;
-        // Sweep pencil linearly across the text path matching the new larger width
-        const x = 30 + pct * (500 - 30);
+        // Sweep pencil linearly across the text path matching the new larger width (560px)
+        const x = 40 + pct * (560 - 40);
         // Gentle up-and-down oscillation to simulate cursive stroke flow
         const y = 60 + Math.sin(pct * Math.PI * 14) * 8;
         const angleRot = Math.cos(pct * Math.PI * 14) * 20 - 30; // realistic tilting
@@ -175,8 +175,8 @@ function ScribbleEmptyState({ onAddScribble }) {
       {/* Decorative ambient blueprint grid */}
       <div className="absolute inset-0 bg-dot-pattern opacity-[0.04] pointer-events-none" />
 
-      {/* DYNAMIC WRITING DOCK (Kurachude big size: max-w-[560px] h-40) */}
-      <div className="relative w-full max-w-[560px] h-40 flex items-center justify-center flex-shrink-0">
+      {/* DYNAMIC WRITING DOCK (Kurachude big size: max-w-[640px] h-48) */}
+      <div className="relative w-full max-w-[640px] h-48 flex items-center justify-center flex-shrink-0">
         
         {/* Real-time Cursive Pencil Follower */}
         <div
@@ -211,15 +211,15 @@ function ScribbleEmptyState({ onAddScribble }) {
           ))}
         </div>
 
-        {/* Dynamic English Calligraphy Canvas (Larger viewBox: 540 120) */}
-        <svg viewBox="0 0 540 120" className="w-full h-full relative z-0">
+        {/* Dynamic English Calligraphy Canvas (Larger viewBox: 600 120) */}
+        <svg viewBox="0 0 600 120" className="w-full h-full relative z-0">
           <defs>
             <clipPath id="text-reveal-clip">
               <motion.rect
                 x="0"
                 y="0"
                 height="120"
-                animate={{ width: [30, 510] }}
+                animate={{ width: [40, 565] }}
                 transition={{
                   duration: 3.5,
                   ease: "linear",
@@ -231,15 +231,15 @@ function ScribbleEmptyState({ onAddScribble }) {
             </clipPath>
           </defs>
 
-          {/* Premium, perfectly legible cursive English handwriting text stack (Massive size: 52px) */}
+          {/* Premium, perfectly legible cursive English handwriting text stack (Massive size: 64px) */}
           <text 
             x="50%" 
-            y="75" 
+            y="80" 
             textAnchor="middle" 
             clipPath="url(#text-reveal-clip)"
             style={{ 
               fontFamily: "'Segoe Script', 'Segoe Print', 'Caveat', 'Dancing Script', cursive",
-              fontSize: "52px"
+              fontSize: "64px"
             }}
             className="font-extrabold fill-[#FF6044] select-none"
           >
@@ -269,7 +269,7 @@ function ScribbleEmptyState({ onAddScribble }) {
 
         <button
           onClick={onAddScribble}
-          className="inline-flex items-center gap-2 px-6 py-3.5 bg-[#FF6044] hover:bg-white text-black font-black uppercase text-xs font-display tracking-wider rounded-xl transition-all duration-300 shadow-lg shadow-[#FF6044]/15 hover:shadow-white/10 hover:translate-y-[-2px] select-none cursor-pointer"
+          className="inline-flex items-center gap-2 px-6 py-3.5 bg-[#FF6044] hover:bg-white text-black font-black uppercase text-xs font-display tracking-[0.16em] rounded-xl transition-all duration-300 shadow-lg shadow-[#FF6044]/15 hover:shadow-white/10 hover:translate-y-[-2px] select-none cursor-pointer"
         >
           <Plus size={14} strokeWidth={3} /> Initialize New Scribble
         </button>
