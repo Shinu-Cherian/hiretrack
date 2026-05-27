@@ -25,6 +25,7 @@ import SecurityPage from "./SecurityPage";
 import LegalPage from "./LegalPage";
 import BlogPage from "./BlogPage";
 import AuthGate from "./components/AuthGate";
+import Scribbles from "./Scribbles";
 
 function Private({ children }) {
   return <AuthGate>{children}</AuthGate>;
@@ -56,6 +57,7 @@ function App() {
       <Route path="/cover-letter" element={<CoverLetterPage />} />
       <Route path="/career-roadmap" element={<CareerRoadmapPage />} />
       <Route path="/roadmap" element={<RoadmapPage />} />
+      <Route path="/scribbles" element={<Private><Scribbles /></Private>} />
       <Route path="/security" element={<SecurityPage />} />
       <Route path="/privacy" element={<LegalPage />} />
       <Route path="/terms" element={<LegalPage />} />

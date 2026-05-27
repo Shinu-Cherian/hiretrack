@@ -46,5 +46,8 @@ urlpatterns = [
     path('api/generate-cover-letter-pdf/', views.generate_cover_letter_pdf_api),
     path('api/streaks/', views.streak_api),
     path('api/career-roadmap/', career_roadmap_api),
-    
+    path('api/notes/', views.get_notes_api),
+    path('api/notes/add/', views.add_note_api),
+    path('api/notes/update/<int:id>/', views.update_note_api),
+    path('api/notes/delete/<int:id>/', views.delete_note_api),
 ]

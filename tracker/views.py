@@ -2104,3 +2104,112 @@ def notifications_api(request):
     return JsonResponse(data, safe=False)
 
 
+@csrf_exempt
+def get_notes_api(request):
+    user = api_user(request)
+    auth_error = login_required_json(user)
+    if auth_error:
+        return auth_error
+
+    from .models import Scribble
+    notes = Scribble.objects.filter(user=user).order_by("-updated_at")
+    data = []
+    for n in notes:
+        data.append({
+            "id": n.id,
+            "title": n.title,
+            "content": n.content,
+            "color": n.color,
+            "font_family": n.font_family,
+            "font_size": n.font_size,
+            "updated_at": n.updated_at.isoformat() if n.updated_at else "",
+        })
+    return JsonResponse(data, safe=False)
+
+
+@csrf_exempt
+def add_note_api(request):
+    user = api_user(request)
+    auth_error = login_required_json(user)
+    if auth_error:
+        return auth_error
+
+    from .models import Scribble
+    note = Scribble.objects.create(
+        user=user,
+        title="",
+        content="",
+        color="#FF6044",
+        font_family="Inter",
+        font_size="md"
+    )
+    return JsonResponse({
+        "id": note.id,
+        "title": note.title,
+        "content": note.content,
+        "color": note.color,
+        "font_family": note.font_family,
+        "font_size": note.font_size,
+        "updated_at": note.updated_at.isoformat() if note.updated_at else "",
+    })
+
+
+@csrf_exempt
+def update_note_api(request, id):
+    user = api_user(request)
+    auth_error = login_required_json(user)
+    if auth_error:
+        return auth_error
+
+    if request.method != "POST":
+        return JsonResponse({"error": "POST required"}, status=405)
+
+    import json as _json
+    from .models import Scribble
+    note = Scribble.objects.filter(user=user, id=id).first()
+    if not note:
+        return JsonResponse({"error": "Note not found"}, status=404)
+
+    try:
+        body = _json.loads(request.body)
+    except Exception:
+        body = request.POST
+
+    note.title = body.get("title", note.title)
+    note.content = body.get("content", note.content)
+    note.color = body.get("color", note.color)
+    note.font_family = body.get("font_family", note.font_family)
+    note.font_size = body.get("font_size", note.font_size)
+    note.save()
+
+    return JsonResponse({
+        "status": "Success",
+        "id": note.id,
+        "title": note.title,
+        "content": note.content,
+        "color": note.color,
+        "font_family": note.font_family,
+        "font_size": note.font_size,
+        "updated_at": note.updated_at.isoformat() if note.updated_at else "",
+    })
+
+
+@csrf_exempt
+def delete_note_api(request, id):
+    user = api_user(request)
+    auth_error = login_required_json(user)
+    if auth_error:
+        return auth_error
+
+    if request.method != "POST":
+        return JsonResponse({"error": "POST required"}, status=405)
+
+    from .models import Scribble
+    note = Scribble.objects.filter(user=user, id=id).first()
+    if not note:
+        return JsonResponse({"error": "Note not found"}, status=404)
+
+    note.delete()
+    return JsonResponse({"status": "Success"})
+
+

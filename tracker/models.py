@@ -121,3 +121,17 @@ class DatabaseFile(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Scribble(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=250, blank=True)
+    content = models.TextField(blank=True)
+    color = models.CharField(max_length=7, default="#FF6044") # Accent highlight/ink color
+    font_family = models.CharField(max_length=50, default="Inter")
+    font_size = models.CharField(max_length=15, default="md") # sm, md, lg, xl
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title or f"Scribble #{self.id}"

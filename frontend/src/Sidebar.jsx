@@ -1,4 +1,4 @@
-import { Star, Bell, Settings, LogOut, Archive, ArrowRight } from "lucide-react";
+import { Star, Bell, Settings, LogOut, Archive, ArrowRight, Edit } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { apiUrl, logoutSession } from "./api";
@@ -123,6 +123,17 @@ export default function Sidebar({ isOpen, onClose, profile }) {
                 className="group flex items-center gap-4 p-4 rounded-2xl cursor-pointer text-gray-400 hover:bg-[#FF6044] hover:text-[#121313] transition-all font-black shadow-lg hover:shadow-[#FF6044]/20"
               >
                 <Archive size={20} /> Career Vault
+              </div>
+
+              {/* ✏️ SCRIBBLES */}
+              <div
+                onClick={() => {
+                  navigate("/scribbles");
+                  onClose();
+                }}
+                className="group flex items-center gap-4 p-4 rounded-2xl cursor-pointer text-gray-400 hover:bg-[#FF6044] hover:text-[#121313] transition-all font-black shadow-lg hover:shadow-[#FF6044]/20"
+              >
+                <Edit size={20} /> Scribbles
               </div>
 
             </div>
