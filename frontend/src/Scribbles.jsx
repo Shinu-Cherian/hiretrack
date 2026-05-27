@@ -380,8 +380,8 @@ export default function Scribbles() {
     
     // Add dynamic border and glow shadow matching selectedScribble's ink color
     if (selectedScribble) {
-      base.borderColor = `${selectedScribble.color}25`;
-      base.boxShadow = `0 4px 30px -10px ${selectedScribble.color}20`;
+      base.borderColor = `${selectedScribble.color}45`;
+      base.boxShadow = `0 10px 40px -12px ${selectedScribble.color}35`;
     }
     return base;
   };
@@ -455,7 +455,7 @@ export default function Scribbles() {
                 placeholder="Search scribbles or keywords..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-11 pr-4 py-3 bg-[#121313]/90 border border-white/5 rounded-xl text-xs placeholder:text-gray-600 focus:outline-none focus:border-[#FF6044]/40 transition-colors font-mono"
+                className="w-full pl-11 pr-4 py-3 bg-[#1A1B1B] border border-white/10 rounded-xl text-xs placeholder:text-gray-600 focus:outline-none focus:border-[#FF6044]/45 transition-colors font-mono"
               />
             </div>
 
@@ -475,8 +475,8 @@ export default function Scribbles() {
                         boxShadow: isSelected ? `0 4px 20px -5px ${item.color}35` : "none"
                       }}
                       className={`
-                        group relative flex flex-col justify-between p-5 bg-[#121313]/40 hover:bg-[#121313]/80 border rounded-2xl cursor-pointer transition-all duration-300 select-none
-                        ${isSelected ? "translate-x-1" : "hover:translate-x-1"}
+                        group relative flex flex-col justify-between p-5 bg-[#1A1B1B] hover:bg-[#222323] border border-white/10 rounded-2xl cursor-pointer transition-all duration-300 select-none
+                        ${isSelected ? "translate-x-1 bg-[#222323]" : "hover:translate-x-1"}
                       `}
                     >
                       {/* Left color ribbon indicator */}
@@ -746,7 +746,7 @@ export default function Scribbles() {
                     {/* WRITING PAD CANVAS */}
                     <div 
                       style={getCanvasPatternStyle()}
-                      className="flex-1 flex flex-col gap-4 p-6 bg-[#121313]/20 border rounded-2xl min-h-[350px] transition-all duration-300"
+                      className="flex-1 flex flex-col gap-4 p-6 bg-[#1A1B1B]/95 border rounded-2xl min-h-[350px] transition-all duration-300"
                     >
                       {/* Notebook Title Block */}
                       <input
