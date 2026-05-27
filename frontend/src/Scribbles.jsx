@@ -22,8 +22,10 @@ import {
   LayoutGrid, 
   Share2, 
   ArrowRight,
-  ChevronRight
+  ChevronRight,
+  Pencil
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { apiUrl } from "./api";
 import Header from "./Header";
 
@@ -77,6 +79,221 @@ function CustomDropdown({ label, value, options, onChange }) {
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+// Cursive timeline coordinates for the pencil path tracing
+const penTimeline = {
+  x: [25, 40, 55, 70, 80, 90, 105, 120, 135, 145, 160, 175, 195, 210, 220, 235, 245, 260, 270, 285, 295, 310, 320, 335, 350, 365, 375],
+  y: [55, 25, 55, 35, 55, 35, 55, 25, 30, 55, 40, 55, 55, 35, 55, 35, 55, 35, 55, 35, 55, 35, 30, 55, 40, 55, 52]
+};
+
+function ScribbleEmptyState({ onAddScribble }) {
+  const [particles, setParticles] = useState([]);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+  const [showContent, setShowContent] = useState(false);
+
+  // Render content elements (text, button) after drawing is done
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowContent(true);
+    }, 2800);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Spawn chalk dust particles at the tip coordinates
+  useEffect(() => {
+    let start = Date.now();
+    const interval = setInterval(() => {
+      const elapsed = (Date.now() - start) % 5000;
+      if (elapsed < 3000) {
+        const pct = elapsed / 3000;
+        const totalNodes = penTimeline.x.length;
+        const indexFloat = pct * (totalNodes - 1);
+        const baseIndex = Math.floor(indexFloat);
+        const nextIndex = Math.min(baseIndex + 1, totalNodes - 1);
+        const ratio = indexFloat - baseIndex;
+        
+        const x = penTimeline.x[baseIndex] + (penTimeline.x[nextIndex] - penTimeline.x[baseIndex]) * ratio;
+        const y = penTimeline.y[baseIndex] + (penTimeline.y[nextIndex] - penTimeline.y[baseIndex]) * ratio;
+        
+        // Spawn 2 particles for richer visual texture
+        const p1 = {
+          id: Math.random(),
+          x: x + (Math.random() * 8 - 4),
+          y: y + (Math.random() * 8 - 4),
+          size: Math.random() * 3.5 + 1.5,
+          vx: (Math.random() * 2 - 1) * 0.35,
+          vy: -Math.random() * 0.6 - 0.2,
+          alpha: 1
+        };
+        const p2 = {
+          id: Math.random(),
+          x: x + (Math.random() * 6 - 3),
+          y: y + (Math.random() * 6 - 3),
+          size: Math.random() * 2 + 1,
+          vx: (Math.random() * 2 - 1) * 0.45,
+          vy: -Math.random() * 0.5 - 0.1,
+          alpha: 0.8
+        };
+        
+        setParticles((prev) => [...prev.slice(-40), p1, p2]);
+      }
+    }, 60);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Update dust particles
+  useEffect(() => {
+    let active = true;
+    const update = () => {
+      if (!active) return;
+      setParticles((prev) =>
+        prev
+          .map((p) => ({
+            ...p,
+            x: p.x + p.vx,
+            y: p.y + p.vy,
+            alpha: p.alpha - 0.02,
+            size: p.size * 0.97
+          }))
+          .filter((p) => p.alpha > 0)
+      );
+      requestAnimationFrame(update);
+    };
+    requestAnimationFrame(update);
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const handleMouseMove = (e) => {
+    setIsHovered(true);
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    const rotateX = ((y / rect.height) - 0.5) * -12;
+    const rotateY = ((x / rect.width) - 0.5) * 12;
+    
+    setTilt({ x: rotateX, y: rotateY });
+  };
+
+  const handleMouseLeave = () => {
+    setTilt({ x: 0, y: 0 });
+    setIsHovered(false);
+  };
+
+  return (
+    <div 
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        transform: `perspective(1000px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+        transition: isHovered ? "none" : "transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)",
+      }}
+      className="flex-1 flex flex-col items-center justify-center p-12 text-center space-y-7 select-none bg-[#1A1B1B] border border-white/10 rounded-3xl h-full shadow-[0_20px_50px_rgba(0,0,0,0.65)] hover:border-[#FF6044]/35 transition-all duration-300 relative overflow-hidden group"
+    >
+      {/* Decorative ambient blueprint grid */}
+      <div className="absolute inset-0 bg-dot-pattern opacity-[0.04] pointer-events-none group-hover:opacity-[0.06] transition-opacity" />
+
+      {/* LET'S SCRIBBLE DYNAMIC WRITING DOCK */}
+      <div className="relative w-full max-w-[400px] h-32 flex items-center justify-center flex-shrink-0">
+        
+        {/* Floating Pencil Tracker */}
+        <motion.div
+          animate={{
+            x: penTimeline.x,
+            y: penTimeline.y,
+            rotate: [-15, 15, -15, 25, -15, 15, -15, 25, -10, 20, -10, 10, -15, 15, -15, 25, -15, 15, -15, 25, -15, 15, -10, 20, -10, 10, -5],
+            opacity: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0]
+          }}
+          transition={{
+            duration: 3,
+            ease: "easeInOut",
+            repeat: Infinity,
+            repeatType: "loop",
+            repeatDelay: 2
+          }}
+          style={{
+            transformOrigin: "bottom left"
+          }}
+          className="absolute left-0 top-0 z-20 text-[#FF6044] pointer-events-none filter drop-shadow-[0_0_8px_rgba(255,96,68,0.85)]"
+        >
+          <Pencil size={26} className="transform -scale-x-100 -translate-x-[2px] -translate-y-[24px]" />
+        </motion.div>
+
+        {/* Live Canvas Particle Emitter mapping */}
+        <div className="absolute inset-0 z-10 pointer-events-none">
+          {particles.map((p) => (
+            <div
+              key={p.id}
+              style={{
+                left: `${p.x}px`,
+                top: `${p.y}px`,
+                width: `${p.size}px`,
+                height: `${p.size}px`,
+                opacity: p.alpha,
+                backgroundColor: "#FF6044",
+                boxShadow: "0 0 6px #FF6044"
+              }}
+              className="absolute rounded-full pointer-events-none"
+            />
+          ))}
+        </div>
+
+        {/* Cursive Handwriting Vector Canvas */}
+        <svg viewBox="0 0 400 100" className="w-full h-full relative z-0">
+          <motion.path
+            d="M 25,55 C 40,25 55,25 60,55 C 65,70 75,35 85,55 C 95,35 105,35 110,55 Q 115,25 125,25 M 120,35 L 130,35 M 140,55 L 140,30 M 150,55 C 160,40 170,40 185,55 M 205,55 C 210,35 225,35 230,55 C 235,70 245,35 255,55 C 265,35 275,35 280,55 C 285,70 295,35 305,55 C 315,35 325,35 330,55 L 330,30 M 340,55 C 350,40 360,40 375,55"
+            fill="none"
+            stroke="#FF6044"
+            strokeWidth="5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="filter drop-shadow-[0_0_10px_rgba(255,96,68,0.7)]"
+            animate={{ pathLength: [0, 1] }}
+            transition={{
+              duration: 3,
+              ease: "easeInOut",
+              repeat: Infinity,
+              repeatType: "loop",
+              repeatDelay: 2
+            }}
+          />
+        </svg>
+      </div>
+
+      {/* Floating telemetry text + Coral CTA Button */}
+      <div 
+        style={{
+          opacity: showContent ? 1 : 0,
+          transform: showContent ? "translateY(0)" : "translateY(15px)",
+          transition: "opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.25, 1, 0.5, 1)"
+        }}
+        className="space-y-7 max-w-md w-full"
+      >
+        <div className="space-y-3">
+          <h3 className="text-sm font-mono uppercase font-black tracking-widest text-[#FF6044] flex items-center justify-center gap-2">
+            <span className="w-2 h-2 bg-[#FF6044] rounded-full animate-ping" />
+            Scribbling Deck Active
+          </h3>
+          <p className="text-xs text-gray-400 leading-relaxed font-sans font-light">
+            Select an existing draft from the log sidebar to begin editing, or initialize a fresh scratchpad to capture quick job specifications, paste Indeed / Naukri application links, or draft notes on the fly!
+          </p>
+        </div>
+
+        <button
+          onClick={onAddScribble}
+          className="inline-flex items-center gap-2 px-6 py-3.5 bg-[#FF6044] hover:bg-white text-black font-black uppercase text-xs font-mono tracking-widest rounded-xl transition-all duration-300 shadow-lg shadow-[#FF6044]/15 hover:shadow-white/10 hover:translate-y-[-2px] select-none cursor-pointer"
+        >
+          <Plus size={14} strokeWidth={3} /> Initialize New Scribble
+        </button>
+      </div>
     </div>
   );
 }
@@ -851,37 +1068,7 @@ export default function Scribbles() {
 
               </div>
             ) : (
-              /* ACTIVE DASHBOARD EMPTY STATE (Fits theme with bold contrast) */
-              <div className="flex-1 flex flex-col items-center justify-center p-12 text-center space-y-7 select-none bg-[#1A1B1B] border border-white/10 rounded-3xl h-full shadow-[0_15px_40px_rgba(0,0,0,0.5)]">
-                
-                {/* Visual telemetry aesthetic graph block */}
-                <div className="relative w-36 h-36 flex items-center justify-center">
-                  <div className="absolute inset-0 border border-dashed border-[#FF6044]/20 rounded-full animate-spin-slow" />
-                  <div className="absolute inset-4 border border-white/10 rounded-full" />
-                  <div className="absolute inset-8 border border-dashed border-[#FF6044]/30 rounded-full animate-reverse-spin" />
-                  <div className="w-16 h-16 rounded-full bg-[#FF6044]/10 border border-[#FF6044]/25 flex items-center justify-center text-[#FF6044] shadow-[0_0_30px_rgba(255,96,68,0.25)]">
-                    <Sparkles size={24} className="animate-pulse" />
-                  </div>
-                </div>
-
-                <div className="space-y-3 max-w-md">
-                  <h3 className="text-sm font-mono uppercase font-black tracking-widest text-[#FF6044] flex items-center justify-center gap-2">
-                    <span className="w-2 h-2 bg-[#FF6044] rounded-full animate-ping" />
-                    Scribbling Deck Active
-                  </h3>
-                  <p className="text-xs text-gray-400 leading-relaxed font-sans font-light">
-                    Select an existing draft from the log sidebar to begin editing, or initialize a fresh scratchpad to capture quick job specifications, paste Indeed / Naukri application links, or draft notes on the fly!
-                  </p>
-                </div>
-
-                <button
-                  onClick={handleAddScribble}
-                  className="inline-flex items-center gap-2 px-6 py-3.5 bg-[#FF6044] hover:bg-white text-black font-black uppercase text-xs font-mono tracking-widest rounded-xl transition-all duration-300 shadow-lg shadow-[#FF6044]/15 hover:shadow-white/10 hover:translate-y-[-2px] select-none cursor-pointer"
-                >
-                  <Plus size={14} strokeWidth={3} /> Initialize New Scribble
-                </button>
-
-              </div>
+              <ScribbleEmptyState onAddScribble={handleAddScribble} />
             )}
 
           </div>
