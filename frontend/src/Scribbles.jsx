@@ -214,7 +214,7 @@ export default function Scribbles() {
                 Scribbles
               </h1>
               <p className="max-w-2xl text-gray-400 text-sm md:text-base leading-relaxed font-light font-sans">
-                SCRIBBLES // Scribble down quick job requirements, copy-paste application links, or draft notes on the fly. Exit or navigate back to trigger automatic secure cloud sync.
+                SCRIBBLES // A zero-friction scratchpad to capture raw requirements, dump unformatted text, or draft application context on the fly. Exit or navigate back to trigger instant background cloud sync.
               </p>
             </div>
 
