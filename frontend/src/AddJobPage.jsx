@@ -66,7 +66,17 @@ export default function AddJobPage() {
             </button>
           </div>
 
-          <JobForm submitLabel="Add Job" onSubmit={handleSave} onCancel={closePage} />
+          <JobForm 
+            submitLabel="Add Job" 
+            onSubmit={handleSave} 
+            onCancel={closePage} 
+            initialValues={{
+              notes: new URLSearchParams(window.location.search).get("notes") || "",
+              platform: new URLSearchParams(window.location.search).get("platform") || "",
+              jobTitle: new URLSearchParams(window.location.search).get("title") || "",
+              company: new URLSearchParams(window.location.search).get("company") || "",
+            }}
+          />
         </section>
       </div>
 
