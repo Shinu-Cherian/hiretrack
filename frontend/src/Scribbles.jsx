@@ -416,7 +416,7 @@ export default function Scribbles() {
                 Scribbles
               </h1>
               <p className="max-w-3xl text-gray-400 text-xs sm:text-sm leading-relaxed font-light font-sans">
-                SCRIBBLES // Scribble down quick job requirements, copy-paste application links, or draft notes on the fly. Exit or navigate back to trigger automatic secure cloud sync.
+                Scribble down quick job requirements, copy-paste application links, or draft notes on the fly. Exit or navigate back to trigger automatic secure cloud sync.
               </p>
             </div>
 
@@ -851,33 +851,34 @@ export default function Scribbles() {
 
               </div>
             ) : (
-              /* TELEMETRY RECORD EMPTY STATE (Only visible on desktop) */
-              <div className="flex-1 flex flex-col items-center justify-center p-12 text-center space-y-6 select-none bg-[#121313]/10 h-full">
+              /* ACTIVE DASHBOARD EMPTY STATE (Fits theme with bold contrast) */
+              <div className="flex-1 flex flex-col items-center justify-center p-12 text-center space-y-7 select-none bg-[#1A1B1B] border border-white/10 rounded-3xl h-full shadow-[0_15px_40px_rgba(0,0,0,0.5)]">
                 
                 {/* Visual telemetry aesthetic graph block */}
                 <div className="relative w-36 h-36 flex items-center justify-center">
-                  <div className="absolute inset-0 border border-dashed border-[#FF6044]/10 rounded-full animate-spin-slow" />
-                  <div className="absolute inset-4 border border-white/5 rounded-full" />
-                  <div className="absolute inset-8 border border-dashed border-[#FF6044]/20 rounded-full animate-reverse-spin" />
-                  <div className="w-16 h-16 rounded-full bg-[#FF6044]/5 border border-[#FF6044]/25 flex items-center justify-center text-[#FF6044] shadow-[0_0_20px_rgba(255,96,68,0.15)]">
+                  <div className="absolute inset-0 border border-dashed border-[#FF6044]/20 rounded-full animate-spin-slow" />
+                  <div className="absolute inset-4 border border-white/10 rounded-full" />
+                  <div className="absolute inset-8 border border-dashed border-[#FF6044]/30 rounded-full animate-reverse-spin" />
+                  <div className="w-16 h-16 rounded-full bg-[#FF6044]/10 border border-[#FF6044]/25 flex items-center justify-center text-[#FF6044] shadow-[0_0_30px_rgba(255,96,68,0.25)]">
                     <Sparkles size={24} className="animate-pulse" />
                   </div>
                 </div>
 
-                <div className="space-y-2 max-w-sm">
-                  <h3 className="text-xs font-mono uppercase font-black tracking-widest text-[#FF6044]">
-                    Workspace Standing By
+                <div className="space-y-3 max-w-md">
+                  <h3 className="text-sm font-mono uppercase font-black tracking-widest text-[#FF6044] flex items-center justify-center gap-2">
+                    <span className="w-2 h-2 bg-[#FF6044] rounded-full animate-ping" />
+                    Scribbling Deck Active
                   </h3>
-                  <p className="text-[11px] text-gray-500 leading-relaxed">
-                    AWAITING TELEMETRY SELECTION // Select a draft from the log sidebar or click the New Scribble trigger to open an ink pad canvas.
+                  <p className="text-xs text-gray-400 leading-relaxed font-sans font-light">
+                    Select an existing draft from the log sidebar to begin editing, or initialize a fresh scratchpad to capture quick job specifications, paste Indeed / Naukri application links, or draft notes on the fly!
                   </p>
                 </div>
 
                 <button
                   onClick={handleAddScribble}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 border border-white/10 hover:border-white text-[10px] font-mono uppercase tracking-widest text-gray-400 hover:text-white rounded-lg transition-colors"
+                  className="inline-flex items-center gap-2 px-6 py-3.5 bg-[#FF6044] hover:bg-white text-black font-black uppercase text-xs font-mono tracking-widest rounded-xl transition-all duration-300 shadow-lg shadow-[#FF6044]/15 hover:shadow-white/10 hover:translate-y-[-2px] select-none cursor-pointer"
                 >
-                  Create Telemetry Record <ChevronRight size={10} />
+                  <Plus size={14} strokeWidth={3} /> Initialize New Scribble
                 </button>
 
               </div>
