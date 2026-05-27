@@ -512,7 +512,7 @@ export default function Scribbles() {
                       </div>
 
                       {/* Card Footer Actions */}
-                      <div className="flex justify-between items-center pl-2 pt-3 mt-3 border-t border-white/5 text-[9px] font-mono text-gray-500">
+                      <div className="flex justify-between items-center pl-2 pt-3 mt-3 border-t border-white/5 text-[11px] font-mono text-gray-400 font-semibold">
                         <span>
                           {new Date(item.updated_at).toLocaleDateString(undefined, {
                             month: "short",
