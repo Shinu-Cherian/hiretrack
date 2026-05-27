@@ -88,15 +88,6 @@ function ScribbleEmptyState({ onAddScribble }) {
   const [pencilPos, setPencilPos] = useState({ x: 30, y: 60 });
   const [pencilRot, setPencilRot] = useState(-30);
   const [pencilOpacity, setPencilOpacity] = useState(1);
-  const [showContent, setShowContent] = useState(false);
-
-  // Render content elements (text, button) after drawing is done
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowContent(true);
-    }, 3800);
-    return () => clearTimeout(timer);
-  }, []);
 
   // Update pencil position dynamically along a linear reveal sweep with a gentle writing bounce
   useEffect(() => {
@@ -249,14 +240,7 @@ function ScribbleEmptyState({ onAddScribble }) {
       </div>
 
       {/* Floating text + Coral CTA Button */}
-      <div 
-        style={{
-          opacity: showContent ? 1 : 0,
-          transform: showContent ? "translateY(0)" : "translateY(15px)",
-          transition: "opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.25, 1, 0.5, 1)"
-        }}
-        className="space-y-7 max-w-md w-full animate-fade-in"
-      >
+      <div className="space-y-7 max-w-md w-full">
         <div className="space-y-3">
           <h3 className="text-sm font-mono uppercase font-black tracking-widest text-[#FF6044] flex items-center justify-center gap-2">
             <span className="w-2 h-2 bg-[#FF6044] rounded-full animate-ping" />
