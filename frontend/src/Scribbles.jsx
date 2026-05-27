@@ -83,71 +83,82 @@ function CustomDropdown({ label, value, options, onChange }) {
   );
 }
 
-// Cursive timeline coordinates for the pencil path tracing (moving cleanly from left to right)
-const penTimeline = {
-  x: [40, 80, 120, 160, 200, 240, 280, 320, 360, 370],
-  y: [52, 45, 52, 45, 52, 45, 52, 45, 52, 52]
-};
+// A beautifully flowing, continuous vector cursive signature path spelling "Let's Scribble"
+const cursivePath = "M 35,70 C 25,30 65,30 55,75 C 50,95 85,90 95,75 C 105,60 95,75 105,75 C 115,75 125,50 120,75 C 115,95 130,90 140,75 C 150,60 145,55 140,55 C 135,55 145,75 155,75 C 165,75 175,60 170,75 C 165,90 185,80 195,75 M 225,80 C 215,60 245,50 240,75 C 235,95 260,90 270,75 C 280,60 270,75 280,75 C 290,75 300,50 295,75 C 290,95 305,90 315,75 C 325,60 330,55 330,75 C 330,95 340,90 350,75 C 355,65 355,50 350,50 C 345,50 350,75 360,75 C 370,75 380,50 375,75 C 370,95 385,90 395,75 C 405,60 400,75 410,75";
 
 function ScribbleEmptyState({ onAddScribble }) {
+  const pathRef = useRef(null);
   const [particles, setParticles] = useState([]);
+  const [pencilPos, setPencilPos] = useState({ x: 35, y: 70 });
+  const [pencilRot, setPencilRot] = useState(-30);
+  const [pencilOpacity, setPencilOpacity] = useState(1);
   const [showContent, setShowContent] = useState(false);
 
   // Render content elements (text, button) after drawing is done
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowContent(true);
-    }, 2800);
+    }, 3800);
     return () => clearTimeout(timer);
   }, []);
 
-  // Spawn chalk dust particles at the tip coordinates
-  useEffect(() => {
-    let start = Date.now();
-    const interval = setInterval(() => {
-      const elapsed = (Date.now() - start) % 5000;
-      if (elapsed < 3000) {
-        const pct = elapsed / 3000;
-        const totalNodes = penTimeline.x.length;
-        const indexFloat = pct * (totalNodes - 1);
-        const baseIndex = Math.floor(indexFloat);
-        const nextIndex = Math.min(baseIndex + 1, totalNodes - 1);
-        const ratio = indexFloat - baseIndex;
-        
-        const x = penTimeline.x[baseIndex] + (penTimeline.x[nextIndex] - penTimeline.x[baseIndex]) * ratio;
-        const y = penTimeline.y[baseIndex] + (penTimeline.y[nextIndex] - penTimeline.y[baseIndex]) * ratio;
-        
-        // Spawn 2 particles for richer visual texture
-        const p1 = {
-          id: Math.random(),
-          x: x + (Math.random() * 8 - 4),
-          y: y + (Math.random() * 8 - 4),
-          size: Math.random() * 3.5 + 1.5,
-          vx: (Math.random() * 2 - 1) * 0.35,
-          vy: -Math.random() * 0.6 - 0.2,
-          alpha: 1
-        };
-        const p2 = {
-          id: Math.random(),
-          x: x + (Math.random() * 6 - 3),
-          y: y + (Math.random() * 6 - 3),
-          size: Math.random() * 2 + 1,
-          vx: (Math.random() * 2 - 1) * 0.45,
-          vy: -Math.random() * 0.5 - 0.1,
-          alpha: 0.8
-        };
-        
-        setParticles((prev) => [...prev.slice(-40), p1, p2]);
-      }
-    }, 60);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  // Update dust particles
+  // Update pencil position dynamically along the cursive vector path
   useEffect(() => {
     let active = true;
-    const update = () => {
+    let start = Date.now();
+    
+    const updatePencil = () => {
+      if (!active) return;
+      if (pathRef.current) {
+        const path = pathRef.current;
+        const totalLength = path.getTotalLength();
+        const elapsed = (Date.now() - start) % 5500; // 3.5s write + 2.0s delay = 5.5s cycle
+        
+        if (elapsed < 3500) {
+          const pct = elapsed / 3500;
+          const currentLength = pct * totalLength;
+          const point = path.getPointAtLength(currentLength);
+          
+          // Calculate realistic tangent pencil rotation!
+          const nextLength = Math.min(currentLength + 2, totalLength);
+          const nextPoint = path.getPointAtLength(nextLength);
+          const angleRad = Math.atan2(nextPoint.y - point.y, nextPoint.x - point.x);
+          const angleDeg = (angleRad * 180) / Math.PI;
+          
+          setPencilPos({ x: point.x, y: point.y });
+          setPencilRot(angleDeg - 45); // offset to tilt pencil realistically
+          setPencilOpacity(1);
+          
+          // Spawn particle at the exact writing pencil tip!
+          if (Math.random() < 0.8) {
+            const p = {
+              id: Math.random(),
+              x: point.x + (Math.random() * 6 - 3),
+              y: point.y + (Math.random() * 6 - 3),
+              size: Math.random() * 3 + 1,
+              vx: (Math.random() * 2 - 1) * 0.35,
+              vy: -Math.random() * 0.5 - 0.1,
+              alpha: 0.95
+            };
+            setParticles((prev) => [...prev.slice(-35), p]);
+          }
+        } else {
+          setPencilOpacity(0);
+        }
+      }
+      requestAnimationFrame(updatePencil);
+    };
+    
+    requestAnimationFrame(updatePencil);
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  // Update active particles (physics drift & fade)
+  useEffect(() => {
+    let active = true;
+    const updateParticles = () => {
       if (!active) return;
       setParticles((prev) =>
         prev
@@ -155,14 +166,14 @@ function ScribbleEmptyState({ onAddScribble }) {
             ...p,
             x: p.x + p.vx,
             y: p.y + p.vy,
-            alpha: p.alpha - 0.02,
-            size: p.size * 0.97
+            alpha: p.alpha - 0.022,
+            size: p.size * 0.965
           }))
           .filter((p) => p.alpha > 0)
       );
-      requestAnimationFrame(update);
+      requestAnimationFrame(updateParticles);
     };
-    requestAnimationFrame(update);
+    requestAnimationFrame(updateParticles);
     return () => {
       active = false;
     };
@@ -170,38 +181,29 @@ function ScribbleEmptyState({ onAddScribble }) {
 
   return (
     <div 
-      className="flex-1 flex flex-col items-center justify-center p-12 text-center space-y-7 select-none bg-[#1A1B1B] border border-white/10 rounded-3xl h-full shadow-[0_20px_50px_rgba(0,0,0,0.65)] hover:border-[#FF6044]/20 transition-all duration-300 relative overflow-hidden group"
+      className="flex-1 flex flex-col items-center justify-center p-12 text-center space-y-7 select-none bg-[#1A1B1B] border border-white/10 rounded-3xl h-full shadow-[0_20px_50px_rgba(0,0,0,0.65)] hover:border-[#FF6044]/15 transition-all duration-300 relative overflow-hidden"
     >
       {/* Decorative ambient blueprint grid */}
-      <div className="absolute inset-0 bg-dot-pattern opacity-[0.04] pointer-events-none group-hover:opacity-[0.06] transition-opacity" />
+      <div className="absolute inset-0 bg-dot-pattern opacity-[0.04] pointer-events-none" />
 
-      {/* LET'S SCRIBBLE DYNAMIC WRITING DOCK */}
-      <div className="relative w-full max-w-[400px] h-32 flex items-center justify-center flex-shrink-0">
+      {/* DYNAMIC WRITING DOCK (Kurachude big size: max-w-[480px] h-36) */}
+      <div className="relative w-full max-w-[480px] h-36 flex items-center justify-center flex-shrink-0">
         
-        {/* Floating Pencil Tracker */}
-        <motion.div
-          animate={{
-            x: penTimeline.x,
-            y: penTimeline.y,
-            rotate: [-15, 15, -15, 15, -15, 15, -15, 15, -10, 20, -10, 10, -5, 0],
-            opacity: [1, 1, 1, 1, 1, 1, 1, 1, 1, 0]
-          }}
-          transition={{
-            duration: 3,
-            ease: "easeInOut",
-            repeat: Infinity,
-            repeatType: "loop",
-            repeatDelay: 2
-          }}
+        {/* Real-time Cursive Pencil Follower */}
+        <div
           style={{
-            transformOrigin: "bottom left"
+            left: `${pencilPos.x}px`,
+            top: `${pencilPos.y}px`,
+            transform: `rotate(${pencilRot}deg)`,
+            opacity: pencilOpacity,
+            transition: "opacity 0.2s ease-in-out"
           }}
-          className="absolute left-0 top-0 z-20 text-[#FF6044] pointer-events-none filter drop-shadow-[0_0_8px_rgba(255,96,68,0.85)]"
+          className="absolute z-20 text-[#FF6044] pointer-events-none transform -translate-x-[2px] -translate-y-[24px]"
         >
-          <Pencil size={26} className="transform -scale-x-100 -translate-x-[2px] -translate-y-[24px]" />
-        </motion.div>
+          <Pencil size={28} className="transform -scale-x-100" />
+        </div>
 
-        {/* Live Canvas Particle Emitter mapping */}
+        {/* Live Chalk Particles */}
         <div className="absolute inset-0 z-10 pointer-events-none">
           {particles.map((p) => (
             <div
@@ -213,47 +215,37 @@ function ScribbleEmptyState({ onAddScribble }) {
                 height: `${p.size}px`,
                 opacity: p.alpha,
                 backgroundColor: "#FF6044",
-                boxShadow: "0 0 6px #FF6044"
+                boxShadow: "0 0 5px #FF6044"
               }}
               className="absolute rounded-full pointer-events-none"
             />
           ))}
         </div>
 
-        {/* Cursive Handwriting Vector Canvas */}
-        <svg viewBox="0 0 400 100" className="w-full h-full relative z-0">
-          <defs>
-            <clipPath id="text-reveal-clip">
-              <motion.rect
-                x="0"
-                y="0"
-                height="100"
-                animate={{ width: [0, 400] }}
-                transition={{
-                  duration: 3,
-                  ease: "easeInOut",
-                  repeat: Infinity,
-                  repeatType: "loop",
-                  repeatDelay: 2
-                }}
-              />
-            </clipPath>
-          </defs>
-
-          {/* Premium, perfectly legible bold neon-glow text */}
-          <text 
-            x="50%" 
-            y="62%" 
-            textAnchor="middle" 
-            clipPath="url(#text-reveal-clip)"
-            className="font-display font-black text-3xl uppercase tracking-widest fill-[#FF6044] select-none filter drop-shadow-[0_0_12px_rgba(255,96,68,0.85)]"
-          >
-            LET'S SCRIBBLE
-          </text>
+        {/* Dynamic Vector Calligraphy Canvas */}
+        <svg viewBox="0 0 450 120" className="w-full h-full relative z-0">
+          {/* Cursive path representing "Let's Scribble" in running letter calligraphy */}
+          <motion.path
+            ref={pathRef}
+            d={cursivePath}
+            fill="none"
+            stroke="#FF6044"
+            strokeWidth="5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            animate={{ pathLength: [0, 1] }}
+            transition={{
+              duration: 3.5,
+              ease: "easeInOut",
+              repeat: Infinity,
+              repeatType: "loop",
+              repeatDelay: 2
+            }}
+          />
         </svg>
       </div>
 
-      {/* Floating telemetry text + Coral CTA Button */}
+      {/* Floating text + Coral CTA Button */}
       <div 
         style={{
           opacity: showContent ? 1 : 0,
