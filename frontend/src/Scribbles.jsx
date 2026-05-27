@@ -398,7 +398,7 @@ export default function Scribbles() {
   const metrics = selectedScribble ? getScribbleMetrics(selectedScribble.content) : { words: 0, chars: 0, readTime: 1 };
 
   return (
-    <div className="h-screen bg-[#0A0B0B] text-white selection:bg-[#FF6044] selection:text-black overflow-hidden font-sans flex flex-col">
+    <div className="h-screen bg-[#121313] bg-dot-pattern text-white selection:bg-[#FF6044] selection:text-black overflow-hidden font-sans flex flex-col">
       <Header />
 
       <main className="max-w-[1780px] w-full mx-auto px-4 sm:px-6 pt-20 pb-4 flex-1 flex flex-col min-h-0 overflow-hidden">
