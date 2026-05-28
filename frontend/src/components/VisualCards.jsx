@@ -961,10 +961,23 @@ export const ChalkboardShowcase = () => {
   const x2bOffset = tictactoeProgress < 0.86 ? 14 : tictactoeProgress < 0.94 ? 14 - ((tictactoeProgress - 0.86) / 0.08) * 14 : 0;
 
   return (
-    <div className="relative w-full max-w-[500px] h-[340px] glass-panel brutalist-border p-4 rounded-none overflow-hidden shadow-2xl bg-surface/80">
-      
-      {/* Decorative Blueprint Dots Grid */}
-      <div className="absolute inset-0 bg-dot-pattern opacity-[0.04] pointer-events-none" />
+    <div 
+      style={{
+        transform: "perspective(1200px) rotateY(-18deg) rotateX(8deg) rotateZ(2deg)",
+        transformStyle: "preserve-3d",
+        boxShadow: "25px 25px 60px rgba(0, 0, 0, 0.85), -5px -5px 30px rgba(255, 255, 255, 0.01), inset 0 0 40px rgba(0,0,0,0.7)"
+      }}
+      className="relative w-full max-w-[520px] h-[350px] bg-[#141717] p-6 rounded-2xl overflow-hidden border border-white/10 transition-transform duration-500 hover:scale-[1.02]"
+    >
+      {/* Decorative Chalk Dust Texture Overlay */}
+      <div className="absolute inset-0 bg-[#000] opacity-[0.03] mix-blend-overlay pointer-events-none" />
+      <div className="absolute inset-0 bg-dot-pattern opacity-[0.02] pointer-events-none" />
+
+      {/* 3D Chalk Ledge */}
+      <div 
+        style={{ transform: "translateZ(20px)" }}
+        className="absolute bottom-2 left-6 right-6 h-2.5 bg-[#252828] border-t border-white/10 rounded-t shadow-[0_-2px_10px_rgba(0,0,0,0.5)] z-20 pointer-events-none"
+      />
 
       {/* Eraser sweep overlay */}
       {isErasing && (
@@ -976,16 +989,17 @@ export const ChalkboardShowcase = () => {
         />
       )}
 
-      {/* Custom Chalk Position & Pencil Cursor */}
+      {/* Custom Chalk Position & Pencil Cursor with 3D Float */}
       {chalk.opacity > 0 && (
         <div
           style={{
             left: `${chalk.x}px`,
             top: `${chalk.y}px`,
             opacity: chalk.opacity,
+            transform: "translateZ(30px) -translate-x-[2px] -translate-y-[24px]",
             transition: "opacity 0.2s ease-in-out"
           }}
-          className="absolute z-30 text-primary pointer-events-none transform -translate-x-[2px] -translate-y-[24px]"
+          className="absolute z-30 text-primary pointer-events-none"
         >
           <Pencil size={24} className="transform -scale-x-100 drop-shadow-[0_0_8px_var(--color-primary)]" />
         </div>

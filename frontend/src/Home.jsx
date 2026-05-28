@@ -913,9 +913,14 @@ export default function Home() {
           }}
         />
 
-        <div className="relative z-10 mx-auto grid w-full max-w-[1530px] items-center gap-14 lg:grid-cols-[720px_760px] lg:gap-24">
+        <div className="relative z-10 mx-auto grid w-full max-w-[1530px] items-center gap-14 lg:grid-cols-2 lg:gap-24">
           
-          {/* Left Column: Text Content */}
+          {/* Left Column: Chalkboard Canvas Showcase */}
+          <div className="scribbles-item flex justify-center items-center w-full">
+            <ChalkboardShowcase />
+          </div>
+
+          {/* Right Column: Text Content */}
           <div className="scribbles-item">
             <span className="block font-display text-[18px] font-medium uppercase tracking-[0.18em] text-primary">
               Creative Scratchpad
@@ -939,11 +944,6 @@ export default function Home() {
                 Open Scribbles <ArrowUpRight className="w-5 h-5" />
               </span>
             </Link>
-          </div>
-
-          {/* Right Column: Chalkboard Canvas Showcase */}
-          <div className="scribbles-item flex justify-center items-center w-full">
-            <ChalkboardShowcase />
           </div>
 
         </div>
