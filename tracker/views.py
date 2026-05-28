@@ -2122,7 +2122,6 @@ def get_notes_api(request):
             "color": n.color,
             "font_family": n.font_family,
             "font_size": n.font_size,
-            "attached_file": n.attached_file.url if n.attached_file else None,
             "updated_at": n.updated_at.isoformat() if n.updated_at else "",
         })
     return JsonResponse(data, safe=False)
@@ -2151,7 +2150,6 @@ def add_note_api(request):
         "color": note.color,
         "font_family": note.font_family,
         "font_size": note.font_size,
-        "attached_file": None,
         "updated_at": note.updated_at.isoformat() if note.updated_at else "",
     })
 
@@ -2183,14 +2181,6 @@ def update_note_api(request, id):
         except Exception:
             body = request.POST
 
-    if 'attached_file' in request.FILES:
-        note.attached_file = request.FILES['attached_file']
-        
-    if body.get('remove_attached_file') == 'true' or body.get('remove_attached_file') is True:
-        if note.attached_file:
-            note.attached_file.delete()
-            note.attached_file = None
-
     note.title = body.get("title", note.title)
     note.content = body.get("content", note.content)
     note.color = body.get("color", note.color)
@@ -2206,7 +2196,6 @@ def update_note_api(request, id):
         "color": note.color,
         "font_family": note.font_family,
         "font_size": note.font_size,
-        "attached_file": note.attached_file.url if note.attached_file else None,
         "updated_at": note.updated_at.isoformat() if note.updated_at else "",
     })
 

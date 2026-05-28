@@ -130,7 +130,6 @@ class Scribble(models.Model):
     color = models.CharField(max_length=7, default="#FF6044") # Accent highlight/ink color
     font_family = models.CharField(max_length=50, default="Inter")
     font_size = models.CharField(max_length=15, default="md") # sm, md, lg, xl
-    attached_file = models.FileField(upload_to='scribble_files/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
