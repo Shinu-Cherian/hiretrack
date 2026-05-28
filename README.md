@@ -45,13 +45,18 @@ Over the recent development iterations, HireTrack has evolved significantly to p
 
 - **Dark Nebula Theme & Aesthetics**: Completely redesigned frontend UI featuring a highly-polished dark mode, vibrant neon green accents (`#c4fc70`), glassmorphism effects, glowing active borders, and smooth `framer-motion` page transitions.
 - **Interactive Visual Pipeline**: A dynamic flowchart view for Job Applications and Referrals showing real-time statistics and interactive progression stages (e.g., *Applied → Phone Screen → Interview → Offer*).
-- **Animated Chalkboard Showcase**: A beautifully simulated cursive handwriting animation tool that tracks realistic job search "scribbles" stroke-by-stroke on a transparent canvas.
+- **Scribble Feature (Visual Cards)**: A beautifully simulated cursive handwriting animation tool that tracks realistic job search "scribbles" (like follow-ups and mock interviews) stroke-by-stroke on a transparent canvas.
 - **AI Career Roadmap Builder**: Generates dynamic, step-by-step career progression nodes based on your current profile, complete with interactive UI cards.
 - **Enhanced Landing Page**: Redesigned marketing landing page with floating 3D elements, feature highlights, and interactive component previews.
 
 ---
 
 ## ✨ Features
+
+### ✍️ Scribble Feature (Live Job Tracker Notes)
+- An animated, stroke-by-stroke cursive handwriting showcase built directly into the UI.
+- Simulates realistic job search notes (e.g., *Applied to 10 jobs today*, *Update resume for Frontend role*, *Prepare for system design*).
+- Uses `framer-motion` and custom SVG masking to mimic a real pencil tracing over the screen.
 
 ### 🔐 Authentication & Privacy
 - Session-based authentication with Django's built-in auth system
