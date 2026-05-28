@@ -618,156 +618,13 @@ export default function Scribbles() {
         <div className="h-[1px] bg-white/5 mb-6 flex-shrink-0" />
 
         {/* WORKSPACE AREA: SPLIT PANE GRID */}
-        <div className="grid grid-cols-12 gap-6 flex-1 min-h-0 items-stretch overflow-hidden">
-          
-          {/* ========================================================================= */}
-          {/* PANE A: LIST SIDEBAR (Col span 4 on desktop, hidden in focus mode or mobile editor) */}
-          {/* ========================================================================= */}
-          <div className={`
-            ${selectedScribble ? "hidden md:flex" : "flex"} 
-            ${isFocusMode && selectedScribble ? "md:hidden" : "md:col-span-4 lg:col-span-4"} 
-            col-span-12 flex-col space-y-4 h-full min-h-0 overflow-hidden pr-1
-          `}>
-            
-            {/* Search inputs panel */}
-            <div className="relative">
-              <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
-              <input
-                type="text"
-                placeholder="Search scribbles or keywords..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-11 pr-4 py-3 bg-[#1A1B1B] border border-white/10 rounded-xl text-xs placeholder:text-gray-600 focus:outline-none focus:border-[#FF6044]/45 transition-colors font-mono"
-              />
-            </div>
-
-            {/* Scribble cards list */}
-            <div className="flex-1 overflow-y-auto space-y-3 custom-scrollbar pr-1 pb-10">
-              {sortedScribbles.length > 0 ? (
-                sortedScribbles.map((item) => {
-                  const isPinned = pinnedIds.includes(item.id);
-                  const isSelected = selectedScribble?.id === item.id;
-                  
-                  return (
-                    <div
-                      key={item.id}
-                      onClick={() => setSelectedScribble(item)}
-                      style={{ 
-                        borderColor: isSelected ? item.color : `${item.color}15`,
-                        boxShadow: isSelected ? `0 4px 20px -5px ${item.color}35` : "none"
-                      }}
-                      className={`
-                        group relative flex flex-col justify-between p-5 bg-[#1A1B1B] hover:bg-[#222323] border border-white/10 rounded-2xl cursor-pointer transition-all duration-300 select-none
-                        ${isSelected ? "translate-x-1 bg-[#222323]" : "hover:translate-x-1"}
-                      `}
-                    >
-                      {/* Left color ribbon indicator */}
-                      <div
-                        style={{ backgroundColor: item.color }}
-                        className={`absolute left-0 top-4 bottom-4 w-[3px] rounded-r-full transition-opacity ${
-                          isSelected ? "opacity-100" : "opacity-40 group-hover:opacity-100"
-                        }`}
-                      />
-
-                      <div className="space-y-2.5 pl-2 overflow-hidden">
-                        <div className="flex items-center justify-between gap-2">
-                          <h3
-                            style={{ color: item.color }}
-                            className="text-sm font-display font-black uppercase truncate tracking-wide flex-1"
-                          >
-                            {item.title || "Untitled Draft"}
-                          </h3>
-
-                          {/* Pinned pill or Pin trigger */}
-                          <div className="flex items-center gap-1">
-                            {isPinned && (
-                              <span className="p-1 text-yellow-500 rounded bg-yellow-500/10 border border-yellow-500/20" title="Pinned Note">
-                                <Pin size={10} className="fill-current" />
-                              </span>
-                            )}
-                          </div>
-                        </div>
-
-                        <p className="text-gray-400 font-sans text-[11px] line-clamp-3 leading-relaxed font-light">
-                          {item.content || <em className="text-gray-600 italic">No scribble text added yet.</em>}
-                        </p>
-                      </div>
-
-                      {/* Card Footer Actions */}
-                      <div className="flex justify-between items-center pl-2 pt-3 mt-3 border-t border-white/5 text-[11px] font-mono text-gray-400 font-semibold">
-                        <span>
-                          {new Date(item.updated_at).toLocaleDateString(undefined, {
-                            month: "short",
-                            day: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </span>
-
-                        <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                          {/* Pin Toggle */}
-                          <button
-                            onClick={(e) => handleTogglePin(item.id, e)}
-                            className={`p-1.5 rounded-lg border transition-all ${
-                              isPinned 
-                                ? "border-yellow-500/30 text-yellow-500 bg-yellow-500/5 hover:bg-yellow-500/10" 
-                                : "border-white/5 text-gray-400 hover:text-white hover:bg-white/5"
-                            }`}
-                            title={isPinned ? "Unpin Note" : "Pin Note"}
-                          >
-                            <Pin size={10} className={isPinned ? "fill-current" : ""} />
-                          </button>
-
-                          {/* Instant Copy */}
-                          <button
-                            onClick={(e) => handleCopyNote(item.id, item.content, e)}
-                            className="p-1.5 rounded-lg border border-white/5 text-gray-400 hover:text-[#34D399] hover:bg-[#34D399]/5 transition-all"
-                            title="Copy Content"
-                          >
-                            {copiedId === item.id ? <Check size={10} /> : <Copy size={10} />}
-                          </button>
-
-                          {/* Delete Note */}
-                          <button
-                            onClick={(e) => handleDeleteScribble(item.id, e)}
-                            className="p-1.5 rounded-lg border border-white/5 text-gray-400 hover:text-red-500 hover:bg-red-500/5 transition-all"
-                            title="Delete note"
-                          >
-                            <Trash2 size={10} />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })
-              ) : (
-                <div className="text-center py-16 bg-[#121313]/20 border border-white/5 rounded-2xl space-y-3">
-                  <p className="text-gray-600 font-mono text-[10px] uppercase tracking-wider">
-                    Zero scribbles logged
-                  </p>
-                  <button
-                    onClick={handleAddScribble}
-                    className="text-[#FF6044] hover:text-white text-[10px] font-mono uppercase font-black tracking-widest border border-[#FF6044]/20 hover:border-white px-3 py-1.5 rounded-lg bg-[#FF6044]/5 transition-all"
-                  >
-                    + Add Scribble
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* ========================================================================= */}
-          {/* PANE B: NOTE EDITOR & CANVAS (Col span 8 on desktop, full span on mobile or focus mode) */}
-          {/* ========================================================================= */}
-          <div className={`
-            ${!selectedScribble ? "hidden md:flex" : "flex"} 
-            ${isFocusMode ? "col-span-12" : "md:col-span-8 lg:col-span-8"} 
-            col-span-12 flex-col h-full min-h-0 bg-[#121313]/25 border border-white/5 rounded-3xl overflow-hidden
-          `}>
-            
-            {selectedScribble ? (
+        {selectedScribble ? (
+          /* ========================================================================= */
+          /* ACTIVE NOTE WRITING MODE: FULL-WIDTH FOCUS EDITOR WORKSPACE */
+          /* ========================================================================= */
+          <div className="grid grid-cols-12 gap-6 flex-1 min-h-0 items-stretch overflow-hidden">
+            <div className="col-span-12 flex flex-col h-full min-h-0 bg-[#121313]/25 border border-white/5 rounded-3xl overflow-hidden">
               <div className="flex flex-col h-full min-h-0 overflow-hidden">
-                
                 {/* Editor Top Bar Controls */}
                 <div className="flex items-center justify-between p-4 border-b border-white/5 bg-[#121313]/40 flex-shrink-0">
                   <div className="flex items-center gap-2.5">
@@ -1030,15 +887,156 @@ export default function Scribbles() {
                   )}
 
                 </div>
-
               </div>
-            ) : (
-              <ScribbleEmptyState onAddScribble={handleAddScribble} />
-            )}
-
+            </div>
           </div>
+        ) : (
+          /* ========================================================================= */
+          /* EMPTY/STANDBY DASHBOARD MODE: TOP HERO CALLIGRAPHY + BOTTOM NOTES GRID */
+          /* ========================================================================= */
+          <div className="flex-1 flex flex-col overflow-y-auto custom-scrollbar pr-1 pb-10 space-y-10">
+            {/* Top Hero Calligraphy Panel */}
+            <div className="w-full flex-shrink-0">
+              <ScribbleEmptyState onAddScribble={handleAddScribble} />
+            </div>
 
-        </div>
+            {/* Horizontal Separator */}
+            <div className="h-[1px] bg-white/5 flex-shrink-0" />
+
+            {/* Bottom "Your Scribbles" Card Grid */}
+            <div className="space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <h2 className="text-lg font-display font-black uppercase tracking-wider text-white flex items-center gap-2">
+                    <span className="w-2 h-2 bg-[#FF6044] rounded-full" />
+                    Your Scribbles
+                  </h2>
+                  <p className="text-xs text-gray-500 font-sans font-light">
+                    Manage, search, and edit your saved drafts and quick job specifications.
+                  </p>
+                </div>
+
+                {/* Inline Search Bar */}
+                <div className="relative w-full sm:max-w-xs">
+                  <Search size={13} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
+                  <input
+                    type="text"
+                    placeholder="Search scribbles..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-9 pr-4 py-2.5 bg-[#1A1B1B] border border-white/10 rounded-xl text-xs placeholder:text-gray-600 focus:outline-none focus:border-[#FF6044]/45 transition-colors font-mono"
+                  />
+                </div>
+              </div>
+
+              {/* Note Cards Grid */}
+              {sortedScribbles.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                  {sortedScribbles.map((item) => {
+                    const isPinned = pinnedIds.includes(item.id);
+                    return (
+                      <div
+                        key={item.id}
+                        onClick={() => setSelectedScribble(item)}
+                        style={{
+                          borderColor: `${item.color}15`,
+                        }}
+                        className="group relative flex flex-col justify-between p-5 bg-[#1A1B1B] hover:bg-[#222323] border border-white/10 rounded-2xl cursor-pointer hover:border-[#FF6044]/20 hover:shadow-[0_8px_30px_rgba(0,0,0,0.5)] hover:-translate-y-1 transition-all duration-300 select-none min-h-[175px]"
+                      >
+                        {/* Left color ribbon indicator */}
+                        <div
+                          style={{ backgroundColor: item.color }}
+                          className="absolute left-0 top-4 bottom-4 w-[3px] rounded-r-full opacity-40 group-hover:opacity-100 transition-opacity"
+                        />
+
+                        <div className="space-y-2.5 pl-2 overflow-hidden">
+                          <div className="flex items-center justify-between gap-2">
+                            <h3
+                              style={{ color: item.color }}
+                              className="text-sm font-display font-black uppercase truncate tracking-wide flex-1"
+                            >
+                              {item.title || "Untitled Draft"}
+                            </h3>
+
+                            {/* Pinned pill */}
+                            <div className="flex items-center gap-1">
+                              {isPinned && (
+                                <span className="p-1 text-yellow-500 rounded bg-yellow-500/10 border border-yellow-500/20" title="Pinned Note">
+                                  <Pin size={10} className="fill-current" />
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          <p className="text-gray-400 font-sans text-[11px] line-clamp-3 leading-relaxed font-light">
+                            {item.content || <em className="text-gray-600 italic">No scribble text added yet.</em>}
+                          </p>
+                        </div>
+
+                        {/* Card Footer Actions */}
+                        <div className="flex justify-between items-center pl-2 pt-3 mt-4 border-t border-white/5 text-[11px] font-mono text-gray-400 font-semibold">
+                          <span>
+                            {new Date(item.updated_at).toLocaleDateString(undefined, {
+                              month: "short",
+                              day: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </span>
+
+                          <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                            {/* Pin Toggle */}
+                            <button
+                              onClick={(e) => handleTogglePin(item.id, e)}
+                              className={`p-1.5 rounded-lg border transition-all ${
+                                isPinned
+                                  ? "border-yellow-500/30 text-yellow-500 bg-yellow-500/5 hover:bg-yellow-500/10"
+                                  : "border-white/5 text-gray-400 hover:text-white hover:bg-white/5"
+                              }`}
+                              title={isPinned ? "Unpin Note" : "Pin Note"}
+                            >
+                              <Pin size={10} className={isPinned ? "fill-current" : ""} />
+                            </button>
+
+                            {/* Instant Copy */}
+                            <button
+                              onClick={(e) => handleCopyNote(item.id, item.content, e)}
+                              className="p-1.5 rounded-lg border border-white/5 text-gray-400 hover:text-[#34D399] hover:bg-[#34D399]/5 transition-all"
+                              title="Copy Content"
+                            >
+                              {copiedId === item.id ? <Check size={10} /> : <Copy size={10} />}
+                            </button>
+
+                            {/* Delete Note */}
+                            <button
+                              onClick={(e) => handleDeleteScribble(item.id, e)}
+                              className="p-1.5 rounded-lg border border-white/5 text-gray-400 hover:text-red-500 hover:bg-red-500/5 transition-all"
+                              title="Delete note"
+                            >
+                              <Trash2 size={10} />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-16 bg-[#1A1B1B] border border-white/5 rounded-2xl space-y-4">
+                  <p className="text-gray-500 font-mono text-xs uppercase tracking-wider">
+                    Zero scribbles logged
+                  </p>
+                  <button
+                    onClick={handleAddScribble}
+                    className="text-[#FF6044] hover:text-white text-xs font-mono uppercase font-black tracking-widest border border-[#FF6044]/20 hover:border-white px-4 py-2.5 rounded-xl bg-[#FF6044]/5 transition-all"
+                  >
+                    + Add Scribble
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
