@@ -881,10 +881,91 @@ export default function Scribbles() {
                         onChange={(e) => handleEditorChange("content", e.target.value)}
                         placeholder="Dump application links, draft job summaries, paste bullet lists, or scribble quick thoughts..."
                         style={{ color: selectedScribble.color }}
-                        className={`w-full bg-transparent flex-1 focus:outline-none placeholder:text-gray-700 resize-none min-h-[300px] ${
+                        className={`w-full bg-transparent flex-1 focus:outline-none placeholder:text-gray-700 resize-none min-h-[200px] ${
                           selectedScribble.font_family
                         } ${getFontSizeClass(selectedScribble.font_size)}`}
                       />
+
+                      {/* ── ATTACHMENT PREVIEW ── */}
+                      {selectedScribble.attached_file && (() => {
+                        const fileUrl = selectedScribble.attached_file.startsWith("http")
+                          ? selectedScribble.attached_file
+                          : (import.meta.env.VITE_API_URL || "") + selectedScribble.attached_file;
+                        const isPdf = fileUrl.toLowerCase().includes(".pdf");
+                        const fileName = fileUrl.split("/").pop().split("?")[0];
+                        return (
+                          <div className="mt-4 border border-white/10 rounded-2xl overflow-hidden bg-[#0e0f0f]/80">
+                            {/* Header bar */}
+                            <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/5 bg-white/[0.03]">
+                              <div className="flex items-center gap-2 min-w-0">
+                                <div className="p-1.5 bg-[#FF6044]/15 rounded-lg flex-shrink-0">
+                                  <Paperclip size={11} className="text-[#FF6044]" />
+                                </div>
+                                <span className="text-[11px] font-mono text-gray-300 truncate">{fileName}</span>
+                                <span className="text-[9px] font-mono text-gray-600 uppercase tracking-wider flex-shrink-0">
+                                  {isPdf ? "PDF" : "IMAGE"}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-1.5 flex-shrink-0 ml-3">
+                                <a
+                                  href={fileUrl}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="inline-flex items-center gap-1 px-2.5 py-1 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-[10px] font-mono text-gray-300 hover:text-white transition-all"
+                                >
+                                  <ExternalLink size={9} /> Open
+                                </a>
+                                <button
+                                  onClick={handleRemoveFile}
+                                  className="p-1 bg-red-500/5 hover:bg-red-500/20 border border-red-500/10 rounded-lg text-red-400 hover:text-red-300 transition-all"
+                                  title="Remove attachment"
+                                >
+                                  <X size={11} />
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Preview body */}
+                            {isPdf ? (
+                              <div className="flex flex-col items-center justify-center gap-4 p-8 text-center">
+                                <div className="w-16 h-16 flex items-center justify-center bg-[#FF6044]/10 border border-[#FF6044]/20 rounded-2xl">
+                                  <FileText size={32} className="text-[#FF6044]" />
+                                </div>
+                                <div>
+                                  <p className="text-white text-sm font-bold truncate max-w-xs">{fileName}</p>
+                                  <p className="text-gray-500 text-[11px] mt-1 font-mono">PDF Document attached</p>
+                                </div>
+                                <div className="flex gap-3">
+                                  <a
+                                    href={fileUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-flex items-center gap-2 px-4 py-2 bg-[#FF6044] hover:bg-white text-black text-xs font-black uppercase tracking-wider rounded-xl transition-all"
+                                  >
+                                    <ExternalLink size={12} /> Open PDF
+                                  </a>
+                                  <a
+                                    href={fileUrl}
+                                    download={fileName}
+                                    className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-mono rounded-xl transition-all"
+                                  >
+                                    Download
+                                  </a>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="p-3">
+                                <img
+                                  src={fileUrl}
+                                  alt="Attached file"
+                                  className="w-full max-h-[400px] object-contain rounded-xl bg-black/20"
+                                  onError={(e) => { e.target.style.display = "none"; }}
+                                />
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })()}
                     </div>
                   </div>
 
