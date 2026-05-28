@@ -268,17 +268,17 @@ function ScribbleEmptyState({ onAddScribble }) {
 export default function Scribbles() {
   const navigate = useNavigate();
   const [scribbles, setScribbles] = useState([]);
-  const [selectedScribble, _setSelectedScribble] = useState(null);
-  const setSelectedScribble = (val) => {
-    selectedScribbleRef.current = val;
-    _setSelectedScribble(val);
-  };
+  const [selectedScribble, setSelectedScribble] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [uploadStatus, setUploadStatus] = useState(null);
 
   const fileInputRef = useRef(null);
+  // This ref always holds the latest selectedScribble to avoid stale closures in async handlers
   const selectedScribbleRef = useRef(null);
-  const [uploadStatus, setUploadStatus] = useState(null); // null | 'uploading' | 'success' | 'error'
+  useEffect(() => {
+    selectedScribbleRef.current = selectedScribble;
+  }, [selectedScribble]);
 
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
