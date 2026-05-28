@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { FileText, AlertCircle, Clock, Search, MessageCircle, FileQuestion, Users, CheckCircle2, ShieldCheck, Map, Target, Route, Briefcase } from 'lucide-react';
+import { FileText, AlertCircle, Clock, Search, MessageCircle, FileQuestion, Users, CheckCircle2, ShieldCheck, Map, Target, Route, Briefcase, Pencil } from 'lucide-react';
 
 // --- BEFORE CARDS (THE PROBLEM) ---
 
@@ -344,6 +344,779 @@ export const CareerRoadmap = () => {
             initial={{ opacity: 0, scale: 0 }} animate={{ opacity: [0, 1, 1], scale: [0, 1.2, 1] }} transition={{ duration: 4, repeat: Infinity, times: [0, 0.8, 1] }}
           >Director</motion.div>
        </div>
+    </div>
+  );
+};
+
+const charStrokes = {
+  ' ': {
+    width: 12,
+    points: []
+  },
+  'L': {
+    width: 20,
+    points: [
+      { dx: 16, dy: 2, lift: true },
+      { dx: 10, dy: 0, lift: false },
+      { dx: 6, dy: 4, lift: false },
+      { dx: 6, dy: 16, lift: false },
+      { dx: 14, dy: 20, lift: false },
+      { dx: 2, dy: 20, lift: false },
+      { dx: 18, dy: 20, lift: false }
+    ]
+  },
+  'S': {
+    width: 18,
+    points: [
+      { dx: 2, dy: 20, lift: true },
+      { dx: 12, dy: 2, lift: false },
+      { dx: 16, dy: 6, lift: false },
+      { dx: 8, dy: 12, lift: false },
+      { dx: 4, dy: 18, lift: false },
+      { dx: 14, dy: 20, lift: false }
+    ]
+  },
+  'e': {
+    width: 12,
+    points: [
+      { dx: 2, dy: 16, lift: true },
+      { dx: 10, dy: 12, lift: false },
+      { dx: 8, dy: 8, lift: false },
+      { dx: 4, dy: 12, lift: false },
+      { dx: 4, dy: 16, lift: false },
+      { dx: 10, dy: 20, lift: false }
+    ]
+  },
+  't': {
+    width: 12,
+    points: [
+      { dx: 6, dy: 2, lift: true },
+      { dx: 6, dy: 20, lift: false },
+      { dx: 2, dy: 10, lift: true },
+      { dx: 10, dy: 10, lift: false }
+    ]
+  },
+  's': {
+    width: 12,
+    points: [
+      { dx: 2, dy: 20, lift: true },
+      { dx: 10, dy: 12, lift: false },
+      { dx: 8, dy: 16, lift: false },
+      { dx: 2, dy: 20, lift: false },
+      { dx: 10, dy: 20, lift: false }
+    ]
+  },
+  'c': {
+    width: 12,
+    points: [
+      { dx: 10, dy: 12, lift: true },
+      { dx: 4, dy: 12, lift: false },
+      { dx: 4, dy: 18, lift: false },
+      { dx: 10, dy: 20, lift: false }
+    ]
+  },
+  'r': {
+    width: 10,
+    points: [
+      { dx: 2, dy: 20, lift: true },
+      { dx: 2, dy: 12, lift: false },
+      { dx: 6, dy: 12, lift: false },
+      { dx: 8, dy: 20, lift: false }
+    ]
+  },
+  'i': {
+    width: 8,
+    points: [
+      { dx: 4, dy: 12, lift: true },
+      { dx: 4, dy: 20, lift: false },
+      { dx: 4, dy: 6, lift: true },
+      { dx: 4.5, dy: 6.5, lift: false }
+    ]
+  },
+  'b': {
+    width: 12,
+    points: [
+      { dx: 2, dy: 20, lift: true },
+      { dx: 4, dy: 4, lift: false },
+      { dx: 2, dy: 20, lift: false },
+      { dx: 8, dy: 20, lift: false },
+      { dx: 10, dy: 16, lift: false },
+      { dx: 4, dy: 16, lift: false }
+    ]
+  },
+  'l': {
+    width: 10,
+    points: [
+      { dx: 2, dy: 20, lift: true },
+      { dx: 6, dy: 4, lift: false },
+      { dx: 4, dy: 20, lift: false }
+    ]
+  },
+  'h': {
+    width: 14,
+    points: [
+      { dx: 2, dy: 20, lift: true },
+      { dx: 6, dy: 4, lift: false },
+      { dx: 4, dy: 20, lift: false },
+      { dx: 4, dy: 14, lift: true },
+      { dx: 10, dy: 14, lift: false },
+      { dx: 12, dy: 20, lift: false }
+    ]
+  },
+  'a': {
+    width: 12,
+    points: [
+      { dx: 10, dy: 14, lift: true },
+      { dx: 4, dy: 14, lift: false },
+      { dx: 4, dy: 20, lift: false },
+      { dx: 10, dy: 20, lift: false },
+      { dx: 10, dy: 14, lift: false },
+      { dx: 10, dy: 20, lift: false }
+    ]
+  },
+  'p': {
+    width: 12,
+    points: [
+      { dx: 3, dy: 12, lift: true },
+      { dx: 3, dy: 28, lift: false },
+      { dx: 3, dy: 12, lift: true },
+      { dx: 9, dy: 12, lift: false },
+      { dx: 9, dy: 20, lift: false },
+      { dx: 3, dy: 20, lift: false }
+    ]
+  },
+  'd': {
+    width: 12,
+    points: [
+      { dx: 10, dy: 14, lift: true },
+      { dx: 4, dy: 14, lift: false },
+      { dx: 4, dy: 20, lift: false },
+      { dx: 10, dy: 20, lift: false },
+      { dx: 10, dy: 4, lift: true },
+      { dx: 10, dy: 20, lift: false }
+    ]
+  },
+  'o': {
+    width: 12,
+    points: [
+      { dx: 8, dy: 14, lift: true },
+      { dx: 4, dy: 14, lift: false },
+      { dx: 4, dy: 20, lift: false },
+      { dx: 8, dy: 20, lift: false },
+      { dx: 8, dy: 14, lift: false }
+    ]
+  },
+  'y': {
+    width: 12,
+    points: [
+      { dx: 2, dy: 12, lift: true },
+      { dx: 2, dy: 20, lift: false },
+      { dx: 8, dy: 20, lift: false },
+      { dx: 8, dy: 12, lift: true },
+      { dx: 8, dy: 28, lift: false },
+      { dx: 2, dy: 28, lift: false }
+    ]
+  },
+  '1': {
+    width: 12,
+    points: [
+      { dx: 2, dy: 8, lift: true },
+      { dx: 6, dy: 4, lift: false },
+      { dx: 6, dy: 20, lift: false },
+      { dx: 2, dy: 20, lift: true },
+      { dx: 10, dy: 20, lift: false }
+    ]
+  },
+  '0': {
+    width: 14,
+    points: [
+      { dx: 7, dy: 4, lift: true },
+      { dx: 3, dy: 12, lift: false },
+      { dx: 7, dy: 20, lift: false },
+      { dx: 11, dy: 12, lift: false },
+      { dx: 7, dy: 4, lift: false }
+    ]
+  },
+  'j': {
+    width: 10,
+    points: [
+      { dx: 6, dy: 12, lift: true },
+      { dx: 6, dy: 28, lift: false },
+      { dx: 2, dy: 28, lift: false },
+      { dx: 6, dy: 6, lift: true },
+      { dx: 6.5, dy: 6.5, lift: false }
+    ]
+  },
+  'w': {
+    width: 16,
+    points: [
+      { dx: 2, dy: 12, lift: true },
+      { dx: 4, dy: 20, lift: false },
+      { dx: 8, dy: 16, lift: false },
+      { dx: 10, dy: 20, lift: false },
+      { dx: 14, dy: 12, lift: false }
+    ]
+  },
+  'u': {
+    width: 12,
+    points: [
+      { dx: 2, dy: 12, lift: true },
+      { dx: 2, dy: 20, lift: false },
+      { dx: 8, dy: 20, lift: false },
+      { dx: 8, dy: 12, lift: true },
+      { dx: 8, dy: 20, lift: false }
+    ]
+  },
+  'k': {
+    width: 12,
+    points: [
+      { dx: 3, dy: 4, lift: true },
+      { dx: 3, dy: 20, lift: false },
+      { dx: 9, dy: 10, lift: true },
+      { dx: 3, dy: 14, lift: false },
+      { dx: 9, dy: 20, lift: false }
+    ]
+  },
+  'O': {
+    width: 18,
+    points: [
+      { dx: 9, dy: 2, lift: true },
+      { dx: 3, dy: 11, lift: false },
+      { dx: 9, dy: 20, lift: false },
+      { dx: 15, dy: 11, lift: false },
+      { dx: 9, dy: 2, lift: false }
+    ]
+  },
+  ',': {
+    width: 6,
+    points: [
+      { dx: 3, dy: 20, lift: true },
+      { dx: 2, dy: 24, lift: false }
+    ]
+  },
+  '!': {
+    width: 6,
+    points: [
+      { dx: 3, dy: 4, lift: true },
+      { dx: 3, dy: 16, lift: false },
+      { dx: 3, dy: 20, lift: true },
+      { dx: 3.5, dy: 20.5, lift: false }
+    ]
+  },
+  "'": {
+    width: 6,
+    points: [
+      { dx: 3, dy: 4, lift: true },
+      { dx: 2, dy: 8, lift: false }
+    ]
+  },
+  'N': {
+    width: 16,
+    points: [
+      { dx: 3, dy: 20, lift: true },
+      { dx: 3, dy: 4, lift: false },
+      { dx: 13, dy: 20, lift: false },
+      { dx: 13, dy: 4, lift: false }
+    ]
+  },
+  'I': {
+    width: 14,
+    points: [
+      { dx: 3, dy: 4, lift: true },
+      { dx: 11, dy: 4, lift: false },
+      { dx: 7, dy: 4, lift: true },
+      { dx: 7, dy: 20, lift: false },
+      { dx: 3, dy: 20, lift: true },
+      { dx: 11, dy: 20, lift: false }
+    ]
+  }
+};
+
+const generatePoints = (text, startX, startY, charScale = 1.0) => {
+  const pts = [];
+  let curX = startX;
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    const strokeDef = charStrokes[char] || charStrokes[' '];
+    const w = strokeDef.width * charScale;
+    
+    if (strokeDef.points) {
+      strokeDef.points.forEach((pt) => {
+        pts.push({
+          x: curX + pt.dx * charScale,
+          y: startY + pt.dy * charScale,
+          lift: pt.lift
+        });
+      });
+    }
+    curX += w;
+  }
+  return pts;
+};
+
+const getPathD = (points, activeIndex) => {
+  if (activeIndex < 0) return "";
+  let d = "";
+  const count = Math.min(activeIndex, points.length - 1);
+  for (let i = 0; i <= count; i++) {
+    const pt = points[i];
+    if (pt.lift || i === 0) {
+      d += ` M ${pt.x.toFixed(1)} ${pt.y.toFixed(1)}`;
+    } else {
+      d += ` L ${pt.x.toFixed(1)} ${pt.y.toFixed(1)}`;
+    }
+  }
+  return d;
+};
+
+export const ChalkboardShowcase = () => {
+  const [chalk, setChalk] = useState({ x: 450, y: 200, opacity: 0 });
+  const [step, setStep] = useState(0);
+  const [revealTitleIndex, setRevealTitleIndex] = useState(-1);
+  const [revealNaukriIndex, setRevealNaukriIndex] = useState(-1);
+  const [revealLinkIndex, setRevealLinkIndex] = useState(-1);
+  const [tictactoeProgress, setTictactoeProgress] = useState(0);
+  const [particles, setParticles] = useState([]);
+  const [isErasing, setIsErasing] = useState(false);
+
+  const titlePoints = useMemo(() => generatePoints("Let's Scribble here!", 40, 50, 0.95), []);
+  const naukriPoints = useMemo(() => generatePoints("I applied 10 jobs in Naukri today", 40, 195, 0.65), []);
+  const linkPoints = useMemo(() => generatePoints("Okay, I will paste the link here", 40, 240, 0.65), []);
+
+  useEffect(() => {
+    let active = true;
+    let start = Date.now();
+    let prevChalkX = 450;
+    let prevChalkY = 200;
+
+    const animate = () => {
+      if (!active) return;
+      const now = Date.now();
+      const elapsed = now - start;
+
+      const totalCycle = 23000;
+      const cycleTime = elapsed % totalCycle;
+
+      let currentX = 450;
+      let currentY = 200;
+      let currentOpacity = 1;
+
+      if (cycleTime < 1500) {
+        const pct = cycleTime / 1500;
+        currentX = 450 - pct * (450 - 40);
+        currentY = 200 - pct * (200 - 55);
+        currentOpacity = 1;
+        setStep(0);
+        setRevealTitleIndex(-1);
+        setRevealNaukriIndex(-1);
+        setRevealLinkIndex(-1);
+        setTictactoeProgress(0);
+        setIsErasing(false);
+      } 
+      else if (cycleTime < 4500) {
+        const pct = (cycleTime - 1500) / 3000;
+        const idx = Math.floor(pct * titlePoints.length);
+        
+        if (titlePoints.length > 0) {
+          const pt = titlePoints[Math.min(idx, titlePoints.length - 1)];
+          let cx = pt.x;
+          let cy = pt.y;
+          if (idx < titlePoints.length - 1) {
+            const nextPt = titlePoints[idx + 1];
+            const subPct = (pct * titlePoints.length) % 1;
+            cx = pt.x + (nextPt.x - pt.x) * subPct;
+            cy = pt.y + (nextPt.y - pt.y) * subPct;
+          }
+          currentX = cx;
+          currentY = cy;
+        } else {
+          currentX = 40;
+          currentY = 55;
+        }
+
+        currentOpacity = 1;
+        setStep(1);
+        setRevealTitleIndex(idx);
+      } 
+      else if (cycleTime < 6000) {
+        const pct = (cycleTime - 4500) / 1500;
+        const startPt = titlePoints[titlePoints.length - 1] || { x: 360, y: 55 };
+        currentX = startPt.x + pct * (385 - startPt.x);
+        currentY = startPt.y + pct * (105 - startPt.y);
+        currentOpacity = 1;
+        setStep(2);
+        setRevealTitleIndex(titlePoints.length);
+      } 
+      else if (cycleTime < 12000) {
+        const subElapsed = cycleTime - 6000;
+        const pct = subElapsed / 6000;
+        setStep(3);
+        setTictactoeProgress(pct);
+        setRevealTitleIndex(titlePoints.length);
+
+        if (pct < 0.12) {
+          const t = pct / 0.12;
+          currentX = 385;
+          currentY = 105 + t * (165 - 105);
+        } else if (pct < 0.24) {
+          const t = (pct - 0.12) / 0.12;
+          currentX = 415;
+          currentY = 105 + t * (165 - 105);
+        } else if (pct < 0.36) {
+          const t = (pct - 0.24) / 0.12;
+          currentX = 360 + t * (440 - 360);
+          currentY = 125;
+        } else if (pct < 0.48) {
+          const t = (pct - 0.36) / 0.12;
+          currentX = 360 + t * (440 - 360);
+          currentY = 145;
+        } else if (pct < 0.56) {
+          const t = (pct - 0.48) / 0.08;
+          currentX = 365 + t * (375 - 365);
+          currentY = 110 + t * (120 - 110);
+        } else if (pct < 0.64) {
+          const t = (pct - 0.56) / 0.08;
+          currentX = 375 - t * (375 - 365);
+          currentY = 110 + t * (120 - 110);
+        } else if (pct < 0.78) {
+          const t = (pct - 0.64) / 0.14;
+          const angle = t * Math.PI * 2;
+          currentX = 400 + Math.cos(angle) * 6;
+          currentY = 135 + Math.sin(angle) * 6;
+        } else if (pct < 0.86) {
+          const t = (pct - 0.78) / 0.08;
+          currentX = 422 + t * (432 - 422);
+          currentY = 150 + t * (160 - 150);
+        } else if (pct < 0.94) {
+          const t = (pct - 0.86) / 0.08;
+          currentX = 432 - t * (432 - 422);
+          currentY = 150 + t * (160 - 150);
+        } else {
+          currentX = 422;
+          currentY = 160;
+          currentOpacity = 0;
+        }
+      } 
+      else if (cycleTime < 13500) {
+        const pct = (cycleTime - 12000) / 1500;
+        const endPt = naukriPoints[0] || { x: 40, y: 195 };
+        currentX = 422 + pct * (endPt.x - 422);
+        currentY = 160 + pct * (endPt.y - 160);
+        currentOpacity = 1;
+        setStep(4);
+        setRevealTitleIndex(titlePoints.length);
+        setRevealNaukriIndex(-1);
+      } 
+      else if (cycleTime < 16500) {
+        const pct = (cycleTime - 13500) / 3000;
+        const idx = Math.floor(pct * naukriPoints.length);
+
+        if (naukriPoints.length > 0) {
+          const pt = naukriPoints[Math.min(idx, naukriPoints.length - 1)];
+          let cx = pt.x;
+          let cy = pt.y;
+          if (idx < naukriPoints.length - 1) {
+            const nextPt = naukriPoints[idx + 1];
+            const subPct = (pct * naukriPoints.length) % 1;
+            cx = pt.x + (nextPt.x - pt.x) * subPct;
+            cy = pt.y + (nextPt.y - pt.y) * subPct;
+          }
+          currentX = cx;
+          currentY = cy;
+        } else {
+          currentX = 40;
+          currentY = 195;
+        }
+
+        currentOpacity = 1;
+        setStep(5);
+        setRevealTitleIndex(titlePoints.length);
+        setRevealNaukriIndex(idx);
+      } 
+      else if (cycleTime < 18000) {
+        const pct = (cycleTime - 16500) / 1500;
+        const startPt = naukriPoints[naukriPoints.length - 1] || { x: 300, y: 195 };
+        const endPt = linkPoints[0] || { x: 40, y: 240 };
+        currentX = startPt.x + pct * (endPt.x - startPt.x);
+        currentY = startPt.y + pct * (endPt.y - startPt.y);
+        currentOpacity = 1;
+        setStep(6);
+        setRevealTitleIndex(titlePoints.length);
+        setRevealNaukriIndex(naukriPoints.length);
+        setRevealLinkIndex(-1);
+      } 
+      else if (cycleTime < 21000) {
+        const pct = (cycleTime - 18000) / 3000;
+        const idx = Math.floor(pct * linkPoints.length);
+
+        if (linkPoints.length > 0) {
+          const pt = linkPoints[Math.min(idx, linkPoints.length - 1)];
+          let cx = pt.x;
+          let cy = pt.y;
+          if (idx < linkPoints.length - 1) {
+            const nextPt = linkPoints[idx + 1];
+            const subPct = (pct * linkPoints.length) % 1;
+            cx = pt.x + (nextPt.x - pt.x) * subPct;
+            cy = pt.y + (nextPt.y - pt.y) * subPct;
+          }
+          currentX = cx;
+          currentY = cy;
+        } else {
+          currentX = 40;
+          currentY = 240;
+        }
+
+        currentOpacity = 1;
+        setStep(7);
+        setRevealTitleIndex(titlePoints.length);
+        setRevealNaukriIndex(naukriPoints.length);
+        setRevealLinkIndex(idx);
+      } 
+      else {
+        const pct = (cycleTime - 21000) / 2000;
+        const startPt = linkPoints[linkPoints.length - 1] || { x: 300, y: 240 };
+        currentX = startPt.x + pct * (450 - startPt.x);
+        currentY = startPt.y + pct * (200 - startPt.y);
+        currentOpacity = 0.5;
+        setStep(8);
+        setIsErasing(true);
+        setRevealTitleIndex(titlePoints.length);
+        setRevealNaukriIndex(naukriPoints.length);
+        setRevealLinkIndex(linkPoints.length);
+      }
+
+      setChalk({ x: currentX, y: currentY, opacity: currentOpacity });
+
+      const isDrawing = (step === 1 || step === 3 || step === 5 || step === 7) && currentOpacity === 1;
+      if (isDrawing && Math.random() < 0.6) {
+        const dx = currentX - prevChalkX;
+        const dy = currentY - prevChalkY;
+        
+        const p = {
+          id: Math.random(),
+          x: currentX,
+          y: currentY,
+          vx: (Math.random() * 2 - 1) * 0.2 - (dx * 0.1),
+          vy: -Math.random() * 0.4 - 0.1,
+          size: Math.random() * 2.5 + 0.8,
+          alpha: 0.9
+        };
+        setParticles((prev) => [...prev.slice(-30), p]);
+      }
+
+      prevChalkX = currentX;
+      prevChalkY = currentY;
+
+      requestAnimationFrame(animate);
+    };
+
+    requestAnimationFrame(animate);
+    return () => {
+      active = false;
+    };
+  }, [step, titlePoints, naukriPoints, linkPoints]);
+
+  useEffect(() => {
+    let active = true;
+    const updateParticles = () => {
+      if (!active) return;
+      setParticles((prev) =>
+        prev
+          .map((p) => ({
+            ...p,
+            x: p.x + p.vx,
+            y: p.y + p.vy,
+            alpha: p.alpha - 0.02,
+            size: p.size * 0.97
+          }))
+          .filter((p) => p.alpha > 0)
+      );
+      requestAnimationFrame(updateParticles);
+    };
+    requestAnimationFrame(updateParticles);
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  // Tic-Tac-Toe Line Lengths
+  const v1Offset = tictactoeProgress < 0.12 ? 60 - (tictactoeProgress / 0.12) * 60 : 0;
+  const v2Offset = tictactoeProgress < 0.12 ? 60 : tictactoeProgress < 0.24 ? 60 - ((tictactoeProgress - 0.12) / 0.12) * 60 : 0;
+  const h1Offset = tictactoeProgress < 0.24 ? 80 : tictactoeProgress < 0.36 ? 80 - ((tictactoeProgress - 0.24) / 0.12) * 80 : 0;
+  const h2Offset = tictactoeProgress < 0.36 ? 80 : tictactoeProgress < 0.48 ? 80 - ((tictactoeProgress - 0.36) / 0.12) * 80 : 0;
+  const x1aOffset = tictactoeProgress < 0.48 ? 14 : tictactoeProgress < 0.56 ? 14 - ((tictactoeProgress - 0.48) / 0.08) * 14 : 0;
+  const x1bOffset = tictactoeProgress < 0.56 ? 14 : tictactoeProgress < 0.64 ? 14 - ((tictactoeProgress - 0.56) / 0.08) * 14 : 0;
+  const o1Offset = tictactoeProgress < 0.64 ? 38 : tictactoeProgress < 0.78 ? 38 - ((tictactoeProgress - 0.64) / 0.14) * 38 : 0;
+  const x2aOffset = tictactoeProgress < 0.78 ? 14 : tictactoeProgress < 0.86 ? 14 - ((tictactoeProgress - 0.78) / 0.08) * 14 : 0;
+  const x2bOffset = tictactoeProgress < 0.86 ? 14 : tictactoeProgress < 0.94 ? 14 - ((tictactoeProgress - 0.86) / 0.08) * 14 : 0;
+
+  return (
+    <div className="relative w-full max-w-[500px] h-[340px] glass-panel brutalist-border p-4 rounded-none overflow-hidden shadow-2xl bg-surface/80">
+      
+      {/* Decorative Blueprint Dots Grid */}
+      <div className="absolute inset-0 bg-dot-pattern opacity-[0.04] pointer-events-none" />
+
+      {/* Eraser sweep overlay */}
+      {isErasing && (
+        <motion.div 
+          initial={{ left: "-100%" }}
+          animate={{ left: "100%" }}
+          transition={{ duration: 1.8, ease: "easeInOut" }}
+          className="absolute top-0 bottom-0 w-1/3 bg-gradient-to-r from-transparent via-white/5 to-transparent z-40 pointer-events-none"
+        />
+      )}
+
+      {/* Custom Chalk Position & Pencil Cursor */}
+      {chalk.opacity > 0 && (
+        <div
+          style={{
+            left: `${chalk.x}px`,
+            top: `${chalk.y}px`,
+            opacity: chalk.opacity,
+            transition: "opacity 0.2s ease-in-out"
+          }}
+          className="absolute z-30 text-primary pointer-events-none transform -translate-x-[2px] -translate-y-[24px]"
+        >
+          <Pencil size={24} className="transform -scale-x-100 drop-shadow-[0_0_8px_var(--color-primary)]" />
+        </div>
+      )}
+
+      {/* Floating Chalk Dust Particles */}
+      <div className="absolute inset-0 z-20 pointer-events-none">
+        {particles.map((p) => (
+          <div
+            key={p.id}
+            style={{
+              left: `${p.x}px`,
+              top: `${p.y}px`,
+              width: `${p.size}px`,
+              height: `${p.size}px`,
+              opacity: p.alpha,
+              backgroundColor: "var(--color-primary)",
+              boxShadow: "0 0 5px var(--color-primary)"
+            }}
+            className="absolute rounded-full pointer-events-none"
+          />
+        ))}
+      </div>
+
+      {/* Chalkboard Drawing Core SVG */}
+      <svg viewBox="0 0 500 300" className="w-full h-full relative z-10">
+        
+        {/* 1. Main Title Cursive Handwriting (y=50, drawn coordinate-by-coordinate) */}
+        <path
+          d={getPathD(titlePoints, step === 1 ? revealTitleIndex : (step > 1 ? titlePoints.length : -1))}
+          fill="none"
+          stroke="var(--color-primary)"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="drop-shadow-[0_0_5px_rgba(255,96,68,0.4)]"
+          opacity={isErasing ? 1 - (tictactoeProgress * 2) : 1}
+        />
+
+        {/* 2. Tic-Tac-Toe Game (Top Right Area, animated line-by-line) */}
+        <g opacity={isErasing ? 1 - (tictactoeProgress * 2) : 1}>
+          {/* Vertical Lines */}
+          {tictactoeProgress > 0 && (
+            <line 
+              x1="385" y1="105" x2="385" y2="165" 
+              stroke="var(--color-primary)" strokeWidth="2.5" strokeLinecap="round"
+              strokeDasharray="60" strokeDashoffset={v1Offset}
+              className="drop-shadow-[0_0_3px_rgba(255,96,68,0.3)]"
+            />
+          )}
+          {tictactoeProgress > 0.12 && (
+            <line 
+              x1="415" y1="105" x2="415" y2="165" 
+              stroke="var(--color-primary)" strokeWidth="2.5" strokeLinecap="round"
+              strokeDasharray="60" strokeDashoffset={v2Offset}
+              className="drop-shadow-[0_0_3px_rgba(255,96,68,0.3)]"
+            />
+          )}
+
+          {/* Horizontal Lines */}
+          {tictactoeProgress > 0.24 && (
+            <line 
+              x1="360" y1="125" x2="440" y2="125" 
+              stroke="var(--color-primary)" strokeWidth="2.5" strokeLinecap="round"
+              strokeDasharray="80" strokeDashoffset={h1Offset}
+              className="drop-shadow-[0_0_3px_rgba(255,96,68,0.3)]"
+            />
+          )}
+          {tictactoeProgress > 0.36 && (
+            <line 
+              x1="360" y1="145" x2="440" y2="145" 
+              stroke="var(--color-primary)" strokeWidth="2.5" strokeLinecap="round"
+              strokeDasharray="80" strokeDashoffset={h2Offset}
+              className="drop-shadow-[0_0_3px_rgba(255,96,68,0.3)]"
+            />
+          )}
+
+          {/* X1 (Top-Left) */}
+          {tictactoeProgress > 0.48 && (
+            <line 
+              x1="365" y1="110" x2="375" y2="120" 
+              stroke="var(--color-primary)" strokeWidth="2.5" strokeLinecap="round"
+              strokeDasharray="14" strokeDashoffset={x1aOffset}
+            />
+          )}
+          {tictactoeProgress > 0.56 && (
+            <line 
+              x1="375" y1="110" x2="365" y2="120" 
+              stroke="var(--color-primary)" strokeWidth="2.5" strokeLinecap="round"
+              strokeDasharray="14" strokeDashoffset={x1bOffset}
+            />
+          )}
+
+          {/* O1 (Center Circle) */}
+          {tictactoeProgress > 0.64 && (
+            <path 
+              d="M 394,135 A 6,6 0 1,1 406,135 A 6,6 0 1,1 394,135" 
+              stroke="var(--color-primary)" strokeWidth="2.5" fill="none" strokeLinecap="round"
+              strokeDasharray="38" strokeDashoffset={o1Offset}
+            />
+          )}
+
+          {/* X2 (Bottom-Right) */}
+          {tictactoeProgress > 0.78 && (
+            <line 
+              x1="422" y1="150" x2="432" y2="160" 
+              stroke="var(--color-primary)" strokeWidth="2.5" strokeLinecap="round"
+              strokeDasharray="14" strokeDashoffset={x2aOffset}
+            />
+          )}
+          {tictactoeProgress > 0.86 && (
+            <line 
+              x1="432" y1="150" x2="422" y2="160" 
+              stroke="var(--color-primary)" strokeWidth="2.5" strokeLinecap="round"
+              strokeDasharray="14" strokeDashoffset={x2bOffset}
+            />
+          )}
+        </g>
+
+        {/* 3. Naukri Note (Bottom Left, y=195, drawn coordinate-by-coordinate) */}
+        <path
+          d={getPathD(naukriPoints, step === 5 ? revealNaukriIndex : (step > 5 ? naukriPoints.length : -1))}
+          fill="none"
+          stroke="rgba(255, 255, 255, 0.85)"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          opacity={isErasing ? 1 - (tictactoeProgress * 2) : 1}
+        />
+
+        {/* 4. Paste Link Note (Bottom Right, y=240, drawn coordinate-by-coordinate) */}
+        <path
+          d={getPathD(linkPoints, step === 7 ? revealLinkIndex : (step > 7 ? linkPoints.length : -1))}
+          fill="none"
+          stroke="rgba(255, 255, 255, 0.85)"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          opacity={isErasing ? 1 - (tictactoeProgress * 2) : 1}
+        />
+      </svg>
     </div>
   );
 };

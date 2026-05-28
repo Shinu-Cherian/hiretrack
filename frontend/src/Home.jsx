@@ -356,7 +356,8 @@ import {
   CareerVault, 
   IntelligentReminders, 
   PipelineStream, 
-  CareerRoadmap 
+  CareerRoadmap,
+  ChalkboardShowcase
 } from './components/VisualCards';
 import Dashboard from './components/Dashboard';
 import { RollingHeading, RollingWord } from './components/RollingHeading';
@@ -883,6 +884,53 @@ export default function Home() {
             </div>
 
           </div>
+      </section>
+
+      {/* Scribbles Product Showcase Section */}
+      <section className="min-h-screen px-6 sm:px-12 lg:px-20 py-28 reveal-section relative overflow-hidden bg-[#0a0a0a] border-b border-white/5">
+        <div
+          className="absolute inset-0 opacity-[0.16] pointer-events-none"
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, rgba(255,255,255,0.12) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.12) 1px, transparent 1px)",
+            backgroundSize: "48px 48px",
+          }}
+        />
+
+        <div className="relative z-10 mx-auto grid w-full max-w-[1530px] items-center gap-14 lg:grid-cols-[720px_760px] lg:gap-24">
+          
+          {/* Left Column: Text Content */}
+          <div className="reveal-item">
+            <span className="block font-display text-[18px] font-medium uppercase tracking-[0.18em] text-primary">
+              Creative Scratchpad
+            </span>
+
+            <h2 className="mt-8 font-display text-[clamp(2.5rem,6.25vw,7.35rem)] font-black uppercase leading-[0.88] tracking-normal text-white">
+              <span className="block text-primary">Scribble What</span>
+              <span className="block">You Want<span className="text-primary">.</span></span>
+            </h2>
+
+            <p className="mt-9 max-w-[680px] text-[22px] leading-[1.55] text-[#dbc0bb] font-light">
+              Draft quick thoughts, capture key specifications, draw pipelines, or scratch note logs on the fly. 
+              HireTrack's automated canvas extracts live job intel in real-time, feeding links directly into your job pipeline.
+            </p>
+
+            <Link
+              to="/scribbles"
+              className="mt-11 inline-flex h-[68px] min-w-[255px] items-center justify-center border border-primary px-8 font-display text-[18px] font-bold uppercase tracking-[0.16em] text-primary transition-all hover:bg-primary hover:text-surface transform -skew-x-12"
+            >
+              <span className="transform skew-x-12 flex items-center gap-2">
+                Open Scribbles <ArrowUpRight className="w-5 h-5" />
+              </span>
+            </Link>
+          </div>
+
+          {/* Right Column: Chalkboard Canvas Showcase */}
+          <div className="reveal-item flex justify-center items-center w-full">
+            <ChalkboardShowcase />
+          </div>
+
+        </div>
       </section>
 
       {/* Dashboard Preview Section */}
