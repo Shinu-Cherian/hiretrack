@@ -667,20 +667,10 @@ export const ChalkboardShowcase = () => {
 
           {/* Chalkboard Drawing Core SVG */}
           <svg viewBox="0 0 500 300" className="w-full h-full relative z-10" preserveAspectRatio="none">
-            <defs>
-              <clipPath id="title-clip-straight">
-                <rect x="0" y="0" width={revealTitleWidth + 5} height="120" />
-              </clipPath>
-              <clipPath id="naukri-clip-straight">
-                <rect x="0" y="170" width={revealNaukriWidth + 5} height="60" />
-              </clipPath>
-              <clipPath id="link-clip-straight">
-                <rect x="0" y="220" width={revealLinkWidth + 5} height="60" />
-              </clipPath>
-            </defs>
-
+            
             {/* 1. Main Title Cursive Handwriting (y=65) */}
-            <g clipPath="url(#title-clip-straight)" opacity={isErasing ? 1 - (tictactoeProgress * 2) : 1}>
+            {/* Using nested SVG for reliable clipping instead of url(#id) */}
+            <svg x="0" y="0" width={revealTitleWidth + 45} height="300" opacity={isErasing ? 1 - (tictactoeProgress * 2) : 1}>
               <text
                 x="40"
                 y="65"
@@ -689,11 +679,12 @@ export const ChalkboardShowcase = () => {
                   fontSize: "30px",
                   fontWeight: "700"
                 }}
-                className="fill-primary select-none drop-shadow-[0_0_3px_rgba(255,96,68,0.4)]"
+                fill="#ff6044"
+                className="select-none drop-shadow-[0_0_3px_rgba(255,96,68,0.4)]"
               >
                 Let's Scribble here!
               </text>
-            </g>
+            </svg>
 
             {/* 2. Tic-Tac-Toe Game (Top Right Area) */}
             <g opacity={isErasing ? 1 - (tictactoeProgress * 2) : 1}>
@@ -701,7 +692,7 @@ export const ChalkboardShowcase = () => {
               {tictactoeProgress > 0 && (
                 <line 
                   x1="385" y1="105" x2="385" y2="165" 
-                  stroke="var(--color-primary)" strokeWidth="3" strokeLinecap="round"
+                  stroke="#ff6044" strokeWidth="3" strokeLinecap="round"
                   strokeDasharray="60" strokeDashoffset={v1Offset}
                   className="drop-shadow-[0_0_2px_rgba(255,96,68,0.3)]"
                 />
@@ -709,7 +700,7 @@ export const ChalkboardShowcase = () => {
               {tictactoeProgress > 0.12 && (
                 <line 
                   x1="415" y1="105" x2="415" y2="165" 
-                  stroke="var(--color-primary)" strokeWidth="3" strokeLinecap="round"
+                  stroke="#ff6044" strokeWidth="3" strokeLinecap="round"
                   strokeDasharray="60" strokeDashoffset={v2Offset}
                   className="drop-shadow-[0_0_2px_rgba(255,96,68,0.3)]"
                 />
@@ -719,7 +710,7 @@ export const ChalkboardShowcase = () => {
               {tictactoeProgress > 0.24 && (
                 <line 
                   x1="360" y1="125" x2="440" y2="125" 
-                  stroke="var(--color-primary)" strokeWidth="3" strokeLinecap="round"
+                  stroke="#ff6044" strokeWidth="3" strokeLinecap="round"
                   strokeDasharray="80" strokeDashoffset={h1Offset}
                   className="drop-shadow-[0_0_2px_rgba(255,96,68,0.3)]"
                 />
@@ -727,7 +718,7 @@ export const ChalkboardShowcase = () => {
               {tictactoeProgress > 0.36 && (
                 <line 
                   x1="360" y1="145" x2="440" y2="145" 
-                  stroke="var(--color-primary)" strokeWidth="3" strokeLinecap="round"
+                  stroke="#ff6044" strokeWidth="3" strokeLinecap="round"
                   strokeDasharray="80" strokeDashoffset={h2Offset}
                   className="drop-shadow-[0_0_2px_rgba(255,96,68,0.3)]"
                 />
@@ -737,14 +728,14 @@ export const ChalkboardShowcase = () => {
               {tictactoeProgress > 0.48 && (
                 <line 
                   x1="365" y1="110" x2="375" y2="120" 
-                  stroke="var(--color-primary)" strokeWidth="3" strokeLinecap="round"
+                  stroke="#ff6044" strokeWidth="3" strokeLinecap="round"
                   strokeDasharray="14" strokeDashoffset={x1aOffset}
                 />
               )}
               {tictactoeProgress > 0.56 && (
                 <line 
                   x1="375" y1="110" x2="365" y2="120" 
-                  stroke="var(--color-primary)" strokeWidth="3" strokeLinecap="round"
+                  stroke="#ff6044" strokeWidth="3" strokeLinecap="round"
                   strokeDasharray="14" strokeDashoffset={x1bOffset}
                 />
               )}
@@ -753,7 +744,7 @@ export const ChalkboardShowcase = () => {
               {tictactoeProgress > 0.64 && (
                 <path 
                   d="M 394,135 A 6,6 0 1,1 406,135 A 6,6 0 1,1 394,135" 
-                  stroke="var(--color-primary)" strokeWidth="3" fill="none" strokeLinecap="round"
+                  stroke="#ff6044" strokeWidth="3" fill="none" strokeLinecap="round"
                   strokeDasharray="38" strokeDashoffset={o1Offset}
                 />
               )}
@@ -762,21 +753,21 @@ export const ChalkboardShowcase = () => {
               {tictactoeProgress > 0.78 && (
                 <line 
                   x1="422" y1="150" x2="432" y2="160" 
-                  stroke="var(--color-primary)" strokeWidth="3" strokeLinecap="round"
+                  stroke="#ff6044" strokeWidth="3" strokeLinecap="round"
                   strokeDasharray="14" strokeDashoffset={x2aOffset}
                 />
               )}
               {tictactoeProgress > 0.86 && (
                 <line 
                   x1="432" y1="150" x2="422" y2="160" 
-                  stroke="var(--color-primary)" strokeWidth="3" strokeLinecap="round"
+                  stroke="#ff6044" strokeWidth="3" strokeLinecap="round"
                   strokeDasharray="14" strokeDashoffset={x2bOffset}
                 />
               )}
             </g>
 
             {/* 3. Naukri Note */}
-            <g clipPath="url(#naukri-clip-straight)" opacity={isErasing ? 1 - (tictactoeProgress * 2) : 1}>
+            <svg x="0" y="0" width={revealNaukriWidth > 0 ? revealNaukriWidth + 45 : 0} height="300" opacity={isErasing ? 1 - (tictactoeProgress * 2) : 1}>
               <text
                 x="40"
                 y="200"
@@ -785,14 +776,15 @@ export const ChalkboardShowcase = () => {
                   fontSize: "15px",
                   fontWeight: "bold"
                 }}
-                className="fill-white/90 select-none tracking-wide"
+                fill="#ffffff"
+                className="select-none tracking-wide opacity-90"
               >
                 I applied 10 jobs in Naukri today
               </text>
-            </g>
+            </svg>
 
             {/* 4. Paste Link Note */}
-            <g clipPath="url(#link-clip-straight)" opacity={isErasing ? 1 - (tictactoeProgress * 2) : 1}>
+            <svg x="0" y="0" width={revealLinkWidth > 0 ? revealLinkWidth + 45 : 0} height="300" opacity={isErasing ? 1 - (tictactoeProgress * 2) : 1}>
               <text
                 x="40"
                 y="250"
@@ -801,11 +793,12 @@ export const ChalkboardShowcase = () => {
                   fontSize: "15px",
                   fontWeight: "bold"
                 }}
-                className="fill-white/90 select-none tracking-wide"
+                fill="#ffffff"
+                className="select-none tracking-wide opacity-90"
               >
                 Okay, I will paste the link here
               </text>
-            </g>
+            </svg>
           </svg>
         </div>
       </motion.div>
