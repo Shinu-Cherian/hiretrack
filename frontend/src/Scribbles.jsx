@@ -23,7 +23,9 @@ import {
   Share2, 
   ArrowRight,
   ChevronRight,
-  Pencil
+  Pencil,
+  Paperclip,
+  X
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { apiUrl } from "./api";
@@ -269,6 +271,76 @@ export default function Scribbles() {
   const [selectedScribble, setSelectedScribble] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
+  const fileInputRef = useRef(null);
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("File size must be under 5MB");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("attached_file", file);
+    formData.append("title", selectedScribble.title);
+    formData.append("content", selectedScribble.content);
+    formData.append("color", selectedScribble.color);
+    formData.append("font_family", selectedScribble.font_family);
+    formData.append("font_size", selectedScribble.font_size);
+
+    setIsSaving(true);
+    try {
+      const res = await fetch(apiUrl(`/api/notes/update/${selectedScribble.id}/`), {
+        method: "POST",
+        credentials: "include",
+        body: formData, // fetch will automatically set multipart/form-data boundary
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        // Update local state with the returned file URL
+        const updated = { ...selectedScribble, attached_file: data.attached_file };
+        setSelectedScribble(updated);
+        setScribbles((prev) => prev.map((s) => (s.id === updated.id ? updated : s)));
+      }
+    } catch (err) {
+      console.error("Upload error:", err);
+    } finally {
+      setIsSaving(false);
+      // Reset input
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const handleRemoveFile = async () => {
+    if (!window.confirm("Remove this attachment?")) return;
+    
+    const formData = new FormData();
+    formData.append("remove_attached_file", "true");
+    
+    setIsSaving(true);
+    try {
+      const res = await fetch(apiUrl(`/api/notes/update/${selectedScribble.id}/`), {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      });
+
+      if (res.ok) {
+        const updated = { ...selectedScribble, attached_file: null };
+        setSelectedScribble(updated);
+        setScribbles((prev) => prev.map((s) => (s.id === updated.id ? updated : s)));
+      }
+    } catch (err) {
+      console.error("Remove error:", err);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("isLoggedIn") === "true");
   
   // Custom interactive states
@@ -759,6 +831,21 @@ export default function Scribbles() {
                         options={SIZES}
                         onChange={(val) => handleEditorChange("font_size", val)}
                       />
+
+                      
+                      {/* Attach File Button */}
+                      <div className="flex items-center">
+                        <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileUpload} accept="image/*,application/pdf" />
+                        <button
+                          type="button"
+                          onClick={() => fileInputRef.current?.click()}
+                          className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/20 rounded-xl text-white transition-all ml-2"
+                          title="Attach Image or PDF"
+                        >
+                          <Paperclip size={13} />
+                          <span>Attach</span>
+                        </button>
+                      </div>
 
                       {/* Mobile stats show up in the toolbar */}
                       <div className="flex md:hidden ml-auto items-center gap-2 text-gray-400">
