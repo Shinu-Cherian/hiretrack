@@ -268,52 +268,65 @@ function ScribbleEmptyState({ onAddScribble }) {
 export default function Scribbles() {
   const navigate = useNavigate();
   const [scribbles, setScribbles] = useState([]);
-  const [selectedScribble, setSelectedScribble] = useState(null);
+  const [selectedScribble, _setSelectedScribble] = useState(null);
+  const setSelectedScribble = (val) => {
+    selectedScribbleRef.current = val;
+    _setSelectedScribble(val);
+  };
   const [isSaving, setIsSaving] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const fileInputRef = useRef(null);
+  const selectedScribbleRef = useRef(null);
+  const [uploadStatus, setUploadStatus] = useState(null); // null | 'uploading' | 'success' | 'error'
 
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      alert("File size must be under 5MB");
+    // Always read from ref to avoid stale closure
+    const currentScribble = selectedScribbleRef.current;
+    if (!currentScribble) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      alert("File size must be under 10MB");
       return;
     }
 
     const formData = new FormData();
     formData.append("attached_file", file);
-    formData.append("title", selectedScribble.title || "");
-    formData.append("content", selectedScribble.content || "");
-    formData.append("color", selectedScribble.color || "#FF6044");
-    formData.append("font_family", selectedScribble.font_family || "Inter");
-    formData.append("font_size", selectedScribble.font_size || "md");
+    formData.append("title", currentScribble.title || "");
+    formData.append("content", currentScribble.content || "");
+    formData.append("color", currentScribble.color || "#FF6044");
+    formData.append("font_family", currentScribble.font_family || "Inter");
+    formData.append("font_size", currentScribble.font_size || "md");
 
     setIsSaving(true);
+    setUploadStatus("uploading");
     try {
-      const res = await fetch(apiUrl(`/api/notes/update/${selectedScribble.id}/`), {
+      const res = await fetch(apiUrl(`/api/notes/update/${currentScribble.id}/`), {
         method: "POST",
         credentials: "include",
         body: formData,
       });
 
+      const data = await res.json();
       if (res.ok) {
-        const data = await res.json();
-        const updated = { ...selectedScribble, attached_file: data.attached_file };
+        const updated = { ...currentScribble, attached_file: data.attached_file };
         setSelectedScribble(updated);
         setScribbles((prev) => prev.map((s) => (s.id === updated.id ? updated : s)));
+        setUploadStatus("success");
+        setTimeout(() => setUploadStatus(null), 3000);
       } else {
-        const errText = await res.text();
-        alert("Upload Failed! Status: " + res.status + " " + errText);
+        setUploadStatus("error");
+        alert("Upload Failed! Status: " + res.status + "\n" + JSON.stringify(data));
       }
     } catch (err) {
       console.error("Upload error:", err);
+      setUploadStatus("error");
       alert("Network Error: " + err.message);
     } finally {
       setIsSaving(false);
-      // Reset input
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
@@ -842,11 +855,20 @@ export default function Scribbles() {
                         <button
                           type="button"
                           onClick={() => fileInputRef.current?.click()}
-                          className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/20 rounded-xl text-white transition-all ml-2"
-                          title="Attach Image or PDF"
+                          disabled={uploadStatus === "uploading"}
+                          className={`flex items-center gap-1.5 px-3 py-1.5 border rounded-xl transition-all ml-2 ${
+                            uploadStatus === "uploading"
+                              ? "bg-amber-500/10 border-amber-500/30 text-amber-400 cursor-wait"
+                              : uploadStatus === "success"
+                              ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
+                              : "bg-white/5 hover:bg-white/10 border-white/5 hover:border-white/20 text-white"
+                          }`}
+                          title="Attach Image or PDF (max 10MB)"
                         >
-                          <Paperclip size={13} />
-                          <span>Attach</span>
+                          <Paperclip size={13} className={uploadStatus === "uploading" ? "animate-spin" : ""} />
+                          <span>
+                            {uploadStatus === "uploading" ? "Uploading..." : uploadStatus === "success" ? "✓ Attached!" : "Attach"}
+                          </span>
                         </button>
                       </div>
 
