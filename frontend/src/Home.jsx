@@ -547,6 +547,22 @@ export default function Home() {
         });
       });
 
+      // Scribbles Section ScrollTriggers (Play once, never hide)
+      gsap.utils.toArray('.scribbles-section').forEach((section) => {
+        gsap.from(section.querySelectorAll('.scribbles-item'), {
+          scrollTrigger: {
+            trigger: section,
+            start: 'top 85%',
+            toggleActions: 'play none none none'
+          },
+          y: 50,
+          opacity: 0,
+          duration: 0.8,
+          stagger: 0.15,
+          ease: 'power2.out'
+        });
+      });
+
       // Parallax effect for the background grid
       gsap.to('.bg-grid', {
         scrollTrigger: {
@@ -887,7 +903,7 @@ export default function Home() {
       </section>
 
       {/* Scribbles Product Showcase Section */}
-      <section className="min-h-screen px-6 sm:px-12 lg:px-20 py-28 reveal-section relative overflow-hidden bg-[#0a0a0a] border-b border-white/5">
+      <section className="min-h-screen px-6 sm:px-12 lg:px-20 py-28 scribbles-section relative overflow-hidden bg-[#0a0a0a] border-b border-white/5">
         <div
           className="absolute inset-0 opacity-[0.16] pointer-events-none"
           style={{
@@ -900,7 +916,7 @@ export default function Home() {
         <div className="relative z-10 mx-auto grid w-full max-w-[1530px] items-center gap-14 lg:grid-cols-[720px_760px] lg:gap-24">
           
           {/* Left Column: Text Content */}
-          <div className="reveal-item">
+          <div className="scribbles-item">
             <span className="block font-display text-[18px] font-medium uppercase tracking-[0.18em] text-primary">
               Creative Scratchpad
             </span>
@@ -926,7 +942,7 @@ export default function Home() {
           </div>
 
           {/* Right Column: Chalkboard Canvas Showcase */}
-          <div className="reveal-item flex justify-center items-center w-full">
+          <div className="scribbles-item flex justify-center items-center w-full">
             <ChalkboardShowcase />
           </div>
 
