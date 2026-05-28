@@ -348,40 +348,340 @@ export const CareerRoadmap = () => {
   );
 };
 
-const charWidths = {
-  'L': 16, 'S': 16, 'e': 10, 't': 8, "'": 4, 's': 10, ' ': 10,
-  'c': 10, 'r': 10, 'i': 8, 'b': 10, 'l': 8, 'h': 10, 'a': 10,
-  'p': 10, 'd': 10, 'o': 10, 'y': 10, '1': 10, '0': 10, 'j': 10,
-  'w': 14, 'u': 10, 'k': 10, 'O': 16, ',': 6, '!': 8, 'N': 16, 'I': 12
+const charStrokes = {
+  ' ': {
+    width: 12,
+    points: []
+  },
+  'L': {
+    width: 20,
+    points: [
+      { dx: 16, dy: 2, lift: true },
+      { dx: 10, dy: 0, lift: false },
+      { dx: 6, dy: 4, lift: false },
+      { dx: 6, dy: 16, lift: false },
+      { dx: 14, dy: 20, lift: false },
+      { dx: 2, dy: 20, lift: false },
+      { dx: 18, dy: 20, lift: false }
+    ]
+  },
+  'S': {
+    width: 18,
+    points: [
+      { dx: 2, dy: 20, lift: true },
+      { dx: 12, dy: 2, lift: false },
+      { dx: 16, dy: 6, lift: false },
+      { dx: 8, dy: 12, lift: false },
+      { dx: 4, dy: 18, lift: false },
+      { dx: 14, dy: 20, lift: false }
+    ]
+  },
+  'e': {
+    width: 12,
+    points: [
+      { dx: 2, dy: 16, lift: true },
+      { dx: 10, dy: 12, lift: false },
+      { dx: 8, dy: 8, lift: false },
+      { dx: 4, dy: 12, lift: false },
+      { dx: 4, dy: 16, lift: false },
+      { dx: 10, dy: 20, lift: false }
+    ]
+  },
+  't': {
+    width: 12,
+    points: [
+      { dx: 6, dy: 2, lift: true },
+      { dx: 6, dy: 20, lift: false },
+      { dx: 2, dy: 10, lift: true },
+      { dx: 10, dy: 10, lift: false }
+    ]
+  },
+  's': {
+    width: 12,
+    points: [
+      { dx: 2, dy: 20, lift: true },
+      { dx: 10, dy: 12, lift: false },
+      { dx: 8, dy: 16, lift: false },
+      { dx: 2, dy: 20, lift: false },
+      { dx: 10, dy: 20, lift: false }
+    ]
+  },
+  'c': {
+    width: 12,
+    points: [
+      { dx: 10, dy: 12, lift: true },
+      { dx: 4, dy: 12, lift: false },
+      { dx: 4, dy: 18, lift: false },
+      { dx: 10, dy: 20, lift: false }
+    ]
+  },
+  'r': {
+    width: 10,
+    points: [
+      { dx: 2, dy: 20, lift: true },
+      { dx: 2, dy: 12, lift: false },
+      { dx: 6, dy: 12, lift: false },
+      { dx: 8, dy: 20, lift: false }
+    ]
+  },
+  'i': {
+    width: 8,
+    points: [
+      { dx: 4, dy: 12, lift: true },
+      { dx: 4, dy: 20, lift: false },
+      { dx: 4, dy: 6, lift: true },
+      { dx: 4.5, dy: 6.5, lift: false }
+    ]
+  },
+  'b': {
+    width: 12,
+    points: [
+      { dx: 2, dy: 20, lift: true },
+      { dx: 4, dy: 4, lift: false },
+      { dx: 2, dy: 20, lift: false },
+      { dx: 8, dy: 20, lift: false },
+      { dx: 10, dy: 16, lift: false },
+      { dx: 4, dy: 16, lift: false }
+    ]
+  },
+  'l': {
+    width: 10,
+    points: [
+      { dx: 2, dy: 20, lift: true },
+      { dx: 6, dy: 4, lift: false },
+      { dx: 4, dy: 20, lift: false }
+    ]
+  },
+  'h': {
+    width: 14,
+    points: [
+      { dx: 2, dy: 20, lift: true },
+      { dx: 6, dy: 4, lift: false },
+      { dx: 4, dy: 20, lift: false },
+      { dx: 4, dy: 14, lift: true },
+      { dx: 10, dy: 14, lift: false },
+      { dx: 12, dy: 20, lift: false }
+    ]
+  },
+  'a': {
+    width: 12,
+    points: [
+      { dx: 10, dy: 14, lift: true },
+      { dx: 4, dy: 14, lift: false },
+      { dx: 4, dy: 20, lift: false },
+      { dx: 10, dy: 20, lift: false },
+      { dx: 10, dy: 14, lift: false },
+      { dx: 10, dy: 20, lift: false }
+    ]
+  },
+  'p': {
+    width: 12,
+    points: [
+      { dx: 3, dy: 12, lift: true },
+      { dx: 3, dy: 28, lift: false },
+      { dx: 3, dy: 12, lift: true },
+      { dx: 9, dy: 12, lift: false },
+      { dx: 9, dy: 20, lift: false },
+      { dx: 3, dy: 20, lift: false }
+    ]
+  },
+  'd': {
+    width: 12,
+    points: [
+      { dx: 10, dy: 14, lift: true },
+      { dx: 4, dy: 14, lift: false },
+      { dx: 4, dy: 20, lift: false },
+      { dx: 10, dy: 20, lift: false },
+      { dx: 10, dy: 4, lift: true },
+      { dx: 10, dy: 20, lift: false }
+    ]
+  },
+  'o': {
+    width: 12,
+    points: [
+      { dx: 8, dy: 14, lift: true },
+      { dx: 4, dy: 14, lift: false },
+      { dx: 4, dy: 20, lift: false },
+      { dx: 8, dy: 20, lift: false },
+      { dx: 8, dy: 14, lift: false }
+    ]
+  },
+  'y': {
+    width: 12,
+    points: [
+      { dx: 2, dy: 12, lift: true },
+      { dx: 2, dy: 20, lift: false },
+      { dx: 8, dy: 20, lift: false },
+      { dx: 8, dy: 12, lift: true },
+      { dx: 8, dy: 28, lift: false },
+      { dx: 2, dy: 28, lift: false }
+    ]
+  },
+  '1': {
+    width: 12,
+    points: [
+      { dx: 2, dy: 8, lift: true },
+      { dx: 6, dy: 4, lift: false },
+      { dx: 6, dy: 20, lift: false },
+      { dx: 2, dy: 20, lift: true },
+      { dx: 10, dy: 20, lift: false }
+    ]
+  },
+  '0': {
+    width: 14,
+    points: [
+      { dx: 7, dy: 4, lift: true },
+      { dx: 3, dy: 12, lift: false },
+      { dx: 7, dy: 20, lift: false },
+      { dx: 11, dy: 12, lift: false },
+      { dx: 7, dy: 4, lift: false }
+    ]
+  },
+  'j': {
+    width: 10,
+    points: [
+      { dx: 6, dy: 12, lift: true },
+      { dx: 6, dy: 28, lift: false },
+      { dx: 2, dy: 28, lift: false },
+      { dx: 6, dy: 6, lift: true },
+      { dx: 6.5, dy: 6.5, lift: false }
+    ]
+  },
+  'w': {
+    width: 16,
+    points: [
+      { dx: 2, dy: 12, lift: true },
+      { dx: 4, dy: 20, lift: false },
+      { dx: 8, dy: 16, lift: false },
+      { dx: 10, dy: 20, lift: false },
+      { dx: 14, dy: 12, lift: false }
+    ]
+  },
+  'u': {
+    width: 12,
+    points: [
+      { dx: 2, dy: 12, lift: true },
+      { dx: 2, dy: 20, lift: false },
+      { dx: 8, dy: 20, lift: false },
+      { dx: 8, dy: 12, lift: true },
+      { dx: 8, dy: 20, lift: false }
+    ]
+  },
+  'k': {
+    width: 12,
+    points: [
+      { dx: 3, dy: 4, lift: true },
+      { dx: 3, dy: 20, lift: false },
+      { dx: 9, dy: 10, lift: true },
+      { dx: 3, dy: 14, lift: false },
+      { dx: 9, dy: 20, lift: false }
+    ]
+  },
+  'O': {
+    width: 18,
+    points: [
+      { dx: 9, dy: 2, lift: true },
+      { dx: 3, dy: 11, lift: false },
+      { dx: 9, dy: 20, lift: false },
+      { dx: 15, dy: 11, lift: false },
+      { dx: 9, dy: 2, lift: false }
+    ]
+  },
+  ',': {
+    width: 6,
+    points: [
+      { dx: 3, dy: 20, lift: true },
+      { dx: 2, dy: 24, lift: false }
+    ]
+  },
+  '!': {
+    width: 6,
+    points: [
+      { dx: 3, dy: 4, lift: true },
+      { dx: 3, dy: 16, lift: false },
+      { dx: 3, dy: 20, lift: true },
+      { dx: 3.5, dy: 20.5, lift: false }
+    ]
+  },
+  "'": {
+    width: 6,
+    points: [
+      { dx: 3, dy: 4, lift: true },
+      { dx: 2, dy: 8, lift: false }
+    ]
+  },
+  'N': {
+    width: 16,
+    points: [
+      { dx: 3, dy: 20, lift: true },
+      { dx: 3, dy: 4, lift: false },
+      { dx: 13, dy: 20, lift: false },
+      { dx: 13, dy: 4, lift: false }
+    ]
+  },
+  'I': {
+    width: 14,
+    points: [
+      { dx: 3, dy: 4, lift: true },
+      { dx: 11, dy: 4, lift: false },
+      { dx: 7, dy: 4, lift: true },
+      { dx: 7, dy: 20, lift: false },
+      { dx: 3, dy: 20, lift: true },
+      { dx: 11, dy: 20, lift: false }
+    ]
+  }
 };
 
-const getSubstringWidth = (text, charIndex, charScale = 1.0) => {
-  let w = 0;
-  const count = Math.min(charIndex, text.length);
-  for (let i = 0; i < count; i++) {
+const generatePoints = (text, startX, startY, charScale = 1.0) => {
+  const pts = [];
+  let curX = startX;
+  for (let i = 0; i < text.length; i++) {
     const char = text[i];
-    w += (charWidths[char] || 10) * charScale;
+    const strokeDef = charStrokes[char] || charStrokes[' '];
+    const w = strokeDef.width * charScale;
+    
+    if (strokeDef.points) {
+      strokeDef.points.forEach((pt) => {
+        pts.push({
+          x: curX + pt.dx * charScale,
+          y: startY + pt.dy * charScale,
+          lift: pt.lift
+        });
+      });
+    }
+    curX += w;
   }
-  return w;
+  return pts;
+};
+
+const getPathD = (points, activeIndex) => {
+  if (activeIndex < 0) return "";
+  let d = "";
+  const count = Math.min(activeIndex, points.length - 1);
+  for (let i = 0; i <= count; i++) {
+    const pt = points[i];
+    if (pt.lift || i === 0) {
+      d += ` M ${pt.x.toFixed(1)} ${pt.y.toFixed(1)}`;
+    } else {
+      d += ` L ${pt.x.toFixed(1)} ${pt.y.toFixed(1)}`;
+    }
+  }
+  return d;
 };
 
 export const ChalkboardShowcase = () => {
   const [chalk, setChalk] = useState({ x: 450, y: 200, opacity: 0 });
   const [step, setStep] = useState(0);
-  const [revealTitleWidth, setRevealTitleWidth] = useState(0);
-  const [revealNaukriWidth, setRevealNaukriWidth] = useState(0);
-  const [revealLinkWidth, setRevealLinkWidth] = useState(0);
+  const [revealTitleIndex, setRevealTitleIndex] = useState(-1);
+  const [revealNaukriIndex, setRevealNaukriIndex] = useState(-1);
+  const [revealLinkIndex, setRevealLinkIndex] = useState(-1);
   const [tictactoeProgress, setTictactoeProgress] = useState(0);
   const [particles, setParticles] = useState([]);
   const [isErasing, setIsErasing] = useState(false);
 
-  const titleText = "Let's Scribble here!";
-  const naukriText = "I applied 10 jobs in Naukri today";
-  const linkText = "Okay, I will paste the link here";
-
-  const titleWidth = useMemo(() => getSubstringWidth(titleText, titleText.length, 1.25), []);
-  const naukriWidth = useMemo(() => getSubstringWidth(naukriText, naukriText.length, 0.9), []);
-  const linkWidth = useMemo(() => getSubstringWidth(linkText, linkText.length, 0.9), []);
+  const titlePoints = useMemo(() => generatePoints("Let's Scribble here!", 40, 50, 0.95), []);
+  const naukriPoints = useMemo(() => generatePoints("I applied 10 jobs in Naukri today", 40, 195, 0.65), []);
+  const linkPoints = useMemo(() => generatePoints("Okay, I will paste the link here", 40, 240, 0.65), []);
 
   useEffect(() => {
     let active = true;
@@ -404,37 +704,55 @@ export const ChalkboardShowcase = () => {
       if (cycleTime < 1500) {
         const pct = cycleTime / 1500;
         currentX = 450 - pct * (450 - 40);
-        currentY = 200 - pct * (200 - 65);
+        currentY = 200 - pct * (200 - 55);
         currentOpacity = 1;
         setStep(0);
-        setRevealTitleWidth(0);
-        setRevealNaukriWidth(0);
-        setRevealLinkWidth(0);
+        setRevealTitleIndex(-1);
+        setRevealNaukriIndex(-1);
+        setRevealLinkIndex(-1);
         setTictactoeProgress(0);
         setIsErasing(false);
       } 
       else if (cycleTime < 4500) {
         const pct = (cycleTime - 1500) / 3000;
-        currentX = 40 + pct * titleWidth;
-        currentY = 65 + Math.sin(pct * Math.PI * 30) * 3;
+        const idx = Math.floor(pct * titlePoints.length);
+        
+        if (titlePoints.length > 0) {
+          const pt = titlePoints[Math.min(idx, titlePoints.length - 1)];
+          let cx = pt.x;
+          let cy = pt.y;
+          if (idx < titlePoints.length - 1) {
+            const nextPt = titlePoints[idx + 1];
+            const subPct = (pct * titlePoints.length) % 1;
+            cx = pt.x + (nextPt.x - pt.x) * subPct;
+            cy = pt.y + (nextPt.y - pt.y) * subPct;
+          }
+          currentX = cx;
+          currentY = cy;
+        } else {
+          currentX = 40;
+          currentY = 55;
+        }
+
         currentOpacity = 1;
         setStep(1);
-        setRevealTitleWidth(pct * titleWidth);
+        setRevealTitleIndex(idx);
       } 
       else if (cycleTime < 6000) {
         const pct = (cycleTime - 4500) / 1500;
-        currentX = (40 + titleWidth) + pct * (385 - (40 + titleWidth));
-        currentY = 65 + pct * (105 - 65);
+        const startPt = titlePoints[titlePoints.length - 1] || { x: 360, y: 55 };
+        currentX = startPt.x + pct * (385 - startPt.x);
+        currentY = startPt.y + pct * (105 - startPt.y);
         currentOpacity = 1;
         setStep(2);
-        setRevealTitleWidth(titleWidth);
+        setRevealTitleIndex(titlePoints.length);
       } 
       else if (cycleTime < 12000) {
         const subElapsed = cycleTime - 6000;
         const pct = subElapsed / 6000;
         setStep(3);
         setTictactoeProgress(pct);
-        setRevealTitleWidth(titleWidth);
+        setRevealTitleIndex(titlePoints.length);
 
         if (pct < 0.12) {
           const t = pct / 0.12;
@@ -481,52 +799,90 @@ export const ChalkboardShowcase = () => {
       } 
       else if (cycleTime < 13500) {
         const pct = (cycleTime - 12000) / 1500;
-        currentX = 422 + pct * (40 - 422);
-        currentY = 160 + pct * (200 - 160);
+        const endPt = naukriPoints[0] || { x: 40, y: 195 };
+        currentX = 422 + pct * (endPt.x - 422);
+        currentY = 160 + pct * (endPt.y - 160);
         currentOpacity = 1;
         setStep(4);
-        setRevealTitleWidth(titleWidth);
-        setRevealNaukriWidth(0);
+        setRevealTitleIndex(titlePoints.length);
+        setRevealNaukriIndex(-1);
       } 
       else if (cycleTime < 16500) {
         const pct = (cycleTime - 13500) / 3000;
-        currentX = 40 + pct * naukriWidth;
-        currentY = 200 + Math.sin(pct * Math.PI * 32) * 2;
+        const idx = Math.floor(pct * naukriPoints.length);
+
+        if (naukriPoints.length > 0) {
+          const pt = naukriPoints[Math.min(idx, naukriPoints.length - 1)];
+          let cx = pt.x;
+          let cy = pt.y;
+          if (idx < naukriPoints.length - 1) {
+            const nextPt = naukriPoints[idx + 1];
+            const subPct = (pct * naukriPoints.length) % 1;
+            cx = pt.x + (nextPt.x - pt.x) * subPct;
+            cy = pt.y + (nextPt.y - pt.y) * subPct;
+          }
+          currentX = cx;
+          currentY = cy;
+        } else {
+          currentX = 40;
+          currentY = 195;
+        }
+
         currentOpacity = 1;
         setStep(5);
-        setRevealTitleWidth(titleWidth);
-        setRevealNaukriWidth(pct * naukriWidth);
+        setRevealTitleIndex(titlePoints.length);
+        setRevealNaukriIndex(idx);
       } 
       else if (cycleTime < 18000) {
         const pct = (cycleTime - 16500) / 1500;
-        currentX = (40 + naukriWidth) + pct * (40 - (40 + naukriWidth));
-        currentY = 200 + pct * (250 - 200);
+        const startPt = naukriPoints[naukriPoints.length - 1] || { x: 300, y: 195 };
+        const endPt = linkPoints[0] || { x: 40, y: 240 };
+        currentX = startPt.x + pct * (endPt.x - startPt.x);
+        currentY = startPt.y + pct * (endPt.y - startPt.y);
         currentOpacity = 1;
         setStep(6);
-        setRevealTitleWidth(titleWidth);
-        setRevealNaukriWidth(naukriWidth);
-        setRevealLinkWidth(0);
+        setRevealTitleIndex(titlePoints.length);
+        setRevealNaukriIndex(naukriPoints.length);
+        setRevealLinkIndex(-1);
       } 
       else if (cycleTime < 21000) {
         const pct = (cycleTime - 18000) / 3000;
-        currentX = 40 + pct * linkWidth;
-        currentY = 250 + Math.sin(pct * Math.PI * 32) * 2;
+        const idx = Math.floor(pct * linkPoints.length);
+
+        if (linkPoints.length > 0) {
+          const pt = linkPoints[Math.min(idx, linkPoints.length - 1)];
+          let cx = pt.x;
+          let cy = pt.y;
+          if (idx < linkPoints.length - 1) {
+            const nextPt = linkPoints[idx + 1];
+            const subPct = (pct * linkPoints.length) % 1;
+            cx = pt.x + (nextPt.x - pt.x) * subPct;
+            cy = pt.y + (nextPt.y - pt.y) * subPct;
+          }
+          currentX = cx;
+          currentY = cy;
+        } else {
+          currentX = 40;
+          currentY = 240;
+        }
+
         currentOpacity = 1;
         setStep(7);
-        setRevealTitleWidth(titleWidth);
-        setRevealNaukriWidth(naukriWidth);
-        setRevealLinkWidth(pct * linkWidth);
+        setRevealTitleIndex(titlePoints.length);
+        setRevealNaukriIndex(naukriPoints.length);
+        setRevealLinkIndex(idx);
       } 
       else {
         const pct = (cycleTime - 21000) / 2000;
-        currentX = (40 + linkWidth) + pct * (450 - (40 + linkWidth));
-        currentY = 250 - pct * (250 - 200);
+        const startPt = linkPoints[linkPoints.length - 1] || { x: 300, y: 240 };
+        currentX = startPt.x + pct * (450 - startPt.x);
+        currentY = startPt.y + pct * (200 - startPt.y);
         currentOpacity = 0.5;
         setStep(8);
         setIsErasing(true);
-        setRevealTitleWidth(titleWidth);
-        setRevealNaukriWidth(naukriWidth);
-        setRevealLinkWidth(linkWidth);
+        setRevealTitleIndex(titlePoints.length);
+        setRevealNaukriIndex(naukriPoints.length);
+        setRevealLinkIndex(linkPoints.length);
       }
 
       setChalk({ x: currentX, y: currentY, opacity: currentOpacity });
@@ -558,7 +914,7 @@ export const ChalkboardShowcase = () => {
     return () => {
       active = false;
     };
-  }, [titleWidth, naukriWidth, linkWidth, step]);
+  }, [step, titlePoints, naukriPoints, linkPoints]);
 
   useEffect(() => {
     let active = true;
@@ -668,137 +1024,70 @@ export const ChalkboardShowcase = () => {
           {/* Chalkboard Drawing Core SVG */}
           <svg viewBox="0 0 500 300" className="w-full h-full relative z-10" preserveAspectRatio="none">
             
-            {/* 1. Main Title Cursive Handwriting (y=65) */}
-            {/* Using nested SVG for reliable clipping instead of url(#id) */}
-            <svg x="0" y="0" width={revealTitleWidth + 45} height="300" opacity={isErasing ? 1 - (tictactoeProgress * 2) : 1}>
-              <text
-                x="40"
-                y="65"
-                style={{
-                  fontFamily: "'Chalkboard SE', 'Comic Sans MS', cursive",
-                  fontSize: "30px",
-                  fontWeight: "700"
-                }}
-                fill="#ff6044"
-                className="select-none drop-shadow-[0_0_3px_rgba(255,96,68,0.4)]"
-              >
-                Let's Scribble here!
-              </text>
-            </svg>
+            {/* 1. Main Title Cursive Handwriting (y=50, drawn coordinate-by-coordinate) */}
+            <path
+              d={getPathD(titlePoints, step === 1 ? revealTitleIndex : (step > 1 ? titlePoints.length : -1))}
+              fill="none"
+              stroke="#ff6044"
+              strokeWidth="3.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="drop-shadow-[0_0_5px_rgba(255,96,68,0.5)]"
+              opacity={isErasing ? 1 - (tictactoeProgress * 2) : 1}
+            />
 
-            {/* 2. Tic-Tac-Toe Game (Top Right Area) */}
+            {/* 2. Tic-Tac-Toe Game (Top Right Area, animated line-by-line) */}
             <g opacity={isErasing ? 1 - (tictactoeProgress * 2) : 1}>
-              {/* Vertical Lines */}
               {tictactoeProgress > 0 && (
-                <line 
-                  x1="385" y1="105" x2="385" y2="165" 
-                  stroke="#ff6044" strokeWidth="3" strokeLinecap="round"
-                  strokeDasharray="60" strokeDashoffset={v1Offset}
-                  className="drop-shadow-[0_0_2px_rgba(255,96,68,0.3)]"
-                />
+                <line x1="385" y1="105" x2="385" y2="165" stroke="#ff6044" strokeWidth="3" strokeLinecap="round" strokeDasharray="60" strokeDashoffset={v1Offset} className="drop-shadow-[0_0_2px_rgba(255,96,68,0.3)]" />
               )}
               {tictactoeProgress > 0.12 && (
-                <line 
-                  x1="415" y1="105" x2="415" y2="165" 
-                  stroke="#ff6044" strokeWidth="3" strokeLinecap="round"
-                  strokeDasharray="60" strokeDashoffset={v2Offset}
-                  className="drop-shadow-[0_0_2px_rgba(255,96,68,0.3)]"
-                />
+                <line x1="415" y1="105" x2="415" y2="165" stroke="#ff6044" strokeWidth="3" strokeLinecap="round" strokeDasharray="60" strokeDashoffset={v2Offset} className="drop-shadow-[0_0_2px_rgba(255,96,68,0.3)]" />
               )}
-
-              {/* Horizontal Lines */}
               {tictactoeProgress > 0.24 && (
-                <line 
-                  x1="360" y1="125" x2="440" y2="125" 
-                  stroke="#ff6044" strokeWidth="3" strokeLinecap="round"
-                  strokeDasharray="80" strokeDashoffset={h1Offset}
-                  className="drop-shadow-[0_0_2px_rgba(255,96,68,0.3)]"
-                />
+                <line x1="360" y1="125" x2="440" y2="125" stroke="#ff6044" strokeWidth="3" strokeLinecap="round" strokeDasharray="80" strokeDashoffset={h1Offset} className="drop-shadow-[0_0_2px_rgba(255,96,68,0.3)]" />
               )}
               {tictactoeProgress > 0.36 && (
-                <line 
-                  x1="360" y1="145" x2="440" y2="145" 
-                  stroke="#ff6044" strokeWidth="3" strokeLinecap="round"
-                  strokeDasharray="80" strokeDashoffset={h2Offset}
-                  className="drop-shadow-[0_0_2px_rgba(255,96,68,0.3)]"
-                />
+                <line x1="360" y1="145" x2="440" y2="145" stroke="#ff6044" strokeWidth="3" strokeLinecap="round" strokeDasharray="80" strokeDashoffset={h2Offset} className="drop-shadow-[0_0_2px_rgba(255,96,68,0.3)]" />
               )}
-
-              {/* X1 (Top-Left) */}
               {tictactoeProgress > 0.48 && (
-                <line 
-                  x1="365" y1="110" x2="375" y2="120" 
-                  stroke="#ff6044" strokeWidth="3" strokeLinecap="round"
-                  strokeDasharray="14" strokeDashoffset={x1aOffset}
-                />
+                <line x1="365" y1="110" x2="375" y2="120" stroke="#ff6044" strokeWidth="3" strokeLinecap="round" strokeDasharray="14" strokeDashoffset={x1aOffset} />
               )}
               {tictactoeProgress > 0.56 && (
-                <line 
-                  x1="375" y1="110" x2="365" y2="120" 
-                  stroke="#ff6044" strokeWidth="3" strokeLinecap="round"
-                  strokeDasharray="14" strokeDashoffset={x1bOffset}
-                />
+                <line x1="375" y1="110" x2="365" y2="120" stroke="#ff6044" strokeWidth="3" strokeLinecap="round" strokeDasharray="14" strokeDashoffset={x1bOffset} />
               )}
-
-              {/* O1 (Center Circle) */}
               {tictactoeProgress > 0.64 && (
-                <path 
-                  d="M 394,135 A 6,6 0 1,1 406,135 A 6,6 0 1,1 394,135" 
-                  stroke="#ff6044" strokeWidth="3" fill="none" strokeLinecap="round"
-                  strokeDasharray="38" strokeDashoffset={o1Offset}
-                />
+                <path d="M 394,135 A 6,6 0 1,1 406,135 A 6,6 0 1,1 394,135" stroke="#ff6044" strokeWidth="3" fill="none" strokeLinecap="round" strokeDasharray="38" strokeDashoffset={o1Offset} />
               )}
-
-              {/* X2 (Bottom-Right) */}
               {tictactoeProgress > 0.78 && (
-                <line 
-                  x1="422" y1="150" x2="432" y2="160" 
-                  stroke="#ff6044" strokeWidth="3" strokeLinecap="round"
-                  strokeDasharray="14" strokeDashoffset={x2aOffset}
-                />
+                <line x1="422" y1="150" x2="432" y2="160" stroke="#ff6044" strokeWidth="3" strokeLinecap="round" strokeDasharray="14" strokeDashoffset={x2aOffset} />
               )}
               {tictactoeProgress > 0.86 && (
-                <line 
-                  x1="432" y1="150" x2="422" y2="160" 
-                  stroke="#ff6044" strokeWidth="3" strokeLinecap="round"
-                  strokeDasharray="14" strokeDashoffset={x2bOffset}
-                />
+                <line x1="432" y1="150" x2="422" y2="160" stroke="#ff6044" strokeWidth="3" strokeLinecap="round" strokeDasharray="14" strokeDashoffset={x2bOffset} />
               )}
             </g>
 
-            {/* 3. Naukri Note */}
-            <svg x="0" y="0" width={revealNaukriWidth > 0 ? revealNaukriWidth + 45 : 0} height="300" opacity={isErasing ? 1 - (tictactoeProgress * 2) : 1}>
-              <text
-                x="40"
-                y="200"
-                style={{
-                  fontFamily: "monospace",
-                  fontSize: "15px",
-                  fontWeight: "bold"
-                }}
-                fill="#ffffff"
-                className="select-none tracking-wide opacity-90"
-              >
-                I applied 10 jobs in Naukri today
-              </text>
-            </svg>
+            {/* 3. Naukri Note (Bottom Left, y=195, drawn coordinate-by-coordinate) */}
+            <path
+              d={getPathD(naukriPoints, step === 5 ? revealNaukriIndex : (step > 5 ? naukriPoints.length : -1))}
+              fill="none"
+              stroke="#ffffff"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              opacity={isErasing ? 1 - (tictactoeProgress * 2) : 1}
+            />
 
-            {/* 4. Paste Link Note */}
-            <svg x="0" y="0" width={revealLinkWidth > 0 ? revealLinkWidth + 45 : 0} height="300" opacity={isErasing ? 1 - (tictactoeProgress * 2) : 1}>
-              <text
-                x="40"
-                y="250"
-                style={{
-                  fontFamily: "monospace",
-                  fontSize: "15px",
-                  fontWeight: "bold"
-                }}
-                fill="#ffffff"
-                className="select-none tracking-wide opacity-90"
-              >
-                Okay, I will paste the link here
-              </text>
-            </svg>
+            {/* 4. Paste Link Note (Bottom Right, y=240, drawn coordinate-by-coordinate) */}
+            <path
+              d={getPathD(linkPoints, step === 7 ? revealLinkIndex : (step > 7 ? linkPoints.length : -1))}
+              fill="none"
+              stroke="#ffffff"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              opacity={isErasing ? 1 - (tictactoeProgress * 2) : 1}
+            />
           </svg>
         </div>
       </motion.div>
