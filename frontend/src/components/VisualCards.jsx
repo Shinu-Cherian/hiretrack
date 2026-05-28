@@ -348,350 +348,40 @@ export const CareerRoadmap = () => {
   );
 };
 
-const charStrokes = {
-  ' ': {
-    width: 12,
-    points: []
-  },
-  'L': {
-    width: 20,
-    points: [
-      { dx: 16, dy: 2, lift: true },
-      { dx: 10, dy: 0, lift: false },
-      { dx: 6, dy: 4, lift: false },
-      { dx: 6, dy: 16, lift: false },
-      { dx: 14, dy: 20, lift: false },
-      { dx: 2, dy: 20, lift: false },
-      { dx: 18, dy: 20, lift: false }
-    ]
-  },
-  'S': {
-    width: 18,
-    points: [
-      { dx: 2, dy: 20, lift: true },
-      { dx: 12, dy: 2, lift: false },
-      { dx: 16, dy: 6, lift: false },
-      { dx: 8, dy: 12, lift: false },
-      { dx: 4, dy: 18, lift: false },
-      { dx: 14, dy: 20, lift: false }
-    ]
-  },
-  'e': {
-    width: 12,
-    points: [
-      { dx: 2, dy: 16, lift: true },
-      { dx: 10, dy: 12, lift: false },
-      { dx: 8, dy: 8, lift: false },
-      { dx: 4, dy: 12, lift: false },
-      { dx: 4, dy: 16, lift: false },
-      { dx: 10, dy: 20, lift: false }
-    ]
-  },
-  't': {
-    width: 12,
-    points: [
-      { dx: 6, dy: 2, lift: true },
-      { dx: 6, dy: 20, lift: false },
-      { dx: 2, dy: 10, lift: true },
-      { dx: 10, dy: 10, lift: false }
-    ]
-  },
-  's': {
-    width: 12,
-    points: [
-      { dx: 2, dy: 20, lift: true },
-      { dx: 10, dy: 12, lift: false },
-      { dx: 8, dy: 16, lift: false },
-      { dx: 2, dy: 20, lift: false },
-      { dx: 10, dy: 20, lift: false }
-    ]
-  },
-  'c': {
-    width: 12,
-    points: [
-      { dx: 10, dy: 12, lift: true },
-      { dx: 4, dy: 12, lift: false },
-      { dx: 4, dy: 18, lift: false },
-      { dx: 10, dy: 20, lift: false }
-    ]
-  },
-  'r': {
-    width: 10,
-    points: [
-      { dx: 2, dy: 20, lift: true },
-      { dx: 2, dy: 12, lift: false },
-      { dx: 6, dy: 12, lift: false },
-      { dx: 8, dy: 20, lift: false }
-    ]
-  },
-  'i': {
-    width: 8,
-    points: [
-      { dx: 4, dy: 12, lift: true },
-      { dx: 4, dy: 20, lift: false },
-      { dx: 4, dy: 6, lift: true },
-      { dx: 4.5, dy: 6.5, lift: false }
-    ]
-  },
-  'b': {
-    width: 12,
-    points: [
-      { dx: 2, dy: 20, lift: true },
-      { dx: 4, dy: 4, lift: false },
-      { dx: 2, dy: 20, lift: false },
-      { dx: 8, dy: 20, lift: false },
-      { dx: 10, dy: 16, lift: false },
-      { dx: 4, dy: 16, lift: false }
-    ]
-  },
-  'l': {
-    width: 10,
-    points: [
-      { dx: 2, dy: 20, lift: true },
-      { dx: 6, dy: 4, lift: false },
-      { dx: 4, dy: 20, lift: false }
-    ]
-  },
-  'h': {
-    width: 14,
-    points: [
-      { dx: 2, dy: 20, lift: true },
-      { dx: 6, dy: 4, lift: false },
-      { dx: 4, dy: 20, lift: false },
-      { dx: 4, dy: 14, lift: true },
-      { dx: 10, dy: 14, lift: false },
-      { dx: 12, dy: 20, lift: false }
-    ]
-  },
-  'a': {
-    width: 12,
-    points: [
-      { dx: 10, dy: 14, lift: true },
-      { dx: 4, dy: 14, lift: false },
-      { dx: 4, dy: 20, lift: false },
-      { dx: 10, dy: 20, lift: false },
-      { dx: 10, dy: 14, lift: false },
-      { dx: 10, dy: 20, lift: false }
-    ]
-  },
-  'p': {
-    width: 12,
-    points: [
-      { dx: 3, dy: 12, lift: true },
-      { dx: 3, dy: 28, lift: false },
-      { dx: 3, dy: 12, lift: true },
-      { dx: 9, dy: 12, lift: false },
-      { dx: 9, dy: 20, lift: false },
-      { dx: 3, dy: 20, lift: false }
-    ]
-  },
-  'd': {
-    width: 12,
-    points: [
-      { dx: 10, dy: 14, lift: true },
-      { dx: 4, dy: 14, lift: false },
-      { dx: 4, dy: 20, lift: false },
-      { dx: 10, dy: 20, lift: false },
-      { dx: 10, dy: 4, lift: true },
-      { dx: 10, dy: 20, lift: false }
-    ]
-  },
-  'o': {
-    width: 12,
-    points: [
-      { dx: 8, dy: 14, lift: true },
-      { dx: 4, dy: 14, lift: false },
-      { dx: 4, dy: 20, lift: false },
-      { dx: 8, dy: 20, lift: false },
-      { dx: 8, dy: 14, lift: false }
-    ]
-  },
-  'y': {
-    width: 12,
-    points: [
-      { dx: 2, dy: 12, lift: true },
-      { dx: 2, dy: 20, lift: false },
-      { dx: 8, dy: 20, lift: false },
-      { dx: 8, dy: 12, lift: true },
-      { dx: 8, dy: 28, lift: false },
-      { dx: 2, dy: 28, lift: false }
-    ]
-  },
-  'n': {
-    width: 12,
-    points: [
-      { dx: 3, dy: 20, lift: true },
-      { dx: 3, dy: 12, lift: false },
-      { dx: 3, dy: 15, lift: true },
-      { dx: 9, dy: 15, lift: false },
-      { dx: 9, dy: 20, lift: false }
-    ]
-  },
-  '1': {
-    width: 12,
-    points: [
-      { dx: 2, dy: 8, lift: true },
-      { dx: 6, dy: 4, lift: false },
-      { dx: 6, dy: 20, lift: false },
-      { dx: 2, dy: 20, lift: true },
-      { dx: 10, dy: 20, lift: false }
-    ]
-  },
-  '0': {
-    width: 14,
-    points: [
-      { dx: 7, dy: 4, lift: true },
-      { dx: 3, dy: 12, lift: false },
-      { dx: 7, dy: 20, lift: false },
-      { dx: 11, dy: 12, lift: false },
-      { dx: 7, dy: 4, lift: false }
-    ]
-  },
-  'j': {
-    width: 10,
-    points: [
-      { dx: 6, dy: 12, lift: true },
-      { dx: 6, dy: 28, lift: false },
-      { dx: 2, dy: 28, lift: false },
-      { dx: 6, dy: 6, lift: true },
-      { dx: 6.5, dy: 6.5, lift: false }
-    ]
-  },
-  'w': {
-    width: 16,
-    points: [
-      { dx: 2, dy: 12, lift: true },
-      { dx: 4, dy: 20, lift: false },
-      { dx: 8, dy: 16, lift: false },
-      { dx: 10, dy: 20, lift: false },
-      { dx: 14, dy: 12, lift: false }
-    ]
-  },
-  'u': {
-    width: 12,
-    points: [
-      { dx: 2, dy: 12, lift: true },
-      { dx: 2, dy: 20, lift: false },
-      { dx: 8, dy: 20, lift: false },
-      { dx: 8, dy: 12, lift: true },
-      { dx: 8, dy: 20, lift: false }
-    ]
-  },
-  'k': {
-    width: 12,
-    points: [
-      { dx: 3, dy: 4, lift: true },
-      { dx: 3, dy: 20, lift: false },
-      { dx: 9, dy: 10, lift: true },
-      { dx: 3, dy: 14, lift: false },
-      { dx: 9, dy: 20, lift: false }
-    ]
-  },
-  'O': {
-    width: 18,
-    points: [
-      { dx: 9, dy: 2, lift: true },
-      { dx: 3, dy: 11, lift: false },
-      { dx: 9, dy: 20, lift: false },
-      { dx: 15, dy: 11, lift: false },
-      { dx: 9, dy: 2, lift: false }
-    ]
-  },
-  ',': {
-    width: 6,
-    points: [
-      { dx: 3, dy: 20, lift: true },
-      { dx: 2, dy: 24, lift: false }
-    ]
-  },
-  '!': {
-    width: 6,
-    points: [
-      { dx: 3, dy: 4, lift: true },
-      { dx: 3, dy: 16, lift: false },
-      { dx: 3, dy: 20, lift: true },
-      { dx: 3.5, dy: 20.5, lift: false }
-    ]
-  },
-  "'": {
-    width: 6,
-    points: [
-      { dx: 3, dy: 4, lift: true },
-      { dx: 2, dy: 8, lift: false }
-    ]
-  },
-  'N': {
-    width: 16,
-    points: [
-      { dx: 3, dy: 20, lift: true },
-      { dx: 3, dy: 4, lift: false },
-      { dx: 13, dy: 20, lift: false },
-      { dx: 13, dy: 4, lift: false }
-    ]
-  },
-  'I': {
-    width: 14,
-    points: [
-      { dx: 3, dy: 4, lift: true },
-      { dx: 11, dy: 4, lift: false },
-      { dx: 7, dy: 4, lift: true },
-      { dx: 7, dy: 20, lift: false },
-      { dx: 3, dy: 20, lift: true },
-      { dx: 11, dy: 20, lift: false }
-    ]
-  }
+const charWidths = {
+  'L': 16, 'S': 16, 'e': 10, 't': 8, "'": 4, 's': 10, ' ': 10,
+  'c': 10, 'r': 10, 'i': 8, 'b': 10, 'l': 8, 'h': 10, 'a': 10,
+  'p': 10, 'd': 10, 'o': 10, 'y': 10, '1': 10, '0': 10, 'j': 10,
+  'w': 14, 'u': 10, 'k': 10, 'O': 16, ',': 6, '!': 8, 'N': 16, 'I': 12
 };
 
-const generatePoints = (text, startX, startY, charScale = 1.0) => {
-  const pts = [];
-  let curX = startX;
-  for (let i = 0; i < text.length; i++) {
+const getSubstringWidth = (text, charIndex, charScale = 1.0) => {
+  let w = 0;
+  const count = Math.min(charIndex, text.length);
+  for (let i = 0; i < count; i++) {
     const char = text[i];
-    const strokeDef = charStrokes[char] || charStrokes[' '];
-    const w = strokeDef.width * charScale;
-    
-    if (strokeDef.points) {
-      strokeDef.points.forEach((pt) => {
-        pts.push({
-          x: curX + pt.dx * charScale,
-          y: startY + pt.dy * charScale,
-          lift: pt.lift
-        });
-      });
-    }
-    curX += w;
+    w += (charWidths[char] || 10) * charScale;
   }
-  return pts;
-};
-
-const getPathD = (points, activeIndex) => {
-  if (activeIndex < 0) return "";
-  let d = "";
-  const count = Math.min(activeIndex, points.length - 1);
-  for (let i = 0; i <= count; i++) {
-    const pt = points[i];
-    if (pt.lift || i === 0) {
-      d += ` M ${pt.x.toFixed(1)} ${pt.y.toFixed(1)}`;
-    } else {
-      d += ` L ${pt.x.toFixed(1)} ${pt.y.toFixed(1)}`;
-    }
-  }
-  return d;
+  return w;
 };
 
 export const ChalkboardShowcase = () => {
   const [chalk, setChalk] = useState({ x: 450, y: 200, opacity: 0 });
   const [step, setStep] = useState(0);
-  const [revealTitleIndex, setRevealTitleIndex] = useState(-1);
-  const [revealNaukriIndex, setRevealNaukriIndex] = useState(-1);
-  const [revealLinkIndex, setRevealLinkIndex] = useState(-1);
+  const [revealTitleWidth, setRevealTitleWidth] = useState(0);
+  const [revealNaukriWidth, setRevealNaukriWidth] = useState(0);
+  const [revealLinkWidth, setRevealLinkWidth] = useState(0);
   const [tictactoeProgress, setTictactoeProgress] = useState(0);
   const [particles, setParticles] = useState([]);
   const [isErasing, setIsErasing] = useState(false);
 
-  const titlePoints = useMemo(() => generatePoints("Let's Scribble here!", 40, 50, 0.95), []);
-  const naukriPoints = useMemo(() => generatePoints("I applied 10 jobs in Naukri today", 40, 195, 0.65), []);
-  const linkPoints = useMemo(() => generatePoints("Okay, I will paste the link here", 40, 240, 0.65), []);
+  const titleText = "Let's Scribble here!";
+  const naukriText = "I applied 10 jobs in Naukri today";
+  const linkText = "Okay, I will paste the link here";
+
+  const titleWidth = useMemo(() => getSubstringWidth(titleText, titleText.length, 1.25), []);
+  const naukriWidth = useMemo(() => getSubstringWidth(naukriText, naukriText.length, 0.9), []);
+  const linkWidth = useMemo(() => getSubstringWidth(linkText, linkText.length, 0.9), []);
 
   useEffect(() => {
     let active = true;
@@ -714,55 +404,37 @@ export const ChalkboardShowcase = () => {
       if (cycleTime < 1500) {
         const pct = cycleTime / 1500;
         currentX = 450 - pct * (450 - 40);
-        currentY = 200 - pct * (200 - 55);
+        currentY = 200 - pct * (200 - 65);
         currentOpacity = 1;
         setStep(0);
-        setRevealTitleIndex(-1);
-        setRevealNaukriIndex(-1);
-        setRevealLinkIndex(-1);
+        setRevealTitleWidth(0);
+        setRevealNaukriWidth(0);
+        setRevealLinkWidth(0);
         setTictactoeProgress(0);
         setIsErasing(false);
       } 
       else if (cycleTime < 4500) {
         const pct = (cycleTime - 1500) / 3000;
-        const idx = Math.floor(pct * titlePoints.length);
-        
-        if (titlePoints.length > 0) {
-          const pt = titlePoints[Math.min(idx, titlePoints.length - 1)];
-          let cx = pt.x;
-          let cy = pt.y;
-          if (idx < titlePoints.length - 1) {
-            const nextPt = titlePoints[idx + 1];
-            const subPct = (pct * titlePoints.length) % 1;
-            cx = pt.x + (nextPt.x - pt.x) * subPct;
-            cy = pt.y + (nextPt.y - pt.y) * subPct;
-          }
-          currentX = cx;
-          currentY = cy;
-        } else {
-          currentX = 40;
-          currentY = 55;
-        }
-
+        currentX = 40 + pct * titleWidth;
+        currentY = 65 + Math.sin(pct * Math.PI * 30) * 3;
         currentOpacity = 1;
         setStep(1);
-        setRevealTitleIndex(idx);
+        setRevealTitleWidth(pct * titleWidth);
       } 
       else if (cycleTime < 6000) {
         const pct = (cycleTime - 4500) / 1500;
-        const startPt = titlePoints[titlePoints.length - 1] || { x: 360, y: 55 };
-        currentX = startPt.x + pct * (385 - startPt.x);
-        currentY = startPt.y + pct * (105 - startPt.y);
+        currentX = (40 + titleWidth) + pct * (385 - (40 + titleWidth));
+        currentY = 65 + pct * (105 - 65);
         currentOpacity = 1;
         setStep(2);
-        setRevealTitleIndex(titlePoints.length);
+        setRevealTitleWidth(titleWidth);
       } 
       else if (cycleTime < 12000) {
         const subElapsed = cycleTime - 6000;
         const pct = subElapsed / 6000;
         setStep(3);
         setTictactoeProgress(pct);
-        setRevealTitleIndex(titlePoints.length);
+        setRevealTitleWidth(titleWidth);
 
         if (pct < 0.12) {
           const t = pct / 0.12;
@@ -809,90 +481,52 @@ export const ChalkboardShowcase = () => {
       } 
       else if (cycleTime < 13500) {
         const pct = (cycleTime - 12000) / 1500;
-        const endPt = naukriPoints[0] || { x: 40, y: 195 };
-        currentX = 422 + pct * (endPt.x - 422);
-        currentY = 160 + pct * (endPt.y - 160);
+        currentX = 422 + pct * (40 - 422);
+        currentY = 160 + pct * (200 - 160);
         currentOpacity = 1;
         setStep(4);
-        setRevealTitleIndex(titlePoints.length);
-        setRevealNaukriIndex(-1);
+        setRevealTitleWidth(titleWidth);
+        setRevealNaukriWidth(0);
       } 
       else if (cycleTime < 16500) {
         const pct = (cycleTime - 13500) / 3000;
-        const idx = Math.floor(pct * naukriPoints.length);
-
-        if (naukriPoints.length > 0) {
-          const pt = naukriPoints[Math.min(idx, naukriPoints.length - 1)];
-          let cx = pt.x;
-          let cy = pt.y;
-          if (idx < naukriPoints.length - 1) {
-            const nextPt = naukriPoints[idx + 1];
-            const subPct = (pct * naukriPoints.length) % 1;
-            cx = pt.x + (nextPt.x - pt.x) * subPct;
-            cy = pt.y + (nextPt.y - pt.y) * subPct;
-          }
-          currentX = cx;
-          currentY = cy;
-        } else {
-          currentX = 40;
-          currentY = 195;
-        }
-
+        currentX = 40 + pct * naukriWidth;
+        currentY = 200 + Math.sin(pct * Math.PI * 32) * 2;
         currentOpacity = 1;
         setStep(5);
-        setRevealTitleIndex(titlePoints.length);
-        setRevealNaukriIndex(idx);
+        setRevealTitleWidth(titleWidth);
+        setRevealNaukriWidth(pct * naukriWidth);
       } 
       else if (cycleTime < 18000) {
         const pct = (cycleTime - 16500) / 1500;
-        const startPt = naukriPoints[naukriPoints.length - 1] || { x: 300, y: 195 };
-        const endPt = linkPoints[0] || { x: 40, y: 240 };
-        currentX = startPt.x + pct * (endPt.x - startPt.x);
-        currentY = startPt.y + pct * (endPt.y - startPt.y);
+        currentX = (40 + naukriWidth) + pct * (40 - (40 + naukriWidth));
+        currentY = 200 + pct * (250 - 200);
         currentOpacity = 1;
         setStep(6);
-        setRevealTitleIndex(titlePoints.length);
-        setRevealNaukriIndex(naukriPoints.length);
-        setRevealLinkIndex(-1);
+        setRevealTitleWidth(titleWidth);
+        setRevealNaukriWidth(naukriWidth);
+        setRevealLinkWidth(0);
       } 
       else if (cycleTime < 21000) {
         const pct = (cycleTime - 18000) / 3000;
-        const idx = Math.floor(pct * linkPoints.length);
-
-        if (linkPoints.length > 0) {
-          const pt = linkPoints[Math.min(idx, linkPoints.length - 1)];
-          let cx = pt.x;
-          let cy = pt.y;
-          if (idx < linkPoints.length - 1) {
-            const nextPt = linkPoints[idx + 1];
-            const subPct = (pct * linkPoints.length) % 1;
-            cx = pt.x + (nextPt.x - pt.x) * subPct;
-            cy = pt.y + (nextPt.y - pt.y) * subPct;
-          }
-          currentX = cx;
-          currentY = cy;
-        } else {
-          currentX = 40;
-          currentY = 240;
-        }
-
+        currentX = 40 + pct * linkWidth;
+        currentY = 250 + Math.sin(pct * Math.PI * 32) * 2;
         currentOpacity = 1;
         setStep(7);
-        setRevealTitleIndex(titlePoints.length);
-        setRevealNaukriIndex(naukriPoints.length);
-        setRevealLinkIndex(idx);
+        setRevealTitleWidth(titleWidth);
+        setRevealNaukriWidth(naukriWidth);
+        setRevealLinkWidth(pct * linkWidth);
       } 
       else {
         const pct = (cycleTime - 21000) / 2000;
-        const startPt = linkPoints[linkPoints.length - 1] || { x: 300, y: 240 };
-        currentX = startPt.x + pct * (450 - startPt.x);
-        currentY = startPt.y + pct * (200 - startPt.y);
+        currentX = (40 + linkWidth) + pct * (450 - (40 + linkWidth));
+        currentY = 250 - pct * (250 - 200);
         currentOpacity = 0.5;
         setStep(8);
         setIsErasing(true);
-        setRevealTitleIndex(titlePoints.length);
-        setRevealNaukriIndex(naukriPoints.length);
-        setRevealLinkIndex(linkPoints.length);
+        setRevealTitleWidth(titleWidth);
+        setRevealNaukriWidth(naukriWidth);
+        setRevealLinkWidth(linkWidth);
       }
 
       setChalk({ x: currentX, y: currentY, opacity: currentOpacity });
@@ -924,7 +558,7 @@ export const ChalkboardShowcase = () => {
     return () => {
       active = false;
     };
-  }, []);
+  }, [titleWidth, naukriWidth, linkWidth, step]);
 
   useEffect(() => {
     let active = true;
@@ -962,21 +596,15 @@ export const ChalkboardShowcase = () => {
 
   return (
     <div 
-      style={{
-        transform: "perspective(1200px) rotateY(-18deg) rotateX(8deg) rotateZ(2deg)",
-        transformStyle: "preserve-3d",
-        boxShadow: "25px 25px 60px rgba(0, 0, 0, 0.85), -5px -5px 30px rgba(255, 255, 255, 0.01), inset 0 0 40px rgba(0,0,0,0.7)"
-      }}
-      className="relative w-full max-w-[520px] h-[350px] bg-[#141717] p-6 rounded-2xl overflow-hidden border border-white/10 transition-transform duration-500 hover:scale-[1.02]"
+      className="relative w-full max-w-[500px] h-[340px] bg-[#121414] p-6 rounded-none overflow-hidden border-2 border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.8),inset_0_0_30px_rgba(0,0,0,0.7)] transition-transform duration-300 hover:scale-[1.01]"
     >
       {/* Decorative Chalk Dust Texture Overlay */}
       <div className="absolute inset-0 bg-[#000] opacity-[0.03] mix-blend-overlay pointer-events-none" />
       <div className="absolute inset-0 bg-dot-pattern opacity-[0.02] pointer-events-none" />
 
-      {/* 3D Chalk Ledge */}
+      {/* Chalk Ledge */}
       <div 
-        style={{ transform: "translateZ(20px)" }}
-        className="absolute bottom-2 left-6 right-6 h-2.5 bg-[#252828] border-t border-white/10 rounded-t shadow-[0_-2px_10px_rgba(0,0,0,0.5)] z-20 pointer-events-none"
+        className="absolute bottom-2 left-6 right-6 h-2 bg-[#252828] border-t border-white/10 rounded-t shadow-[0_-2px_10px_rgba(0,0,0,0.5)] z-20 pointer-events-none"
       />
 
       {/* Eraser sweep overlay */}
@@ -989,17 +617,16 @@ export const ChalkboardShowcase = () => {
         />
       )}
 
-      {/* Custom Chalk Position & Pencil Cursor with 3D Float */}
+      {/* Custom Chalk Position & Pencil Cursor */}
       {chalk.opacity > 0 && (
         <div
           style={{
             left: `${chalk.x}px`,
             top: `${chalk.y}px`,
             opacity: chalk.opacity,
-            transform: "translateZ(30px) -translate-x-[2px] -translate-y-[24px]",
             transition: "opacity 0.2s ease-in-out"
           }}
-          className="absolute z-30 text-primary pointer-events-none"
+          className="absolute z-30 text-primary pointer-events-none transform -translate-x-[2px] -translate-y-[24px]"
         >
           <Pencil size={24} className="transform -scale-x-100 drop-shadow-[0_0_8px_var(--color-primary)]" />
         </div>
@@ -1026,18 +653,33 @@ export const ChalkboardShowcase = () => {
 
       {/* Chalkboard Drawing Core SVG */}
       <svg viewBox="0 0 500 300" className="w-full h-full relative z-10">
-        
-        {/* 1. Main Title Cursive Handwriting (y=50, drawn coordinate-by-coordinate) */}
-        <path
-          d={getPathD(titlePoints, step === 1 ? revealTitleIndex : (step > 1 ? titlePoints.length : -1))}
-          fill="none"
-          stroke="var(--color-primary)"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="drop-shadow-[0_0_5px_rgba(255,96,68,0.4)]"
-          opacity={isErasing ? 1 - (tictactoeProgress * 2) : 1}
-        />
+        <defs>
+          <clipPath id="title-clip-straight">
+            <rect x="0" y="0" width={revealTitleWidth + 5} height="120" />
+          </clipPath>
+          <clipPath id="naukri-clip-straight">
+            <rect x="0" y="170" width={revealNaukriWidth + 5} height="60" />
+          </clipPath>
+          <clipPath id="link-clip-straight">
+            <rect x="0" y="220" width={revealLinkWidth + 5} height="60" />
+          </clipPath>
+        </defs>
+
+        {/* 1. Main Title Cursive Handwriting (y=65, Caveat Google Font style) */}
+        <g clipPath="url(#title-clip-straight)" opacity={isErasing ? 1 - (tictactoeProgress * 2) : 1}>
+          <text
+            x="40"
+            y="65"
+            style={{
+              fontFamily: "'Caveat', 'Segoe Script', 'Segoe Print', cursive",
+              fontSize: "26px",
+              fontWeight: "700"
+            }}
+            className="fill-primary select-none drop-shadow-[0_0_5px_rgba(255,96,68,0.5)]"
+          >
+            Let's Scribble here!
+          </text>
+        </g>
 
         {/* 2. Tic-Tac-Toe Game (Top Right Area, animated line-by-line) */}
         <g opacity={isErasing ? 1 - (tictactoeProgress * 2) : 1}>
@@ -1120,26 +762,36 @@ export const ChalkboardShowcase = () => {
         </g>
 
         {/* 3. Naukri Note (Bottom Left, y=195, drawn coordinate-by-coordinate) */}
-        <path
-          d={getPathD(naukriPoints, step === 5 ? revealNaukriIndex : (step > 5 ? naukriPoints.length : -1))}
-          fill="none"
-          stroke="rgba(255, 255, 255, 0.85)"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          opacity={isErasing ? 1 - (tictactoeProgress * 2) : 1}
-        />
+        <g clipPath="url(#naukri-clip-straight)" opacity={isErasing ? 1 - (tictactoeProgress * 2) : 1}>
+          <text
+            x="40"
+            y="200"
+            style={{
+              fontFamily: "monospace",
+              fontSize: "13px",
+              fontWeight: "bold"
+            }}
+            className="fill-white/85 select-none uppercase tracking-wide"
+          >
+            I applied 10 jobs in Naukri today
+          </text>
+        </g>
 
         {/* 4. Paste Link Note (Bottom Right, y=240, drawn coordinate-by-coordinate) */}
-        <path
-          d={getPathD(linkPoints, step === 7 ? revealLinkIndex : (step > 7 ? linkPoints.length : -1))}
-          fill="none"
-          stroke="rgba(255, 255, 255, 0.85)"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          opacity={isErasing ? 1 - (tictactoeProgress * 2) : 1}
-        />
+        <g clipPath="url(#link-clip-straight)" opacity={isErasing ? 1 - (tictactoeProgress * 2) : 1}>
+          <text
+            x="40"
+            y="250"
+            style={{
+              fontFamily: "monospace",
+              fontSize: "13px",
+              fontWeight: "bold"
+            }}
+            className="fill-white/85 select-none uppercase tracking-wide"
+          >
+            Okay, I will paste the link here
+          </text>
+        </g>
       </svg>
     </div>
   );
