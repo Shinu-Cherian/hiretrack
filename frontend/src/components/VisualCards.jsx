@@ -517,6 +517,16 @@ const charStrokes = {
       { dx: 2, dy: 28, lift: false }
     ]
   },
+  'n': {
+    width: 12,
+    points: [
+      { dx: 3, dy: 20, lift: true },
+      { dx: 3, dy: 12, lift: false },
+      { dx: 3, dy: 15, lift: true },
+      { dx: 9, dy: 15, lift: false },
+      { dx: 9, dy: 20, lift: false }
+    ]
+  },
   '1': {
     width: 12,
     points: [
@@ -914,7 +924,7 @@ export const ChalkboardShowcase = () => {
     return () => {
       active = false;
     };
-  }, [step, titlePoints, naukriPoints, linkPoints]);
+  }, []);
 
   useEffect(() => {
     let active = true;
