@@ -2172,10 +2172,16 @@ def update_note_api(request, id):
     if not note:
         return JsonResponse({"error": "Note not found"}, status=404)
 
-    try:
-        body = _json.loads(request.body)
-    except Exception:
+    # CRITICAL: For multipart/form-data (file uploads), we must use request.POST
+    # NEVER call request.body before request.POST/FILES on multipart — it consumes the stream
+    content_type = request.content_type or ""
+    if "multipart/form-data" in content_type:
         body = request.POST
+    else:
+        try:
+            body = _json.loads(request.body)
+        except Exception:
+            body = request.POST
 
     if 'attached_file' in request.FILES:
         note.attached_file = request.FILES['attached_file']
