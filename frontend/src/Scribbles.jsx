@@ -838,7 +838,7 @@ export default function Scribbles() {
                       
                       {/* Attach File Button */}
                       <div className="flex items-center">
-                        <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileUpload} accept="image/*,application/pdf" />
+                        <input type="file" ref={fileInputRef} className="sr-only" onChange={handleFileUpload} accept="image/*,application/pdf" />
                         <button
                           type="button"
                           onClick={() => fileInputRef.current?.click()}
