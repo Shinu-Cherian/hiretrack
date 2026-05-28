@@ -914,7 +914,7 @@ export const ChalkboardShowcase = () => {
     return () => {
       active = false;
     };
-  }, [step, titlePoints, naukriPoints, linkPoints]);
+  }, [titlePoints, naukriPoints, linkPoints]);
 
   useEffect(() => {
     let active = true;
