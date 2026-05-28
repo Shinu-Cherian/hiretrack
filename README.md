@@ -1,6 +1,6 @@
 # 🗂️ HireTrack — Career Management Platform
 
-> A full-stack, private workspace to track job applications, referrals, resumes, cover letters, and career progress — built for serious job seekers.
+> A premium full-stack, private workspace to track job applications, referrals, resumes, cover letters, and career progress — built for serious job seekers.
 
 [![Django](https://img.shields.io/badge/Backend-Django%205.2-092E20?style=flat&logo=django&logoColor=white)](https://www.djangoproject.com/)
 [![React](https://img.shields.io/badge/Frontend-React%2019-61DAFB?style=flat&logo=react&logoColor=black)](https://react.dev/)
@@ -14,6 +14,7 @@
 ## 📌 Table of Contents
 
 - [Overview](#-overview)
+- [New Features (Latest Updates)](#-new-features-latest-updates)
 - [Features](#-features)
 - [Tech Stack](#-tech-stack)
 - [Project Structure](#-project-structure)
@@ -23,7 +24,6 @@
 - [Environment Variables](#-environment-variables)
 - [Running the App](#-running-the-app)
 - [Browser Extension](#-browser-extension)
-- [Screenshots](#-screenshots)
 - [Deployment](#-deployment)
 - [Author](#-author)
 
@@ -35,7 +35,19 @@
 
 Every job application, referral outreach, resume version, cover letter, follow-up deadline, and career milestone lives in one private, authenticated workspace — visible only to the logged-in user.
 
-The platform combines practical job-search tooling with AI-powered features (ATS resume analysis, cover letter generation, career roadmap planning) in a modern "Dark Nebula" SaaS interface.
+The platform combines practical job-search tooling with **AI-powered features** (ATS resume analysis, cover letter generation, career roadmap planning) wrapped in a stunning, modern **"Dark Nebula" UI theme** with fluid animations.
+
+---
+
+## 🚀 New Features (Latest Updates)
+
+Over the recent development iterations, HireTrack has evolved significantly to provide a premium user experience:
+
+- **Dark Nebula Theme & Aesthetics**: Completely redesigned frontend UI featuring a highly-polished dark mode, vibrant neon green accents (`#c4fc70`), glassmorphism effects, glowing active borders, and smooth `framer-motion` page transitions.
+- **Interactive Visual Pipeline**: A dynamic flowchart view for Job Applications and Referrals showing real-time statistics and interactive progression stages (e.g., *Applied → Phone Screen → Interview → Offer*).
+- **Animated Chalkboard Showcase**: A beautifully simulated cursive handwriting animation tool that tracks realistic job search "scribbles" stroke-by-stroke on a transparent canvas.
+- **AI Career Roadmap Builder**: Generates dynamic, step-by-step career progression nodes based on your current profile, complete with interactive UI cards.
+- **Enhanced Landing Page**: Redesigned marketing landing page with floating 3D elements, feature highlights, and interactive component previews.
 
 ---
 
@@ -61,8 +73,8 @@ The platform combines practical job-search tooling with AI-powered features (ATS
 - Follow-up date reminders and starred referrals
 - Inline editing and deletion
 
-### 📊 Dashboard Analytics
-- Visual pipeline overview — applications by status, referral stats
+### 📊 Dashboard Analytics & Pipelines
+- **Pipeline Stream**: Visual pipeline overview showing live application drop-off rates and referral engagement metrics.
 - Streak tracker — consecutive daily activity monitoring
 - Follow-up alerts — items due soon surfaced automatically
 - Real-time stats across the entire workspace
@@ -82,7 +94,7 @@ The platform combines practical job-search tooling with AI-powered features (ATS
 - Upload a resume (PDF) + paste a job description
 - AI extracts keywords from the JD and compares against resume content
 - Returns a match score, missing keywords, and actionable suggestions
-- Built with `pypdf` for PDF parsing + external LLM API
+- Built with `pypdf` for PDF parsing + external LLM API (Google Gemini)
 
 #### Cover Letter Generator
 - Input resume details and job description
@@ -92,7 +104,7 @@ The platform combines practical job-search tooling with AI-powered features (ATS
 #### Career Roadmap
 - Input your degree, target role, experience level, and country
 - AI returns a personalized multi-step career plan
-- Roadmap displayed as a visual step-by-step timeline
+- Roadmap displayed as an animated visual step-by-step timeline using framer-motion
 
 ### 🗄️ Career Vault
 - Centralized view of all uploaded documents
@@ -139,9 +151,10 @@ The platform combines practical job-search tooling with AI-powered features (ATS
 | React | 19 | UI component framework |
 | Vite | 6 | Build tool and dev server |
 | Tailwind CSS | 3 | Utility-first styling |
+| Framer Motion | latest | Complex animations, page transitions, visual cards |
 | Lucide React | latest | Icon library |
 | React Router DOM | 7 | Client-side routing |
-| Vanilla CSS | — | Custom animations, Dark Nebula theme |
+| Vanilla CSS | — | Custom glassmorphism, animations, Dark Nebula theme tokens |
 
 ### Database
 | Environment | Database |
@@ -223,8 +236,10 @@ hiretrack/
         ├── ExtensionFormPage.jsx   # Extension form handler
         │
         └── components/
-            ├── Avatar.jsx       # Profile avatar component
-            ├── ReferralForm.jsx # Reusable referral form
+            ├── Avatar.jsx            # Profile avatar component
+            ├── ReferralForm.jsx      # Reusable referral form
+            ├── PipelineStream.jsx    # Interactive Flowchart visualizations
+            ├── VisualCards.jsx       # Chalkboard handwriting showcase
             └── ...
 ```
 
@@ -501,9 +516,9 @@ python manage.py test tracker
 | Backend API Endpoints | 30+ |
 | Integrated Feature Modules | 8 |
 | Database Models | 5 (Job, Referral, Profile, Education, Experience) |
-| Frontend Pages/Components | 25+ |
+| Frontend Pages/Components | 28+ |
 | AI-Powered Features | 3 (ATS Analyzer, Cover Letter, Career Roadmap) |
-| Lines of Code | 5,000+ |
+| Lines of Code | 6,500+ |
 
 ---
 
