@@ -273,7 +273,6 @@ export default function Scribbles() {
   
   // Custom interactive states
   const [canvasPattern, setCanvasPattern] = useState("void");
-  const [isFocusMode, setIsFocusMode] = useState(false);
   const [copiedId, setCopiedId] = useState(null);
   const [pinnedIds, setPinnedIds] = useState(() => {
     try {
@@ -690,19 +689,6 @@ export default function Scribbles() {
                       {copiedId === selectedScribble.id ? "Copied" : "Copy Note"}
                     </button>
 
-                    {/* Focus toggle (Placed between Copy and Delete) */}
-                    <button
-                      onClick={() => setIsFocusMode(!isFocusMode)}
-                      className={`inline-flex items-center gap-1.5 px-3 py-2 border rounded-xl text-[10px] font-mono uppercase font-black transition-all select-none ${
-                        isFocusMode
-                          ? "border-[#FF6044]/20 bg-[#FF6044]/10 text-[#FF6044]"
-                          : "border-white/5 bg-white/5 text-gray-400 hover:text-white hover:border-white/20"
-                      }`}
-                      title={isFocusMode ? "Exit Focus Mode" : "Focus Canvas"}
-                    >
-                      {isFocusMode ? <Minimize2 size={11} /> : <Maximize2 size={11} />}
-                      {isFocusMode ? "Exit Focus" : "Focus"}
-                    </button>
 
                     {/* Delete Note */}
                     <button
