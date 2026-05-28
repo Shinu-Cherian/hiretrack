@@ -285,29 +285,32 @@ export default function Scribbles() {
 
     const formData = new FormData();
     formData.append("attached_file", file);
-    formData.append("title", selectedScribble.title);
-    formData.append("content", selectedScribble.content);
-    formData.append("color", selectedScribble.color);
-    formData.append("font_family", selectedScribble.font_family);
-    formData.append("font_size", selectedScribble.font_size);
+    formData.append("title", selectedScribble.title || "");
+    formData.append("content", selectedScribble.content || "");
+    formData.append("color", selectedScribble.color || "#FF6044");
+    formData.append("font_family", selectedScribble.font_family || "Inter");
+    formData.append("font_size", selectedScribble.font_size || "md");
 
     setIsSaving(true);
     try {
       const res = await fetch(apiUrl(`/api/notes/update/${selectedScribble.id}/`), {
         method: "POST",
         credentials: "include",
-        body: formData, // fetch will automatically set multipart/form-data boundary
+        body: formData,
       });
 
       if (res.ok) {
         const data = await res.json();
-        // Update local state with the returned file URL
         const updated = { ...selectedScribble, attached_file: data.attached_file };
         setSelectedScribble(updated);
         setScribbles((prev) => prev.map((s) => (s.id === updated.id ? updated : s)));
+      } else {
+        const errText = await res.text();
+        alert("Upload Failed! Status: " + res.status + " " + errText);
       }
     } catch (err) {
       console.error("Upload error:", err);
+      alert("Network Error: " + err.message);
     } finally {
       setIsSaving(false);
       // Reset input
