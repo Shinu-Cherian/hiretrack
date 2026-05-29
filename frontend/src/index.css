@@ -2453,6 +2453,32 @@ html.dark body {
   color: #2e3847;
 }
 
+/* GLOBAL SCROLLBAR */
+::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #101212;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333333;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555555;
+}
+
+/* Fallbacks for older Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #333333 #101212;
+}
+
 /* Coral column headings */
 .ht-footer-col-heading-coral {
   color: #FF6044 !important;

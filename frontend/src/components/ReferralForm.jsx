@@ -73,7 +73,7 @@ export default function ReferralForm({ initialValues = emptyReferral, submitLabe
 
       <div className="flex flex-col-reverse gap-3 border-t border-white/5 pt-6 sm:flex-row sm:justify-end">
         {onCancel && (
-          <button type="button" onClick={onCancel} className="rounded-xl border border-white/10 bg-white/5 px-6 py-3 font-bold text-white hover:bg-white/10 transition-all">
+          <button type="button" onClick={onCancel} className="rounded-xl border border-white/10 bg-[#121313] px-6 py-3 font-bold text-gray-400 hover:text-white hover:bg-[#1A1B1B] transition-all shadow-md">
             Cancel
           </button>
         )}
