@@ -9,12 +9,12 @@ export default function ExtensionPage() {
     <div className="min-h-screen bg-[#101212] bg-dot-pattern text-white">
       <Header />
 
-      <main className="mx-auto w-full max-w-[1400px] space-y-32 px-6 lg:px-12 py-12 animate-fade-in-up">
+      <main className="mx-auto w-full max-w-[1400px] space-y-16 px-6 lg:px-12 py-8 animate-fade-in-up">
         <div className="flex items-center">
           <BackButton label="Back" />
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-16 lg:gap-8 items-center pt-8">
+        <div className="grid lg:grid-cols-2 gap-16 lg:gap-8 items-center pt-2">
           {/* Hero Section */}
           <section className="flex flex-col items-start text-left max-w-2xl">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#FF6044]/10 border border-[#FF6044]/20 text-[#FF6044] text-xs font-display tracking-widest uppercase mb-10 rounded-full">
@@ -59,7 +59,7 @@ export default function ExtensionPage() {
                    >
                      <motion.span 
                        animate={{ opacity: [0, 0, 1, 1, 0] }}
-                       transition={{ duration: 8, repeat: Infinity, times: [0, 0.30, 0.31, 0.99, 1] }}
+                       transition={{ duration: 10, repeat: Infinity, times: [0, 0.30, 0.31, 0.99, 1] }}
                        className="text-[11px] text-gray-500 font-mono tracking-wide"
                      >
                        chrome://extensions
@@ -72,8 +72,8 @@ export default function ExtensionPage() {
                      
                      {/* 3 Dots Menu */}
                      <motion.div 
-                       animate={{ scale: [1, 1, 1, 0.8, 1, 0.8, 1, 0.8, 1, 1, 1] }} 
-                       transition={{ duration: 8, repeat: Infinity, times: [0, 0.05, 0.15, 0.175, 0.275, 0.3, 0.425, 0.45, 0.5, 0.81, 1] }}
+                       animate={{ scale: [1, 1, 0.8, 1, 1] }} 
+                       transition={{ duration: 10, repeat: Infinity, times: [0, 0.15, 0.165, 0.18, 1] }}
                        className="flex flex-col gap-[3px] items-center justify-center w-5 h-5 cursor-pointer hover:bg-white/5 rounded-full"
                      >
                        <div className="w-[3px] h-[3px] rounded-full bg-gray-400"></div>
@@ -87,7 +87,7 @@ export default function ExtensionPage() {
                 <motion.div 
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: [0, 0, 1, 1, 0, 0], scale: [0.95, 0.95, 1, 1, 0.95, 0.95] }}
-                  transition={{ duration: 8, repeat: Infinity, times: [0, 0.17, 0.18, 0.30, 0.31, 1] }}
+                  transition={{ duration: 10, repeat: Infinity, times: [0, 0.18, 0.19, 0.30, 0.31, 1] }}
                   className="absolute top-14 right-4 w-48 bg-[#1A1B1B] border border-white/10 rounded-xl shadow-2xl py-2 z-20 origin-top-right"
                 >
                    <div className="px-4 py-2.5 text-xs text-gray-400">New Tab</div>
@@ -95,8 +95,8 @@ export default function ExtensionPage() {
                    <div className="px-4 py-2.5 text-xs text-gray-400">Settings</div>
                    <div className="my-1 border-t border-white/5"></div>
                    <motion.div 
-                     animate={{ backgroundColor: ["transparent", "transparent", "transparent", "rgba(255,255,255,0.05)", "rgba(255,255,255,0.05)", "transparent"] }}
-                     transition={{ duration: 8, repeat: Infinity, times: [0, 0.26, 0.27, 0.28, 0.31, 1] }}
+                     animate={{ backgroundColor: ["transparent", "transparent", "rgba(255,255,255,0.05)", "rgba(255,255,255,0.05)", "transparent"] }}
+                     transition={{ duration: 10, repeat: Infinity, times: [0, 0.26, 0.27, 0.31, 1] }}
                      className="px-4 py-2.5 text-xs text-white flex justify-between items-center"
                    >
                      Extensions <Globe size={12} className="text-gray-500" />
@@ -106,7 +106,7 @@ export default function ExtensionPage() {
                 {/* Browser Body - New Tab (Empty State) */}
                 <motion.div 
                   animate={{ opacity: [1, 1, 0, 0, 1] }}
-                  transition={{ duration: 8, repeat: Infinity, times: [0, 0.30, 0.31, 0.99, 1] }}
+                  transition={{ duration: 10, repeat: Infinity, times: [0, 0.30, 0.31, 0.99, 1] }}
                   className="absolute inset-0 top-[60px] flex flex-col items-center justify-center z-10"
                 >
                   <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-6">
@@ -118,7 +118,7 @@ export default function ExtensionPage() {
                 {/* Browser Body - Extensions Page */}
                 <motion.div 
                   animate={{ opacity: [0, 0, 1, 1, 0] }}
-                  transition={{ duration: 8, repeat: Infinity, times: [0, 0.30, 0.31, 0.99, 1] }}
+                  transition={{ duration: 10, repeat: Infinity, times: [0, 0.30, 0.31, 0.99, 1] }}
                   className="absolute inset-0 top-[60px] p-8 z-10 bg-[#121313]"
                 >
                   <div className="mb-8 flex items-center justify-between border-b border-white/5 pb-4">
@@ -149,13 +149,13 @@ export default function ExtensionPage() {
                               x: [0, 0, 20, 20, 0],
                               backgroundColor: ["#888", "#888", "#fff", "#fff", "#888"]
                             }}
-                            transition={{ duration: 8, repeat: Infinity, times: [0, 0.45, 0.46, 0.99, 1] }}
+                            transition={{ duration: 10, repeat: Infinity, times: [0, 0.48, 0.49, 0.99, 1] }}
                             className="w-4 h-4 rounded-full absolute left-1 shadow-md z-10"
                           ></motion.div>
                           
                           <motion.div 
                             animate={{ backgroundColor: ["#333", "#333", "#FF6044", "#FF6044", "#333"] }}
-                            transition={{ duration: 8, repeat: Infinity, times: [0, 0.45, 0.46, 0.99, 1] }}
+                            transition={{ duration: 10, repeat: Infinity, times: [0, 0.48, 0.49, 0.99, 1] }}
                             className="absolute inset-0 rounded-full"
                           ></motion.div>
                         </div>
@@ -166,20 +166,20 @@ export default function ExtensionPage() {
                 {/* Animated Cursor */}
                 <motion.div
                   animate={{ 
-                    left: ["50%", "50%", "95%", "95%",  "85%", "85%", "40%", "40%", "55%", "55%", "50%"],
-                    top:  ["110%", "80%", "28px", "28px", "155px", "155px", "280px", "280px", "320px", "320px", "110%"],
-                    scale: [1, 1, 1, 0.8, 1, 0.8, 1, 0.8, 1, 1, 1],
-                    opacity:[0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0]
+                    left: ["50%", "50%", "95%", "95%", "95%", "85%", "85%", "85%", "40%", "40%", "40%", "40%", "50%", "50%"],
+                    top:  ["110%", "80%", "28px", "28px", "28px", "155px", "155px", "155px", "280px", "280px", "280px", "280px", "110%", "110%"],
+                    scale: [1, 1, 1, 0.7, 1, 1, 0.7, 1, 1, 0.7, 1, 1, 1, 1],
+                    opacity:[0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0]
                   }}
                   transition={{ 
-                     duration: 8, 
+                     duration: 10, 
                      repeat: Infinity,
-                     times: [0, 0.05, 0.15, 0.175, 0.275, 0.3, 0.425, 0.45, 0.5, 0.81, 1],
+                     times: [0, 0.05, 0.15, 0.165, 0.18, 0.27, 0.285, 0.30, 0.45, 0.465, 0.48, 0.85, 0.90, 1],
                      ease: "easeInOut"
                   }}
                   className="absolute z-30 pointer-events-none drop-shadow-[0_5px_15px_rgba(0,0,0,0.5)] -ml-2 -mt-2"
                 >
-                   <MousePointer2 size={36} className="text-white fill-[#121313] stroke-[1.5]" />
+                   <MousePointer2 size={24} className="text-white fill-[#121313] stroke-[1.5]" />
                 </motion.div>
              </div>
           </div>
