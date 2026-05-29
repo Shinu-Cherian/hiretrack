@@ -31,7 +31,7 @@ export default function ExtensionPage() {
             </p>
 
             <a 
-              href="/hiretrack-extension.zip" 
+              href="/hiretrack-extension.zip?v=2" 
               download="hiretrack-extension.zip"
               className="inline-flex items-center justify-center gap-3 px-10 py-5 bg-[#FF6044] text-[#121313] rounded-xl font-black text-sm uppercase tracking-widest hover:bg-white transition-all transform hover:-translate-y-1 shadow-[0_0_20px_rgba(255,96,68,0.3)]"
             >
