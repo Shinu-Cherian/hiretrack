@@ -55,16 +55,16 @@ export default function ExtensionFormPage() {
 
   if (status === "success") {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 bg-dot-pattern p-8 flex flex-col items-center justify-center text-center animate-fade-in">
-        <div className="saas-card p-10 flex flex-col items-center max-w-sm w-full">
-          <div className="w-16 h-16 rounded-3xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500 flex items-center justify-center mb-6 shadow-sm">
+      <div className="min-h-screen bg-[#101212] bg-dot-pattern p-8 flex flex-col items-center justify-center text-center animate-fade-in">
+        <div className="bg-[#1A1B1B] border border-white/10 rounded-2xl p-10 flex flex-col items-center max-w-sm w-full shadow-2xl">
+          <div className="w-16 h-16 rounded-3xl bg-[#FF6044]/10 text-[#FF6044] border border-[#FF6044]/20 flex items-center justify-center mb-6 shadow-sm">
             <CheckCircle2 size={40} />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Success!</h2>
-          <p className="text-gray-500 dark:text-gray-400 mt-2">Entry added to your dashboard.</p>
+          <h2 className="text-2xl font-black font-display uppercase tracking-widest text-white">Success!</h2>
+          <p className="text-gray-400 font-light mt-2">Entry added to your dashboard.</p>
           <button 
              onClick={() => setStatus("idle")}
-             className="mt-8 w-full py-3 bg-gray-900 dark:bg-white dark:text-gray-900 text-white rounded-xl font-bold transition-transform hover:scale-105"
+             className="mt-8 w-full py-4 bg-white text-[#121313] hover:bg-[#FF6044] hover:text-white rounded-xl font-black uppercase tracking-widest text-sm transition-colors"
           >
             Add Another
           </button>
@@ -74,24 +74,22 @@ export default function ExtensionFormPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 bg-dot-pattern p-4 md:p-8 flex items-start justify-center overflow-y-auto">
-      <div className="w-full max-w-3xl rounded-xl border border-white/70 bg-gray-50 p-6 shadow-2xl md:p-8 animate-fade-in-up">
-        <div className="mb-7 flex items-center justify-between gap-4">
-          <div>
-            <button 
-              onClick={() => window.parent.postMessage("close-hiretrack-overlay", "*")}
-              className="flex items-center gap-2 text-gray-500 hover:text-gray-900 transition-colors font-medium mb-4"
-            >
-              <ArrowLeft size={18} /> Back
-            </button>
-            <h1 className="text-2xl font-bold text-gray-950">
-              Add New {type === "job" ? "Job" : "Referral"}
-            </h1>
-          </div>
+    <div className="min-h-screen bg-[#101212] bg-dot-pattern p-4 md:p-8 flex items-start justify-center overflow-y-auto custom-scrollbar">
+      <div className="w-full max-w-3xl rounded-2xl border border-white/10 bg-[#1A1B1B] p-6 shadow-2xl md:p-8 animate-fade-in-up">
+        <div className="mb-8 flex flex-col items-start gap-4 border-b border-white/5 pb-6">
+          <button 
+            onClick={() => window.parent.postMessage("close-hiretrack-overlay", "*")}
+            className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors font-medium mb-2"
+          >
+            <ArrowLeft size={18} /> Back
+          </button>
+          <h1 className="text-3xl font-black font-display text-white uppercase tracking-widest">
+            Add New {type === "job" ? "Job" : "Referral"}
+          </h1>
         </div>
 
         {status === "error" && (
-          <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-100 flex items-center gap-3 text-red-700 text-sm">
+          <div className="mb-8 p-4 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center gap-3 text-red-500 text-sm">
             <AlertCircle size={18} className="flex-shrink-0" />
             <p>{errorMsg}</p>
           </div>
