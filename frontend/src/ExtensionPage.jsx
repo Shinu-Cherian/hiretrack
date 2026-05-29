@@ -14,38 +14,28 @@ export default function ExtensionPage() {
         </div>
 
         {/* Hero Section */}
-        <section className="relative overflow-hidden rounded-3xl border border-white/5 bg-[#121313]/50 p-10 md:p-20 shadow-2xl flex flex-col lg:flex-row items-center justify-between gap-16 group">
-          <div className="absolute right-0 top-0 h-full w-1/2 bg-gradient-to-l from-[#FF6044]/5 to-transparent pointer-events-none" />
-
-          <div className="z-10 relative max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#FF6044]/10 border border-[#FF6044]/20 text-[#FF6044] text-xs font-display tracking-widest uppercase mb-8">
-              <Puzzle size={14} /> Extension Module
-            </div>
-            
-            <h1 className="text-5xl md:text-7xl font-black font-display text-white uppercase tracking-tight mb-6 leading-[0.9]">
-              The <span className="text-[#FF6044]">HireTrack</span><br/>Extension
-            </h1>
-            <p className="text-xl md:text-2xl font-light text-gray-400 leading-relaxed mb-10 max-w-2xl">
-              Don't switch tabs. Capture job postings and log referrals directly from LinkedIn, Indeed, and across the web instantly.
-            </p>
-
-            <a 
-              href="/hiretrack-extension.zip" 
-              download="hiretrack-extension.zip"
-              className="inline-flex items-center justify-center gap-3 px-10 py-5 bg-[#FF6044] text-[#121313] rounded-none brutalist-shadow font-black text-sm uppercase tracking-widest hover:bg-white transition-all transform hover:-translate-y-1"
-            >
-              <Download size={20} strokeWidth={3} />
-              Download Extension ZIP
-            </a>
+        <section className="mb-24">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#FF6044]/10 border border-[#FF6044]/20 text-[#FF6044] text-xs font-display tracking-widest uppercase mb-12">
+            <Puzzle size={14} /> Extension Module
           </div>
           
-          {/* Right side illustration / graphic */}
-          <div className="hidden lg:flex relative w-full max-w-md h-full items-center justify-center">
-             <div className="w-64 h-64 bg-[#FF6044]/10 rounded-full blur-3xl absolute"></div>
-             <div className="relative z-10 glass-panel border border-[#FF6044]/20 p-8 transform rotate-3 group-hover:rotate-0 transition-transform duration-700">
-                <Puzzle size={120} className="text-[#FF6044] opacity-80" />
-             </div>
-          </div>
+          <h1 className="text-5xl sm:text-7xl md:text-9xl font-display font-black leading-[0.8] uppercase tracking-tighter mb-12 manifesto-title">
+            The<br />
+            <span className="text-[#FF6044]">Extension</span>
+          </h1>
+          <div className="h-2 w-24 bg-[#FF6044] mb-12" />
+          <p className="text-2xl md:text-4xl font-light leading-tight text-gray-400 max-w-4xl mb-12">
+            Don't switch tabs. Capture job postings and log referrals directly from LinkedIn, Indeed, and across the web instantly.
+          </p>
+
+          <a 
+            href="/hiretrack-extension.zip" 
+            download="hiretrack-extension.zip"
+            className="inline-flex items-center justify-center gap-4 px-12 py-6 bg-[#FF6044] text-[#121313] rounded-none brutalist-shadow font-display font-black text-xl md:text-2xl uppercase tracking-tight hover:bg-white transition-all transform hover:-translate-y-1"
+          >
+            <Download size={28} strokeWidth={3} />
+            Download ZIP
+          </a>
         </section>
 
         {/* Installation Guide */}
