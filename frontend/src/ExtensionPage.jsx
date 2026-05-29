@@ -1,7 +1,8 @@
 import React from "react";
 import Header from "./Header";
 import BackButton from "./components/BackButton";
-import { Download, Puzzle, Settings, Pin, Globe } from "lucide-react";
+import { Download, Puzzle, Settings, Pin, Globe, MousePointer2 } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function ExtensionPage() {
   return (
@@ -40,25 +41,36 @@ export default function ExtensionPage() {
 
         {/* Visual Mockup */}
         <section className="flex justify-center relative">
-          <div className="absolute inset-0 bg-gradient-to-t from-[#101212] via-transparent to-transparent z-10 bottom-0 h-32 mt-auto" />
-          <div className="w-full max-w-3xl rounded-t-2xl border-t border-l border-r border-white/10 bg-[#1A1B1B] overflow-hidden shadow-2xl p-2 pb-0">
-             <div className="bg-[#121313] w-full h-[300px] rounded-t-xl border border-white/5 relative p-6">
+          <div className="absolute inset-0 bg-gradient-to-t from-[#101212] via-transparent to-transparent z-20 bottom-0 h-32 mt-auto pointer-events-none" />
+          <div className="w-full max-w-3xl rounded-t-2xl border-t border-l border-r border-white/10 bg-[#1A1B1B] overflow-hidden shadow-2xl p-2 pb-0 relative">
+             <div className="bg-[#121313] w-full h-[320px] rounded-t-xl border border-white/5 relative p-6 overflow-hidden">
+                
                 {/* Browser top bar mockup */}
-                <div className="flex items-center gap-4 border-b border-white/5 pb-4 mb-6">
+                <div className="flex items-center gap-4 border-b border-white/5 pb-4 mb-6 relative z-10">
                    <div className="flex gap-2">
                      <div className="w-3 h-3 rounded-full bg-white/10"></div>
                      <div className="w-3 h-3 rounded-full bg-white/10"></div>
                      <div className="w-3 h-3 rounded-full bg-white/10"></div>
                    </div>
                    <div className="flex-1 bg-white/5 h-6 rounded-md"></div>
-                   <div className="flex gap-3">
-                     <Puzzle size={16} className="text-[#FF6044]" />
-                     <div className="w-6 h-6 rounded-full bg-white/10"></div>
+                   <div className="flex gap-4 relative pr-2">
+                     <motion.div 
+                       animate={{ scale: [1, 1, 0.85, 1, 1] }} 
+                       transition={{ duration: 4, repeat: Infinity, times: [0, 0.35, 0.38, 0.4, 1] }}
+                     >
+                       <Puzzle size={16} className="text-[#FF6044]" />
+                     </motion.div>
+                     <div className="w-6 h-6 rounded-full bg-white/10 -mt-1"></div>
                    </div>
                 </div>
                 
                 {/* Extension Popup Mockup */}
-                <div className="absolute top-16 right-6 w-72 bg-[#1A1B1B] border border-white/10 rounded-xl shadow-2xl p-4">
+                <motion.div 
+                  initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                  animate={{ opacity: [0, 0, 1, 1, 0], y: [-10, -10, 0, 0, -10], scale: [0.95, 0.95, 1, 1, 0.95] }}
+                  transition={{ duration: 4, repeat: Infinity, times: [0, 0.38, 0.45, 0.9, 1] }}
+                  className="absolute top-16 right-6 w-72 bg-[#1A1B1B] border border-white/10 rounded-xl shadow-2xl p-4 z-10 origin-top-right"
+                >
                    <div className="flex items-center justify-between border-b border-white/5 pb-3 mb-4">
                       <div className="flex items-center gap-2">
                         <Puzzle size={16} className="text-[#FF6044]" />
@@ -69,9 +81,33 @@ export default function ExtensionPage() {
                    <div className="space-y-3">
                       <div className="h-8 bg-white/5 rounded w-full"></div>
                       <div className="h-8 bg-white/5 rounded w-full"></div>
-                      <div className="h-10 bg-[#FF6044] rounded w-full mt-4"></div>
+                      <motion.div 
+                        animate={{ scale: [1, 1, 0.96, 1, 1], backgroundColor: ["#FF6044", "#FF6044", "#ff4d2e", "#FF6044", "#FF6044"] }}
+                        transition={{ duration: 4, repeat: Infinity, times: [0, 0.75, 0.78, 0.8, 1] }}
+                        className="h-10 rounded w-full mt-4"
+                      ></motion.div>
                    </div>
-                </div>
+                </motion.div>
+
+                {/* Animated Cursor */}
+                <motion.div
+                  initial={{ x: "50%", y: "200%", opacity: 0 }}
+                  animate={{ 
+                    x: ["50%", "92%", "92%", "82%", "82%", "50%"], 
+                    y: ["200px", "20px", "20px", "190px", "190px", "200px"],
+                    opacity: [0, 1, 1, 1, 1, 0],
+                    scale: [1, 1, 0.85, 1, 1, 0.85, 1, 1] // Added scale array for clicking
+                  }}
+                  transition={{ 
+                     duration: 4, 
+                     repeat: Infinity,
+                     times: [0, 0.25, 0.4, 0.6, 0.8, 1],
+                     ease: "easeInOut"
+                  }}
+                  className="absolute top-0 left-0 z-30 pointer-events-none drop-shadow-[0_5px_15px_rgba(0,0,0,0.5)]"
+                >
+                   <MousePointer2 size={32} className="text-white fill-[#121313] stroke-[1.5]" />
+                </motion.div>
              </div>
           </div>
         </section>
