@@ -43,7 +43,7 @@
   menu.querySelectorAll('.hiretrack-menu-item').forEach(item => {
     item.addEventListener('click', () => {
       const type = item.getAttribute('data-type');
-      iframe.src = `http://localhost:5173/extension/${type}`;
+      iframe.src = `https://hiretrack-gw0m.onrender.com/extension/${type}`;
       overlay.classList.add('active');
       menu.classList.remove('active');
       fab.classList.remove('active');
