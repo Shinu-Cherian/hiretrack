@@ -1307,9 +1307,11 @@ def dashboard_api(request):
 
 
 
+from django.middleware.csrf import get_token
+
 @ensure_csrf_cookie
 def get_csrf(request):
-    return JsonResponse({"message": "CSRF cookie set"})
+    return JsonResponse({"message": "CSRF cookie set", "csrfToken": get_token(request)})
 
 
 
