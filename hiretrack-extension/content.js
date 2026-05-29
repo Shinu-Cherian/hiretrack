@@ -55,11 +55,27 @@
     iframe.src = '';
   });
 
-  // Listen for messages from iframe (e.g. to close on cancel)
+  // Listen for messages from iframe
   window.addEventListener('message', (event) => {
     if (event.data === 'close-hiretrack-overlay') {
       overlay.classList.remove('active');
       iframe.src = '';
+    }
+    
+    // Bridge API requests to background.js
+    if (event.data && event.data.type === 'HT_API_POST') {
+      chrome.runtime.sendMessage({
+        action: 'API_POST',
+        endpoint: event.data.endpoint,
+        payload: event.data.payload
+      }, (response) => {
+        // Send the response back to the iframe
+        iframe.contentWindow.postMessage({
+          type: 'HT_API_RESPONSE',
+          id: event.data.id,
+          response: response
+        }, '*');
+      });
     }
   });
 

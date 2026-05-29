@@ -36,7 +36,7 @@ function Private({ children }) {
 function App() {
   return (
     <Routes>
-      <Route path="/extension/:type" element={<Private><ExtensionFormPage /></Private>} />
+      <Route path="/extension/:type" element={<ExtensionFormPage />} />
       <Route path="/extension" element={<ExtensionPage />} />
       <Route path="/" element={<Home />} />
       <Route path="/manifesto" element={<ManifestoPage />} />

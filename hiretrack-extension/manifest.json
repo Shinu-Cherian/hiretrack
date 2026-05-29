@@ -6,6 +6,12 @@
   "permissions": [
     "storage"
   ],
+  "host_permissions": [
+    "https://hiretrack-gw0m.onrender.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
   "action": {
     "default_title": "HireTrack Quick Entry"
   },

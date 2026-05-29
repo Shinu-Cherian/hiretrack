@@ -15,41 +15,52 @@ export default function ExtensionFormPage() {
     document.documentElement.classList.toggle("dark", isDark);
   }, [isDark]);
 
+  const bgApiRequest = (endpoint, payload) => {
+    return new Promise((resolve, reject) => {
+      const msgId = Date.now().toString() + Math.random().toString();
+      
+      const listener = (event) => {
+        if (event.data && event.data.type === "HT_API_RESPONSE" && event.data.id === msgId) {
+          window.removeEventListener("message", listener);
+          if (event.data.response.success) resolve(event.data.response.data);
+          else reject(new Error(event.data.response.error));
+        }
+      };
+      
+      window.addEventListener("message", listener);
+      window.parent.postMessage({
+        type: "HT_API_POST",
+        id: msgId,
+        endpoint,
+        payload
+      }, "*");
+      
+      setTimeout(() => {
+        window.removeEventListener("message", listener);
+        reject(new Error("Request timed out"));
+      }, 10000);
+    });
+  };
+
   const handleAddJob = async (form) => {
     setStatus("saving");
-    const body = new FormData();
-    Object.entries(form).forEach(([key, value]) => {
-      if (value !== null && value !== undefined) body.append(key, value);
-    });
-
-    const res = await fetch(apiUrl("/api/add-job/"), {
-      method: "POST",
-      credentials: "include",
-      body,
-    });
-
-    if (res.ok) {
+    try {
+      await bgApiRequest("/api/add-job/", form);
       setStatus("success");
-    } else {
+    } catch (err) {
       setStatus("error");
-      setErrorMsg("Could not add job. Are you logged in?");
+      setErrorMsg(err.message === "NOT_LOGGED_IN" ? "Please log in to your HireTrack website first." : "Could not add job. Try again.");
     }
   };
 
   const handleAddReferral = async (form) => {
     setStatus("saving");
-    const res = await fetch(apiUrl("/api/add-referral/"), {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-
-    if (res.ok) {
+    try {
+      await bgApiRequest("/api/add-referral/", form);
       setStatus("success");
-    } else {
+    } catch (err) {
       setStatus("error");
-      setErrorMsg("Could not add referral. Are you logged in?");
+      setErrorMsg(err.message === "NOT_LOGGED_IN" ? "Please log in to your HireTrack website first." : "Could not add referral. Try again.");
     }
   };
 
