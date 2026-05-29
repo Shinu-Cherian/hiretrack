@@ -9,41 +9,42 @@ export default function ExtensionPage() {
     <div className="min-h-screen bg-[#101212] bg-dot-pattern text-white">
       <Header />
 
-      <main className="mx-auto w-full max-w-5xl space-y-24 px-6 py-12 animate-fade-in-up">
+      <main className="mx-auto w-full max-w-[1400px] space-y-32 px-6 lg:px-12 py-12 animate-fade-in-up">
         <div className="flex items-center">
           <BackButton label="Back" />
         </div>
 
-        {/* Hero Section */}
-        <section className="flex flex-col items-center text-center max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#FF6044]/10 border border-[#FF6044]/20 text-[#FF6044] text-xs font-display tracking-widest uppercase mb-10 rounded-full">
-            <Puzzle size={14} /> Extension Module
-          </div>
-          
-          <h1 className="text-5xl md:text-6xl font-black font-display text-white uppercase tracking-tight mb-8 leading-[1.1]">
-            Capture Opportunities <br />
-            <span className="text-[#FF6044]">Without Switching Tabs</span>
-          </h1>
-          
-          <p className="text-xl font-light text-gray-400 leading-relaxed mb-12">
-            The HireTrack extension sits right in your browser. Save jobs and log referrals directly from LinkedIn, Indeed, and across the web instantly.
-          </p>
+        <div className="grid lg:grid-cols-2 gap-16 lg:gap-8 items-center pt-8">
+          {/* Hero Section */}
+          <section className="flex flex-col items-start text-left max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#FF6044]/10 border border-[#FF6044]/20 text-[#FF6044] text-xs font-display tracking-widest uppercase mb-10 rounded-full">
+              <Puzzle size={14} /> Extension Module
+            </div>
+            
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-black font-display text-white uppercase tracking-tight mb-8 leading-[1.05]">
+              Capture Opportunities <br />
+              <span className="text-[#FF6044]">Without Switching Tabs</span>
+            </h1>
+            
+            <p className="text-xl font-light text-gray-400 leading-relaxed mb-12">
+              The HireTrack extension sits right in your browser. Save jobs and log referrals directly from LinkedIn, Indeed, and across the web instantly.
+            </p>
 
-          <a 
-            href="/hiretrack-extension.zip" 
-            download="hiretrack-extension.zip"
-            className="inline-flex items-center justify-center gap-3 px-10 py-5 bg-[#FF6044] text-[#121313] rounded-xl font-black text-sm uppercase tracking-widest hover:bg-white transition-all transform hover:-translate-y-1 shadow-[0_0_20px_rgba(255,96,68,0.3)]"
-          >
-            <Download size={20} strokeWidth={3} />
-            Download ZIP
-          </a>
-        </section>
+            <a 
+              href="/hiretrack-extension.zip" 
+              download="hiretrack-extension.zip"
+              className="inline-flex items-center justify-center gap-3 px-10 py-5 bg-[#FF6044] text-[#121313] rounded-xl font-black text-sm uppercase tracking-widest hover:bg-white transition-all transform hover:-translate-y-1 shadow-[0_0_20px_rgba(255,96,68,0.3)]"
+            >
+              <Download size={20} strokeWidth={3} />
+              Download ZIP
+            </a>
+          </section>
 
-        {/* Visual Mockup - Full Chrome Walkthrough */}
-        <section className="flex justify-center relative">
-          <div className="absolute inset-0 bg-gradient-to-t from-[#101212] via-transparent to-transparent z-20 bottom-0 h-32 mt-auto pointer-events-none" />
-          <div className="w-full max-w-3xl rounded-t-2xl border-t border-l border-r border-white/10 bg-[#1A1B1B] overflow-hidden shadow-2xl p-2 pb-0 relative">
-             <div className="bg-[#121313] w-full h-[360px] rounded-t-xl border border-white/5 relative overflow-hidden">
+          {/* Visual Mockup - Full Chrome Walkthrough */}
+          <section className="flex justify-center relative w-full">
+            <div className="absolute inset-0 bg-gradient-to-t from-[#101212] via-transparent to-transparent z-20 bottom-0 h-32 mt-auto pointer-events-none" />
+            <div className="w-full max-w-2xl rounded-t-2xl border-t border-l border-r border-white/10 bg-[#1A1B1B] overflow-hidden shadow-2xl p-2 pb-0 relative">
+               <div className="bg-[#121313] w-full h-[360px] rounded-t-xl border border-white/5 relative overflow-hidden">
                 
                 {/* Browser top bar mockup */}
                 <div className="flex items-center gap-4 border-b border-white/5 p-4 relative z-10 bg-[#121313]">
@@ -183,6 +184,7 @@ export default function ExtensionPage() {
              </div>
           </div>
         </section>
+        </div>
 
         {/* Installation Guide */}
         <section className="space-y-12">
