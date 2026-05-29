@@ -39,74 +39,146 @@ export default function ExtensionPage() {
           </a>
         </section>
 
-        {/* Visual Mockup */}
+        {/* Visual Mockup - Full Chrome Walkthrough */}
         <section className="flex justify-center relative">
           <div className="absolute inset-0 bg-gradient-to-t from-[#101212] via-transparent to-transparent z-20 bottom-0 h-32 mt-auto pointer-events-none" />
           <div className="w-full max-w-3xl rounded-t-2xl border-t border-l border-r border-white/10 bg-[#1A1B1B] overflow-hidden shadow-2xl p-2 pb-0 relative">
-             <div className="bg-[#121313] w-full h-[320px] rounded-t-xl border border-white/5 relative p-6 overflow-hidden">
+             <div className="bg-[#121313] w-full h-[360px] rounded-t-xl border border-white/5 relative overflow-hidden">
                 
                 {/* Browser top bar mockup */}
-                <div className="flex items-center gap-4 border-b border-white/5 pb-4 mb-6 relative z-10">
+                <div className="flex items-center gap-4 border-b border-white/5 p-4 relative z-10 bg-[#121313]">
                    <div className="flex gap-2">
                      <div className="w-3 h-3 rounded-full bg-white/10"></div>
                      <div className="w-3 h-3 rounded-full bg-white/10"></div>
                      <div className="w-3 h-3 rounded-full bg-white/10"></div>
                    </div>
-                   <div className="flex-1 bg-white/5 h-6 rounded-md"></div>
-                   <div className="flex gap-4 relative pr-2">
-                     <motion.div 
-                       animate={{ scale: [1, 1, 0.85, 1, 1] }} 
-                       transition={{ duration: 4, repeat: Infinity, times: [0, 0.35, 0.38, 0.4, 1] }}
+                   
+                   <motion.div 
+                     className="flex-1 bg-white/5 h-7 rounded-md px-4 flex items-center overflow-hidden"
+                   >
+                     <motion.span 
+                       animate={{ opacity: [0, 0, 1, 1, 0] }}
+                       transition={{ duration: 8, repeat: Infinity, times: [0, 0.30, 0.31, 0.99, 1] }}
+                       className="text-[11px] text-gray-500 font-mono tracking-wide"
                      >
-                       <Puzzle size={16} className="text-[#FF6044]" />
+                       chrome://extensions
+                     </motion.span>
+                   </motion.div>
+                   
+                   <div className="flex gap-5 relative pr-2 items-center">
+                     <Puzzle size={16} className="text-gray-600" />
+                     <div className="w-7 h-7 rounded-full bg-white/10"></div>
+                     
+                     {/* 3 Dots Menu */}
+                     <motion.div 
+                       animate={{ scale: [1, 1, 1, 0.8, 1, 0.8, 1, 0.8, 1, 1, 1] }} 
+                       transition={{ duration: 8, repeat: Infinity, times: [0, 0.05, 0.15, 0.175, 0.275, 0.3, 0.425, 0.45, 0.5, 0.81, 1] }}
+                       className="flex flex-col gap-[3px] items-center justify-center w-5 h-5 cursor-pointer hover:bg-white/5 rounded-full"
+                     >
+                       <div className="w-[3px] h-[3px] rounded-full bg-gray-400"></div>
+                       <div className="w-[3px] h-[3px] rounded-full bg-gray-400"></div>
+                       <div className="w-[3px] h-[3px] rounded-full bg-gray-400"></div>
                      </motion.div>
-                     <div className="w-6 h-6 rounded-full bg-white/10 -mt-1"></div>
                    </div>
                 </div>
                 
-                {/* Extension Popup Mockup */}
+                {/* Dropdown Menu Mockup */}
                 <motion.div 
-                  initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                  animate={{ opacity: [0, 0, 1, 1, 0], y: [-10, -10, 0, 0, -10], scale: [0.95, 0.95, 1, 1, 0.95] }}
-                  transition={{ duration: 4, repeat: Infinity, times: [0, 0.38, 0.45, 0.9, 1] }}
-                  className="absolute top-16 right-6 w-72 bg-[#1A1B1B] border border-white/10 rounded-xl shadow-2xl p-4 z-10 origin-top-right"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: [0, 0, 1, 1, 0, 0], scale: [0.95, 0.95, 1, 1, 0.95, 0.95] }}
+                  transition={{ duration: 8, repeat: Infinity, times: [0, 0.17, 0.18, 0.30, 0.31, 1] }}
+                  className="absolute top-14 right-4 w-48 bg-[#1A1B1B] border border-white/10 rounded-xl shadow-2xl py-2 z-20 origin-top-right"
                 >
-                   <div className="flex items-center justify-between border-b border-white/5 pb-3 mb-4">
-                      <div className="flex items-center gap-2">
-                        <Puzzle size={16} className="text-[#FF6044]" />
-                        <span className="font-display font-bold text-sm">HireTrack</span>
-                      </div>
-                      <Pin size={14} className="text-gray-500" />
-                   </div>
-                   <div className="space-y-3">
-                      <div className="h-8 bg-white/5 rounded w-full"></div>
-                      <div className="h-8 bg-white/5 rounded w-full"></div>
-                      <motion.div 
-                        animate={{ scale: [1, 1, 0.96, 1, 1], backgroundColor: ["#FF6044", "#FF6044", "#ff4d2e", "#FF6044", "#FF6044"] }}
-                        transition={{ duration: 4, repeat: Infinity, times: [0, 0.75, 0.78, 0.8, 1] }}
-                        className="h-10 rounded w-full mt-4"
-                      ></motion.div>
-                   </div>
+                   <div className="px-4 py-2.5 text-xs text-gray-400">New Tab</div>
+                   <div className="px-4 py-2.5 text-xs text-gray-400">History</div>
+                   <div className="px-4 py-2.5 text-xs text-gray-400">Settings</div>
+                   <div className="my-1 border-t border-white/5"></div>
+                   <motion.div 
+                     animate={{ backgroundColor: ["transparent", "transparent", "transparent", "rgba(255,255,255,0.05)", "rgba(255,255,255,0.05)", "transparent"] }}
+                     transition={{ duration: 8, repeat: Infinity, times: [0, 0.26, 0.27, 0.28, 0.31, 1] }}
+                     className="px-4 py-2.5 text-xs text-white flex justify-between items-center"
+                   >
+                     Extensions <Globe size={12} className="text-gray-500" />
+                   </motion.div>
+                </motion.div>
+
+                {/* Browser Body - New Tab (Empty State) */}
+                <motion.div 
+                  animate={{ opacity: [1, 1, 0, 0, 1] }}
+                  transition={{ duration: 8, repeat: Infinity, times: [0, 0.30, 0.31, 0.99, 1] }}
+                  className="absolute inset-0 top-[60px] flex flex-col items-center justify-center z-10"
+                >
+                  <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-6">
+                    <Globe size={24} className="text-white/20" />
+                  </div>
+                  <div className="w-64 h-8 bg-white/5 rounded-full"></div>
+                </motion.div>
+
+                {/* Browser Body - Extensions Page */}
+                <motion.div 
+                  animate={{ opacity: [0, 0, 1, 1, 0] }}
+                  transition={{ duration: 8, repeat: Infinity, times: [0, 0.30, 0.31, 0.99, 1] }}
+                  className="absolute inset-0 top-[60px] p-8 z-10 bg-[#121313]"
+                >
+                  <div className="mb-8 flex items-center justify-between border-b border-white/5 pb-4">
+                    <h2 className="text-2xl font-display font-bold text-white">Extensions</h2>
+                    <div className="px-3 py-1 bg-[#FF6044]/10 text-[#FF6044] text-[10px] uppercase tracking-widest font-bold rounded-full border border-[#FF6044]/20">
+                      Developer mode ON
+                    </div>
+                  </div>
+                  
+                  {/* HireTrack Extension Card */}
+                  <div className="w-full max-w-[340px] bg-[#1A1B1B] border border-white/5 rounded-2xl p-6 shadow-lg relative">
+                     <div className="flex items-start gap-4 mb-6">
+                        <div className="w-14 h-14 rounded-xl bg-[#FF6044]/10 flex items-center justify-center border border-[#FF6044]/20 flex-shrink-0">
+                          <Puzzle size={28} className="text-[#FF6044]" />
+                        </div>
+                        <div>
+                          <h3 className="font-display font-bold text-white text-base">HireTrack</h3>
+                          <p className="text-[11px] text-gray-500 mb-2 font-mono">Version 1.0.0</p>
+                          <p className="text-xs text-gray-400 leading-relaxed font-light">Capture job postings and manage referrals directly from the web.</p>
+                        </div>
+                     </div>
+                     <div className="flex justify-between items-center pt-4 border-t border-white/5">
+                        <span className="text-[10px] text-gray-500 uppercase tracking-widest">Status</span>
+                        {/* Toggle Switch */}
+                        <div className="w-11 h-6 rounded-full bg-[#333] relative flex items-center px-1 shadow-inner">
+                          <motion.div 
+                            animate={{ 
+                              x: [0, 0, 20, 20, 0],
+                              backgroundColor: ["#888", "#888", "#fff", "#fff", "#888"]
+                            }}
+                            transition={{ duration: 8, repeat: Infinity, times: [0, 0.45, 0.46, 0.99, 1] }}
+                            className="w-4 h-4 rounded-full absolute left-1 shadow-md z-10"
+                          ></motion.div>
+                          
+                          <motion.div 
+                            animate={{ backgroundColor: ["#333", "#333", "#FF6044", "#FF6044", "#333"] }}
+                            transition={{ duration: 8, repeat: Infinity, times: [0, 0.45, 0.46, 0.99, 1] }}
+                            className="absolute inset-0 rounded-full"
+                          ></motion.div>
+                        </div>
+                     </div>
+                  </div>
                 </motion.div>
 
                 {/* Animated Cursor */}
                 <motion.div
-                  initial={{ x: "50%", y: "200%", opacity: 0 }}
                   animate={{ 
-                    x: ["50%", "92%", "92%", "82%", "82%", "50%"], 
-                    y: ["200px", "20px", "20px", "190px", "190px", "200px"],
-                    opacity: [0, 1, 1, 1, 1, 0],
-                    scale: [1, 1, 0.85, 1, 1, 0.85, 1, 1] // Added scale array for clicking
+                    left: ["50%", "50%", "95%", "95%",  "85%", "85%", "40%", "40%", "55%", "55%", "50%"],
+                    top:  ["110%", "80%", "28px", "28px", "155px", "155px", "280px", "280px", "320px", "320px", "110%"],
+                    scale: [1, 1, 1, 0.8, 1, 0.8, 1, 0.8, 1, 1, 1],
+                    opacity:[0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0]
                   }}
                   transition={{ 
-                     duration: 4, 
+                     duration: 8, 
                      repeat: Infinity,
-                     times: [0, 0.25, 0.4, 0.6, 0.8, 1],
+                     times: [0, 0.05, 0.15, 0.175, 0.275, 0.3, 0.425, 0.45, 0.5, 0.81, 1],
                      ease: "easeInOut"
                   }}
-                  className="absolute top-0 left-0 z-30 pointer-events-none drop-shadow-[0_5px_15px_rgba(0,0,0,0.5)]"
+                  className="absolute z-30 pointer-events-none drop-shadow-[0_5px_15px_rgba(0,0,0,0.5)] -ml-2 -mt-2"
                 >
-                   <MousePointer2 size={32} className="text-white fill-[#121313] stroke-[1.5]" />
+                   <MousePointer2 size={36} className="text-white fill-[#121313] stroke-[1.5]" />
                 </motion.div>
              </div>
           </div>
