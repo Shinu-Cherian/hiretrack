@@ -5,7 +5,7 @@
   width: 44px;
   height: 44px;
   border-radius: 14px;
-  background: #f97316; /* orange-500 */
+  background: #121313; /* space black */
   color: white;
   display: flex;
   align-items: center;
@@ -20,7 +20,7 @@
 }
 
 #hiretrack-fab.active {
-  background: #111827; /* gray-900 */
+  background: #1A1B1B; /* slightly lighter black */
   transform: rotate(135deg);
 }
 
@@ -48,10 +48,10 @@
 .hiretrack-menu-item {
   background: #FF6044;
   color: #121313;
-  padding: 12px 20px;
-  border-radius: 12px;
+  padding: 8px 16px;
+  border-radius: 10px;
   font-family: sans-serif;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 900;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(255, 96, 68, 0.2);
@@ -64,7 +64,8 @@
 }
 
 .hiretrack-menu-item:hover {
-  background: white;
+  background: #FF6044;
+  box-shadow: 0 0 15px rgba(255, 96, 68, 0.6);
   transform: translateX(-5px);
 }
 

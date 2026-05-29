@@ -9,7 +9,7 @@
   // FAB Button
   const fab = document.createElement('div');
   fab.id = 'hiretrack-fab';
-  fab.innerHTML = 'HT';
+  fab.innerHTML = '<span style="color: white">H</span><span style="color: #FF6044">T</span>';
   root.appendChild(fab);
 
   // Menu
