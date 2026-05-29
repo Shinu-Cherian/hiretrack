@@ -19,6 +19,7 @@ import StreakPage from "./StreakPage";
 import ResumeAnalyzerPage from "./ResumeAnalyzerPage";
 import CoverLetterPage from "./CoverLetterPage";
 import ExtensionFormPage from "./ExtensionFormPage";
+import ExtensionPage from "./ExtensionPage";
 import CareerRoadmapPage from "./CareerRoadmapPage";
 import RoadmapPage from "./RoadmapPage";
 import SecurityPage from "./SecurityPage";
@@ -36,6 +37,7 @@ function App() {
   return (
     <Routes>
       <Route path="/extension/:type" element={<Private><ExtensionFormPage /></Private>} />
+      <Route path="/extension" element={<ExtensionPage />} />
       <Route path="/" element={<Home />} />
       <Route path="/manifesto" element={<ManifestoPage />} />
       <Route path="/developer-card" element={<DeveloperCard />} />

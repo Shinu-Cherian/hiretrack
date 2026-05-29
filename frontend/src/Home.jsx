@@ -1051,7 +1051,7 @@ export default function Home() {
               <FooterLink to="/dashboard">Command Center</FooterLink>
               <FooterLink to="/career-roadmap">Career Roadmap</FooterLink>
               <FooterLink to="/career-vault">The Vault</FooterLink>
-              <FooterLink onClick={() => setShowComingSoon("chrome extension is in beta... stay cracked ⚡")}>Extension</FooterLink>
+              <FooterLink to="/extension">Extension</FooterLink>
             </FooterColumn>
 
             <FooterColumn title="Company">
