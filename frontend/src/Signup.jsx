@@ -39,7 +39,8 @@ export default function Signup() {
   const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
-    if (!firstName && !lastName) {
+    // Only generate when BOTH First Name and Last Name are provided
+    if (!firstName || !lastName) {
       setUsernameSuffix(null);
       setIsGenerating(false);
       return;
@@ -54,7 +55,7 @@ export default function Signup() {
     return () => clearTimeout(timeoutId);
   }, [firstName, lastName]);
 
-  const generatedUsername = (firstName || lastName) && usernameSuffix && !isGenerating
+  const generatedUsername = (firstName && lastName) && usernameSuffix && !isGenerating
     ? `${firstName.toLowerCase().replace(/[^a-z0-9]/g, '')}_${lastName.toLowerCase().replace(/[^a-z0-9]/g, '')}_${usernameSuffix}`
     : "";
 
