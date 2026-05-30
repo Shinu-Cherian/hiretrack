@@ -4,6 +4,8 @@ import ManifestoPage from "./ManifestoPage";
 import DeveloperCard from "./DeveloperCard";
 import Login from "./Login";  
 import Signup from "./Signup";
+import ForgotPassword from "./ForgotPassword";
+import ResetPassword from "./ResetPassword";
 import Dashboard from "./Dashboard";
 import JobsPage from "./JobsPage";
 import AddJobPage from "./AddJobPage";
@@ -43,6 +45,8 @@ function App() {
       <Route path="/developer-card" element={<DeveloperCard />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password/:uidb64/:token" element={<ResetPassword />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/jobs" element={<JobsPage />} />
       <Route path="/add-job" element={<AddJobPage />} />

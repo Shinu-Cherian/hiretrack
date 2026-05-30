@@ -18,6 +18,11 @@ from .utils_pdf import render_to_pdf
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from datetime import date, timedelta
 from django.http import FileResponse, Http404, JsonResponse, HttpResponse
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.core.mail import send_mail
+import json
 import re
 from io import BytesIO
 from collections import Counter
@@ -1367,6 +1372,64 @@ def login_api(request):
             })
         else:
             return JsonResponse({"error": "Invalid credentials"}, status=400)
+
+
+@csrf_exempt
+def forgot_password_api(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            email = data.get("email", "").strip().lower()
+            if not email:
+                return JsonResponse({"error": "Email is required"}, status=400)
+            
+            user = User.objects.filter(email=email).first()
+            if user:
+                token = default_token_generator.make_token(user)
+                uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+                reset_link = f"http://localhost:5173/reset-password/{uidb64}/{token}/"
+                
+                send_mail(
+                    "HireTrack Password Reset",
+                    f"You requested a password reset.\n\nClick the link below to securely create a new password:\n\n{reset_link}\n\nIf you did not request this, please ignore this email.",
+                    "support.hiretrack@gmail.com",
+                    [user.email],
+                    fail_silently=False,
+                )
+            # Always return success to prevent email enumeration (security best practice)
+            return JsonResponse({"message": "If an account with that email exists, a password reset link has been sent."})
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    return JsonResponse({"error": "Method not allowed"}, status=405)
+
+
+@csrf_exempt
+def reset_password_api(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            uidb64 = data.get("uidb64")
+            token = data.get("token")
+            new_password = data.get("password")
+            
+            if not all([uidb64, token, new_password]):
+                return JsonResponse({"error": "Missing parameters"}, status=400)
+                
+            try:
+                uid = force_str(urlsafe_base64_decode(uidb64))
+                user = User.objects.get(pk=uid)
+            except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+                user = None
+                
+            if user is not None and default_token_generator.check_token(user, token):
+                user.set_password(new_password)
+                user.save()
+                return JsonResponse({"message": "Password has been securely reset. You can now log in."})
+            else:
+                return JsonResponse({"error": "The reset link is invalid or has expired."}, status=400)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    return JsonResponse({"error": "Method not allowed"}, status=405)
 
 
 

@@ -15,6 +15,8 @@ urlpatterns = [
     path('signup/', views.signup, name='signup'),
     path('get-csrf/', views.get_csrf),
     path('login/', views.login_api),
+    path('api/forgot-password/', views.forgot_password_api),
+    path('api/reset-password/', views.reset_password_api),
 
     # Serve media files from database or physical disk fallback
     re_path(r'^media/(?P<path>.*)$', views.serve_db_media),
