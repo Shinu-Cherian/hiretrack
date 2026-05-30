@@ -35,6 +35,11 @@ export default function Signup() {
   const [agreed, setAgreed] = useState(false);
   const [showTerms, setShowTerms] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [usernameSuffix] = useState(() => Math.floor(1000 + Math.random() * 9000));
+
+  const generatedUsername = firstName || lastName 
+    ? `${firstName.toLowerCase().replace(/[^a-z0-9]/g, '')}_${lastName.toLowerCase().replace(/[^a-z0-9]/g, '')}_${usernameSuffix}`
+    : "";
 
   const pwdScore = evaluatePassword(password);
   
@@ -67,7 +72,8 @@ export default function Signup() {
       last_name: lastName,
       email: email,
       password: password,
-      confirm_password: confirm
+      confirm_password: confirm,
+      username: generatedUsername
     };
 
     const res = await fetch(apiUrl("/signup/"), {
@@ -253,8 +259,8 @@ export default function Signup() {
                       <input
                         type="text"
                         placeholder="Auto-generated"
-                        className="w-full bg-[#1a1b1b] border border-white/5 rounded-2xl py-2.5 pl-11 pr-4 text-sm text-gray-500 outline-none cursor-not-allowed font-medium select-none"
-                        value={firstName || lastName ? `${firstName.toLowerCase().replace(/[^a-z0-9]/g, '')}_${lastName.toLowerCase().replace(/[^a-z0-9]/g, '')}` : ""}
+                        className="w-full bg-[#1a1b1b] border border-white/5 rounded-2xl py-2.5 pl-11 pr-4 text-sm text-[#FF6044] outline-none cursor-not-allowed font-black select-none"
+                        value={generatedUsername}
                         disabled
                       />
                     </div>

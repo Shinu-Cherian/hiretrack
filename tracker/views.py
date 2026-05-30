@@ -1036,12 +1036,16 @@ def signup(request):
             if User.objects.filter(email=email).exists():
                 return JsonResponse({"error": "An account with this email already exists"}, status=400)
 
-            # ⚙️ Auto-generate a unique username
-            base_username = f"{first_name.lower()}_{last_name.lower()}"
-            base_username = "".join([c for c in base_username if c.isalnum() or c == "_"])
-            username = base_username
-            while User.objects.filter(username=username).exists():
-                username = f"{base_username}_{random.randint(100, 9999)}"
+            # ⚙️ Unique Username Generation
+            provided_username = data.get('username')
+            if provided_username and not User.objects.filter(username=provided_username).exists():
+                username = provided_username
+            else:
+                base_username = f"{first_name.lower()}_{last_name.lower()}"
+                base_username = "".join([c for c in base_username if c.isalnum() or c == "_"])
+                username = base_username
+                while User.objects.filter(username=username).exists():
+                    username = f"{base_username}_{random.randint(100, 9999)}"
 
             # ✅ Create user
             user = User.objects.create_user(username=username, email=email, password=password)
