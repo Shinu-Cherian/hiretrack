@@ -1339,10 +1339,19 @@ def get_csrf(request):
 @csrf_exempt
 def login_api(request):
     if request.method == "POST":
-        username = request.POST.get("username")
+        login_identifier = request.POST.get("username")
         password = request.POST.get("password")
 
-        user = authenticate(request, username=username, password=password)
+        # Support both Email and Username
+        actual_username = login_identifier
+        if "@" in login_identifier:
+            try:
+                user_obj = User.objects.get(email=login_identifier)
+                actual_username = user_obj.username
+            except User.DoesNotExist:
+                pass
+
+        user = authenticate(request, username=actual_username, password=password)
 
         if user is not None:
             login(request, user)

@@ -100,12 +100,12 @@ export default function Login() {
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Username</label>
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Email or Username</label>
                 <div className="relative group">
                   <User size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-[#FF6044] transition-colors" />
                   <input
                     type="text"
-                    placeholder="Enter your username"
+                    placeholder="Enter your email or username"
                     className="w-full bg-[#1a1b1b] border border-white/5 rounded-2xl py-4 pl-12 pr-4 text-white outline-none focus:border-[#FF6044]/50 focus:ring-4 focus:ring-[#FF6044]/5 transition-all placeholder:text-gray-600 font-medium"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
