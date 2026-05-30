@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Sparkles, Star, ShieldCheck, ArrowRight, UserPlus, Lock, Mail, User, Eye, EyeOff, CheckCircle2, X, Briefcase, FileText } from 'lucide-react';
+import { Sparkles, Star, ShieldCheck, ArrowRight, UserPlus, Lock, Mail, User, Eye, EyeOff, CheckCircle2, X, Briefcase, FileText, Loader2 } from 'lucide-react';
 import { apiUrl } from "./api";
 import Header from "./Header";
 
@@ -35,9 +35,26 @@ export default function Signup() {
   const [agreed, setAgreed] = useState(false);
   const [showTerms, setShowTerms] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [usernameSuffix] = useState(() => Math.floor(1000 + Math.random() * 9000));
+  const [usernameSuffix, setUsernameSuffix] = useState(null);
+  const [isGenerating, setIsGenerating] = useState(false);
 
-  const generatedUsername = firstName || lastName 
+  useEffect(() => {
+    if (!firstName && !lastName) {
+      setUsernameSuffix(null);
+      setIsGenerating(false);
+      return;
+    }
+
+    setIsGenerating(true);
+    const timeoutId = setTimeout(() => {
+      setUsernameSuffix(Math.floor(1000 + Math.random() * 9000));
+      setIsGenerating(false);
+    }, 3000);
+
+    return () => clearTimeout(timeoutId);
+  }, [firstName, lastName]);
+
+  const generatedUsername = (firstName || lastName) && usernameSuffix && !isGenerating
     ? `${firstName.toLowerCase().replace(/[^a-z0-9]/g, '')}_${lastName.toLowerCase().replace(/[^a-z0-9]/g, '')}_${usernameSuffix}`
     : "";
 
@@ -255,12 +272,16 @@ export default function Signup() {
                   <div className="space-y-1.5 flex-1">
                     <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-1">Generated Username</label>
                     <div className="relative group">
-                      <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 transition-colors" />
+                      {isGenerating ? (
+                        <Loader2 size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#FF6044] animate-spin" />
+                      ) : (
+                        <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 transition-colors" />
+                      )}
                       <input
                         type="text"
                         placeholder="Auto-generated"
-                        className="w-full bg-[#1a1b1b] border border-white/5 rounded-2xl py-2.5 pl-11 pr-4 text-sm text-[#FF6044] outline-none cursor-not-allowed font-black select-none"
-                        value={generatedUsername}
+                        className={`w-full bg-[#1a1b1b] border border-white/5 rounded-2xl py-2.5 pl-11 pr-4 text-sm outline-none cursor-not-allowed font-black select-none ${isGenerating ? 'text-gray-500 animate-pulse' : 'text-[#FF6044]'}`}
+                        value={isGenerating ? "Generating username..." : generatedUsername}
                         disabled
                       />
                     </div>
