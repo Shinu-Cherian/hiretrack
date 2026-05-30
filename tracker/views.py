@@ -1453,7 +1453,6 @@ def contact_support_api(request):
                 full_message,
                 "support.hiretrack@gmail.com", # From email
                 ["support.hiretrack@gmail.com"], # To email
-                reply_to=[email],
                 fail_silently=False,
             )
             return JsonResponse({"message": "Your message has been sent successfully. We will get back to you soon!"})
