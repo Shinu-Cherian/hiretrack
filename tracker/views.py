@@ -1432,6 +1432,36 @@ def reset_password_api(request):
     return JsonResponse({"error": "Method not allowed"}, status=405)
 
 
+@csrf_exempt
+def contact_support_api(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            name = data.get("name", "").strip()
+            email = data.get("email", "").strip()
+            subject = data.get("subject", "").strip()
+            message = data.get("message", "").strip()
+            
+            if not all([name, email, subject, message]):
+                return JsonResponse({"error": "All fields are required"}, status=400)
+                
+            full_subject = f"Help Center Request: {subject}"
+            full_message = f"New Support Ticket from HireTrack Help Center:\n\nName: {name}\nEmail: {email}\n\nMessage:\n{message}"
+            
+            send_mail(
+                full_subject,
+                full_message,
+                "support.hiretrack@gmail.com", # From email
+                ["support.hiretrack@gmail.com"], # To email
+                reply_to=[email],
+                fail_silently=False,
+            )
+            return JsonResponse({"message": "Your message has been sent successfully. We will get back to you soon!"})
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    return JsonResponse({"error": "Method not allowed"}, status=405)
+
+
 
 def get_jobs_api(request):
     user = api_user(request)

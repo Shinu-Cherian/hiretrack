@@ -1064,7 +1064,7 @@ export default function Home() {
             <FooterColumn title="Resources">
               <FooterLink onClick={() => setShowComingSoon("documentation is being compiled... 📚")}>Docs</FooterLink>
               <FooterLink onClick={() => setShowComingSoon("interview guides are in the vault... 🔐")}>Interview Prep</FooterLink>
-              <FooterLink onClick={() => setShowComingSoon("support protocols active soon... 📡")}>Help Center</FooterLink>
+              <FooterLink to="/help">Help Center</FooterLink>
             </FooterColumn>
 
             <FooterColumn title="Legal">

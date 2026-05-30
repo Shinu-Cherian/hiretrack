@@ -4,6 +4,7 @@ import ManifestoPage from "./ManifestoPage";
 import DeveloperCard from "./DeveloperCard";
 import Login from "./Login";  
 import Signup from "./Signup";
+import HelpCenter from "./HelpCenter";
 import ForgotPassword from "./ForgotPassword";
 import ResetPassword from "./ResetPassword";
 import Dashboard from "./Dashboard";
@@ -43,6 +44,7 @@ function App() {
       <Route path="/" element={<Home />} />
       <Route path="/manifesto" element={<ManifestoPage />} />
       <Route path="/developer-card" element={<DeveloperCard />} />
+      <Route path="/help" element={<HelpCenter />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
