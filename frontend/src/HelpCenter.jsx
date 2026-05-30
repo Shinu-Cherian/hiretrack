@@ -21,7 +21,7 @@ export default function HelpCenter() {
     setSuccess(false);
 
     try {
-      const res = await fetch(apiUrl("/contact-support/"), {
+      const res = await fetch(apiUrl("/api/contact-support/"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
