@@ -184,8 +184,8 @@ export default function Signup() {
               </div>
 
               <div className="relative z-10 text-center w-full mt-6">
-                 <h3 className="text-2xl font-black text-white mb-2 tracking-tight leading-tight">The ultimate Career Command Center for ambitious developers.</h3>
-                 <p className="text-[#FF6044] font-medium uppercase tracking-widest text-xs">Take control of your job hunt.<br/>Build your future.</p>
+                 <h3 className="text-2xl font-extrabold text-white mb-2 tracking-wide leading-tight drop-shadow-md">The ultimate Career Command Center for ambitious developers.</h3>
+                 <p className="text-[#FF6044] font-bold uppercase tracking-[0.2em] text-[10px]">Take control of your job hunt.<br/>Build your future.</p>
               </div>
             </div>
 
