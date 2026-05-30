@@ -23,6 +23,9 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.core.mail import send_mail
 import json
+import resend
+import os
+resend.api_key = os.environ.get("RESEND_API_KEY")
 import re
 from io import BytesIO
 from collections import Counter
@@ -1389,13 +1392,12 @@ def forgot_password_api(request):
                 uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
                 reset_link = f"http://localhost:5173/reset-password/{uidb64}/{token}/"
                 
-                send_mail(
-                    "HireTrack Password Reset",
-                    f"You requested a password reset.\n\nClick the link below to securely create a new password:\n\n{reset_link}\n\nIf you did not request this, please ignore this email.",
-                    "support.hiretrack@gmail.com",
-                    [user.email],
-                    fail_silently=False,
-                )
+                resend.Emails.send({
+                    "from": "HireTrack Support <onboarding@resend.dev>",
+                    "to": user.email,
+                    "subject": "HireTrack Password Reset",
+                    "text": f"You requested a password reset.\n\nClick the link below to securely create a new password:\n\n{reset_link}\n\nIf you did not request this, please ignore this email."
+                })
             # Always return success to prevent email enumeration (security best practice)
             return JsonResponse({"message": "If an account with that email exists, a password reset link has been sent."})
         except Exception as e:
@@ -1448,13 +1450,12 @@ def contact_support_api(request):
             full_subject = f"Help Center Request: {subject}"
             full_message = f"New Support Ticket from HireTrack Help Center:\n\nName: {name}\nEmail: {email}\n\nMessage:\n{message}"
             
-            send_mail(
-                full_subject,
-                full_message,
-                "support.hiretrack@gmail.com", # From email
-                ["support.hiretrack@gmail.com"], # To email
-                fail_silently=False,
-            )
+            resend.Emails.send({
+                "from": "HireTrack Support <onboarding@resend.dev>",
+                "to": "support.hiretrack@gmail.com",
+                "subject": full_subject,
+                "text": full_message
+            })
             return JsonResponse({"message": "Your message has been sent successfully. We will get back to you soon!"})
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
