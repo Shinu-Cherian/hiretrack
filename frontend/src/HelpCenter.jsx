@@ -49,7 +49,7 @@ export default function HelpCenter() {
 
   const faqs = [
     { q: "How do I add a new job?", a: "Navigate to your Dashboard and click the 'Add Job' button to start tracking a new application." },
-    { q: "Can I use HireTrack with my phone?", a: "Yes! HireTrack is fully responsive and works beautifully on any mobile device." },
+    { q: "How does the Career Roadmap work?", a: "Based on your major and current year, our AI generates a customized timeline of skills to learn and roles to target." },
     { q: "How does the AI Resume Analyzer work?", a: "The AI reads your resume PDF and compares it against modern ATS standards, providing actionable feedback to improve your score." }
   ];
 
@@ -63,14 +63,14 @@ export default function HelpCenter() {
           <div className="mb-12">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#FF6044]/10 border border-[#FF6044]/20 text-[#FF6044] text-xs font-black uppercase tracking-widest mb-6">
               <HelpCircle size={14} />
-              24/7 Priority Support
+              Direct Support
             </div>
-            <h1 className="text-4xl lg:text-6xl font-black text-white mb-6 tracking-tight leading-tight">
+            <h1 className="text-4xl lg:text-6xl font-black text-white mb-6 tracking-tight leading-tight font-display">
               We are here to <br className="hidden lg:block"/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF6044] to-[#ff8f7a]">help you succeed.</span>
+              <span className="text-[#FF6044]">help you succeed.</span>
             </h1>
             <p className="text-lg text-gray-400 font-medium leading-relaxed max-w-md">
-              Need assistance with your account, have a feature request, or just want to say hi? Send our support team a direct message.
+              Need assistance with your account, have a feature request, or encountered an issue? Send our support team a direct message and we will resolve it promptly.
             </p>
           </div>
 
