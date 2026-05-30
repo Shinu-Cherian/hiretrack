@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Briefcase, Key, User, ArrowRight, ShieldCheck, Zap, Sparkles, X } from "lucide-react";
+import { Briefcase, Key, User, ArrowRight, ShieldCheck, Zap, Sparkles, X, Lock } from "lucide-react";
 import { apiUrl, syncAuthStorage } from "./api";
 import Header from "./Header";
 
@@ -48,51 +48,64 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-[#121313] bg-dot-pattern relative overflow-hidden flex flex-col">
       <Header />
-      <div className="flex-1 flex items-center justify-center p-4">
-        <div className="w-full max-w-5xl z-10 animate-fade-in-up">
+      <div className="flex-1 flex items-center justify-center p-4 py-8">
+        <div className="w-full max-w-6xl z-10 animate-fade-in-up">
 
         <div className="saas-card overflow-hidden flex flex-col md:flex-row border-white/10 shadow-[0_30px_100px_rgba(0,0,0,0.5)]">
           
           {/* 3D ANIMATION SIDE */}
-          <div className="hidden md:flex md:w-1/2 bg-[#1a1b1b] items-center justify-center p-12 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-tr from-[#FF6044]/5 to-transparent z-0" />
-            
-            {/* Login Animation Scene */}
-            <div className="relative w-64 h-64 flex items-center justify-center perspective-1000">
-               {/* Central Lock Core */}
-               <div className="w-32 h-32 rounded-[2.5rem] bg-[#121313] border border-[#FF6044]/30 flex items-center justify-center shadow-[0_0_40px_rgba(255,96,68,0.15)] animate-float z-20">
-                  <ShieldCheck size={48} className="text-[#FF6044]" />
-               </div>
+          <div className="hidden md:flex md:w-5/12 bg-[#1a1b1b] flex-col items-center justify-center p-8 relative overflow-hidden">
+              <div className="relative w-full flex-1 flex items-center justify-center perspective-1000">
+                {/* Holographic grid floor */}
+                <div className="absolute inset-0 bg-[linear-gradient(to_right,#FF60441a_1px,transparent_1px),linear-gradient(to_bottom,#FF60441a_1px,transparent_1px)] bg-[size:2rem_2rem] [transform:rotateX(60deg)_translateZ(-50px)] opacity-30 animate-pulse" />
+                
+                {/* 3D Ring 1 */}
+                <div className="absolute w-48 h-48 border-2 border-[#FF6044]/30 rounded-full animate-spin-slow" style={{ transformStyle: 'preserve-3d', transform: 'rotateX(70deg) rotateY(20deg)' }}>
+                  <div className="absolute top-0 left-1/2 w-3 h-3 bg-[#FF6044] rounded-full shadow-[0_0_15px_#FF6044] -translate-x-1/2 -translate-y-1/2" />
+                </div>
+                
+                {/* 3D Ring 2 */}
+                <div className="absolute w-64 h-64 border border-white/10 rounded-full animate-spin-slow-reverse" style={{ animationDuration: '15s', transformStyle: 'preserve-3d', transform: 'rotateX(60deg) rotateY(-20deg)' }}>
+                  <div className="absolute bottom-0 right-1/4 w-2 h-2 bg-white rounded-full shadow-[0_0_10px_white] -translate-x-1/2 translate-y-1/2" />
+                </div>
 
-               {/* Orbiting Tech Elements */}
-               <div className="absolute inset-0 animate-spin-slow">
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-12 rounded-xl bg-white/5 border border-white/10 backdrop-blur-md flex items-center justify-center animate-pulse shadow-xl">
+                {/* Central Data Core */}
+                <div className="relative w-24 h-24 rounded-3xl bg-gradient-to-br from-[#FF6044] to-[#cc4c36] flex items-center justify-center shadow-[0_0_60px_rgba(255,96,68,0.4)] animate-float z-20 overflow-hidden group">
+                  <div className="absolute inset-0 bg-white/20 blur-xl group-hover:blur-md transition-all duration-500" />
+                  <Lock size={32} className="text-[#121313] relative z-10" />
+                </div>
+
+                {/* Floating Holograms */}
+                <div className="absolute inset-0 animate-spin-slow" style={{ animationDuration: '20s' }}>
+                  <div className="absolute top-1/4 left-1/4 w-12 h-12 rounded-xl bg-[#1a1b1b]/80 border border-white/10 backdrop-blur-md flex items-center justify-center animate-bounce shadow-xl" style={{ animationDelay: '0.5s' }}>
+                    <Key size={18} className="text-[#FF6044]" />
+                  </div>
+                </div>
+                <div className="absolute inset-0 animate-spin-slow-reverse" style={{ animationDuration: '25s' }}>
+                  <div className="absolute bottom-1/4 right-1/4 w-12 h-12 rounded-xl bg-[#1a1b1b]/80 border border-white/10 backdrop-blur-md flex items-center justify-center animate-float shadow-xl" style={{ animationDelay: '1s' }}>
                     <Zap size={20} className="text-[#FF6044]" />
                   </div>
-               </div>
-
-               <div className="absolute inset-[-20px] animate-spin-slow-reverse" style={{ animationDuration: '15s' }}>
-                  <div className="absolute bottom-0 right-10 w-14 h-14 rounded-xl bg-white/5 border border-white/10 backdrop-blur-md flex items-center justify-center animate-float shadow-xl">
-                    <Key size={24} className="text-[#FF6044]" />
+                </div>
+                <div className="absolute inset-0 animate-spin-slow" style={{ animationDuration: '30s' }}>
+                  <div className="absolute top-1/3 right-1/3 w-10 h-10 rounded-xl bg-[#1a1b1b]/80 border border-white/10 backdrop-blur-md flex items-center justify-center animate-bounce shadow-xl" style={{ animationDelay: '2s' }}>
+                    <User size={16} className="text-[#FF6044]" />
                   </div>
-                  <div className="absolute top-1/2 -left-10 w-12 h-12 rounded-xl bg-white/5 border border-white/10 backdrop-blur-md flex items-center justify-center animate-bounce shadow-xl">
-                    <Sparkles size={20} className="text-[#FF6044]" />
+                </div>
+                <div className="absolute inset-0 animate-spin-slow-reverse" style={{ animationDuration: '35s' }}>
+                  <div className="absolute bottom-1/3 left-1/3 w-10 h-10 rounded-xl bg-[#1a1b1b]/80 border border-white/10 backdrop-blur-md flex items-center justify-center animate-float shadow-xl" style={{ animationDelay: '3s' }}>
+                    <Sparkles size={16} className="text-[#FF6044]" />
                   </div>
-               </div>
+                </div>
+              </div>
 
-               {/* Grid Orbits */}
-               <div className="absolute inset-0 border border-white/5 rounded-full animate-ping opacity-10" style={{ animationDuration: '5s' }} />
-               <div className="absolute inset-[-60px] border border-white/5 rounded-full animate-ping opacity-5" style={{ animationDuration: '8s' }} />
-            </div>
-
-            <div className="absolute bottom-12 text-center px-8">
-               <h3 className="text-xl font-black text-white mb-2 tracking-tight">Secure Access Protocol</h3>
-               <p className="text-gray-500 text-sm leading-relaxed">Encrypted workspace for your professional growth and career data.</p>
-            </div>
+              <div className="relative z-10 text-center w-full mt-6">
+                 <h3 className="text-xl font-extrabold text-white mb-2 tracking-wide leading-tight drop-shadow-md">Secure Access Protocol</h3>
+                 <p className="text-[#FF6044] font-bold uppercase tracking-[0.2em] text-[10px]">Encrypted workspace for your professional growth and career data.</p>
+              </div>
           </div>
 
           {/* FORM SIDE */}
-          <div className="w-full md:w-1/2 p-10 lg:p-14 flex flex-col justify-center bg-[#121313]/50 backdrop-blur-3xl">
+          <div className="w-full md:w-7/12 p-6 lg:px-12 lg:py-8 flex flex-col justify-center bg-[#121313]/50 backdrop-blur-3xl">
             <div className="mb-10">
               <h2 className="text-3xl font-black text-white mb-2 tracking-tight">Welcome back</h2>
               <div className="h-1 w-12 bg-[#FF6044] rounded-full" />

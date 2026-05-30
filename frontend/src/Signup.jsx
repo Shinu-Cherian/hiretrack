@@ -230,19 +230,34 @@ export default function Signup() {
                   </div>
                 </div>
 
-                {/* ROW 2: Work Email */}
-                <div className="space-y-1.5">
-                  <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-1">Work Email</label>
-                  <div className="relative group">
-                    <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-[#FF6044] transition-colors" />
-                    <input
-                      type="email"
-                      placeholder="john@example.com"
-                      className="w-full bg-[#1a1b1b] border border-white/5 rounded-2xl py-2.5 pl-11 pr-4 text-sm text-white outline-none focus:border-[#FF6044]/50 focus:ring-4 focus:ring-[#FF6044]/5 transition-all placeholder:text-gray-600 font-medium"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
+                {/* ROW 2: Work Email & Auto Username */}
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="space-y-1.5 flex-1">
+                    <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-1">Work Email</label>
+                    <div className="relative group">
+                      <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-[#FF6044] transition-colors" />
+                      <input
+                        type="email"
+                        placeholder="john@example.com"
+                        className="w-full bg-[#1a1b1b] border border-white/5 rounded-2xl py-2.5 pl-11 pr-4 text-sm text-white outline-none focus:border-[#FF6044]/50 focus:ring-4 focus:ring-[#FF6044]/5 transition-all placeholder:text-gray-600 font-medium"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5 flex-1">
+                    <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-1">Generated Username</label>
+                    <div className="relative group">
+                      <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 transition-colors" />
+                      <input
+                        type="text"
+                        placeholder="Auto-generated"
+                        className="w-full bg-[#1a1b1b] border border-white/5 rounded-2xl py-2.5 pl-11 pr-4 text-sm text-gray-500 outline-none cursor-not-allowed font-medium select-none"
+                        value={firstName || lastName ? `${firstName.toLowerCase().replace(/[^a-z0-9]/g, '')}_${lastName.toLowerCase().replace(/[^a-z0-9]/g, '')}` : ""}
+                        disabled
+                      />
+                    </div>
                   </div>
                 </div>
 
