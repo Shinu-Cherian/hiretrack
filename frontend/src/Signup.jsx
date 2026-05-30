@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Briefcase, Sparkles, Zap, Star, ShieldCheck, ArrowRight, UserPlus, Lock } from 'lucide-react';
+import { Sparkles, Star, ShieldCheck, ArrowRight, UserPlus, Lock, Mail, User, Eye, EyeOff, CheckCircle2, X } from 'lucide-react';
 import { apiUrl } from "./api";
 import Header from "./Header";
 
@@ -11,34 +11,75 @@ function getCSRFToken() {
     ?.split("=")[1];
 }
 
+// Password strength evaluator
+function evaluatePassword(password) {
+  let score = 0;
+  if (!password) return score;
+  if (password.length >= 8) score += 1;
+  if (/[A-Z]/.test(password)) score += 1;
+  if (/[0-9]/.test(password)) score += 1;
+  if (/[^A-Za-z0-9]/.test(password)) score += 1;
+  return score; // 0 to 4
+}
+
 export default function Signup() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [username, setUsername] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [agreed, setAgreed] = useState(false);
+  const [showTerms, setShowTerms] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  const pwdScore = evaluatePassword(password);
+  
+  const getScoreColor = () => {
+    if (pwdScore <= 1) return 'bg-red-500';
+    if (pwdScore === 2 || pwdScore === 3) return 'bg-yellow-500';
+    return 'bg-green-500';
+  };
+
+  const getScoreLabel = () => {
+    if (pwdScore === 0) return 'Very Weak';
+    if (pwdScore === 1) return 'Weak';
+    if (pwdScore === 2 || pwdScore === 3) return 'Good';
+    return 'Strong';
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitting(true);
     
+    if (!agreed) {
+      alert("Please agree to the Terms of Service & Privacy Policy.");
+      return;
+    }
+
+    setSubmitting(true);
     await fetch(apiUrl("/get-csrf/"), { credentials: "include" });
+
+    const payload = {
+      first_name: firstName,
+      last_name: lastName,
+      email: email,
+      password: password,
+      confirm_password: confirm
+    };
 
     const res = await fetch(apiUrl("/signup/"), {
       method: "POST",
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
+        "Content-Type": "application/json",
         "X-CSRFToken": getCSRFToken(),
       },
       credentials: "include",
-      body: new URLSearchParams({
-        username: username,
-        password: password,
-        confirm_password: confirm,
-      }),
+      body: JSON.stringify(payload),
     });
+    
     setSubmitting(false);
 
     if (res.ok) {
@@ -53,123 +94,226 @@ export default function Signup() {
   return (
     <div className="min-h-screen bg-[#121313] bg-dot-pattern relative overflow-hidden flex flex-col">
       <Header />
-      <div className="flex-1 flex items-center justify-center p-4">
-        <div className="w-full max-w-5xl z-10 animate-fade-in-up">
 
-        <div className="saas-card overflow-hidden flex flex-col md:flex-row-reverse border-white/10 shadow-[0_30px_100px_rgba(0,0,0,0.5)]">
-          
-          {/* 3D ANIMATION SIDE */}
-          <div className="hidden md:flex md:w-1/2 bg-[#1a1b1b] items-center justify-center p-12 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#FF6044]/5 to-transparent z-0" />
-            
-            {/* Neural Hub Scene */}
-            <div className="relative w-64 h-64 flex items-center justify-center perspective-1000">
-               {/* Central Core */}
-               <div className="w-32 h-32 rounded-[2.5rem] bg-[#FF6044] flex items-center justify-center shadow-[0_0_50px_rgba(255,96,68,0.3)] animate-float z-20">
-                  <UserPlus size={48} className="text-[#121313]" />
-               </div>
-
-               {/* Orbiting Elements */}
-               <div className="absolute inset-0 animate-spin-slow">
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-12 h-12 rounded-xl bg-white/5 border border-white/10 backdrop-blur-md flex items-center justify-center animate-bounce shadow-xl">
-                    <Sparkles size={20} className="text-[#FF6044]" />
-                  </div>
-               </div>
-
-               <div className="absolute inset-0 animate-spin-slow-reverse" style={{ animationDuration: '12s' }}>
-                  <div className="absolute bottom-10 -left-4 w-12 h-12 rounded-xl bg-white/5 border border-white/10 backdrop-blur-md flex items-center justify-center animate-pulse shadow-xl">
-                    <Star size={20} className="text-[#FF6044]" />
-                  </div>
-                  <div className="absolute top-1/2 -right-8 w-14 h-14 rounded-xl bg-white/5 border border-white/10 backdrop-blur-md flex items-center justify-center animate-float shadow-xl">
-                    <ShieldCheck size={24} className="text-[#FF6044]" />
-                  </div>
-               </div>
-
-               {/* Grid Background Effect */}
-               <div className="absolute inset-0 border border-white/5 rounded-full animate-ping opacity-20" style={{ animationDuration: '4s' }} />
-               <div className="absolute inset-[-40px] border border-white/5 rounded-full animate-ping opacity-10" style={{ animationDuration: '6s' }} />
-            </div>
-
-            <div className="absolute bottom-12 text-center px-8">
-               <h3 className="text-xl font-black text-white mb-2 tracking-tight">Your Career Command Center</h3>
-               <p className="text-gray-500 text-sm leading-relaxed">Join thousands of professionals tracking their future with AI precision.</p>
-            </div>
-          </div>
-
-          {/* FORM SIDE */}
-          <div className="w-full md:w-1/2 p-10 lg:p-14 flex flex-col justify-center bg-[#121313]/50 backdrop-blur-3xl">
-            <div className="mb-10">
-              <h2 className="text-3xl font-black text-white mb-2 tracking-tight">Create account</h2>
-              <div className="h-1 w-12 bg-[#FF6044] rounded-full" />
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Username</label>
-                <div className="relative group">
-                  <Briefcase size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-[#FF6044] transition-colors" />
-                  <input
-                    type="text"
-                    placeholder="Choose a username"
-                    className="w-full bg-[#1a1b1b] border border-white/5 rounded-2xl py-4 pl-12 pr-4 text-white outline-none focus:border-[#FF6044]/50 focus:ring-4 focus:ring-[#FF6044]/5 transition-all placeholder:text-gray-600 font-medium"
-                    onChange={(e) => setUsername(e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Password</label>
-                <div className="relative group">
-                  <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-[#FF6044] transition-colors" />
-                  <input
-                    type="password"
-                    placeholder="Create a password"
-                    className="w-full bg-[#1a1b1b] border border-white/5 rounded-2xl py-4 pl-12 pr-4 text-white outline-none focus:border-[#FF6044]/50 focus:ring-4 focus:ring-[#FF6044]/5 transition-all placeholder:text-gray-600 font-medium"
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Confirm Password</label>
-                <div className="relative group">
-                  <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-[#FF6044] transition-colors" />
-                  <input
-                    type="password"
-                    placeholder="Repeat your password"
-                    className="w-full bg-[#1a1b1b] border border-white/5 rounded-2xl py-4 pl-12 pr-4 text-white outline-none focus:border-[#FF6044]/50 focus:ring-4 focus:ring-[#FF6044]/5 transition-all placeholder:text-gray-600 font-medium"
-                    onChange={(e) => setConfirm(e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
-
-              <button 
-                type="submit"
-                disabled={submitting}
-                className="group relative w-full bg-[#FF6044] text-[#121313] py-4 rounded-2xl font-black text-sm uppercase tracking-widest shadow-[0_10px_30px_rgba(255,96,68,0.2)] hover:bg-[#ff4d2e] hover:shadow-[0_15px_40px_rgba(255,96,68,0.3)] hover:-translate-y-1 transition-all active:scale-95 disabled:opacity-50 mt-4 overflow-hidden"
-              >
-                <span className="relative z-10 flex items-center justify-center gap-2">
-                  {submitting ? "Processing..." : "Register Now"}
-                  {!submitting && <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />}
-                </span>
-                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+      {/* TERMS MODAL */}
+      {showTerms && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="bg-[#1a1b1b] border border-white/10 rounded-3xl w-full max-w-2xl max-h-[80vh] flex flex-col shadow-2xl overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b border-white/5">
+              <h2 className="text-xl font-black text-white uppercase tracking-widest">Terms & Privacy Policy</h2>
+              <button onClick={() => setShowTerms(false)} className="text-gray-400 hover:text-white transition-colors">
+                <X size={24} />
               </button>
-            </form>
-
-            <div className="mt-10 pt-10 border-t border-white/5 text-center">
-              <p className="text-sm text-gray-500 font-medium">
-                Already part of the network?{" "}
-                <Link to="/login" className="text-[#FF6044] font-black hover:underline underline-offset-4 decoration-2">SIGN IN</Link>
-              </p>
+            </div>
+            <div className="p-6 overflow-y-auto text-gray-400 text-sm leading-relaxed space-y-4 custom-scrollbar">
+              <p>Welcome to HireTrack. By using our service, you agree to these terms.</p>
+              <h3 className="text-white font-bold uppercase tracking-wider text-xs">1. Data Security & Privacy</h3>
+              <p>Your job application data, notes, and professional history are securely stored. We will never sell your personal data to third-party advertisers or recruiters without your explicit consent.</p>
+              <h3 className="text-white font-bold uppercase tracking-wider text-xs">2. Account Responsibilities</h3>
+              <p>You are responsible for safeguarding the password that you use to access the service and for any activities or actions under your password. You agree not to disclose your password to any third party.</p>
+              <h3 className="text-white font-bold uppercase tracking-wider text-xs">3. Acceptable Use</h3>
+              <p>You agree not to misuse the HireTrack platform. This includes not interfering with our services, trying to access them using a method other than the interface and the instructions that we provide, or using the platform for automated bot scraping.</p>
+              <h3 className="text-white font-bold uppercase tracking-wider text-xs">4. Modifications to Service</h3>
+              <p>We reserve the right to modify or discontinue, temporarily or permanently, the service with or without notice. We shall not be liable to you or to any third party for any modification, suspension, or discontinuance of the service.</p>
+            </div>
+            <div className="p-6 border-t border-white/5 bg-[#121313] flex justify-end">
+              <button 
+                onClick={() => {
+                  setAgreed(true);
+                  setShowTerms(false);
+                }}
+                className="bg-[#FF6044] text-[#121313] px-8 py-3 rounded-xl font-black uppercase tracking-widest text-sm hover:bg-white transition-colors flex items-center gap-2"
+              >
+                <CheckCircle2 size={18} /> I Agree
+              </button>
             </div>
           </div>
+        </div>
+      )}
 
+      <div className="flex-1 flex items-center justify-center p-4 py-12">
+        <div className="w-full max-w-5xl z-10 animate-fade-in-up">
+          <div className="saas-card overflow-hidden flex flex-col md:flex-row-reverse border-white/10 shadow-[0_30px_100px_rgba(0,0,0,0.5)]">
+            
+            {/* 3D ANIMATION & MARKETING SIDE */}
+            <div className="hidden md:flex md:w-5/12 bg-[#1a1b1b] flex-col items-center justify-center p-12 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#FF6044]/10 via-[#1a1b1b] to-transparent z-0" />
+              
+              <div className="relative w-full flex-1 flex items-center justify-center perspective-1000">
+                 <div className="w-28 h-28 rounded-3xl bg-[#FF6044] flex items-center justify-center shadow-[0_0_50px_rgba(255,96,68,0.2)] animate-float z-20">
+                    <UserPlus size={40} className="text-[#121313]" />
+                 </div>
+                 <div className="absolute inset-0 animate-spin-slow">
+                    <div className="absolute top-1/4 left-1/4 w-10 h-10 rounded-xl bg-white/5 border border-white/10 backdrop-blur-md flex items-center justify-center animate-bounce shadow-xl">
+                      <Sparkles size={16} className="text-[#FF6044]" />
+                    </div>
+                 </div>
+                 <div className="absolute inset-0 animate-spin-slow-reverse" style={{ animationDuration: '12s' }}>
+                    <div className="absolute bottom-1/4 right-1/4 w-12 h-12 rounded-xl bg-white/5 border border-white/10 backdrop-blur-md flex items-center justify-center animate-pulse shadow-xl">
+                      <ShieldCheck size={20} className="text-[#FF6044]" />
+                    </div>
+                 </div>
+                 <div className="absolute inset-0 border border-white/5 rounded-full animate-ping opacity-20" style={{ animationDuration: '4s' }} />
+              </div>
+
+              <div className="relative z-10 text-center w-full mt-8">
+                 <h3 className="text-2xl font-black text-white mb-4 tracking-tight leading-tight">The ultimate Career Command Center for ambitious developers.</h3>
+                 <p className="text-[#FF6044] font-medium uppercase tracking-widest text-xs">Take control of your job hunt.<br/>Build your future.</p>
+              </div>
+            </div>
+
+            {/* FORM SIDE */}
+            <div className="w-full md:w-7/12 p-8 lg:p-12 flex flex-col justify-center bg-[#121313]/80 backdrop-blur-3xl">
+              <div className="mb-8">
+                <h2 className="text-3xl font-black text-white mb-2 tracking-tight">Create account</h2>
+                <div className="h-1 w-12 bg-[#FF6044] rounded-full" />
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-5">
+                
+                <div className="flex flex-col sm:flex-row gap-5">
+                  <div className="space-y-2 flex-1">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">First Name</label>
+                    <div className="relative group">
+                      <User size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-[#FF6044] transition-colors" />
+                      <input
+                        type="text"
+                        placeholder="John"
+                        className="w-full bg-[#1a1b1b] border border-white/5 rounded-2xl py-3.5 pl-12 pr-4 text-white outline-none focus:border-[#FF6044]/50 focus:ring-4 focus:ring-[#FF6044]/5 transition-all placeholder:text-gray-600 font-medium"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2 flex-1">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Last Name</label>
+                    <div className="relative group">
+                      <User size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-[#FF6044] transition-colors" />
+                      <input
+                        type="text"
+                        placeholder="Doe"
+                        className="w-full bg-[#1a1b1b] border border-white/5 rounded-2xl py-3.5 pl-12 pr-4 text-white outline-none focus:border-[#FF6044]/50 focus:ring-4 focus:ring-[#FF6044]/5 transition-all placeholder:text-gray-600 font-medium"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Work Email</label>
+                  <div className="relative group">
+                    <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-[#FF6044] transition-colors" />
+                    <input
+                      type="email"
+                      placeholder="john@example.com"
+                      className="w-full bg-[#1a1b1b] border border-white/5 rounded-2xl py-3.5 pl-12 pr-4 text-white outline-none focus:border-[#FF6044]/50 focus:ring-4 focus:ring-[#FF6044]/5 transition-all placeholder:text-gray-600 font-medium"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Password</label>
+                  <div className="relative group">
+                    <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-[#FF6044] transition-colors" />
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Create a strong password"
+                      className="w-full bg-[#1a1b1b] border border-white/5 rounded-2xl py-3.5 pl-12 pr-12 text-white outline-none focus:border-[#FF6044]/50 focus:ring-4 focus:ring-[#FF6044]/5 transition-all placeholder:text-gray-600 font-medium"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
+                    <button 
+                      type="button" 
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors"
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                  {/* Password Strength Meter */}
+                  {password.length > 0 && (
+                    <div className="pt-2 px-1">
+                      <div className="flex gap-1 h-1.5 w-full rounded-full overflow-hidden bg-white/5">
+                        <div className={`h-full transition-all duration-300 ${pwdScore >= 1 ? getScoreColor() : 'bg-transparent'}`} style={{ width: '25%' }} />
+                        <div className={`h-full transition-all duration-300 ${pwdScore >= 2 ? getScoreColor() : 'bg-transparent'}`} style={{ width: '25%' }} />
+                        <div className={`h-full transition-all duration-300 ${pwdScore >= 3 ? getScoreColor() : 'bg-transparent'}`} style={{ width: '25%' }} />
+                        <div className={`h-full transition-all duration-300 ${pwdScore >= 4 ? getScoreColor() : 'bg-transparent'}`} style={{ width: '25%' }} />
+                      </div>
+                      <div className="flex justify-between items-center mt-1.5">
+                        <span className={`text-[10px] font-bold uppercase tracking-widest ${pwdScore <= 1 ? 'text-red-500' : pwdScore <= 3 ? 'text-yellow-500' : 'text-green-500'}`}>
+                          {getScoreLabel()}
+                        </span>
+                        <span className="text-[9px] text-gray-500">
+                          Use 8+ chars, mix of letters, numbers & symbols
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Confirm Password</label>
+                  <div className="relative group">
+                    <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-[#FF6044] transition-colors" />
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Repeat your password"
+                      className="w-full bg-[#1a1b1b] border border-white/5 rounded-2xl py-3.5 pl-12 pr-4 text-white outline-none focus:border-[#FF6044]/50 focus:ring-4 focus:ring-[#FF6044]/5 transition-all placeholder:text-gray-600 font-medium"
+                      value={confirm}
+                      onChange={(e) => setConfirm(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* TERMS CHECKBOX */}
+                <div className="pt-2 flex items-start gap-3">
+                  <div className="mt-1 relative flex items-center justify-center">
+                    <input 
+                      type="checkbox" 
+                      id="terms" 
+                      checked={agreed}
+                      onChange={(e) => setAgreed(e.target.checked)}
+                      className="peer appearance-none w-5 h-5 border-2 border-gray-600 rounded-md checked:bg-[#FF6044] checked:border-[#FF6044] cursor-pointer transition-all"
+                    />
+                    <CheckCircle2 size={14} className="absolute text-[#121313] opacity-0 peer-checked:opacity-100 pointer-events-none" />
+                  </div>
+                  <label htmlFor="terms" className="text-xs text-gray-400 leading-relaxed cursor-pointer select-none">
+                    I agree to the <button type="button" onClick={(e) => { e.preventDefault(); setShowTerms(true); }} className="text-white font-bold hover:text-[#FF6044] underline decoration-white/20 hover:decoration-[#FF6044] underline-offset-4 transition-colors">Terms of Service</button> and <button type="button" onClick={(e) => { e.preventDefault(); setShowTerms(true); }} className="text-white font-bold hover:text-[#FF6044] underline decoration-white/20 hover:decoration-[#FF6044] underline-offset-4 transition-colors">Privacy Policy</button>.
+                  </label>
+                </div>
+
+                <button 
+                  type="submit"
+                  disabled={submitting || !agreed}
+                  className="group relative w-full bg-[#FF6044] text-[#121313] py-4 rounded-2xl font-black text-sm uppercase tracking-widest shadow-[0_10px_30px_rgba(255,96,68,0.2)] hover:bg-[#ff4d2e] hover:shadow-[0_15px_40px_rgba(255,96,68,0.3)] hover:-translate-y-1 transition-all active:scale-95 disabled:opacity-50 disabled:hover:translate-y-0 disabled:cursor-not-allowed mt-2 overflow-hidden"
+                >
+                  <span className="relative z-10 flex items-center justify-center gap-2">
+                    {submitting ? "Processing..." : "Create Account"}
+                    {!submitting && <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />}
+                  </span>
+                  <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                </button>
+              </form>
+
+              <div className="mt-8 pt-8 border-t border-white/5 text-center">
+                <p className="text-sm text-gray-500 font-medium">
+                  Already have an account?{" "}
+                  <Link to="/login" className="text-[#FF6044] font-black hover:underline underline-offset-4 decoration-2">SIGN IN</Link>
+                </p>
+              </div>
+            </div>
+
+          </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
 }

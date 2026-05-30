@@ -1015,24 +1015,45 @@ def toggle_star_referral(request, id):
 @csrf_exempt
 def signup(request):
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        confirm_password = request.POST.get('confirm_password')
+        import json
+        import random
+        try:
+            data = json.loads(request.body)
+            first_name = data.get('first_name', '').strip()
+            last_name = data.get('last_name', '').strip()
+            email = data.get('email', '').strip().lower()
+            password = data.get('password')
+            confirm_password = data.get('confirm_password')
 
-        # 🔐 Password match check
-        if password != confirm_password:
-            return JsonResponse({"error": "Passwords do not match"}, status=400)
+            if not all([first_name, last_name, email, password]):
+                return JsonResponse({"error": "All fields are required"}, status=400)
 
-        # 🔐 Username already exists check
-        if User.objects.filter(username=username).exists():
-            return JsonResponse({"error": "Username already taken"}, status=400)
+            # 🔐 Password match check
+            if password != confirm_password:
+                return JsonResponse({"error": "Passwords do not match"}, status=400)
 
-        # ✅ Create user
-        User.objects.create_user(username=username, password=password)
+            # 🔐 Email already exists check
+            if User.objects.filter(email=email).exists():
+                return JsonResponse({"error": "An account with this email already exists"}, status=400)
 
-        return JsonResponse({"message": "Signup success. Please login."})
+            # ⚙️ Auto-generate a unique username
+            base_username = f"{first_name.lower()}_{last_name.lower()}"
+            base_username = "".join([c for c in base_username if c.isalnum() or c == "_"])
+            username = base_username
+            while User.objects.filter(username=username).exists():
+                username = f"{base_username}_{random.randint(100, 9999)}"
 
-    return render(request, 'signup.html')
+            # ✅ Create user
+            user = User.objects.create_user(username=username, email=email, password=password)
+            user.first_name = first_name
+            user.last_name = last_name
+            user.save()
+
+            return JsonResponse({"message": "Signup success. Please login."})
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid request payload"}, status=400)
+
+    return JsonResponse({"error": "Method not allowed"}, status=405)
 
 
 @login_required
