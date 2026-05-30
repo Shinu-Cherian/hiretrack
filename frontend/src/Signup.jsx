@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Sparkles, Star, ShieldCheck, ArrowRight, UserPlus, Lock, Mail, User, Eye, EyeOff, CheckCircle2, X } from 'lucide-react';
+import { Sparkles, Star, ShieldCheck, ArrowRight, UserPlus, Lock, Mail, User, Eye, EyeOff, CheckCircle2, X, Briefcase, FileText } from 'lucide-react';
 import { apiUrl } from "./api";
 import Header from "./Header";
 
@@ -137,7 +137,7 @@ export default function Signup() {
             
             {/* 3D ANIMATION & MARKETING SIDE */}
             <div className="hidden md:flex md:w-5/12 bg-[#1a1b1b] flex-col items-center justify-center p-8 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#FF6044]/10 via-[#1a1b1b] to-transparent z-0" />
+              {/* Radiant glow removed as requested */}
               
               <div className="relative w-full flex-1 flex items-center justify-center perspective-1000">
                 {/* Holographic grid floor */}
@@ -168,6 +168,17 @@ export default function Signup() {
                 <div className="absolute inset-0 animate-spin-slow-reverse" style={{ animationDuration: '25s' }}>
                   <div className="absolute bottom-1/4 right-1/4 w-12 h-12 rounded-xl bg-[#1a1b1b]/80 border border-white/10 backdrop-blur-md flex items-center justify-center animate-float shadow-xl" style={{ animationDelay: '1s' }}>
                     <ShieldCheck size={20} className="text-[#FF6044]" />
+                  </div>
+                </div>
+                {/* 2 New Floating Holograms added as requested */}
+                <div className="absolute inset-0 animate-spin-slow" style={{ animationDuration: '30s' }}>
+                  <div className="absolute top-1/3 right-1/3 w-10 h-10 rounded-xl bg-[#1a1b1b]/80 border border-white/10 backdrop-blur-md flex items-center justify-center animate-bounce shadow-xl" style={{ animationDelay: '2s' }}>
+                    <Briefcase size={16} className="text-[#FF6044]" />
+                  </div>
+                </div>
+                <div className="absolute inset-0 animate-spin-slow-reverse" style={{ animationDuration: '35s' }}>
+                  <div className="absolute bottom-1/3 left-1/3 w-10 h-10 rounded-xl bg-[#1a1b1b]/80 border border-white/10 backdrop-blur-md flex items-center justify-center animate-float shadow-xl" style={{ animationDelay: '3s' }}>
+                    <FileText size={16} className="text-[#FF6044]" />
                   </div>
                 </div>
               </div>
