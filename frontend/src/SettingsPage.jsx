@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ShieldCheck, ArrowLeft, X, Save, Moon } from "lucide-react";
+import { ShieldCheck, ArrowLeft, X, Save, Moon, Eye, EyeOff } from "lucide-react";
 import Header from "./Header";
 import { apiUrl } from "./api";
 import BackButton from "./components/BackButton";
@@ -142,17 +142,28 @@ export default function SettingsPage() {
 }
 
 function PasswordInput({ label, value, onChange }) {
+  const [showPassword, setShowPassword] = useState(false);
+  
   return (
     <label className="block">
       <span className="text-xs font-black text-gray-500 uppercase tracking-widest block mb-2">{label}</span>
-      <input
-        type="password"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="form-input"
-        required
-        placeholder="••••••••"
-      />
+      <div className="relative">
+        <input
+          type={showPassword ? "text" : "password"}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="form-input w-full pr-12"
+          required
+          placeholder="••••••••"
+        />
+        <button 
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors"
+        >
+          {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+        </button>
+      </div>
     </label>
   );
 }
