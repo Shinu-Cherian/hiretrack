@@ -140,8 +140,8 @@ export default function NotificationsPage() {
                 setIsManageMode(!isManageMode);
                 if (isManageMode) setSelected(new Set());
               }}
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm transition-all duration-300 ${
-                isManageMode ? "bg-white/10 text-white" : "bg-transparent text-gray-400 hover:text-white hover:bg-white/5 border border-white/10"
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl font-black text-sm uppercase tracking-widest transition-all duration-300 ${
+                isManageMode ? "bg-white/10 text-white hover:bg-white/20" : "bg-[#FF6044] text-[#121313] hover:-translate-y-1 hover:shadow-lg hover:shadow-[#FF6044]/20"
               }`}
             >
               {isManageMode ? "Cancel" : <><Settings2 size={16} /> Manage Alerts</>}
@@ -270,67 +270,67 @@ export default function NotificationsPage() {
             })
           )}
         </div>
+      </main>
 
-        {isManageMode && selected.size > 0 && (
-           <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 animate-fade-in-up">
-              <button 
-                 onClick={() => setShowConfirmModal(true)}
-                 className="flex items-center gap-3 px-8 py-4 bg-[#FF6044] text-[#121313] rounded-full font-black uppercase tracking-widest text-sm brutalist-shadow hover:-translate-y-1 transition-all duration-300"
-              >
-                 <Trash2 size={18} />
-                 Delete ({selected.size}) Alerts
-              </button>
-           </div>
-        )}
-
-        {showConfirmModal && (
-          <div 
-            className="fixed inset-0 z-[500] flex items-center justify-center p-6 bg-surface/80 backdrop-blur-md animate-fade-in"
-            onClick={() => setShowConfirmModal(false)}
-          >
-            <div 
-              className="bg-[#121313] border border-white/10 p-12 max-w-md w-full text-center space-y-6 brutalist-shadow relative overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
+      {isManageMode && selected.size > 0 && (
+         <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 animate-fade-in-up">
+            <button 
+               onClick={() => setShowConfirmModal(true)}
+               className="flex items-center gap-3 px-8 py-4 bg-[#FF6044] text-[#121313] rounded-full font-black uppercase tracking-widest text-sm brutalist-shadow hover:-translate-y-1 transition-all duration-300"
             >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-[#FF6044]/5 -skew-x-12 translate-x-16 -translate-y-16 pointer-events-none"></div>
-              
-              <div className="w-16 h-16 bg-[#FF6044]/10 text-[#FF6044] rounded-none mx-auto flex items-center justify-center border border-[#FF6044]/20">
-                <Trash2 size={32} />
-              </div>
+               <Trash2 size={18} />
+               Delete ({selected.size}) Alerts
+            </button>
+         </div>
+      )}
 
-              <h3 className="text-2xl font-display font-black uppercase tracking-tight text-white">Confirm Deletion</h3>
+      {showConfirmModal && (
+        <div 
+          className="fixed inset-0 z-[500] flex items-center justify-center p-6 bg-black/80 backdrop-blur-md animate-fade-in"
+          onClick={() => setShowConfirmModal(false)}
+        >
+          <div 
+            className="bg-[#121313] border border-white/10 p-12 max-w-md w-full text-center space-y-6 brutalist-shadow relative overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="absolute top-0 right-0 w-32 h-32 bg-[#FF6044]/5 -skew-x-12 translate-x-16 -translate-y-16 pointer-events-none"></div>
+            
+            <div className="w-16 h-16 bg-[#FF6044]/10 text-[#FF6044] rounded-none mx-auto flex items-center justify-center border border-[#FF6044]/20">
+              <Trash2 size={32} />
+            </div>
 
-              <p className="text-gray-400 font-light lowercase tracking-tight italic text-lg leading-relaxed">
-                "are you sure you want to delete {selected.size} selected {selected.size === 1 ? 'alert' : 'alerts'}? this action is permanent. ⚠️"
-              </p>
+            <h3 className="text-2xl font-display font-black uppercase tracking-tight text-white">Confirm Deletion</h3>
 
-              <div className="flex gap-4 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmModal(false)}
-                  className="flex-1 py-3.5 border border-white/20 hover:bg-white/10 transition-all font-display uppercase tracking-widest text-sm font-bold text-gray-300"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={confirmDelete}
-                  className="flex-1 py-3.5 bg-[#FF6044] text-[#121313] hover:bg-white hover:text-black transition-all font-display uppercase tracking-widest text-sm font-black"
-                >
-                  Delete
-                </button>
-              </div>
+            <p className="text-gray-400 font-light lowercase tracking-tight italic text-lg leading-relaxed">
+              "are you sure you want to delete {selected.size} selected {selected.size === 1 ? 'alert' : 'alerts'}? this action is permanent. ⚠️"
+            </p>
+
+            <div className="flex gap-4 pt-4">
+              <button
+                type="button"
+                onClick={() => setShowConfirmModal(false)}
+                className="flex-1 py-3.5 border border-white/20 hover:bg-white/10 transition-all font-display uppercase tracking-widest text-sm font-bold text-gray-300"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmDelete}
+                className="flex-1 py-3.5 bg-[#FF6044] text-[#121313] hover:bg-white hover:text-black transition-all font-display uppercase tracking-widest text-sm font-black"
+              >
+                Delete
+              </button>
             </div>
           </div>
-        )}
+        </div>
+      )}
 
-        <AuthActionModal 
-          isOpen={showAuthModal} 
-          onClose={() => setShowAuthModal(false)} 
-          title="Notification Sync Locked"
-          message="Real-time alerts for your applications and network are private to each account. Sign in to sync your notifications."
-        />
-      </main>
+      <AuthActionModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)} 
+        title="Notification Sync Locked"
+        message="Real-time alerts for your applications and network are private to each account. Sign in to sync your notifications."
+      />
     </div>
   );
 }
