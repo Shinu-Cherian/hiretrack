@@ -91,6 +91,38 @@ export default function NotificationsPage() {
           <p className="mt-1 text-gray-400">Click a reminder to jump to the matching job or referral.</p>
         </div>
 
+        {!isDemo && data.length > 0 && (
+          <div className="mb-6 grid grid-cols-2 md:grid-cols-3 gap-4">
+             <div className="saas-card p-4 flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+                   <Bell className="text-white" size={20} />
+                </div>
+                <div>
+                   <div className="text-2xl font-black text-white">{data.length}</div>
+                   <div className="text-[10px] uppercase tracking-wider text-gray-500 font-bold">Total Alerts</div>
+                </div>
+             </div>
+             <div className="saas-card p-4 flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+                   <Briefcase className="text-[#FF6044]" size={20} />
+                </div>
+                <div>
+                   <div className="text-2xl font-black text-white">{data.filter(n => n.type !== "referral").length}</div>
+                   <div className="text-[10px] uppercase tracking-wider text-gray-500 font-bold">Job Follow-ups</div>
+                </div>
+             </div>
+             <div className="saas-card p-4 flex items-center gap-4 col-span-2 md:col-span-1">
+                <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+                   <Handshake className="text-emerald-400" size={20} />
+                </div>
+                <div>
+                   <div className="text-2xl font-black text-white">{data.filter(n => n.type === "referral").length}</div>
+                   <div className="text-[10px] uppercase tracking-wider text-gray-500 font-bold">Referral Updates</div>
+                </div>
+             </div>
+          </div>
+        )}
+
         <div className="saas-card overflow-hidden">
           {isDemo ? (
             <div className="p-16 text-center flex flex-col items-center max-w-xl mx-auto">
