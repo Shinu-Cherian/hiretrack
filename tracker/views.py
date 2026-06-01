@@ -24,8 +24,8 @@ from django.utils.encoding import force_bytes, force_str
 from django.core.mail import send_mail
 import json
 import resend
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
+import requests
+import os
 import os
 resend.api_key = os.environ.get("RESEND_API_KEY")
 import re
@@ -1394,19 +1394,23 @@ def forgot_password_api(request):
                 uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
                 reset_link = f"http://localhost:5173/reset-password/{uidb64}/{token}/"
                 
-                reset_link = f"http://localhost:5173/reset-password/{uidb64}/{token}/"
+                brevo_url = "https://api.brevo.com/v3/smtp/email"
+                headers = {
+                    "accept": "application/json",
+                    "api-key": os.environ.get("BREVO_API_KEY", ""),
+                    "content-type": "application/json"
+                }
+                payload = {
+                    "sender": {"name": "HireTrack Support", "email": "support.hiretrack@gmail.com"},
+                    "to": [{"email": user.email}],
+                    "subject": "HireTrack Password Reset",
+                    "htmlContent": f"<p>You requested a password reset.</p><p>Click the link below to securely create a new password:</p><p><a href='{reset_link}'>{reset_link}</a></p><p>If you did not request this, please ignore this email.</p>"
+                }
                 
-                message = Mail(
-                    from_email='support.hiretrack@gmail.com',
-                    to_emails=user.email,
-                    subject='HireTrack Password Reset',
-                    plain_text_content=f"You requested a password reset.\n\nClick the link below to securely create a new password:\n\n{reset_link}\n\nIf you did not request this, please ignore this email."
-                )
                 try:
-                    sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
-                    sg.send(message)
-                except Exception as sg_e:
-                    print(f"SendGrid Error: {sg_e}")
+                    requests.post(brevo_url, json=payload, headers=headers)
+                except Exception as brevo_e:
+                    print(f"Brevo Error: {brevo_e}")
             # Always return success to prevent email enumeration (security best practice)
             return JsonResponse({"message": "If an account with that email exists, a password reset link has been sent."})
         except Exception as e:
