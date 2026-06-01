@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Sparkles, Star, ShieldCheck, ArrowRight, UserPlus, Lock, Mail, User, Eye, EyeOff, CheckCircle2, X, Briefcase, FileText, Loader2 } from 'lucide-react';
+import { Sparkles, Star, ShieldCheck, ArrowRight, UserPlus, Lock, Mail, User, Eye, EyeOff, CheckCircle2, X, Briefcase, FileText, Loader2, Info } from 'lucide-react';
 import { apiUrl } from "./api";
 import Header from "./Header";
 
@@ -271,7 +271,16 @@ export default function Signup() {
                     </div>
                   </div>
                   <div className="space-y-1.5 flex-1">
-                    <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-1">Generated Username</label>
+                    <div className="flex items-center gap-1.5 ml-1 mb-1.5">
+                      <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Generated Username</label>
+                      <div className="relative group cursor-help">
+                        <Info size={12} className="text-gray-500 hover:text-[#FF6044] transition-colors" />
+                        <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-48 p-2.5 bg-[#252626] border border-white/10 rounded-xl text-xs font-medium text-gray-300 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10 shadow-xl pointer-events-none">
+                          We automatically generate a unique username for you based on your name. You can use this to sign in later!
+                          <div className="absolute left-1/2 -translate-x-1/2 top-full w-2 h-2 bg-[#252626] border-b border-r border-white/10 rotate-45 -mt-1"></div>
+                        </div>
+                      </div>
+                    </div>
                     <div className="relative group">
                       {isGenerating ? (
                         <Loader2 size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#FF6044] animate-spin" />
