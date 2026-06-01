@@ -1392,7 +1392,8 @@ def forgot_password_api(request):
             if user:
                 token = default_token_generator.make_token(user)
                 uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
-                reset_link = f"http://localhost:5173/reset-password/{uidb64}/{token}/"
+                frontend_url = request.headers.get("Origin", request.build_absolute_uri("/")[:-1])
+                reset_link = f"{frontend_url}/reset-password/{uidb64}/{token}/"
                 
                 brevo_url = "https://api.brevo.com/v3/smtp/email"
                 headers = {
