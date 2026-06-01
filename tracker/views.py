@@ -24,6 +24,8 @@ from django.utils.encoding import force_bytes, force_str
 from django.core.mail import send_mail
 import json
 import resend
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 import os
 resend.api_key = os.environ.get("RESEND_API_KEY")
 import re
@@ -1392,12 +1394,19 @@ def forgot_password_api(request):
                 uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
                 reset_link = f"http://localhost:5173/reset-password/{uidb64}/{token}/"
                 
-                resend.Emails.send({
-                    "from": "HireTrack Support <onboarding@resend.dev>",
-                    "to": user.email,
-                    "subject": "HireTrack Password Reset",
-                    "text": f"You requested a password reset.\n\nClick the link below to securely create a new password:\n\n{reset_link}\n\nIf you did not request this, please ignore this email."
-                })
+                reset_link = f"http://localhost:5173/reset-password/{uidb64}/{token}/"
+                
+                message = Mail(
+                    from_email='support.hiretrack@gmail.com',
+                    to_emails=user.email,
+                    subject='HireTrack Password Reset',
+                    plain_text_content=f"You requested a password reset.\n\nClick the link below to securely create a new password:\n\n{reset_link}\n\nIf you did not request this, please ignore this email."
+                )
+                try:
+                    sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+                    sg.send(message)
+                except Exception as sg_e:
+                    print(f"SendGrid Error: {sg_e}")
             # Always return success to prevent email enumeration (security best practice)
             return JsonResponse({"message": "If an account with that email exists, a password reset link has been sent."})
         except Exception as e:
