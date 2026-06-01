@@ -22,6 +22,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.core.mail import send_mail
+from django_ratelimit.decorators import ratelimit
 import json
 import resend
 import requests
@@ -1023,7 +1024,11 @@ def toggle_star_referral(request, id):
 
 
 @csrf_exempt
+@ratelimit(key='ip', rate='3/m', block=False)
 def signup(request):
+    if getattr(request, 'ratelimit', None) and request.ratelimit.was_limited:
+        return JsonResponse({"error": "Too many attempts. Please try again later."}, status=429)
+        
     if request.method == 'POST':
         import json
         import random
@@ -1351,7 +1356,11 @@ def get_csrf(request):
 
 
 @csrf_exempt
+@ratelimit(key='ip', rate='5/m', block=False)
 def login_api(request):
+    if getattr(request, 'ratelimit', None) and request.ratelimit.was_limited:
+        return JsonResponse({"error": "Too many attempts. Please try again later."}, status=429)
+        
     if request.method == "POST":
         login_identifier = request.POST.get("username")
         password = request.POST.get("password")
@@ -1380,7 +1389,11 @@ def login_api(request):
 
 
 @csrf_exempt
+@ratelimit(key='ip', rate='3/m', block=False)
 def forgot_password_api(request):
+    if getattr(request, 'ratelimit', None) and request.ratelimit.was_limited:
+        return JsonResponse({"error": "Too many attempts. Please try again later."}, status=429)
+        
     if request.method == "POST":
         try:
             data = json.loads(request.body)
@@ -1451,7 +1464,11 @@ def reset_password_api(request):
 
 
 @csrf_exempt
+@ratelimit(key='ip', rate='3/m', block=False)
 def contact_support_api(request):
+    if getattr(request, 'ratelimit', None) and request.ratelimit.was_limited:
+        return JsonResponse({"error": "Too many attempts. Please try again later."}, status=429)
+        
     if request.method == "POST":
         try:
             data = json.loads(request.body)
@@ -1657,7 +1674,11 @@ def update_referral_api(request, id):
 
 
 @csrf_exempt
+@ratelimit(key='ip', rate='5/m', block=False)
 def change_password_api(request):
+    if getattr(request, 'ratelimit', None) and request.ratelimit.was_limited:
+        return JsonResponse({"error": "Too many attempts. Please try again later."}, status=429)
+
     if request.method != "POST":
         return JsonResponse({"error": "POST request required"}, status=405)
 
