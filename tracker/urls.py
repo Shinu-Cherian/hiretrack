@@ -33,6 +33,7 @@ urlpatterns = [
 
     path('api/starred/', views.starred_api),
     path('api/notifications/', views.notifications_api),
+    path('api/notifications/delete/', views.delete_notifications_api),
     path('api/profile/', views.profile_api),
     path('api/profile/update/', views.update_profile_api),
     path('api/change-password/', views.change_password_api),

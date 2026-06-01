@@ -2277,11 +2277,11 @@ def notifications_api(request):
 
     # 🔥 JOB → 5 days
     job_alert_date = today - timedelta(days=5)
-    jobs = Job.objects.filter(user=user, date_applied__lte=job_alert_date)
+    jobs = Job.objects.filter(user=user, date_applied__lte=job_alert_date, notification_dismissed=False)
 
     # 🔥 REFERRAL → 1 day
     ref_alert_date = today - timedelta(days=1)
-    refs = Referral.objects.filter(user=user, date__lte=ref_alert_date)
+    refs = Referral.objects.filter(user=user, date__lte=ref_alert_date, notification_dismissed=False)
 
     data = []
 
@@ -2419,3 +2419,26 @@ def delete_note_api(request, id):
     return JsonResponse({"status": "Success"})
 
 
+@csrf_exempt
+def delete_notifications_api(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Method not allowed"}, status=405)
+    
+    user = api_user(request)
+    auth_error = login_required_json(user)
+    if auth_error:
+        return auth_error
+
+    try:
+        data = json.loads(request.body)
+        job_ids = data.get("job_ids", [])
+        referral_ids = data.get("referral_ids", [])
+
+        if job_ids:
+            Job.objects.filter(user=user, id__in=job_ids).update(notification_dismissed=True)
+        if referral_ids:
+            Referral.objects.filter(user=user, id__in=referral_ids).update(notification_dismissed=True)
+
+        return JsonResponse({"status": "success"})
+    except Exception as e:
+        return JsonResponse({"error": "An unexpected error occurred. Please try again later."}, status=500)

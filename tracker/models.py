@@ -24,6 +24,7 @@ class Job(models.Model):
     notes = models.TextField(blank=True, null=True)
     follow_up_date = models.DateField(null=True, blank=True)
     is_starred = models.BooleanField(default=False)
+    notification_dismissed = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.company} - {self.role}"
@@ -46,7 +47,7 @@ class Referral(models.Model):   # 👈 outside Job class
     linkedin = models.URLField(blank=True, null=True)
     follow_up_date = models.DateField(null=True, blank=True)
     is_starred = models.BooleanField(default=False)
-    
+    notification_dismissed = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.person_name} - {self.company}"
