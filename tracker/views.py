@@ -1570,7 +1570,7 @@ def get_referrals_api(request):
     if auth_error:
         return auth_error
 
-    refs = Referral.objects.filter(user=user)
+    refs = Referral.objects.filter(user=user).order_by('-date', '-id')
 
     data = []
 

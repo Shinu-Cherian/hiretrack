@@ -86,7 +86,8 @@ export default function ViewReferrals() {
     const sorted = [...filtered].sort((a, b) => {
       const dateA = a.date || "";
       const dateB = b.date || "";
-      return dateB.localeCompare(dateA);
+      if (dateA !== dateB) return dateB.localeCompare(dateA);
+      return b.id - a.id;
     });
     const groups = {};
     sorted.forEach((ref) => {
