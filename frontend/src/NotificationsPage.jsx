@@ -273,12 +273,12 @@ export default function NotificationsPage() {
       </main>
 
       {isManageMode && selected.size > 0 && (
-         <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 animate-fade-in-up">
+         <div className="fixed bottom-8 left-0 w-full flex justify-center z-50 pointer-events-none">
             <button 
                onClick={() => setShowConfirmModal(true)}
-               className="flex items-center gap-3 px-8 py-4 bg-[#FF6044] text-[#121313] rounded-full font-black uppercase tracking-widest text-sm brutalist-shadow hover:-translate-y-1 transition-all duration-300"
+               className="pointer-events-auto animate-fade-in-up flex items-center gap-2 px-6 py-3 bg-[#FF6044] text-[#121313] rounded-full font-black uppercase tracking-widest text-xs brutalist-shadow hover:-translate-y-1 transition-all duration-300"
             >
-               <Trash2 size={18} />
+               <Trash2 size={16} />
                Delete ({selected.size}) Alerts
             </button>
          </div>
