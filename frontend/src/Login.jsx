@@ -43,7 +43,12 @@ export default function Login() {
       navigate(nextPath);
       window.location.reload();
     } else {
-      setError("Incorrect username or password. Please try again.");
+      try {
+        const errorData = await res.json();
+        setError(errorData.error || "Incorrect username or password. Please try again.");
+      } catch (e) {
+        setError("Incorrect username or password. Please try again.");
+      }
     }
   };
 
