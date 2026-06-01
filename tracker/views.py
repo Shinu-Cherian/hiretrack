@@ -1537,7 +1537,7 @@ def get_jobs_api(request):
     if auth_error:
         return auth_error
 
-    jobs = Job.objects.filter(user=user)
+    jobs = Job.objects.filter(user=user).order_by('-date_applied', '-id')
 
     data = []
 

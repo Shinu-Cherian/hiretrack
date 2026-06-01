@@ -89,7 +89,8 @@ export default function JobsPage() {
     const sorted = [...filtered].sort((a, b) => {
       const dateA = a.dateApplied || "";
       const dateB = b.dateApplied || "";
-      return dateB.localeCompare(dateA);
+      if (dateA !== dateB) return dateB.localeCompare(dateA);
+      return b.id - a.id;
     });
     const groups = {};
     sorted.forEach((job) => {
