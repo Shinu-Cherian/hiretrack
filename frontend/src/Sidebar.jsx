@@ -57,7 +57,7 @@ export default function Sidebar({ isOpen, onClose, profile }) {
             <div className="flex items-center gap-4">
               <Avatar src={profilePic} username={username} size="md" className="ring-2 ring-white/5" />
               <div className="min-w-0">
-                <h3 className="font-black text-gray-400 truncate text-lg tracking-tight" style={{ textShadow: 'none' }}>
+                <h3 className="font-black text-white truncate text-lg tracking-wide" style={{ textShadow: 'none' }}>
                   {username}
                 </h3>
                 <p
