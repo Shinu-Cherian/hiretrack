@@ -1427,7 +1427,7 @@ def forgot_password_api(request):
             # Always return success to prevent email enumeration (security best practice)
             return JsonResponse({"message": "If an account with that email exists, a password reset link has been sent."})
         except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
+            return JsonResponse({"error": "An unexpected error occurred. Please try again later."}, status=500)
     return JsonResponse({"error": "Method not allowed"}, status=405)
 
 
@@ -1456,7 +1456,7 @@ def reset_password_api(request):
             else:
                 return JsonResponse({"error": "The reset link is invalid or has expired."}, status=400)
         except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
+            return JsonResponse({"error": "An unexpected error occurred. Please try again later."}, status=500)
     return JsonResponse({"error": "Method not allowed"}, status=405)
 
 
@@ -1487,7 +1487,7 @@ def contact_support_api(request):
             })
             return JsonResponse({"message": "Your message has been sent successfully. We will get back to you soon!"})
         except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
+            return JsonResponse({"error": "An unexpected error occurred. Please try again later."}, status=500)
     return JsonResponse({"error": "Method not allowed"}, status=405)
 
 
