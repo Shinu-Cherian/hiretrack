@@ -1415,7 +1415,7 @@ def forgot_password_api(request):
                     "sender": {"name": "HireTrack Support", "email": "support.hiretrack@gmail.com"},
                     "to": [{"email": user.email}],
                     "subject": "HireTrack Password Reset",
-                    "htmlContent": f"<p>You requested a password reset.</p><p>Click the link below to securely create a new password:</p><p><a href='{reset_link}'>{reset_link}</a></p><p>If you did not request this, please ignore this email.</p>"
+                    "htmlContent": f"<p>You requested a password reset.</p><p>Click the link below to securely create a new password:</p><p><a href='{reset_link}'>{reset_link}</a></p><p><strong>Note: For your security, this link is only valid for 15 minutes.</strong></p><p>If you did not request this, please ignore this email.</p>"
                 }
                 
                 try:
