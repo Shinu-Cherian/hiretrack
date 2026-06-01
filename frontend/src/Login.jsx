@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Briefcase, Key, User, ArrowRight, ShieldCheck, Zap, Sparkles, X, Lock } from "lucide-react";
+import { Briefcase, Key, User, ArrowRight, ShieldCheck, Zap, Sparkles, X, Lock, Eye, EyeOff } from "lucide-react";
 import { apiUrl, syncAuthStorage } from "./api";
 import Header from "./Header";
 
