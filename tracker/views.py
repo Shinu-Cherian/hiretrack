@@ -1408,9 +1408,11 @@ def forgot_password_api(request):
                 }
                 
                 try:
-                    requests.post(brevo_url, json=payload, headers=headers)
+                    response = requests.post(brevo_url, json=payload, headers=headers)
+                    if response.status_code not in [200, 201, 202]:
+                        return JsonResponse({"error": f"Brevo API blocked the request. Status: {response.status_code}. Details: {response.text}"}, status=500)
                 except Exception as brevo_e:
-                    print(f"Brevo Error: {brevo_e}")
+                    return JsonResponse({"error": f"Brevo Network Error: {str(brevo_e)}"}, status=500)
             # Always return success to prevent email enumeration (security best practice)
             return JsonResponse({"message": "If an account with that email exists, a password reset link has been sent."})
         except Exception as e:
