@@ -140,11 +140,11 @@ export default function NotificationsPage() {
                 setIsManageMode(!isManageMode);
                 if (isManageMode) setSelected(new Set());
               }}
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl font-black text-sm uppercase tracking-widest transition-all duration-300 ${
-                isManageMode ? "bg-white/10 text-white hover:bg-white/20" : "bg-[#FF6044] text-[#121313] hover:-translate-y-1 hover:shadow-lg hover:shadow-[#FF6044]/20"
+              className={`inline-flex items-center justify-center p-2.5 rounded-xl font-black text-sm uppercase tracking-widest transition-all duration-300 ${
+                isManageMode ? "bg-white/10 text-white hover:bg-white/20 px-4" : "bg-[#FF6044] text-[#121313] hover:-translate-y-1 hover:shadow-lg hover:shadow-[#FF6044]/20"
               }`}
             >
-              {isManageMode ? "Cancel" : <><Trash2 size={16} /> Delete</>}
+              {isManageMode ? "Cancel" : <Trash2 size={20} />}
             </button>
           )}
         </div>
