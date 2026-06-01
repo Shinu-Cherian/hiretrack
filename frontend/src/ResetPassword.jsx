@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { Lock, ArrowRight, Eye, EyeOff, CheckCircle2 } from "lucide-react";
 import { apiUrl } from "./api";
-import Header from "./Header";
 
 function evaluatePassword(password) {
   let score = 0;
@@ -82,7 +81,6 @@ export default function ResetPassword() {
 
   return (
     <div className="min-h-screen bg-[#121313] bg-dot-pattern relative overflow-hidden flex flex-col">
-      <Header />
       <div className="flex-1 flex items-center justify-center p-4 py-8">
         <div className="w-full max-w-xl z-10 animate-fade-in-up">
           <div className="saas-card overflow-hidden flex flex-col border-white/10 shadow-[0_30px_100px_rgba(0,0,0,0.5)] bg-[#121313]/80 backdrop-blur-3xl p-10 lg:p-14">
