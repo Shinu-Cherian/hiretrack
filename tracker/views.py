@@ -2301,6 +2301,9 @@ def notifications_api(request):
             "date": r.date
         })
 
+    # Sort notifications by date (newest first) and then by id
+    data.sort(key=lambda x: (x["date"], x["id"]), reverse=True)
+
     return JsonResponse(data, safe=False)
 
 
