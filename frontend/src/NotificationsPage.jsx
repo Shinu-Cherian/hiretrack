@@ -144,7 +144,7 @@ export default function NotificationsPage() {
                 isManageMode ? "bg-white/10 text-white hover:bg-white/20" : "bg-[#FF6044] text-[#121313] hover:-translate-y-1 hover:shadow-lg hover:shadow-[#FF6044]/20"
               }`}
             >
-              {isManageMode ? "Cancel" : <><Settings2 size={16} /> Manage Alerts</>}
+              {isManageMode ? "Cancel" : <><Trash2 size={16} /> Delete</>}
             </button>
           )}
         </div>
