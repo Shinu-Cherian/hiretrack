@@ -2760,12 +2760,14 @@ def delete_account_otp_api(request):
                         from_email=settings.DEFAULT_FROM_EMAIL,
                         recipient_list=[user_email],
                         html_message=html_message,
-                        fail_silently=True
+                        fail_silently=False
                     )
                 except Exception as e:
                     print(f"Error sending deletion OTP email: {e}")
+                    raise e
             
-            threading.Thread(target=send_delete_otp_email_task, args=(email, user.username, otp)).start()
+            # Run synchronously to catch errors instead of threading
+            send_delete_otp_email_task(email, user.username, otp)
 
             return JsonResponse({"message": "OTP sent to your email."})
 
