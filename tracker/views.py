@@ -1490,8 +1490,8 @@ def forgot_password_api(request):
                 <html>
                 <head>
                     <style>
-                        body {{ background-color: #121313; color: #ffffff; font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 40px 20px; }}
-                        .container {{ max-width: 600px; margin: 0 auto; background-color: #1a1b1b; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 40px; text-align: center; }}
+                        body {{ background-color: #0A0A0A; color: #ffffff; font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 40px 20px; }}
+                        .container {{ max-width: 600px; margin: 0 auto; background-color: #121313; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 40px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }}
                         .logo {{ font-size: 32px; font-weight: 900; text-transform: uppercase; letter-spacing: -1px; margin-bottom: 30px; color: #ffffff; }}
                         .logo-accent {{ color: #FF6044; }}
                         .content {{ font-size: 16px; line-height: 1.6; color: #e5e5e5; text-align: left; }}
