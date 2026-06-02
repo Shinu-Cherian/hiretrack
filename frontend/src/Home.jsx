@@ -575,11 +575,11 @@ export default function Home() {
         opacity: 0.5
       });
 
-      // Horizontal Scroll Section
+      // Horizontal Scroll Section (Desktop only: >= 1024px)
       const horizontalContainer = document.querySelector('.horizontal-scroll-container');
       const horizontalContent = document.querySelector('.horizontal-scroll-content');
       
-      if (horizontalContainer && horizontalContent) {
+      if (horizontalContainer && horizontalContent && window.innerWidth >= 1024) {
         gsap.to(horizontalContent, {
           x: () => -(horizontalContent.scrollWidth - window.innerWidth),
           ease: "none",
@@ -634,9 +634,9 @@ export default function Home() {
           <div className="inline-block px-4 py-1 border border-primary/30 rounded-none text-xs font-display tracking-[0.4em] mb-8 hero-subtitle bg-primary/5 text-primary">
             SYSTEM ENGINE v2.0.4.ACTIVE
           </div>
-          <h1 className="text-4xl sm:text-6xl md:text-[10rem] font-display font-black leading-[0.8] hero-title uppercase mb-10 tracking-normal text-white/80 flex flex-col items-center">
+          <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-[8rem] xl:text-[10rem] font-display font-black leading-[0.8] hero-title uppercase mb-10 tracking-normal text-white/80 flex flex-col items-center">
             <span>The end of</span>
-            <span className="text-white/50 italic whitespace-nowrap mt-4 text-3xl sm:text-5xl md:text-[8rem]">Searching chaos</span>
+            <span className="text-white/50 italic whitespace-nowrap mt-4 text-2xl sm:text-4xl md:text-5xl lg:text-[6.5rem] xl:text-[8rem]">Searching chaos</span>
           </h1>
           <p className="max-w-2xl mx-auto text-on-surface-variant text-lg md:text-2xl font-light leading-relaxed mb-12 hero-subtitle lowercase tracking-tight">
             Stop guessing. Start tracking. The high-performance command center for the modern job hunt.
@@ -656,14 +656,14 @@ export default function Home() {
           </div>
         </div>
       </section>
-
+ 
       {/* Feature Grid - THE 8 PILLARS */}
       <section id="features" className="py-24 bg-surface relative z-20 border-y border-white/5">
         <div className="max-w-7xl mx-auto px-6">
           <div className="mb-20 text-center">
             <span className="text-primary font-display text-sm tracking-widest uppercase mb-4 block">Engine Components</span>
             <RollingHeading 
-              className="text-4xl sm:text-6xl md:text-8xl lg:text-[7rem] font-black mb-8 uppercase tracking-tight flex flex-nowrap whitespace-nowrap justify-center gap-x-6 md:gap-x-10 leading-[1.1] text-primary"
+              className="text-4xl sm:text-6xl md:text-7xl lg:text-[7rem] font-black mb-8 uppercase tracking-tight flex flex-wrap justify-center gap-x-3 sm:gap-x-6 md:gap-x-10 leading-[1.1] text-primary"
               title={
               <>
                 <RollingWord text="The" />
@@ -739,8 +739,8 @@ export default function Home() {
           }}
         />
 
-        <div className="relative z-10 mx-auto grid w-full max-w-[1530px] items-start gap-14 lg:grid-cols-[720px_760px] lg:gap-24">
-          <div className="reveal-item mt-14 [&>div]:min-h-[480px] [&>div]:h-[480px]">
+        <div className="relative z-10 mx-auto grid w-full max-w-[1530px] items-start gap-14 grid-cols-1 lg:grid-cols-2 lg:gap-24">
+          <div className="reveal-item mt-8 lg:mt-14 [&>div]:min-h-[320px] sm:[&>div]:min-h-[480px] [&>div]:h-auto">
             <ResumeAnalysisCard />
           </div>
 
@@ -785,7 +785,7 @@ export default function Home() {
             backgroundSize: "48px 48px",
           }}
         />
-        <div className="relative z-10 mx-auto grid w-full max-w-[1500px] items-center gap-20 md:grid-cols-[690px_minmax(0,1fr)] lg:gap-24">
+        <div className="relative z-10 mx-auto grid w-full max-w-[1500px] items-center gap-12 lg:gap-24 grid-cols-1 lg:grid-cols-2">
           <div className="reveal-item">
             <span className="text-primary font-display text-[16px] tracking-[0.18em] uppercase mb-8 block">Systemic Failure</span>
             <h2 className="font-display text-[clamp(4.4rem,5.9vw,7.1rem)] font-black mb-12 leading-[0.86] uppercase tracking-normal">
@@ -812,11 +812,11 @@ export default function Home() {
       </section>
 
       {/* Transformation Section - Horizontal Scroll */}
-      <section className="horizontal-scroll-container h-screen relative bg-surface border-b border-white/5 overflow-hidden">
-        <div className="horizontal-scroll-content flex h-full will-change-transform w-[200vw]" style={{ width: '200vw' }}>
+      <section className="horizontal-scroll-container lg:h-screen h-auto relative bg-surface border-b border-white/5 lg:overflow-hidden overflow-x-hidden">
+        <div className="horizontal-scroll-content flex flex-col lg:flex-row lg:h-full will-change-transform w-full lg:w-[200vw]" style={typeof window !== 'undefined' && window.innerWidth >= 1024 ? { width: '200vw' } : {}}>
           
           {/* Slide 1: Before HireTrack */}
-            <div className="w-screen h-full flex flex-col items-center justify-center px-8 pb-24 pt-36 relative bg-[#0a0a0a] border-r border-[#FF6044]/20">
+            <div className="w-full lg:w-screen min-h-screen lg:h-full flex flex-col items-center justify-center px-4 sm:px-8 py-20 lg:py-0 relative bg-[#0a0a0a] border-b lg:border-b-0 lg:border-r border-[#FF6044]/20">
               
               <div className="relative z-10 w-full max-w-[1230px] flex flex-col items-start gap-16">
                 <div>
@@ -862,7 +862,7 @@ export default function Home() {
             </div>
 
             {/* Slide 2: After HireTrack */}
-            <div className="w-screen h-full flex flex-col items-center justify-center p-8 md:p-24 relative bg-surface">
+            <div className="w-full lg:w-screen min-h-screen lg:h-full flex flex-col items-center justify-center p-4 sm:p-8 py-20 lg:py-0 md:p-24 relative bg-surface">
               
               <div className="relative z-10 w-full max-w-5xl flex flex-col items-start gap-12">
                 <div>
@@ -955,7 +955,7 @@ export default function Home() {
           <div className="text-center mb-16">
             <span className="text-primary font-display text-sm tracking-widest uppercase mb-4 block dashboard-item">Operational UI</span>
             <RollingHeading 
-              className="text-7xl md:text-[10rem] font-black mb-8 leading-none uppercase tracking-tight flex flex-nowrap whitespace-nowrap justify-center gap-x-4 md:gap-x-8 text-primary"
+              className="text-4xl sm:text-7xl lg:text-[10rem] font-black mb-8 leading-none uppercase tracking-tight flex flex-wrap justify-center gap-x-4 md:gap-x-8 text-primary"
               title={
               <>
                 <RollingWord text="Command" />
@@ -975,7 +975,7 @@ export default function Home() {
       {/* CTA Section */}
       <section className="py-40 px-6 bg-surface relative">
         <div className="max-w-7xl mx-auto text-center relative z-10">
-            <h2 className="text-7xl md:text-[12rem] font-display font-black mb-12 leading-[0.75] uppercase tracking-tight">
+            <h2 className="text-5xl sm:text-7xl lg:text-[10rem] xl:text-[12rem] font-display font-black mb-12 leading-[0.8] lg:leading-[0.75] uppercase tracking-tight">
               Secure the <br /><span className="text-primary italic">Future</span>.
             </h2>
             <p className="text-on-surface-variant text-xl md:text-3xl mb-16 max-w-3xl mx-auto font-light leading-snug">

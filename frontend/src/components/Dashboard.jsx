@@ -325,7 +325,7 @@ export default function Dashboard() {
              </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="bg-[#131313] border border-white/5 rounded-lg p-5">
               <h4 className="text-white font-bold mb-1 flex items-center gap-2">Top Companies <Activity size={12} className="text-[#ff6044] animate-pulse"/></h4>
               <p className="text-white/40 text-[10px] uppercase font-mono tracking-widest mb-4">Most applications</p>
