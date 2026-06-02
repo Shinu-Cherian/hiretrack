@@ -9,6 +9,8 @@ urlpatterns = [
     path('api/auth/logout/', views.logout_api),
     path('api/verify-otp/', views.verify_otp_api),
     path('api/resend-otp/', views.resend_otp_api),
+    path('api/delete-account-otp/', views.delete_account_otp_api),
+    path('api/delete-account-confirm/', views.delete_account_confirm_api),
     path('api/contact-support/', views.contact_support_api),
     path('api/add-referral/', views.add_referral_api),
     # path('jobs/', views.job_list, name='job_list'),

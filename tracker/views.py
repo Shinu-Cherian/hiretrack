@@ -2684,3 +2684,122 @@ def resend_otp_api(request):
             return JsonResponse({"error": "Invalid payload"}, status=400)
 
     return JsonResponse({"error": "Method not allowed"}, status=405)
+
+
+@login_required
+def delete_account_otp_api(request):
+    if is_ratelimited(request, group='delete_account_otp', key='ip', rate='3/m', increment=True):
+        return JsonResponse({"error": "Too many attempts. Please try again later."}, status=429)
+
+    if request.method == 'POST':
+        import json
+        import random
+        from .models import OTPVerification
+        import threading
+        from django.core.mail import send_mail
+        from django.conf import settings
+
+        try:
+            data = json.loads(request.body)
+            email = data.get('email', '').strip().lower()
+
+            if not email:
+                return JsonResponse({"error": "Email is required"}, status=400)
+            
+            # Security check: Make sure they are trying to delete their OWN account
+            if email != request.user.email.lower():
+                return JsonResponse({"error": "Email does not match the logged in account"}, status=400)
+
+            otp = str(random.randint(100000, 999999))
+            
+            OTPVerification.objects.filter(user=request.user).delete()
+            OTPVerification.objects.create(user=request.user, otp=otp)
+
+            def send_delete_otp_email_task(user_email, username, otp_code):
+                subject = "HireTrack Account Deletion Request ⚠️"
+                
+                html_message = f"""
+                <div style="font-family: Arial, sans-serif; background-color: #0A0A0A; color: #FFFFFF; padding: 40px 20px; line-height: 1.6;">
+                    <div style="max-width: 600px; margin: 0 auto; background-color: #121313; border: 1px solid rgba(255,255,255,0.1); border-top: 4px solid #ef4444; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                        <h1 style="color: #ef4444; font-size: 24px; font-weight: 900; letter-spacing: 1px; margin-bottom: 20px; text-transform: uppercase;">ACCOUNT DELETION REQUEST</h1>
+                        
+                        <p style="font-size: 16px;">Hi <strong style="color: #FF6044;">{username}</strong>,</p>
+                        
+                        <p style="font-size: 16px; color: #D1D5DB;">We received a request to permanently delete your HireTrack account. If you proceed, <strong>ALL</strong> your data (jobs, referrals, notes, and scribbles) will be wiped instantly and cannot be recovered.</p>
+                        
+                        <p style="font-size: 16px; color: #D1D5DB;">To confirm deletion, please use this One-Time Password (OTP). <strong>Valid for 5 minutes.</strong></p>
+                        
+                        <div style="background-color: #ef4444; color: #FFFFFF; padding: 20px; border-radius: 8px; text-align: center; margin: 30px 0;">
+                            <span style="font-size: 32px; font-weight: 900; letter-spacing: 8px;">{otp_code}</span>
+                        </div>
+                        
+                        <p style="font-size: 14px; color: #9CA3AF;">If you did not request this, you can safely ignore this email. Your account is secure.</p>
+                    </div>
+                </div>
+                """
+                plain_message = f"Your HireTrack Account Deletion OTP is: {otp_code}"
+                try:
+                    send_mail(
+                        subject=subject,
+                        message=plain_message,
+                        from_email=settings.DEFAULT_FROM_EMAIL,
+                        recipient_list=[user_email],
+                        html_message=html_message,
+                        fail_silently=True
+                    )
+                except Exception as e:
+                    print(f"Error sending deletion OTP email: {e}")
+            
+            threading.Thread(target=send_delete_otp_email_task, args=(email, request.user.username, otp)).start()
+
+            return JsonResponse({"message": "OTP sent to your email."})
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid payload"}, status=400)
+
+    return JsonResponse({"error": "Method not allowed"}, status=405)
+
+
+@login_required
+def delete_account_confirm_api(request):
+    if is_ratelimited(request, group='delete_account_confirm', key='ip', rate='5/m', increment=True):
+        return JsonResponse({"error": "Too many attempts. Please try again later."}, status=429)
+
+    if request.method == 'POST':
+        import json
+        from django.utils import timezone
+        from datetime import timedelta
+        from django.contrib.auth import logout
+        from .models import OTPVerification
+        try:
+            data = json.loads(request.body)
+            email = data.get('email', '').strip().lower()
+            otp = data.get('otp', '').strip()
+
+            if not email or not otp:
+                return JsonResponse({"error": "Email and OTP are required"}, status=400)
+
+            if email != request.user.email.lower():
+                return JsonResponse({"error": "Email mismatch"}, status=400)
+
+            verification = OTPVerification.objects.filter(user=request.user).first()
+            if not verification:
+                return JsonResponse({"error": "No pending verification found. Request a new OTP."}, status=400)
+
+            if verification.otp != otp:
+                return JsonResponse({"error": "Invalid OTP"}, status=400)
+
+            if timezone.now() - verification.created_at > timedelta(minutes=5):
+                return JsonResponse({"error": "OTP has expired. Please resend."}, status=400)
+
+            # Verification successful. Delete account.
+            user_to_delete = request.user
+            logout(request) # Log them out first
+            user_to_delete.delete() # Cascade deletes everything
+
+            return JsonResponse({"message": "Account deleted permanently."})
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid payload"}, status=400)
+
+    return JsonResponse({"error": "Method not allowed"}, status=405)
