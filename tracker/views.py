@@ -2887,8 +2887,7 @@ def delete_account_confirm_api(request):
                     
                     <p style="font-size: 16px; color: #9CA3AF; margin-top: 30px;">
                          Best,<br>
-                         <strong style="color: #FFFFFF; font-weight: 900;">Shinu Cherian</strong><br>
-                         Founder, HireTrack
+                         <strong style="color: #FFFFFF; font-weight: 900;">Team HireTrack</strong>
                     </p>
                 </div>
             </div>
