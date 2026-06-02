@@ -1067,6 +1067,101 @@ def signup(request):
             user.last_name = last_name
             user.save()
 
+            # Background Email Send
+            referer = request.META.get('HTTP_REFERER', '')
+            if referer and referer.startswith('http://localhost:3000'):
+                frontend_url = 'http://localhost:3000'
+            else:
+                frontend_url = 'https://hiretrack.onrender.com'
+            
+            import threading
+            from django.core.mail import send_mail
+            from django.conf import settings
+            
+            def send_welcome_email_task(user_email, username, frontend_url):
+                subject = "Welcome to HireTrack! Your job hunt just got easier 🚀"
+                
+                html_message = f"""
+                <div style="font-family: Arial, sans-serif; background-color: #0A0A0A; color: #FFFFFF; padding: 40px 20px; line-height: 1.6;">
+                    <div style="max-width: 600px; margin: 0 auto; background-color: #121313; border: 1px solid rgba(255,255,255,0.1); padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                        <h1 style="color: #FF6044; font-size: 28px; font-weight: 900; letter-spacing: 2px; margin-bottom: 30px; text-transform: uppercase;">HIRETRACK</h1>
+                        
+                        <p style="font-size: 16px;">Hi <strong style="color: #FF6044;">{username}</strong>,</p>
+                        
+                        <p style="font-size: 16px; color: #D1D5DB;">Welcome to HireTrack! I hope you are doing well.</p>
+                        
+                        <p style="font-size: 16px; color: #D1D5DB;">I believe you are here because you have recently started your job hunt, or you are getting ready to take the next big step in your career. Finding the right job can be a chaotic, exhausting, and overwhelming process. I know exactly how that feels.</p>
+                        
+                        <p style="font-size: 16px; color: #D1D5DB;">That is exactly why I built this platform. I’m Shinu Cherian, the developer and founder of HireTrack. My goal was to replace messy spreadsheets with a streamlined, intelligent system that gives you an unfair advantage in today's highly competitive job market.</p>
+                        
+                        <h3 style="color: #FFFFFF; margin-top: 30px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">Here is how HireTrack supercharges your job hunt:</h3>
+                        
+                        <div style="background-color: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 8px; margin-bottom: 15px;">
+                            <h4 style="color: #FF6044; margin-top: 0; margin-bottom: 5px; font-size: 16px;">Job Tracking & Document Vault</h4>
+                            <p style="margin: 0; color: #9CA3AF; font-size: 14px;">Log your applications and securely store the exact resume, cover letter, and Job Description (JD) you used for each role. Never lose track of what you submitted.</p>
+                        </div>
+
+                        <div style="background-color: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 8px; margin-bottom: 15px;">
+                            <h4 style="color: #FF6044; margin-top: 0; margin-bottom: 5px; font-size: 16px;">Referral Management</h4>
+                            <p style="margin: 0; color: #9CA3AF; font-size: 14px;">Keep tabs on your network. Track every referral request—who you asked, the company, and their response status.</p>
+                        </div>
+
+                        <div style="background-color: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 8px; margin-bottom: 15px;">
+                            <h4 style="color: #FF6044; margin-top: 0; margin-bottom: 5px; font-size: 16px;">Career Roadmap</h4>
+                            <p style="margin: 0; color: #9CA3AF; font-size: 14px;">Plan your long-term vision. Set milestones, track your upskilling progress, and stay focused on your ultimate career goals.</p>
+                        </div>
+
+                        <div style="background-color: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 8px; margin-bottom: 15px;">
+                            <h4 style="color: #FF6044; margin-top: 0; margin-bottom: 5px; font-size: 16px;">Unified Dashboard</h4>
+                            <p style="margin: 0; color: #9CA3AF; font-size: 14px;">Get a crystal-clear, birds-eye view of your entire job hunt progress. Know exactly where you stand.</p>
+                        </div>
+
+                        <div style="background-color: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 8px; margin-bottom: 15px;">
+                            <h4 style="color: #FF6044; margin-top: 0; margin-bottom: 5px; font-size: 16px;">Activity Streaks & Heated Blocks</h4>
+                            <p style="margin: 0; color: #9CA3AF; font-size: 14px;">Build momentum! Watch your activity grid heat up with our GitHub-style contribution blocks as you consistently apply to jobs.</p>
+                        </div>
+
+                        <div style="background-color: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 8px; margin-bottom: 15px;">
+                            <h4 style="color: #FF6044; margin-top: 0; margin-bottom: 5px; font-size: 16px;">Scribbles</h4>
+                            <p style="margin: 0; color: #9CA3AF; font-size: 14px;">A dedicated, distraction-free space to quickly jot down interview notes, thoughts, and daily tasks without leaving the platform.</p>
+                        </div>
+
+                        <div style="background-color: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+                            <h4 style="color: #FF6044; margin-top: 0; margin-bottom: 5px; font-size: 16px;">AI Tools & Chrome Extension</h4>
+                            <p style="margin: 0; color: #9CA3AF; font-size: 14px;">Analyze your resumes for ATS, generate smart cover letters in a click, and save jobs directly from LinkedIn without any manual copy-pasting.</p>
+                        </div>
+                        
+                        <p style="font-size: 16px; color: #D1D5DB; margin-bottom: 30px;">Your job hunt doesn't have to be a mess anymore. We've got everything organized for you.</p>
+                        
+                        <div style="text-align: center; margin-top: 40px; margin-bottom: 40px;">
+                            <a href="{frontend_url}" style="background-color: #FF6044; color: #121313; padding: 16px 32px; text-decoration: none; font-weight: 900; font-size: 16px; border-radius: 50px; text-transform: uppercase; letter-spacing: 1px; display: inline-block;">Open HireTrack Dashboard</a>
+                        </div>
+                        
+                        <p style="font-size: 16px; color: #D1D5DB;">Enjoy your job hunt journey with HireTrack! If you have any feedback or ideas, I'd love to hear them.</p>
+                        
+                        <p style="font-size: 16px; color: #9CA3AF; margin-top: 30px;">
+                            Best,<br>
+                            <strong style="color: #FFFFFF;">Shinu Cherian</strong><br>
+                            Founder, HireTrack
+                        </p>
+                    </div>
+                </div>
+                """
+                plain_message = "Welcome to HireTrack! Open the app to view your dashboard."
+                try:
+                    send_mail(
+                        subject=subject,
+                        message=plain_message,
+                        from_email=settings.DEFAULT_FROM_EMAIL,
+                        recipient_list=[user_email],
+                        html_message=html_message,
+                        fail_silently=True
+                    )
+                except Exception as e:
+                    print(f"Error sending welcome email: {{e}}")
+            
+            threading.Thread(target=send_welcome_email_task, args=(email, username, frontend_url)).start()
+
             return JsonResponse({"message": "Signup success. Please login."})
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid request payload"}, status=400)
