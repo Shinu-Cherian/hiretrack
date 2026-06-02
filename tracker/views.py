@@ -1161,14 +1161,13 @@ def signup(request):
                 """
                 plain_message = "Welcome to HireTrack! Open the app to view your dashboard."
                 try:
-                    send_mail(
-                        subject=subject,
-                        message=plain_message,
-                        from_email=settings.DEFAULT_FROM_EMAIL,
-                        recipient_list=[user_email],
-                        html_message=html_message,
-                        fail_silently=True
-                    )
+                    resend.Emails.send({
+                        "from": "HireTrack <onboarding@resend.dev>",
+                        "to": user_email,
+                        "subject": subject,
+                        "html": html_message,
+                        "text": plain_message
+                    })
                 except Exception as e:
                     print(f"Error sending welcome email: {e}")
             
@@ -2665,16 +2664,15 @@ def resend_otp_api(request):
                 """
                 plain_message = f"Your HireTrack Verification Code is: {otp_code}"
                 try:
-                    send_mail(
-                        subject=subject,
-                        message=plain_message,
-                        from_email=settings.DEFAULT_FROM_EMAIL,
-                        recipient_list=[user_email],
-                        html_message=html_message,
-                        fail_silently=True
-                    )
+                    resend.Emails.send({
+                        "from": "HireTrack <onboarding@resend.dev>",
+                        "to": user_email,
+                        "subject": subject,
+                        "html": html_message,
+                        "text": plain_message
+                    })
                 except Exception as e:
-                    print(f"Error sending OTP email: {{e}}")
+                    print(f"Error sending OTP email: {e}")
             
             threading.Thread(target=send_otp_email_task, args=(email, user.username, frontend_url, otp)).start()
 
@@ -2754,14 +2752,13 @@ def delete_account_otp_api(request):
                 """
                 plain_message = f"Your HireTrack Account Deletion OTP is: {otp_code}"
                 try:
-                    send_mail(
-                        subject=subject,
-                        message=plain_message,
-                        from_email=settings.DEFAULT_FROM_EMAIL,
-                        recipient_list=[user_email],
-                        html_message=html_message,
-                        fail_silently=False
-                    )
+                    resend.Emails.send({
+                        "from": "HireTrack <onboarding@resend.dev>",
+                        "to": user_email,
+                        "subject": subject,
+                        "html": html_message,
+                        "text": plain_message
+                    })
                 except Exception as e:
                     print(f"Error sending deletion OTP email: {e}")
                     raise e
@@ -2774,7 +2771,7 @@ def delete_account_otp_api(request):
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid payload"}, status=400)
         except Exception as e:
-            return JsonResponse({"error": f"Server error: {str(e)}"}, status=500)
+            return JsonResponse({"error": f"Server error: {str(e)}"}, status=400)
 
     return JsonResponse({"error": "Method not allowed"}, status=405)
 
