@@ -1112,7 +1112,7 @@ def signup(request):
             import threading
             
             def send_welcome_email_task(user_email, username, frontend_url, otp):
-                subject = "Your HireTrack Verification Code 🔐"
+                subject = "Your HireTrack Verification Code"
                 
                 html_message = f"""
                 <div style="font-family: Arial, sans-serif; background-color: #0A0A0A; color: #FFFFFF; padding: 40px 20px; line-height: 1.6;">
@@ -1512,7 +1512,7 @@ def forgot_password_api(request):
                                 <a href="{reset_link}" class="btn">Reset My Password</a>
                             </div>
                             <div class="warning-box">
-                                <p class="warning-text">⚠️ SECURITY ALERT: This link is only valid for exactly 15 minutes.</p>
+                                <p class="warning-text">SECURITY ALERT: This link is only valid for exactly 15 minutes.</p>
                             </div>
                             <p style="font-size: 14px; color: #a3a3a3;">If you did not request a password reset, you can safely ignore this email. Your password will remain unchanged.</p>
                         </div>
@@ -2570,7 +2570,7 @@ def verify_otp_api(request):
             else:
                 frontend_url = 'https://hiretrack.onrender.com/'
 
-            subject = "Welcome to HireTrack! 🚀"
+            subject = "Welcome to HireTrack!"
             
             html_message = f"""
             <div style="font-family: Arial, sans-serif; background-color: #0A0A0A; color: #FFFFFF; padding: 40px 20px; line-height: 1.6;">
@@ -2692,7 +2692,7 @@ def resend_otp_api(request):
                 frontend_url = 'https://hiretrack.onrender.com'
             
             def send_otp_email_task(user_email, username, frontend_url, otp_code):
-                subject = "Your HireTrack Verification Code 🔐"
+                subject = "Your HireTrack Verification Code"
                 
                 html_message = f"""
                 <div style="font-family: Arial, sans-serif; background-color: #0A0A0A; color: #FFFFFF; padding: 40px 20px; line-height: 1.6;">
@@ -2772,7 +2772,7 @@ def delete_account_otp_api(request):
             OTPVerification.objects.create(user=user, otp=otp)
 
             def send_delete_otp_email_task(user_email, username, otp_code):
-                subject = "HireTrack Account Deletion Request ⚠️"
+                subject = "HireTrack Account Deletion Request"
                 
                 html_message = f"""
                 <div style="font-family: Arial, sans-serif; background-color: #0A0A0A; color: #FFFFFF; padding: 40px 20px; line-height: 1.6;">
@@ -2871,7 +2871,7 @@ def delete_account_confirm_api(request):
 
             # Send deletion confirmation email via Brevo in background
             import threading
-            subject = "HireTrack Account Deleted Successfully 🔐"
+            subject = "HireTrack Account Deleted Successfully"
             
             html_message = f"""
             <div style="font-family: Arial, sans-serif; background-color: #0A0A0A; color: #FFFFFF; padding: 40px 20px; line-height: 1.6;">
