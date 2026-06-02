@@ -1023,6 +1023,33 @@ def toggle_star_referral(request, id):
 
 
 
+def send_email_via_brevo(recipient_email, subject, html_content, plain_text=None):
+    import os
+    import requests
+    brevo_url = "https://api.brevo.com/v3/smtp/email"
+    headers = {
+        "accept": "application/json",
+        "api-key": os.environ.get("BREVO_API_KEY", ""),
+        "content-type": "application/json"
+    }
+    payload = {
+        "sender": {"name": "HireTrack Support", "email": "support.hiretrack@gmail.com"},
+        "to": [{"email": recipient_email}],
+        "subject": subject,
+        "htmlContent": html_content
+    }
+    if plain_text:
+        payload["textContent"] = plain_text
+        
+    try:
+        response = requests.post(brevo_url, json=payload, headers=headers)
+        if response.status_code not in [200, 201, 202]:
+            raise Exception(f"Brevo API error (Status {response.status_code}): {response.text}")
+    except Exception as e:
+        print(f"Brevo send failed: {e}")
+        raise e
+
+
 @csrf_exempt
 def signup(request):
     if is_ratelimited(request, group='signup_api', key='ip', rate='3/m', increment=True):
@@ -1161,13 +1188,7 @@ def signup(request):
                 """
                 plain_message = "Welcome to HireTrack! Open the app to view your dashboard."
                 try:
-                    resend.Emails.send({
-                        "from": "HireTrack <onboarding@resend.dev>",
-                        "to": user_email,
-                        "subject": subject,
-                        "html": html_message,
-                        "text": plain_message
-                    })
+                    send_email_via_brevo(user_email, subject, html_message, plain_message)
                 except Exception as e:
                     print(f"Error sending welcome email: {e}")
             
@@ -2664,13 +2685,7 @@ def resend_otp_api(request):
                 """
                 plain_message = f"Your HireTrack Verification Code is: {otp_code}"
                 try:
-                    resend.Emails.send({
-                        "from": "HireTrack <onboarding@resend.dev>",
-                        "to": user_email,
-                        "subject": subject,
-                        "html": html_message,
-                        "text": plain_message
-                    })
+                    send_email_via_brevo(user_email, subject, html_message, plain_message)
                 except Exception as e:
                     print(f"Error sending OTP email: {e}")
             
@@ -2752,13 +2767,7 @@ def delete_account_otp_api(request):
                 """
                 plain_message = f"Your HireTrack Account Deletion OTP is: {otp_code}"
                 try:
-                    resend.Emails.send({
-                        "from": "HireTrack <onboarding@resend.dev>",
-                        "to": user_email,
-                        "subject": subject,
-                        "html": html_message,
-                        "text": plain_message
-                    })
+                    send_email_via_brevo(user_email, subject, html_message, plain_message)
                 except Exception as e:
                     print(f"Error sending deletion OTP email: {e}")
                     raise e

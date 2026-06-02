@@ -99,7 +99,7 @@ Over the recent development iterations, HireTrack has evolved significantly to p
 - Upload a resume (PDF) + paste a job description
 - AI extracts keywords from the JD and compares against resume content
 - Returns a match score, missing keywords, and actionable suggestions
-- Built with `pypdf` for PDF parsing + external LLM API (Google Gemini)
+- Built with `pypdf` for PDF parsing + external LLM API (Groq (Llama 3))
 
 #### Cover Letter Generator
 - Input resume details and job description
@@ -390,7 +390,7 @@ ALLOWED_HOSTS=localhost,127.0.0.1
 DATABASE_URL=sqlite:///db.sqlite3
 
 # AI API key (for resume analyzer, cover letter, career roadmap)
-GEMINI_API_KEY=your-api-key-here
+GROQ_API_KEY=your-api-key-here
 
 # CORS
 CORS_ALLOWED_ORIGINS=http://localhost:5173
@@ -457,7 +457,7 @@ The built files will be in `frontend/dist/` — serve them with WhiteNoise or a 
 | `DEBUG` | ✅ | `True` for dev, `False` for prod |
 | `ALLOWED_HOSTS` | ✅ | Comma-separated allowed hosts |
 | `DATABASE_URL` | ✅ | Database connection string |
-| `GEMINI_API_KEY` | ✅ | Google Gemini API key for AI features |
+| `GROQ_API_KEY` | ✅ | Groq (Llama 3) API key for AI features |
 | `CORS_ALLOWED_ORIGINS` | ✅ | Frontend URL for CORS |
 
 ---
@@ -492,7 +492,7 @@ The `hiretrack-extension/` folder contains a Chrome-compatible browser extension
 - [ ] Set a strong `SECRET_KEY`
 - [ ] Configure `ALLOWED_HOSTS` with your domain
 - [ ] Set `DATABASE_URL` to PostgreSQL connection string
-- [ ] Set `GEMINI_API_KEY`
+- [ ] Set `GROQ_API_KEY`
 - [ ] Run `python manage.py collectstatic`
 - [ ] Build frontend with `npm run build`
 - [ ] Configure CORS to allow your frontend domain
