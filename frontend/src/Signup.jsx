@@ -129,7 +129,7 @@ export default function Signup() {
     setSubmitting(false);
     if (res.ok) {
       // User is logged in now
-      navigate("/dashboard");
+      navigate("/");
     } else {
       const data = await res.json().catch(() => ({}));
       alert(data.error || "Invalid OTP");
