@@ -37,6 +37,8 @@ export default function Signup() {
   const [submitting, setSubmitting] = useState(false);
   const [usernameSuffix, setUsernameSuffix] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [step, setStep] = useState(1);
+  const [otp, setOtp] = useState("");
 
   useEffect(() => {
     // Only generate when BOTH First Name and Last Name are provided
@@ -107,11 +109,48 @@ export default function Signup() {
     setSubmitting(false);
 
     if (res.ok) {
-      const nextPath = typeof location.state?.from === "string" ? location.state.from : "/";
-      navigate("/login", { state: { from: nextPath } });
+      setStep(2);
     } else {
       const data = await res.json().catch(() => ({}));
       alert(data.error || "Signup failed");
+    }
+  };
+
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+    const res = await fetch(apiUrl("/api/verify-otp/"), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, otp }),
+    });
+    setSubmitting(false);
+    if (res.ok) {
+      // User is logged in now
+      navigate("/dashboard");
+    } else {
+      const data = await res.json().catch(() => ({}));
+      alert(data.error || "Invalid OTP");
+    }
+  };
+
+  const handleResendOtp = async () => {
+    setSubmitting(true);
+    const res = await fetch(apiUrl("/api/resend-otp/"), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email }),
+    });
+    setSubmitting(false);
+    if (res.ok) {
+      alert("New OTP sent to your email!");
+    } else {
+      const data = await res.json().catch(() => ({}));
+      alert(data.error || "Failed to resend OTP");
     }
   };
 
@@ -215,10 +254,13 @@ export default function Signup() {
 
             {/* FORM SIDE */}
             <div className="w-full md:w-7/12 p-6 lg:px-12 lg:py-8 flex flex-col justify-center bg-[#121313]/80 backdrop-blur-3xl">
-              <div className="mb-6">
-                <h2 className="text-2xl font-black text-white mb-2 tracking-tight">Create account</h2>
-                <div className="h-1 w-12 bg-[#FF6044] rounded-full" />
-              </div>
+              
+              {step === 1 ? (
+                <>
+                  <div className="mb-6">
+                    <h2 className="text-2xl font-black text-white mb-2 tracking-tight">Create account</h2>
+                    <div className="h-1 w-12 bg-[#FF6044] rounded-full" />
+                  </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 
@@ -389,6 +431,60 @@ export default function Signup() {
                   <Link to="/login" className="text-[#FF6044] font-black hover:underline underline-offset-4 decoration-2">SIGN IN</Link>
                 </p>
               </div>
+                </>
+              ) : (
+                <div className="animate-fade-in py-8">
+                  <div className="mb-8 text-center flex flex-col items-center">
+                    <div className="w-16 h-16 rounded-2xl bg-[#1a1b1b] border border-[#FF6044]/30 flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(255,96,68,0.15)] animate-float">
+                      <Mail size={32} className="text-[#FF6044]" />
+                    </div>
+                    <h2 className="text-2xl font-black text-white mb-3 tracking-tight">Verify your email</h2>
+                    <p className="text-gray-400 text-sm max-w-sm mx-auto leading-relaxed">
+                      We've sent a 6-digit verification code to <strong className="text-white">{email}</strong>. 
+                      Please enter it below. The code is valid for 5 minutes.
+                    </p>
+                  </div>
+                  
+                  <form onSubmit={handleVerifyOtp} className="space-y-6 max-w-sm mx-auto w-full">
+                    <div className="space-y-1.5">
+                      <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-1 text-center block">Verification Code</label>
+                      <input
+                        type="text"
+                        maxLength={6}
+                        placeholder="------"
+                        className="w-full bg-[#1a1b1b] border border-white/5 rounded-2xl py-4 text-center text-3xl text-white outline-none focus:border-[#FF6044]/50 focus:ring-4 focus:ring-[#FF6044]/5 transition-all placeholder:text-gray-600 font-black tracking-[0.5em]"
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                        required
+                      />
+                    </div>
+                    
+                    <button 
+                      type="submit"
+                      disabled={submitting || otp.length !== 6}
+                      className="group relative w-full bg-[#FF6044] text-[#121313] py-3.5 rounded-xl font-black text-sm uppercase tracking-widest shadow-[0_10px_30px_rgba(255,96,68,0.2)] hover:bg-[#ff4d2e] hover:shadow-[0_15px_40px_rgba(255,96,68,0.3)] hover:-translate-y-1 transition-all active:scale-95 disabled:opacity-50 disabled:hover:translate-y-0 disabled:cursor-not-allowed overflow-hidden mt-4"
+                    >
+                      <span className="relative z-10 flex items-center justify-center gap-2">
+                        {submitting ? "Verifying..." : "Verify & Login"}
+                        {!submitting && <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />}
+                      </span>
+                      <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                    </button>
+                  </form>
+                  
+                  <div className="mt-8 pt-8 border-t border-white/5 text-center">
+                    <p className="text-xs text-gray-500 font-medium mb-3">Didn't receive the code?</p>
+                    <button 
+                      type="button" 
+                      onClick={handleResendOtp}
+                      disabled={submitting}
+                      className="text-[#FF6044] font-black hover:underline underline-offset-4 decoration-2 text-sm uppercase tracking-wider transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
+                    >
+                      Resend OTP
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
           </div>

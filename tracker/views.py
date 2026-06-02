@@ -1065,7 +1065,15 @@ def signup(request):
             user = User.objects.create_user(username=username, email=email, password=password)
             user.first_name = first_name
             user.last_name = last_name
+            user.is_active = False # OTP Verification required
             user.save()
+
+            # Generate OTP
+            from .models import OTPVerification
+            otp = str(random.randint(100000, 999999))
+            # Delete any existing OTPs for safety
+            OTPVerification.objects.filter(user=user).delete()
+            OTPVerification.objects.create(user=user, otp=otp)
 
             # Background Email Send
             referer = request.META.get('HTTP_REFERER', '')
@@ -1078,8 +1086,8 @@ def signup(request):
             from django.core.mail import send_mail
             from django.conf import settings
             
-            def send_welcome_email_task(user_email, username, frontend_url):
-                subject = "Welcome to HireTrack! Your job hunt just got easier 🚀"
+            def send_welcome_email_task(user_email, username, frontend_url, otp):
+                subject = "Your HireTrack Verification Code 🔐"
                 
                 html_message = f"""
                 <div style="font-family: Arial, sans-serif; background-color: #0A0A0A; color: #FFFFFF; padding: 40px 20px; line-height: 1.6;">
@@ -1088,7 +1096,11 @@ def signup(request):
                         
                         <p style="font-size: 16px;">Hi <strong style="color: #FF6044;">{username}</strong>,</p>
                         
-                        <p style="font-size: 16px; color: #D1D5DB;">Welcome to HireTrack! I hope you are doing well.</p>
+                        <p style="font-size: 16px; color: #D1D5DB;">Welcome to HireTrack! Please use the following One-Time Password (OTP) to verify your email address and activate your account. <strong>This code is valid for 5 minutes.</strong></p>
+                        
+                        <div style="background-color: #FF6044; color: #121313; padding: 20px; border-radius: 8px; text-align: center; margin: 30px 0;">
+                            <span style="font-size: 32px; font-weight: 900; letter-spacing: 8px;">{otp}</span>
+                        </div>
                         
                         <p style="font-size: 16px; color: #D1D5DB;">I believe you are here because you have recently started your job hunt, or you are getting ready to take the next big step in your career. Finding the right job can be a chaotic, exhausting, and overwhelming process. I know exactly how that feels.</p>
                         
@@ -1160,9 +1172,10 @@ def signup(request):
                 except Exception as e:
                     print(f"Error sending welcome email: {e}")
             
-            threading.Thread(target=send_welcome_email_task, args=(email, username, frontend_url)).start()
+            threading.Thread(target=send_welcome_email_task, args=(email, username, frontend_url, otp)).start()
 
-            return JsonResponse({"message": "Signup success. Please login."})
+            return JsonResponse({"message": "Signup success. Please verify OTP.", "email": email})
+
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid request payload"}, status=400)
 
@@ -2540,3 +2553,134 @@ def delete_notifications_api(request):
         return JsonResponse({"status": "success"})
     except Exception as e:
         return JsonResponse({"error": "An unexpected error occurred. Please try again later."}, status=500)
+
+
+@csrf_exempt
+def verify_otp_api(request):
+    if is_ratelimited(request, group='verify_otp', key='ip', rate='10/m', increment=True):
+        return JsonResponse({"error": "Too many attempts. Please try again later."}, status=429)
+
+    if request.method == 'POST':
+        import json
+        from django.utils import timezone
+        from datetime import timedelta
+        from django.contrib.auth import login
+        from .models import OTPVerification
+        try:
+            data = json.loads(request.body)
+            email = data.get('email', '').strip().lower()
+            otp = data.get('otp', '').strip()
+
+            if not email or not otp:
+                return JsonResponse({"error": "Email and OTP are required"}, status=400)
+
+            user = User.objects.filter(email=email).first()
+            if not user:
+                return JsonResponse({"error": "User not found"}, status=404)
+
+            verification = OTPVerification.objects.filter(user=user).first()
+            if not verification:
+                return JsonResponse({"error": "No pending verification found"}, status=400)
+
+            if verification.otp != otp:
+                return JsonResponse({"error": "Invalid OTP"}, status=400)
+
+            if timezone.now() - verification.created_at > timedelta(minutes=5):
+                return JsonResponse({"error": "OTP has expired. Please resend."}, status=400)
+
+            # Success
+            user.is_active = True
+            user.save()
+            verification.delete()
+            login(request, user)
+
+            return JsonResponse({"message": "Email verified successfully!"})
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid payload"}, status=400)
+
+    return JsonResponse({"error": "Method not allowed"}, status=405)
+
+
+@csrf_exempt
+def resend_otp_api(request):
+    if is_ratelimited(request, group='resend_otp', key='ip', rate='3/m', increment=True):
+        return JsonResponse({"error": "Too many attempts. Please try again later."}, status=429)
+
+    if request.method == 'POST':
+        import json
+        import random
+        from django.contrib.auth.models import User
+        from .models import OTPVerification
+        import threading
+        from django.core.mail import send_mail
+        from django.conf import settings
+
+        try:
+            data = json.loads(request.body)
+            email = data.get('email', '').strip().lower()
+
+            if not email:
+                return JsonResponse({"error": "Email is required"}, status=400)
+
+            user = User.objects.filter(email=email).first()
+            if not user:
+                return JsonResponse({"error": "User not found"}, status=404)
+
+            if user.is_active:
+                return JsonResponse({"error": "User is already verified"}, status=400)
+
+            otp = str(random.randint(100000, 999999))
+            
+            # Delete old OTPs and create new one
+            OTPVerification.objects.filter(user=user).delete()
+            OTPVerification.objects.create(user=user, otp=otp)
+
+            # Background Email Send
+            referer = request.META.get('HTTP_REFERER', '')
+            if referer and referer.startswith('http://localhost:3000'):
+                frontend_url = 'http://localhost:3000'
+            else:
+                frontend_url = 'https://hiretrack.onrender.com'
+            
+            def send_otp_email_task(user_email, username, frontend_url, otp_code):
+                subject = "Your HireTrack Verification Code 🔐"
+                
+                html_message = f"""
+                <div style="font-family: Arial, sans-serif; background-color: #0A0A0A; color: #FFFFFF; padding: 40px 20px; line-height: 1.6;">
+                    <div style="max-width: 600px; margin: 0 auto; background-color: #121313; border: 1px solid rgba(255,255,255,0.1); padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                        <h1 style="color: #FF6044; font-size: 28px; font-weight: 900; letter-spacing: 2px; margin-bottom: 30px; text-transform: uppercase;">HIRETRACK</h1>
+                        
+                        <p style="font-size: 16px;">Hi <strong style="color: #FF6044;">{{username}}</strong>,</p>
+                        
+                        <p style="font-size: 16px; color: #D1D5DB;">Welcome back! Please use the following One-Time Password (OTP) to verify your email address and activate your account. <strong>This code is valid for 5 minutes.</strong></p>
+                        
+                        <div style="background-color: #FF6044; color: #121313; padding: 20px; border-radius: 8px; text-align: center; margin: 30px 0;">
+                            <span style="font-size: 32px; font-weight: 900; letter-spacing: 8px;">{{otp_code}}</span>
+                        </div>
+                        
+                        <p style="font-size: 16px; color: #D1D5DB;">Enjoy your job hunt journey with HireTrack!</p>
+                    </div>
+                </div>
+                """
+                plain_message = f"Your HireTrack Verification Code is: {{otp_code}}"
+                try:
+                    send_mail(
+                        subject=subject,
+                        message=plain_message,
+                        from_email=settings.DEFAULT_FROM_EMAIL,
+                        recipient_list=[user_email],
+                        html_message=html_message,
+                        fail_silently=True
+                    )
+                except Exception as e:
+                    print(f"Error sending OTP email: {{e}}")
+            
+            threading.Thread(target=send_otp_email_task, args=(email, user.username, frontend_url, otp)).start()
+
+            return JsonResponse({"message": "OTP sent successfully."})
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid payload"}, status=400)
+
+    return JsonResponse({"error": "Method not allowed"}, status=405)
