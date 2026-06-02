@@ -1112,7 +1112,9 @@ def signup(request):
             import threading
             
             def send_welcome_email_task(user_email, username, frontend_url, otp):
-                subject = "Your HireTrack Verification Code"
+                import uuid
+                ref_id = f"HT-{uuid.uuid4().hex[:6].upper()}"
+                subject = f"Your HireTrack Verification Code [Ref: {ref_id}]"
                 
                 html_message = f"""
                 <div style="font-family: Arial, sans-serif; background-color: #0A0A0A; color: #FFFFFF; padding: 40px 20px; line-height: 1.6;">
@@ -1129,10 +1131,14 @@ def signup(request):
                         </div>
                         
                         <p style="font-size: 14px; color: #9CA3AF;">If you did not request this, you can safely ignore this email.</p>
+                        
+                        <p style="font-size: 10px; color: #4B5563; margin-top: 30px; text-align: left; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
+                            Reference ID: {ref_id}
+                        </p>
                     </div>
                 </div>
                 """
-                plain_message = f"Your HireTrack Verification Code is: {otp}"
+                plain_message = f"Your HireTrack Verification Code is: {otp} [Ref: {ref_id}]"
                 try:
                     send_email_via_brevo(user_email, subject, html_message, plain_message)
                 except Exception as e:
@@ -2562,6 +2568,9 @@ def verify_otp_api(request):
 
             # Send welcome onboarding email via Brevo in background
             import threading
+            import uuid
+            ref_id = f"HT-{uuid.uuid4().hex[:6].upper()}"
+            
             # Dynamically determine base URL (works for both local Vite dev server and exact production Render domain)
             referer = request.META.get('HTTP_REFERER', '')
             if referer:
@@ -2571,7 +2580,7 @@ def verify_otp_api(request):
             else:
                 frontend_url = request.build_absolute_uri("/")
 
-            subject = "Welcome to HireTrack!"
+            subject = f"Welcome to HireTrack! [Ref: {ref_id}]"
             
             html_message = f"""
             <div style="font-family: Arial, sans-serif; background-color: #0A0A0A; color: #FFFFFF; padding: 40px 20px; line-height: 1.6;">
@@ -2631,13 +2640,17 @@ def verify_otp_api(request):
                     
                     <p style="font-size: 16px; color: #9CA3AF; margin-top: 30px;">
                          Best,<br>
-                         <span style="color: #FFFFFF; font-weight: normal;">Shinu Cherian</span><br>
-                         Founder, HireTrack
+                         <span style="color: #FF6044; font-weight: normal;">Shinu Cherian</span><br>
+                         <span style="color: #FF6044;">Founder, HireTrack</span>
+                    </p>
+                    
+                    <p style="font-size: 10px; color: #4B5563; margin-top: 40px; text-align: left; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
+                        Reference ID: {ref_id}
                     </p>
                 </div>
             </div>
             """
-            plain_message = "Welcome to HireTrack! Your email has been verified successfully. Open the app to view your dashboard."
+            plain_message = f"Welcome to HireTrack! Your email has been verified successfully. Open the app to view your dashboard. [Ref: {ref_id}]"
             
             threading.Thread(
                 target=lambda: send_email_via_brevo(email, subject, html_message, plain_message)
