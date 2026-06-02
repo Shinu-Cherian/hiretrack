@@ -1158,7 +1158,7 @@ def signup(request):
                         fail_silently=True
                     )
                 except Exception as e:
-                    print(f"Error sending welcome email: {{e}}")
+                    print(f"Error sending welcome email: {e}")
             
             threading.Thread(target=send_welcome_email_task, args=(email, username, frontend_url)).start()
 
