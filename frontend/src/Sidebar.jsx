@@ -9,6 +9,7 @@ export default function Sidebar({ isOpen, onClose, profile }) {
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState([]);
   const [readVersion, setReadVersion] = useState(0);
+  const [showConfirmLogout, setShowConfirmLogout] = useState(false);
 
   useEffect(() => {
     fetch(apiUrl("/api/notifications/"), {
@@ -186,7 +187,7 @@ export default function Sidebar({ isOpen, onClose, profile }) {
 
             {/* LOGOUT */}
             <button
-              onClick={handleLogout}
+              onClick={() => setShowConfirmLogout(true)}
               className="group flex items-center gap-4 p-4 w-full rounded-2xl text-red-500 hover:bg-red-500 hover:text-white font-black transition-all shadow-lg hover:shadow-red-500/20"
             >
               <LogOut size={20} className="group-hover:translate-x-1 transition-transform" /> Logout
@@ -195,6 +196,45 @@ export default function Sidebar({ isOpen, onClose, profile }) {
 
         </div>
       </div>
+
+      {/* Confirmation Modal */}
+      {showConfirmLogout && (
+        <div 
+          className="fixed inset-0 z-[1000] flex items-center justify-center p-6 bg-black/80 backdrop-blur-md animate-in fade-in duration-300"
+          onClick={() => setShowConfirmLogout(false)}
+        >
+          <div 
+            className="bg-[#121313] border border-white/10 p-12 max-w-sm w-full text-center space-y-6 brutalist-shadow animate-in zoom-in-95 duration-300 relative overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Decorative skewed background */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-[#FF6044]/5 -skew-x-12 translate-x-16 -translate-y-16 pointer-events-none"></div>
+            
+            <div className="w-16 h-16 bg-red-500/10 text-red-500 rounded-none mx-auto flex items-center justify-center">
+              <LogOut size={32} />
+            </div>
+            <h3 className="text-xl font-display font-black uppercase tracking-tight text-white">Confirm Logout</h3>
+            <p className="text-gray-400 font-light lowercase tracking-tight italic">
+              "Are you sure you want to terminate your active session?"
+            </p>
+            
+            <div className="flex flex-col gap-3">
+              <button 
+                onClick={handleLogout}
+                className="w-full py-4 bg-red-600 hover:bg-red-700 text-white transition-all font-display uppercase tracking-widest text-sm font-bold border border-transparent"
+              >
+                Logout
+              </button>
+              <button 
+                onClick={() => setShowConfirmLogout(false)}
+                className="w-full py-4 border border-white/20 hover:bg-white/5 text-white transition-all font-display uppercase tracking-widest text-sm font-bold"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
