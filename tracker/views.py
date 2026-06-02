@@ -2712,8 +2712,18 @@ def delete_account_otp_api(request):
                 return JsonResponse({"error": "Email is required"}, status=400)
             
             # Security check: Make sure they are trying to delete their OWN account
-            if email != user.email.lower():
-                return JsonResponse({"error": "Email does not match the logged in account"}, status=400)
+            db_email = (user.email or "").strip().lower()
+            if not db_email:
+                # Fallback to profile email if User email is empty
+                profile = getattr(user, 'profile', None)
+                if profile and profile.email:
+                    db_email = profile.email.strip().lower()
+
+            if not db_email:
+                return JsonResponse({"error": "No registered email found for this account. Please contact support."}, status=400)
+
+            if email != db_email:
+                return JsonResponse({"error": f"Email does not match the logged in account. Your registered email is {db_email}"}, status=400)
 
             otp = str(random.randint(100000, 999999))
             
@@ -2761,6 +2771,8 @@ def delete_account_otp_api(request):
 
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid payload"}, status=400)
+        except Exception as e:
+            return JsonResponse({"error": f"Server error: {str(e)}"}, status=500)
 
     return JsonResponse({"error": "Method not allowed"}, status=405)
 
@@ -2789,7 +2801,13 @@ def delete_account_confirm_api(request):
             if not email or not otp:
                 return JsonResponse({"error": "Email and OTP are required"}, status=400)
 
-            if email != user.email.lower():
+            db_email = (user.email or "").strip().lower()
+            if not db_email:
+                profile = getattr(user, 'profile', None)
+                if profile and profile.email:
+                    db_email = profile.email.strip().lower()
+
+            if email != db_email:
                 return JsonResponse({"error": "Email mismatch"}, status=400)
 
             verification = OTPVerification.objects.filter(user=user).first()
@@ -2811,5 +2829,7 @@ def delete_account_confirm_api(request):
 
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid payload"}, status=400)
+        except Exception as e:
+            return JsonResponse({"error": f"Server error: {str(e)}"}, status=500)
 
     return JsonResponse({"error": "Method not allowed"}, status=405)
