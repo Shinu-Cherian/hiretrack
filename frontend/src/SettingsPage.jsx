@@ -108,7 +108,7 @@ export default function SettingsPage() {
 
         {/* Navigation */}
         <div className="mb-10">
-          <h1 className="text-4xl font-black text-white tracking-tight">Settings</h1>
+          <h1 className="text-4xl font-bold text-white tracking-wide">Settings</h1>
           <p className="text-gray-400 mt-1">Manage your account security and platform preferences.</p>
         </div>
 
@@ -118,7 +118,7 @@ export default function SettingsPage() {
             <div className="w-12 h-12 rounded-2xl bg-[#FF6044] text-[#121313] flex items-center justify-center mb-5 shadow-xl shadow-[#FF6044]/20">
               <ShieldCheck size={24} strokeWidth={2.5} />
             </div>
-            <h2 className="text-xl font-black text-white tracking-tight">Security & Privacy</h2>
+            <h2 className="text-xl font-bold text-white tracking-wide">Security & Privacy</h2>
             <p className="text-gray-400 mt-2 text-xs leading-relaxed flex-1">
               Update your password regularly to keep your data private and secure from unauthorized access.
             </p>
@@ -136,7 +136,7 @@ export default function SettingsPage() {
             <div className="w-12 h-12 rounded-2xl bg-red-500/10 text-red-500 flex items-center justify-center mb-5 shadow-xl shadow-red-500/10 border border-red-500/20">
               <AlertTriangle size={24} strokeWidth={2.5} />
             </div>
-            <h2 className="text-xl font-black text-white tracking-tight">Danger Zone</h2>
+            <h2 className="text-xl font-bold text-white tracking-wide">Danger Zone</h2>
             <p className="text-gray-400 mt-2 text-xs leading-relaxed flex-1">
               Permanently delete your account and all associated data including applications, referrals, and notes. This action cannot be undone.
             </p>
