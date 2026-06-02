@@ -2686,8 +2686,13 @@ def resend_otp_api(request):
     return JsonResponse({"error": "Method not allowed"}, status=405)
 
 
-@login_required
+@csrf_exempt
 def delete_account_otp_api(request):
+    user = api_user(request)
+    auth_error = login_required_json(user)
+    if auth_error:
+        return auth_error
+
     if is_ratelimited(request, group='delete_account_otp', key='ip', rate='3/m', increment=True):
         return JsonResponse({"error": "Too many attempts. Please try again later."}, status=429)
 
@@ -2707,13 +2712,13 @@ def delete_account_otp_api(request):
                 return JsonResponse({"error": "Email is required"}, status=400)
             
             # Security check: Make sure they are trying to delete their OWN account
-            if email != request.user.email.lower():
+            if email != user.email.lower():
                 return JsonResponse({"error": "Email does not match the logged in account"}, status=400)
 
             otp = str(random.randint(100000, 999999))
             
-            OTPVerification.objects.filter(user=request.user).delete()
-            OTPVerification.objects.create(user=request.user, otp=otp)
+            OTPVerification.objects.filter(user=user).delete()
+            OTPVerification.objects.create(user=user, otp=otp)
 
             def send_delete_otp_email_task(user_email, username, otp_code):
                 subject = "HireTrack Account Deletion Request ⚠️"
@@ -2750,7 +2755,7 @@ def delete_account_otp_api(request):
                 except Exception as e:
                     print(f"Error sending deletion OTP email: {e}")
             
-            threading.Thread(target=send_delete_otp_email_task, args=(email, request.user.username, otp)).start()
+            threading.Thread(target=send_delete_otp_email_task, args=(email, user.username, otp)).start()
 
             return JsonResponse({"message": "OTP sent to your email."})
 
@@ -2760,8 +2765,13 @@ def delete_account_otp_api(request):
     return JsonResponse({"error": "Method not allowed"}, status=405)
 
 
-@login_required
+@csrf_exempt
 def delete_account_confirm_api(request):
+    user = api_user(request)
+    auth_error = login_required_json(user)
+    if auth_error:
+        return auth_error
+
     if is_ratelimited(request, group='delete_account_confirm', key='ip', rate='5/m', increment=True):
         return JsonResponse({"error": "Too many attempts. Please try again later."}, status=429)
 
@@ -2779,10 +2789,10 @@ def delete_account_confirm_api(request):
             if not email or not otp:
                 return JsonResponse({"error": "Email and OTP are required"}, status=400)
 
-            if email != request.user.email.lower():
+            if email != user.email.lower():
                 return JsonResponse({"error": "Email mismatch"}, status=400)
 
-            verification = OTPVerification.objects.filter(user=request.user).first()
+            verification = OTPVerification.objects.filter(user=user).first()
             if not verification:
                 return JsonResponse({"error": "No pending verification found. Request a new OTP."}, status=400)
 
@@ -2793,7 +2803,7 @@ def delete_account_confirm_api(request):
                 return JsonResponse({"error": "OTP has expired. Please resend."}, status=400)
 
             # Verification successful. Delete account.
-            user_to_delete = request.user
+            user_to_delete = user
             logout(request) # Log them out first
             user_to_delete.delete() # Cascade deletes everything
 
