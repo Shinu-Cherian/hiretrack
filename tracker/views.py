@@ -2562,13 +2562,14 @@ def verify_otp_api(request):
 
             # Send welcome onboarding email via Brevo in background
             import threading
+            # Dynamically determine base URL (works for both local Vite dev server and exact production Render domain)
             referer = request.META.get('HTTP_REFERER', '')
-            if referer and (referer.startswith('http://localhost') or referer.startswith('http://127.0.0.1')):
+            if referer:
                 from urllib.parse import urlparse
                 parsed = urlparse(referer)
                 frontend_url = f"{parsed.scheme}://{parsed.netloc}/"
             else:
-                frontend_url = 'https://hiretrack.onrender.com/'
+                frontend_url = request.build_absolute_uri("/")
 
             subject = "Welcome to HireTrack!"
             
@@ -2630,7 +2631,7 @@ def verify_otp_api(request):
                     
                     <p style="font-size: 16px; color: #9CA3AF; margin-top: 30px;">
                          Best,<br>
-                         <strong style="color: #FFFFFF; font-weight: 900;">Shinu Cherian</strong><br>
+                         <span style="color: #FFFFFF; font-weight: normal;">Shinu Cherian</span><br>
                          Founder, HireTrack
                     </p>
                 </div>
