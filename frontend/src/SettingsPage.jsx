@@ -93,7 +93,7 @@ export default function SettingsPage() {
     setDeleteLoading(false);
 
     if (res.ok) {
-      navigate("/login");
+      navigate("/");
     } else {
       setDeleteError(data.error || "Invalid or expired OTP.");
     }
