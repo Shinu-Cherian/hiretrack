@@ -2563,10 +2563,12 @@ def verify_otp_api(request):
             # Send welcome onboarding email via Brevo in background
             import threading
             referer = request.META.get('HTTP_REFERER', '')
-            if referer and referer.startswith('http://localhost:3000'):
-                frontend_url = 'http://localhost:3000'
+            if referer and (referer.startswith('http://localhost') or referer.startswith('http://127.0.0.1')):
+                from urllib.parse import urlparse
+                parsed = urlparse(referer)
+                frontend_url = f"{parsed.scheme}://{parsed.netloc}/"
             else:
-                frontend_url = 'https://hiretrack.onrender.com'
+                frontend_url = 'https://hiretrack.onrender.com/'
 
             subject = "Welcome to HireTrack! 🚀"
             
@@ -2621,14 +2623,14 @@ def verify_otp_api(request):
                     <p style="font-size: 16px; color: #D1D5DB; margin-bottom: 30px;">Your job hunt doesn't have to be a mess anymore. We've got everything organized for you.</p>
                     
                     <div style="text-align: center; margin-top: 40px; margin-bottom: 40px;">
-                        <a href="{frontend_url}" style="background-color: #FF6044; color: #121313; padding: 16px 32px; text-decoration: none; font-weight: 900; font-size: 16px; border-radius: 50px; text-transform: uppercase; letter-spacing: 1px; display: inline-block;">Open HireTrack Dashboard</a>
+                        <a href="{frontend_url}" style="background-color: #FF6044; color: #121313; padding: 16px 32px; text-decoration: none; font-weight: 900; font-size: 16px; border-radius: 50px; text-transform: uppercase; letter-spacing: 1px; display: inline-block;">Open HireTrack</a>
                     </div>
                     
                     <p style="font-size: 16px; color: #D1D5DB;">Enjoy your job hunt journey with HireTrack! If you have any feedback or ideas, I'd love to hear them.</p>
                     
                     <p style="font-size: 16px; color: #9CA3AF; margin-top: 30px;">
                          Best,<br>
-                         <strong style="color: #FFFFFF;">Shinu Cherian</strong><br>
+                         <strong style="color: #FFFFFF; font-weight: 900;">Shinu Cherian</strong><br>
                          Founder, HireTrack
                     </p>
                 </div>
@@ -2857,8 +2859,45 @@ def delete_account_confirm_api(request):
 
             # Verification successful. Delete account.
             user_to_delete = user
+            user_email = (user_to_delete.email or "").strip().lower()
+            if not user_email:
+                profile = getattr(user_to_delete, 'profile', None)
+                if profile and profile.email:
+                    user_email = profile.email.strip().lower()
+            username = user_to_delete.username
+
             logout(request) # Log them out first
             user_to_delete.delete() # Cascade deletes everything
+
+            # Send deletion confirmation email via Brevo in background
+            import threading
+            subject = "HireTrack Account Deleted Successfully 🔐"
+            
+            html_message = f"""
+            <div style="font-family: Arial, sans-serif; background-color: #0A0A0A; color: #FFFFFF; padding: 40px 20px; line-height: 1.6;">
+                <div style="max-width: 600px; margin: 0 auto; background-color: #121313; border: 1px solid rgba(255,255,255,0.1); border-top: 4px solid #ef4444; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                    <div style="font-size: 32px; font-weight: 900; text-transform: uppercase; letter-spacing: -1px; margin-bottom: 30px; color: #FFFFFF; font-family: 'Inter', Arial, sans-serif;">HIRE<span style="color: #FF6044;">TRACK</span></div>
+                    <h1 style="color: #ef4444; font-size: 24px; font-weight: 900; letter-spacing: 1px; margin-bottom: 20px; text-transform: uppercase;">ACCOUNT DELETED</h1>
+                    
+                    <p style="font-size: 16px;">Hi <strong style="color: #FF6044;">{username}</strong>,</p>
+                    
+                    <p style="font-size: 16px; color: #D1D5DB;">This email confirms that your HireTrack account has been permanently deleted as requested. In accordance with our security policies, all your job applications, referrals, activity history, scribbles, and profile data have been completely wiped from our systems and cannot be recovered.</p>
+                    
+                    <p style="font-size: 16px; color: #D1D5DB;">Thank you for using HireTrack. We wish you the very best in your future career journey.</p>
+                    
+                    <p style="font-size: 16px; color: #9CA3AF; margin-top: 30px;">
+                         Best,<br>
+                         <strong style="color: #FFFFFF; font-weight: 900;">Shinu Cherian</strong><br>
+                         Founder, HireTrack
+                    </p>
+                </div>
+            </div>
+            """
+            plain_message = "Your HireTrack account has been permanently deleted as requested."
+            if user_email:
+                threading.Thread(
+                    target=lambda: send_email_via_brevo(user_email, subject, html_message, plain_message)
+                ).start()
 
             return JsonResponse({"message": "Account deleted permanently."})
 
