@@ -2781,7 +2781,7 @@ def delete_account_otp_api(request):
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid payload"}, status=400)
         except Exception as e:
-            return JsonResponse({"error": f"Server error: {str(e)}"}, status=400)
+            return JsonResponse({"error": "An unexpected error occurred. Please try again later."}, status=400)
 
     return JsonResponse({"error": "Method not allowed"}, status=405)
 
@@ -2839,6 +2839,6 @@ def delete_account_confirm_api(request):
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid payload"}, status=400)
         except Exception as e:
-            return JsonResponse({"error": f"Server error: {str(e)}"}, status=500)
+            return JsonResponse({"error": "An unexpected error occurred. Please try again later."}, status=400)
 
     return JsonResponse({"error": "Method not allowed"}, status=405)
