@@ -2592,7 +2592,7 @@ def verify_otp_api(request):
             user.is_active = True
             user.save()
             verification.delete()
-            login(request, user)
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
 
             return JsonResponse({"message": "Email verified successfully!"})
 
@@ -2651,19 +2651,19 @@ def resend_otp_api(request):
                     <div style="max-width: 600px; margin: 0 auto; background-color: #121313; border: 1px solid rgba(255,255,255,0.1); padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
                         <h1 style="color: #FF6044; font-size: 28px; font-weight: 900; letter-spacing: 2px; margin-bottom: 30px; text-transform: uppercase;">HIRETRACK</h1>
                         
-                        <p style="font-size: 16px;">Hi <strong style="color: #FF6044;">{{username}}</strong>,</p>
+                        <p style="font-size: 16px;">Hi <strong style="color: #FF6044;">{username}</strong>,</p>
                         
                         <p style="font-size: 16px; color: #D1D5DB;">Welcome back! Please use the following One-Time Password (OTP) to verify your email address and activate your account. <strong>This code is valid for 5 minutes.</strong></p>
                         
                         <div style="background-color: #FF6044; color: #121313; padding: 20px; border-radius: 8px; text-align: center; margin: 30px 0;">
-                            <span style="font-size: 32px; font-weight: 900; letter-spacing: 8px;">{{otp_code}}</span>
+                            <span style="font-size: 32px; font-weight: 900; letter-spacing: 8px;">{otp_code}</span>
                         </div>
                         
                         <p style="font-size: 16px; color: #D1D5DB;">Enjoy your job hunt journey with HireTrack!</p>
                     </div>
                 </div>
                 """
-                plain_message = f"Your HireTrack Verification Code is: {{otp_code}}"
+                plain_message = f"Your HireTrack Verification Code is: {otp_code}"
                 try:
                     send_mail(
                         subject=subject,
