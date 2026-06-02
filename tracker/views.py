@@ -1119,7 +1119,7 @@ def signup(request):
                 html_message = f"""
                 <div style="font-family: Arial, sans-serif; background-color: #0A0A0A; color: #FFFFFF; padding: 40px 20px; line-height: 1.6;">
                     <div style="max-width: 600px; margin: 0 auto; background-color: #121313; border: 1px solid rgba(255,255,255,0.1); padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-                        <h1 style="color: #FF6044; font-size: 28px; font-weight: 900; letter-spacing: 2px; margin-bottom: 30px; text-transform: uppercase;">HIRETRACK</h1>
+                        <div style="font-size: 32px; font-weight: 900; text-transform: uppercase; letter-spacing: -1px; margin-bottom: 30px; color: #FFFFFF; font-family: 'Inter', Arial, sans-serif;">HIRE<span style="color: #FF6044;">TRACK</span></div>
                         
                         <p style="font-size: 16px;">Hi <strong style="color: #FF6044;">{username}</strong>,</p>
                         
@@ -2669,7 +2669,7 @@ def resend_otp_api(request):
                 html_message = f"""
                 <div style="font-family: Arial, sans-serif; background-color: #0A0A0A; color: #FFFFFF; padding: 40px 20px; line-height: 1.6;">
                     <div style="max-width: 600px; margin: 0 auto; background-color: #121313; border: 1px solid rgba(255,255,255,0.1); padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-                        <h1 style="color: #FF6044; font-size: 28px; font-weight: 900; letter-spacing: 2px; margin-bottom: 30px; text-transform: uppercase;">HIRETRACK</h1>
+                        <div style="font-size: 32px; font-weight: 900; text-transform: uppercase; letter-spacing: -1px; margin-bottom: 30px; color: #FFFFFF; font-family: 'Inter', Arial, sans-serif;">HIRE<span style="color: #FF6044;">TRACK</span></div>
                         
                         <p style="font-size: 16px;">Hi <strong style="color: #FF6044;">{username}</strong>,</p>
                         
@@ -2749,6 +2749,7 @@ def delete_account_otp_api(request):
                 html_message = f"""
                 <div style="font-family: Arial, sans-serif; background-color: #0A0A0A; color: #FFFFFF; padding: 40px 20px; line-height: 1.6;">
                     <div style="max-width: 600px; margin: 0 auto; background-color: #121313; border: 1px solid rgba(255,255,255,0.1); border-top: 4px solid #ef4444; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                        <div style="font-size: 32px; font-weight: 900; text-transform: uppercase; letter-spacing: -1px; margin-bottom: 30px; color: #FFFFFF; font-family: 'Inter', Arial, sans-serif;">HIRE<span style="color: #FF6044;">TRACK</span></div>
                         <h1 style="color: #ef4444; font-size: 24px; font-weight: 900; letter-spacing: 1px; margin-bottom: 20px; text-transform: uppercase;">ACCOUNT DELETION REQUEST</h1>
                         
                         <p style="font-size: 16px;">Hi <strong style="color: #FF6044;">{username}</strong>,</p>
