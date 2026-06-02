@@ -103,7 +103,7 @@ export default function SettingsPage() {
     <div className="min-h-screen bg-[#121313] bg-dot-pattern font-sans text-white flex flex-col">
       <Header />
 
-      <main className="max-w-[1600px] mx-auto p-6 animate-fade-in-up">
+      <main className="w-full px-6 md:px-12 py-6 animate-fade-in-up">
         <BackButton className="mb-8" isMenu={true} />
 
         {/* Navigation */}
@@ -112,32 +112,32 @@ export default function SettingsPage() {
           <p className="text-gray-400 mt-1">Manage your account security and platform preferences.</p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6 max-w-4xl">
+        <div className="flex flex-wrap gap-6 w-full">
           {/* Security Card */}
-          <section className="saas-card p-8 flex flex-col items-center text-center">
-            <div className="w-16 h-16 rounded-2xl bg-[#FF6044] text-[#121313] flex items-center justify-center mb-6 shadow-xl shadow-[#FF6044]/20">
-              <ShieldCheck size={32} strokeWidth={2.5} />
+          <section className="saas-card w-full md:w-[380px] p-6 flex flex-col items-center text-center">
+            <div className="w-12 h-12 rounded-2xl bg-[#FF6044] text-[#121313] flex items-center justify-center mb-5 shadow-xl shadow-[#FF6044]/20">
+              <ShieldCheck size={24} strokeWidth={2.5} />
             </div>
-            <h2 className="text-2xl font-black text-white tracking-tight">Security & Privacy</h2>
-            <p className="text-gray-400 mt-3 text-sm leading-relaxed flex-1">
+            <h2 className="text-xl font-black text-white tracking-tight">Security & Privacy</h2>
+            <p className="text-gray-400 mt-2 text-xs leading-relaxed flex-1">
               Update your password regularly to keep your data private and secure from unauthorized access.
             </p>
             
             <button 
               onClick={() => setPasswordModalOpen(true)}
-              className="mt-8 w-full py-4 bg-[#FF6044] text-[#121313] rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[#ff4d2e] hover:shadow-lg hover:shadow-[#FF6044]/20 transition-all active:scale-95 shadow-md"
+              className="mt-6 w-full py-3 bg-[#FF6044] text-[#121313] rounded-xl font-black text-[11px] uppercase tracking-widest hover:bg-[#ff4d2e] hover:shadow-lg hover:shadow-[#FF6044]/20 transition-all active:scale-95 shadow-md"
             >
               Change Password
             </button>
           </section>
 
           {/* Danger Zone Card */}
-          <section className="saas-card p-8 flex flex-col items-center text-center border-red-500/10">
-            <div className="w-16 h-16 rounded-2xl bg-red-500/10 text-red-500 flex items-center justify-center mb-6 shadow-xl shadow-red-500/10 border border-red-500/20">
-              <AlertTriangle size={32} strokeWidth={2.5} />
+          <section className="saas-card w-full md:w-[380px] p-6 flex flex-col items-center text-center border-red-500/10">
+            <div className="w-12 h-12 rounded-2xl bg-red-500/10 text-red-500 flex items-center justify-center mb-5 shadow-xl shadow-red-500/10 border border-red-500/20">
+              <AlertTriangle size={24} strokeWidth={2.5} />
             </div>
-            <h2 className="text-2xl font-black text-white tracking-tight">Danger Zone</h2>
-            <p className="text-gray-400 mt-3 text-sm leading-relaxed flex-1">
+            <h2 className="text-xl font-black text-white tracking-tight">Danger Zone</h2>
+            <p className="text-gray-400 mt-2 text-xs leading-relaxed flex-1">
               Permanently delete your account and all associated data including applications, referrals, and notes. This action cannot be undone.
             </p>
             
@@ -149,7 +149,7 @@ export default function SettingsPage() {
                 setDeleteOtp("");
                 setDeleteError("");
               }}
-              className="mt-8 w-full py-4 bg-transparent border border-red-500/30 text-red-400 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-red-500 hover:text-white hover:border-red-500 hover:shadow-lg hover:shadow-red-500/20 transition-all active:scale-95 shadow-md flex items-center justify-center gap-2"
+              className="mt-6 w-full py-3 bg-transparent border border-red-500/30 text-red-400 rounded-xl font-black text-[11px] uppercase tracking-widest hover:bg-red-500 hover:text-white hover:border-red-500 hover:shadow-lg hover:shadow-red-500/20 transition-all active:scale-95 shadow-md flex items-center justify-center gap-2"
             >
               <Trash2 size={16} />
               Delete Account
