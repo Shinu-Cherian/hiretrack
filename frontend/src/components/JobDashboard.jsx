@@ -81,7 +81,7 @@ export default function JobDashboard({ data }) {
           <ResponsiveContainer width="100%" height={230}>
             <BarChart data={companies}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-              <XAxis dataKey="name" stroke="#6b7280" fontSize={10} tickLine={false} axisLine={false} />
+              <XAxis dataKey="name" stroke="#6b7280" fontSize={9} interval={0} tickLine={false} axisLine={false} />
               <YAxis allowDecimals={false} stroke="#6b7280" fontSize={10} tickLine={false} axisLine={false} />
               <Tooltip 
                 cursor={{ fill: 'rgba(255,255,255,0.05)' }}
@@ -96,7 +96,7 @@ export default function JobDashboard({ data }) {
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={platforms}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-              <XAxis dataKey="name" stroke="#6b7280" fontSize={10} tickLine={false} axisLine={false} />
+              <XAxis dataKey="name" stroke="#6b7280" fontSize={9} interval={0} tickLine={false} axisLine={false} />
               <YAxis allowDecimals={false} stroke="#6b7280" fontSize={10} tickLine={false} axisLine={false} />
               <Tooltip 
                 cursor={{ fill: 'rgba(255,255,255,0.05)' }}

@@ -1329,6 +1329,24 @@ def normalize_platform(name):
     return cleaned
 
 
+def normalize_company(name):
+    if not name:
+        return "Unknown"
+    cleaned = name.strip()
+    if not cleaned:
+        return "Unknown"
+    
+    # If it is an abbreviation (all uppercase and short, <= 4 chars), keep it uppercase
+    if cleaned.isupper() and len(cleaned) <= 4:
+        return cleaned
+        
+    # If all lowercase or all uppercase, convert to title case
+    if cleaned.islower() or cleaned.isupper():
+        return cleaned.title()
+        
+    return cleaned
+
+
 def dashboard_api(request):
     user = api_user(request)
     auth_error = login_required_json(user)
@@ -1380,10 +1398,10 @@ def dashboard_api(request):
         )
     ]
 
-    # Clean and aggregate job companies in Python to handle empty/whitespace names
+    # Clean and aggregate job companies in Python to handle empty/whitespace names and case normalization
     job_company_counts = {}
     for c in jobs.values_list("company", flat=True):
-        c_name = (c.strip() if c else "") or "Unknown"
+        c_name = normalize_company(c)
         job_company_counts[c_name] = job_company_counts.get(c_name, 0) + 1
 
     job_companies = [
@@ -1391,10 +1409,10 @@ def dashboard_api(request):
         for name, count in sorted(job_company_counts.items(), key=lambda x: (-x[1], x[0]))[:8]
     ]
 
-    # Clean and aggregate referral companies in Python to handle empty/whitespace names
+    # Clean and aggregate referral companies in Python to handle empty/whitespace names and case normalization
     ref_company_counts = {}
     for c in referrals.values_list("company", flat=True):
-        c_name = (c.strip() if c else "") or "Unknown"
+        c_name = normalize_company(c)
         ref_company_counts[c_name] = ref_company_counts.get(c_name, 0) + 1
 
     referral_companies = [
