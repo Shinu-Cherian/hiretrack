@@ -1292,6 +1292,8 @@ def normalize_platform(name):
     if not name:
         return "Not specified"
     cleaned = name.strip()
+    if not cleaned:
+        return "Not specified"
     lower_cleaned = cleaned.lower()
     
     # Common mappings to standardize platform names
@@ -1378,22 +1380,26 @@ def dashboard_api(request):
         )
     ]
 
+    # Clean and aggregate job companies in Python to handle empty/whitespace names
+    job_company_counts = {}
+    for c in jobs.values_list("company", flat=True):
+        c_name = (c.strip() if c else "") or "Unknown"
+        job_company_counts[c_name] = job_company_counts.get(c_name, 0) + 1
+
     job_companies = [
-        {"name": item["company"] or "Unknown", "count": item["count"]}
-        for item in (
-            jobs.values("company")
-            .annotate(count=Count("id"))
-            .order_by("-count", "company")[:8]
-        )
+        {"name": name, "count": count}
+        for name, count in sorted(job_company_counts.items(), key=lambda x: (-x[1], x[0]))[:8]
     ]
 
+    # Clean and aggregate referral companies in Python to handle empty/whitespace names
+    ref_company_counts = {}
+    for c in referrals.values_list("company", flat=True):
+        c_name = (c.strip() if c else "") or "Unknown"
+        ref_company_counts[c_name] = ref_company_counts.get(c_name, 0) + 1
+
     referral_companies = [
-        {"name": item["company"] or "Unknown", "count": item["count"]}
-        for item in (
-            referrals.values("company")
-            .annotate(count=Count("id"))
-            .order_by("-count", "company")[:8]
-        )
+        {"name": name, "count": count}
+        for name, count in sorted(ref_company_counts.items(), key=lambda x: (-x[1], x[0]))[:8]
     ]
 
     # Aggregate platforms in Python to normalize casing and whitespace variations

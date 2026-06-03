@@ -81,6 +81,7 @@ export default function ReferralDashboard({ data }) {
               <XAxis dataKey="name" stroke="#6b7280" fontSize={10} tickLine={false} axisLine={false} />
               <YAxis allowDecimals={false} stroke="#6b7280" fontSize={10} tickLine={false} axisLine={false} />
               <Tooltip 
+                cursor={{ fill: 'rgba(255,255,255,0.05)' }}
                 contentStyle={{ backgroundColor: '#121313', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
               />
               <Bar dataKey="count" fill="#FF6044" radius={[4, 4, 0, 0]} />
