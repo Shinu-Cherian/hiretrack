@@ -1297,6 +1297,11 @@ def normalize_platform(name):
     # Common mappings to standardize platform names
     mappings = {
         "linkedin": "LinkedIn",
+        "linkedln": "LinkedIn",
+        "linked in": "LinkedIn",
+        "linked-in": "LinkedIn",
+        "linked ln": "LinkedIn",
+        "linked-ln": "LinkedIn",
         "indeed": "Indeed",
         "naukri": "Naukri",
         "glassdoor": "Glassdoor",
