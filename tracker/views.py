@@ -1288,8 +1288,38 @@ def settings_view(request):
     return render(request, 'settings.html')
 
 
-
-
+def normalize_platform(name):
+    if not name:
+        return "Not specified"
+    cleaned = name.strip()
+    lower_cleaned = cleaned.lower()
+    
+    # Common mappings to standardize platform names
+    mappings = {
+        "linkedin": "LinkedIn",
+        "indeed": "Indeed",
+        "naukri": "Naukri",
+        "glassdoor": "Glassdoor",
+        "monster": "Monster",
+        "cutshort": "Cutshort",
+        "wellfound": "Wellfound",
+        "angelco": "Wellfound",
+        "angellist": "Wellfound",
+        "jobsfound": "JobsFound",
+        "carrier page": "Career Page",
+        "carrierpage": "Career Page",
+        "career page": "Career Page",
+        "careerpage": "Career Page",
+        "stripe carrier page": "Stripe Career Page",
+    }
+    
+    if lower_cleaned in mappings:
+        return mappings[lower_cleaned]
+    
+    # Otherwise, if it's all lower or all upper, title case it
+    if cleaned.islower() or cleaned.isupper():
+        return cleaned.title()
+    return cleaned
 
 
 def dashboard_api(request):
@@ -1361,13 +1391,15 @@ def dashboard_api(request):
         )
     ]
 
+    # Aggregate platforms in Python to normalize casing and whitespace variations
+    platform_counts = {}
+    for p in jobs.values_list("platform", flat=True):
+        p_name = normalize_platform(p)
+        platform_counts[p_name] = platform_counts.get(p_name, 0) + 1
+
     job_platforms = [
-        {"name": item["platform"] or "Not specified", "count": item["count"]}
-        for item in (
-            jobs.values("platform")
-            .annotate(count=Count("id"))
-            .order_by("-count", "platform")[:8]
-        )
+        {"name": name, "count": count}
+        for name, count in sorted(platform_counts.items(), key=lambda x: (-x[1], x[0]))[:8]
     ]
 
     acceptance_rate = round((selected_jobs / total_jobs) * 100, 1) if total_jobs else 0

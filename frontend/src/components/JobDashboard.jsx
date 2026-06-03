@@ -131,11 +131,13 @@ function buildJobInsights(stats) {
 
 function InsightPanel({ icon, title, insights }) {
   return (
-    <section className="saas-card p-5 hover-3d xl:col-span-6 border-white/5 bg-[#121313]">
-      <h3 className="flex items-center gap-2 text-base font-extrabold text-[#FF6044]">{icon}{title}</h3>
-      <div className="mt-3 grid gap-3 md:grid-cols-3">
+    <section className="saas-card p-5 hover-3d xl:col-span-6 border-white/5 bg-[#121313] flex flex-col h-full">
+      <h3 className="flex items-center gap-2 text-base font-extrabold text-[#FF6044] mb-3">{icon}{title}</h3>
+      <div className="flex-1 flex flex-col sm:flex-row gap-3">
         {insights.map((insight) => (
-          <p key={insight} className="rounded-lg bg-white/5 p-3 text-sm leading-6 text-gray-300 border border-white/5">{insight}</p>
+          <div key={insight} className="flex-1 rounded-lg bg-white/5 p-4 text-sm leading-6 text-gray-300 border border-white/5 flex items-center">
+            <span className="w-full text-left">{insight}</span>
+          </div>
         ))}
       </div>
     </section>
