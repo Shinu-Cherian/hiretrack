@@ -90,14 +90,16 @@ export default function JobForm({ initialValues = emptyJob, submitLabel = "Save 
               <TextInput required type="date" placeholder="10 May 2026" value={form.dateApplied} onChange={(value) => update("dateApplied", value)} />
             </Field>
 
-            <Field label="Status">
-              <SelectInput value={form.status} onChange={(value) => update("status", value)}>
-                <option value="applied">Applied</option>
-                <option value="pending">Pending</option>
-                <option value="rejected">Rejected</option>
-                <option value="selected">Selected</option>
-              </SelectInput>
-            </Field>
+            {initialValues && initialValues.id && (
+              <Field label="Status">
+                <SelectInput value={form.status} onChange={(value) => update("status", value)}>
+                  <option value="applied">Applied</option>
+                  <option value="pending">Pending</option>
+                  <option value="rejected">Rejected</option>
+                  <option value="selected">Selected</option>
+                </SelectInput>
+              </Field>
+            )}
           </div>
 
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">

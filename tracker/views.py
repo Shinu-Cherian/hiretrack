@@ -37,8 +37,24 @@ from zipfile import ZipFile
 from xml.etree import ElementTree
 
 
+def auto_update_job_status(user):
+    from datetime import date, timedelta
+    if not user or not user.is_authenticated:
+        return
+    try:
+        threshold_date = date.today() - timedelta(days=7)
+        Job.objects.filter(
+            user=user,
+            status='applied',
+            date_applied__lte=threshold_date
+        ).update(status='pending')
+    except Exception as e:
+        print(f"Error in auto_update_job_status: {e}")
+
+
 def api_user(request):
     if request.user.is_authenticated:
+        auto_update_job_status(request.user)
         return request.user
     return None
 
@@ -614,6 +630,7 @@ def add_referral_api(request):
 
 @login_required
 def dashboard(request):
+    auto_update_job_status(request.user)
 
     # 🔥 ONLY CURRENT USER DATA
     jobs = Job.objects.filter(user=request.user)
@@ -810,6 +827,7 @@ def edit_referral(request, id):
 
 @login_required
 def job_list(request):
+    auto_update_job_status(request.user)
     jobs = Job.objects.filter(user=request.user)
     highlight_id = request.GET.get('highlight')
 
@@ -1156,6 +1174,7 @@ def signup(request):
 
 @login_required
 def starred_list(request):
+    auto_update_job_status(request.user)
     jobs = Job.objects.filter(user=request.user, is_starred=True)
     referrals = Referral.objects.filter(user=request.user, is_starred=True)
 
