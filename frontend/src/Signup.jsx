@@ -262,7 +262,7 @@ export default function Signup() {
                     <div className="h-1 w-12 bg-[#FF6044] rounded-full" />
                   </div>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
                 
                 {/* ROW 1: First Name & Last Name */}
                 <div className="flex flex-col sm:flex-row gap-4">
@@ -308,6 +308,7 @@ export default function Signup() {
                         className="w-full bg-[#1a1b1b] border border-white/5 rounded-2xl py-2.5 pl-11 pr-4 text-sm text-white outline-none focus:border-[#FF6044]/50 focus:ring-4 focus:ring-[#FF6044]/5 transition-all placeholder:text-gray-600 font-medium"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        autoComplete="off"
                         required
                       />
                     </div>
@@ -352,6 +353,7 @@ export default function Signup() {
                         className="w-full bg-[#1a1b1b] border border-white/5 rounded-2xl py-2.5 pl-11 pr-10 text-sm text-white outline-none focus:border-[#FF6044]/50 focus:ring-4 focus:ring-[#FF6044]/5 transition-all placeholder:text-gray-600 font-medium"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        autoComplete="new-password"
                         required
                       />
                       <button 
@@ -389,6 +391,7 @@ export default function Signup() {
                         className="w-full bg-[#1a1b1b] border border-white/5 rounded-2xl py-2.5 pl-11 pr-4 text-sm text-white outline-none focus:border-[#FF6044]/50 focus:ring-4 focus:ring-[#FF6044]/5 transition-all placeholder:text-gray-600 font-medium"
                         value={confirm}
                         onChange={(e) => setConfirm(e.target.value)}
+                        autoComplete="new-password"
                         required
                       />
                     </div>

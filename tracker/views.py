@@ -1162,10 +1162,26 @@ def signup(request):
                 except Exception as e:
                     print(f"Error sending welcome email: {e}")
             
-            threading.Thread(target=send_welcome_email_task, args=(email, username, frontend_url, otp)).start()
+            from tracker.kafka_producer import publish_event
+            
+            # Create payload for Kafka
+            event_payload = {
+                "type": "welcome_email",
+                "email": email,
+                "username": username,
+                "frontend_url": frontend_url,
+                "otp": otp
+            }
+            
+            # Try to send to Kafka first
+            kafka_success = publish_event("email_events", event_payload)
+            
+            # FALLBACK (Safety Net): If Kafka fails or is down, use standard threading
+            if not kafka_success:
+                print("DEBUG: Kafka unavailable, falling back to threading for email.")
+                threading.Thread(target=send_welcome_email_task, args=(email, username, frontend_url, otp), daemon=True).start()
 
             return JsonResponse({"message": "Signup success. Please verify OTP.", "email": email})
-
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid request payload"}, status=400)
 
