@@ -71,11 +71,10 @@ def publish_event(topic, payload):
     try:
         # Send the message asynchronously
         print(f"DEBUG: Sending message to topic {topic}...")
-        future = producer.send(topic, payload)
-        # We wait briefly just to ensure the network request is sent
-        print("DEBUG: Waiting for message delivery confirmation...")
-        future.get(timeout=5)
-        print("DEBUG: Message successfully delivered to Kafka.")
+        producer.send(topic, payload)
+        # Removed future.get() to ensure TRUE zero-latency. 
+        # The kafka-python library will handle delivery and retries in its background thread.
+        print("DEBUG: Message dropped into Kafka queue asynchronously.")
         return True
     except Exception as e:
         print(f"DEBUG: Error publishing to Kafka topic {topic}: {e}")
