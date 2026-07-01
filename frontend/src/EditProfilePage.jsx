@@ -2,12 +2,14 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   BriefcaseBusiness, GraduationCap, Mail, Pencil, Phone, 
-  Plus, Save, Sparkles, Trash2, Upload, UserRound, Search, ChevronDown
+  Plus, Save, Sparkles, Trash2, Upload, UserRound, Search, ChevronDown, X, Crop, Check
 } from "lucide-react";
 import Header from "./Header";
 import { API_BASE, apiUrl } from "./api";
 import Avatar from "./components/Avatar";
 import BackButton from "./components/BackButton";
+import Cropper from "react-easy-crop";
+import getCroppedImg from "./utils/cropImage";
 
 const emptyEducation = { college: "", course: "", start_year: "", end_year: "" };
 const emptyExperience = { company: "", role: "", start_date: "", end_date: "", description: "" };
@@ -201,6 +203,48 @@ export default function EditProfilePage() {
   const [error, setError] = useState("");
   const [resumeError, setResumeError] = useState("");
 
+  // Crop states
+  const [cropModalOpen, setCropModalOpen] = useState(false);
+  const [imageToCrop, setImageToCrop] = useState(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [isCropping, setIsCropping] = useState(false);
+
+  const onCropComplete = (croppedArea, croppedAreaPixels) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  };
+
+  const handleFileSelect = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      const imageUrl = URL.createObjectURL(file);
+      setImageToCrop(imageUrl);
+      setCropModalOpen(true);
+      setRemoveProfilePic(false);
+    }
+  };
+
+  const handleCropImage = async () => {
+    try {
+      setIsCropping(true);
+      const croppedImageFile = await getCroppedImg(imageToCrop, croppedAreaPixels);
+      setProfilePic(croppedImageFile);
+      
+      // Update form to show local preview immediately
+      setForm((current) => ({
+        ...current,
+        profile_pic_preview: URL.createObjectURL(croppedImageFile)
+      }));
+      
+      setCropModalOpen(false);
+      setIsCropping(false);
+    } catch (e) {
+      console.error(e);
+      setIsCropping(false);
+    }
+  };
+
   useEffect(() => {
     fetch(apiUrl("/api/profile/"), { credentials: "include" })
       .then((res) => {
@@ -324,7 +368,9 @@ export default function EditProfilePage() {
         <form onSubmit={handleSave} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <section className="saas-card p-6 h-fit">
             <div className="flex flex-col items-center text-center">
-              {form.profile_pic && !removeProfilePic ? (
+              {form.profile_pic_preview ? (
+                <img src={form.profile_pic_preview} className="w-28 h-28 rounded-full object-cover shadow border-4 border-white" alt="Profile" />
+              ) : form.profile_pic && !removeProfilePic ? (
                 <img src={`${API_BASE}${form.profile_pic}`} className="w-28 h-28 rounded-full object-cover shadow border-4 border-white" alt="Profile" />
               ) : (
                 <div className="w-28 h-28 rounded-full bg-gray-900 text-white flex items-center justify-center shadow">
@@ -334,11 +380,11 @@ export default function EditProfilePage() {
 
               <label className="mt-5 w-full cursor-pointer rounded-xl border border-dashed border-[#FF6044]/30 bg-[#FF6044]/5 px-4 py-3 text-[#FF6044] flex items-center justify-center gap-2 font-bold hover:bg-[#FF6044]/10 transition-all">
                 <Upload size={18} /> Upload Photo
-                <input type="file" accept="image/*" className="hidden" onChange={(e) => { setProfilePic(e.target.files[0]); setRemoveProfilePic(false); }} />
+                <input type="file" accept="image/*" className="hidden" onChange={handleFileSelect} onClick={(e) => (e.target.value = null)} />
               </label>
 
-              {form.profile_pic && (
-                <button type="button" onClick={() => setRemoveProfilePic(true)} className="mt-3 text-sm text-red-500">
+              {(form.profile_pic || form.profile_pic_preview) && !removeProfilePic && (
+                <button type="button" onClick={() => { setRemoveProfilePic(true); setProfilePic(null); setForm(f => ({...f, profile_pic_preview: null}))}} className="mt-3 text-sm text-red-500">
                   Remove current photo
                 </button>
               )}
@@ -452,6 +498,73 @@ export default function EditProfilePage() {
           </section>
         </form>
       </main>
+
+      {/* Crop Modal */}
+      {cropModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+          <div className="bg-[#1a1b1b] rounded-2xl w-full max-w-md overflow-hidden shadow-2xl border border-white/10 flex flex-col h-[500px]">
+            <div className="p-4 border-b border-white/10 flex justify-between items-center bg-[#121313]">
+              <h3 className="text-lg font-black text-white flex items-center gap-2">
+                <Crop size={18} className="text-[#FF6044]" /> Adjust Photo
+              </h3>
+              <button 
+                type="button"
+                onClick={() => setCropModalOpen(false)} 
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div className="relative flex-1 w-full bg-black">
+              <Cropper
+                image={imageToCrop}
+                crop={crop}
+                zoom={zoom}
+                aspect={1}
+                cropShape="round"
+                showGrid={false}
+                onCropChange={setCrop}
+                onCropComplete={onCropComplete}
+                onZoomChange={setZoom}
+              />
+            </div>
+            
+            <div className="p-4 bg-[#121313] border-t border-white/10">
+              <div className="flex items-center gap-4 mb-4">
+                <span className="text-xs font-bold text-gray-400">Zoom</span>
+                <input
+                  type="range"
+                  value={zoom}
+                  min={1}
+                  max={3}
+                  step={0.1}
+                  aria-labelledby="Zoom"
+                  onChange={(e) => setZoom(e.target.value)}
+                  className="w-full accent-[#FF6044]"
+                />
+              </div>
+              <div className="flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setCropModalOpen(false)}
+                  className="px-4 py-2 rounded-xl text-gray-400 font-bold hover:bg-white/5 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleCropImage}
+                  disabled={isCropping}
+                  className="px-6 py-2 rounded-xl bg-[#FF6044] text-[#121313] font-black flex items-center gap-2 hover:bg-[#ff4d2e] transition-colors"
+                >
+                  <Check size={18} /> {isCropping ? "Applying..." : "Done"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
