@@ -10,7 +10,6 @@ from django.views.static import serve
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('django_prometheus.urls')),
     path('', include('tracker.urls')),
     path('logout/', views.logout_api, name='logout'),
     path('signup/', views.signup, name='signup'),

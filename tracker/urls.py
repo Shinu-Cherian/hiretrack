@@ -1,8 +1,10 @@
 from django.urls import path
 from . import views
 from .career_roadmap_view import career_roadmap_api
+from django.conf import settings
 
 urlpatterns = [
+    path('metrics/', views.secure_metrics_api),
     path('', views.home, name='home'),
     path('api/add-job/', views.add_job_api),
     path('api/auth/status/', views.auth_status_api),

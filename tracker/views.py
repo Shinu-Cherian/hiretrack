@@ -3016,3 +3016,30 @@ def delete_account_confirm_api(request):
             return JsonResponse({"error": "An unexpected error occurred. Please try again later."}, status=400)
 
     return JsonResponse({"error": "Method not allowed"}, status=405)
+
+import os
+from django_prometheus.exports import ExportToDjangoView
+from django.http import HttpResponseForbidden
+
+def secure_metrics_api(request):
+    """
+    Secure wrapper around django-prometheus metrics export.
+    Only allows access if a secret token is provided in the headers or GET params.
+    """
+    expected_token = os.environ.get('PROMETHEUS_METRICS_TOKEN')
+    
+    # If no token is set in environment, deny all access to be safe
+    if not expected_token:
+        return HttpResponseForbidden("Metrics access not configured")
+        
+    auth_header = request.META.get('HTTP_AUTHORIZATION', '')
+    provided_token = request.GET.get('token')
+    
+    if auth_header.startswith('Bearer '):
+        provided_token = auth_header.split(' ')[1]
+        
+    if provided_token != expected_token:
+        return HttpResponseForbidden("Unauthorized access to metrics")
+        
+    # django-prometheus expects the view to be called normally
+    return ExportToDjangoView(request)
