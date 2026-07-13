@@ -3,5 +3,7 @@ global:
 
 scrape_configs:
   - job_name: 'django_hiretrack'
+    scheme: https
+    bearer_token: 'hiretrack_secret_metrics_token_2026'
     static_configs:
-      - targets: ['host.docker.internal:8000']
+      - targets: ['hiretrack-gw0m.onrender.com']
