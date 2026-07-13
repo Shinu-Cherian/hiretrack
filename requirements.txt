@@ -168,3 +168,7 @@ sendgrid==6.11.0
 django-ratelimit==4.1.0
 
 kafka-python-ng==2.2.3
+django-prometheus==2.3.1
+opentelemetry-distro==0.45b0
+opentelemetry-instrumentation-django==0.45b0
+opentelemetry-exporter-otlp==1.24.0

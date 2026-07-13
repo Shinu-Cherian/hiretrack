@@ -15,6 +15,25 @@ def main():
             "available on your PYTHONPATH environment variable? Did you "
             "forget to activate a virtual environment?"
         ) from exc
+        
+    if 'runserver' in sys.argv and os.environ.get('RUN_MAIN') == 'true':
+        from opentelemetry import trace
+        from opentelemetry.sdk.trace import TracerProvider
+        from opentelemetry.sdk.trace.export import BatchSpanProcessor
+        from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+        from opentelemetry.instrumentation.django import DjangoInstrumentor
+        from opentelemetry.sdk.resources import Resource
+
+        resource = Resource.create({"service.name": "hiretrack"})
+        provider = TracerProvider(resource=resource)
+        # Using HTTP exporter on 4318 since grpc might require extra packages
+        from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter as HTTPSpanExporter
+        processor = BatchSpanProcessor(HTTPSpanExporter(endpoint="http://localhost:4318/v1/traces"))
+        provider.add_span_processor(processor)
+        trace.set_tracer_provider(provider)
+        
+        DjangoInstrumentor().instrument()
+
     execute_from_command_line(sys.argv)
 
 
