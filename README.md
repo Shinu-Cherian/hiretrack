@@ -43,6 +43,8 @@ The platform combines practical job-search tooling with **AI-powered features** 
 
 Over the recent development iterations, HireTrack has evolved significantly to provide a premium user experience:
 
+- **Go Microservice (ATS Scorer)**: Extracted ATS Scoring logic to a highly performant **Go (Golang)** microservice.
+- **gRPC Integration**: Implemented **gRPC** communication between the Django monolithic backend and the Go microservice with resilient fallback mechanisms in Python.
 - **Dark Nebula Theme & Aesthetics**: Completely redesigned frontend UI featuring a highly-polished dark mode, vibrant neon green accents (`#c4fc70`), glassmorphism effects, glowing active borders, and smooth `framer-motion` page transitions.
 - **Interactive Visual Pipeline**: A dynamic flowchart view for Job Applications and Referrals showing real-time statistics and interactive progression stages (e.g., *Applied → Phone Screen → Interview → Offer*).
 - **Scribble Feature (Visual Cards)**: A beautifully simulated cursive handwriting animation tool that tracks realistic job search "scribbles" (like follow-ups and mock interviews) stroke-by-stroke on a transparent canvas.
